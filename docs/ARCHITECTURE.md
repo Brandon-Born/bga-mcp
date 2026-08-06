@@ -119,7 +119,7 @@ Facts and suggestions are structurally distinct. Heuristics expose reduced certa
 
 ## Compatibility strategy
 
-BGA projects exist in legacy and modern layouts. Detection should be capability-based rather than assuming one template. Original minimal modern and legacy fixture projects now establish the structural baseline. A supported-layout compatibility matrix will be added before the first capability release.
+BGA projects exist in legacy and modern layouts. Detection should be capability-based rather than assuming one template. Original minimal modern and legacy fixture projects now establish the structural baseline. The supported-layout, runtime, platform, protocol, transport, and client claims are published in [COMPATIBILITY.md](COMPATIBILITY.md) and enforced against the running server by CI.
 
 Unknown syntax should produce an explicit unsupported or uncertain result, not a clean bill of health.
 

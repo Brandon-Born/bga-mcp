@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/compatibility.schema.json",
+  "title": "bga-mcp compatibility matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "updatedAt", "claims"],
+  "properties": {
+    "$schema": {
+      "const": "./compatibility.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "updatedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "dimension", "value", "support", "notes"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^CLAIM-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "dimension": {
+            "enum": [
+              "layout",
+              "file-generation",
+              "runtime",
+              "platform",
+              "protocol",
+              "transport",
+              "client"
+            ]
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1
+          },
+          "support": {
+            "enum": ["supported", "unsupported", "unknown"]
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fixtures": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "support": {
+                  "const": "supported"
+                }
+              },
+              "required": ["support"]
+            },
+            "then": {
+              "type": "object",
+              "required": ["scenarios"],
+              "properties": {
+                "scenarios": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "support": {
+                  "enum": ["unsupported", "unknown"]
+                }
+              },
+              "required": ["support"]
+            },
+            "then": {
+              "type": "object",
+              "not": {
+                "type": "object",
+                "required": ["scenarios"]
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "dimension": {
+                  "const": "layout"
+                },
+                "support": {
+                  "const": "supported"
+                }
+              },
+              "required": ["dimension", "support"]
+            },
+            "then": {
+              "type": "object",
+              "required": ["fixtures"],
+              "properties": {
+                "fixtures": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

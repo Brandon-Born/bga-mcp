@@ -136,12 +136,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-009 — Publish the compatibility matrix
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-008
 - **Deliverable:** Machine-readable and human-readable matrices for BGA layouts, file generations, runtimes, MCP versions, transports, and clients.
 - **Acceptance:** Every support claim maps to a fixture and passing scenario; unknown and unsupported combinations are explicit.
 - **Verification:** CI fails when a support claim lacks a fixture or passing evidence and when runtime behavior claims support outside the matrix.
+- **Evidence:** [`config/compatibility.json`](../config/compatibility.json) and [COMPATIBILITY.md](COMPATIBILITY.md) hold 18 claims. `pnpm verify:compatibility` seeds a missing fixture, an undocumented claim, and a protocol claim beyond `SUPPORTED_PROTOCOL_VERSIONS`, and fails on each before passing the real matrix. `GATE-COMPATIBILITY-MATRIX` proves runtime discovery stays inside the matrix; `pnpm verify:scenarios` proves every claimed scenario exists.
 
 ### BGA-010 — Build the packaged-server E2E harness
 

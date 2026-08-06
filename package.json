@@ -30,6 +30,8 @@
     "dist",
     "config/capabilities.json",
     "config/capabilities.schema.json",
+    "config/compatibility.json",
+    "config/compatibility.schema.json",
     "config/diagnostics.schema.json",
     "LICENSE",
     "README.md"
@@ -48,8 +50,9 @@
     "test:conformance": "tsx scripts/run-conformance.ts",
     "test:fixtures": "vitest run tests/fixture-integrity.test.ts",
     "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",
+    "verify:compatibility": "tsx scripts/verify-compatibility.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm test:coverage && pnpm check:package && pnpm test:conformance",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:compatibility && pnpm test:coverage && pnpm check:package && pnpm test:conformance",
     "prepack": "pnpm build"
   },
   "dependencies": {

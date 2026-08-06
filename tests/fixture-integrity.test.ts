@@ -44,7 +44,7 @@ async function hashes(directory: string): Promise<Record<string, string>> {
 
 describe('BGA project fixture corpus', () => {
   it.each(['modern', 'legacy'])(
-    '%s matches its declared baseline and remains safe and immutable',
+    '[GATE-FIXTURE-SAFETY] %s matches its declared baseline and remains safe and immutable',
     async (layout) => {
       const directory = resolve(projectsRoot, layout);
       const before = await hashes(directory);
