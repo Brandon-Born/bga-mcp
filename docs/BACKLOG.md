@@ -201,12 +201,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-016 — Implement shared error handling and redaction
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-007, BGA-013, BGA-015
 - **Deliverable:** Stable public errors and redaction utilities for paths, credentials, sessions, connection strings, player data, and internal failures.
 - **Acceptance:** Errors remain actionable without stack-trace leakage or secrets; unexpected failures receive stable codes and safe context.
 - **Verification:** Every public capability inherits negative E2E scenarios seeded with sensitive values and proves they are absent from results and evidence.
+- **Evidence:** [`src/errors.ts`](../src/errors.ts) publishes the versioned public error contract with stable codes, and [`src/redaction.ts`](../src/redaction.ts) removes private keys, tokens, sessions, connection credentials, player data, and out-of-root paths. `UNIT-REDACTION-CREDENTIALS`, `UNIT-REDACTION-PATHS`, `UNIT-REDACTION-PLAYER-DATA`, `UNIT-ERROR-UNEXPECTED-COLLAPSE`, and `GATE-LOG-REDACTION` prove seeded values never survive a published error or a log line. This item stays `implemented` until a public capability exists to inherit the negative end-to-end scenarios; BGA-102 is the first.
 
 ## Phase 1 — Read-only local MVP
 
