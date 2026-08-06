@@ -35,6 +35,8 @@ Do not describe a capability as implemented, supported, complete, or verified un
 
 Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
 
+Privileged access belongs to the policy boundary. Only `src/policy.ts` may import filesystem, network, or subprocess modules, and both ESLint and the `GATE-POLICY-IMPORT-BOUNDARY` scenario enforce that.
+
 ## Development commands
 
 Install exactly from the lockfile with `corepack pnpm install --frozen-lockfile`. Run `corepack pnpm check` before submitting. The complete gate includes formatting, linting, strict typing, seeded quality-gate self-tests, coverage, unit/integration/E2E tests, package linting, and the applicable official MCP conformance scenario.

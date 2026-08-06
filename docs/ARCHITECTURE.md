@@ -51,6 +51,10 @@ Optional component for authenticated Studio access. The first adapter should use
 
 Applies configured project roots, remote project allowlists, operation timeouts, output redaction, and mutation safeguards before an adapter runs.
 
+This component is implemented in `src/policy.ts` and is the only module permitted to import filesystem, network, or subprocess APIs; ESLint and the `GATE-POLICY-IMPORT-BOUNDARY` scenario enforce that. It resolves roots through the filesystem at startup, rejects traversal lexically, re-checks resolved locations after symlinks, and fails closed on unconfigured or invalid settings. Defaults are local, read-only, and network-off.
+
+Failures leave the process through the versioned public error contract in `src/errors.ts`. Known errors keep a stable code and redacted details; anything unexpected collapses to `internal.unexpected` with no stack trace. `src/redaction.ts` removes credentials, sessions, connection strings, player data, and out-of-root paths from results, errors, and log lines.
+
 ### Verification harness
 
 Starts the packaged server exactly as a user would, connects through a real MCP client, discovers its advertised capabilities, and exercises every public tool and resource. The harness owns isolated project fixtures and records machine-readable evidence for each capability.

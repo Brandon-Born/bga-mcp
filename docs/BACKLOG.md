@@ -192,12 +192,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-015 — Implement the policy boundary
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-003, BGA-013
 - **Deliverable:** Central enforcement for configured project roots, remote project allowlists, operation timeouts, network policy, mutation intent, and output limits.
 - **Acceptance:** Capabilities cannot bypass policy through alternate paths; configuration is explicit and fails closed; defaults are local, read-only, and network-off.
 - **Verification:** Packaged-server E2E covers traversal, symlink escape, unlisted roots, unlisted remotes, missing mutation confirmation, timeout, and oversized output.
+- **Evidence:** [`src/policy.ts`](../src/policy.ts) is the single gate for roots, traversal, symlink escape, remote allowlist, network, mutation intent, timeouts, and output budget, and an ESLint rule plus `GATE-POLICY-IMPORT-BOUNDARY` prevent any other module from importing filesystem, network, or subprocess APIs. `INT-POLICY-*` scenarios cover every decision against a real filesystem, and `E2E-POLICY-CONFIG-FAILS-CLOSED` and `E2E-POLICY-ROOT-UNAVAILABLE` prove the packaged artifact refuses unsafe configuration at startup. This item stays `implemented`: no public capability exists yet, so no packaged tool call exercises traversal, symlink escape, timeout, or output limits. BGA-102 must add that evidence. The gap is recorded as RR-POLICY-NO-TOOL-EVIDENCE in [THREAT_MODEL.md](THREAT_MODEL.md).
 
 ### BGA-016 — Implement shared error handling and redaction
 

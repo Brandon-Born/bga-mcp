@@ -89,7 +89,18 @@ An MCP client can launch a development checkout after it has been built:
 }
 ```
 
-The project-root option is parsed and resolved as configuration groundwork; no current capability reads it. The server writes only MCP frames to stdout and diagnostics to stderr.
+Configuration is the policy boundary. Defaults are local, read-only, and network-off, and every relaxation is an explicit flag:
+
+| Option                        | Effect                                                                     |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| `--project-root <path>`       | Allow one local project root. Repeatable. A missing root fails at startup. |
+| `--allow-remote-project <id>` | Allowlist a BGA Studio project for a future mutation. Repeatable.          |
+| `--operation-timeout-ms <n>`  | Deadline for a single operation.                                           |
+| `--max-output-bytes <n>`      | Maximum bytes one result may return.                                       |
+| `--allow-network`             | Permit network access. Off by default.                                     |
+| `--allow-mutations`           | Permit explicitly confirmed mutating operations. Off by default.           |
+
+No capability reads a project root yet, but the boundary that will govern them is implemented and tested. The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
 
 ## Verification commands
 

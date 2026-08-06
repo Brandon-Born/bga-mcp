@@ -18,7 +18,7 @@ interface PackagedApi {
 }
 
 describe('packaged bga-mcp server', () => {
-  it('packs, installs, serves both protocol eras, shuts down, and uninstalls', async () => {
+  it('[E2E-PACK-INSTALL-REMOVE][E2E-STDIO-LEGACY-INITIALIZE][E2E-STDIO-MODERN-DISCOVER][E2E-STDIO-UNADVERTISED-METHOD][E2E-STDIO-SHUTDOWN][E2E-POLICY-CONFIG-FAILS-CLOSED] packs, installs, serves both protocol eras, refuses unsafe configuration, shuts down, and uninstalls', async () => {
     const temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-e2e-'));
     const packRoot = resolve(temporaryRoot, 'pack');
     const installRoot = resolve(temporaryRoot, 'install');
@@ -158,6 +158,44 @@ describe('packaged bga-mcp server', () => {
       expect(invalid.exitCode).toBe(2);
       expect(invalid.stdout).toBe('');
       expect(invalid.stderr).toContain('Unknown option: --not-a-real-option');
+
+      const projectRoot = resolve(temporaryRoot, 'project');
+      const missingRoot = resolve(temporaryRoot, 'missing-project');
+      await mkdir(projectRoot);
+
+      for (const [arguments_, expected] of [
+        [['--operation-timeout-ms', '0'], '--operation-timeout-ms requires a positive integer'],
+        [['--max-output-bytes', 'lots'], '--max-output-bytes requires a positive integer'],
+        [['--allow-remote-project', '../escape'], '[config.invalid]'],
+        [['--project-root', missingRoot], '[policy.root.unavailable]'],
+        [['--project-root', 'relative-root'], '[policy.root.unavailable]'],
+      ] as const) {
+        const rejected = await runCommand(process.execPath, [cli, ...arguments_], {
+          cwd: temporaryRoot,
+          timeoutMs: 10_000,
+        });
+        expect(rejected.exitCode, `${arguments_.join(' ')}: ${rejected.stderr}`).toBe(2);
+        expect(rejected.stdout).toBe('');
+        expect(rejected.stderr).toContain(expected);
+        expect(rejected.stderr).not.toContain(missingRoot);
+      }
+
+      const configured = await connectStdio(
+        process.execPath,
+        [cli, '--project-root', projectRoot, '--operation-timeout-ms', '5000'],
+        { timeoutMs: 5_000 },
+      );
+      const configuredProcessId = configured.transport.pid;
+      try {
+        expect(configured.client.getServerCapabilities()).toEqual({});
+        expect(await configured.client.listTools()).toEqual({ tools: [] });
+      } finally {
+        await configured.client.close();
+        if (configuredProcessId !== null) {
+          await waitForProcessExit(configuredProcessId);
+        }
+      }
+      expect(configured.stderr()).toBe('');
 
       const uninstall = await runCommand(
         corepackCommand,

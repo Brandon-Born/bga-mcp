@@ -1,5 +1,6 @@
 export {
   CliUsageError,
+  DEFAULT_SERVER_CONFIG,
   HELP_TEXT,
   parseCliArguments,
   type CliAction,
@@ -18,6 +19,18 @@ export {
   type ErrorCode,
   type PublicError,
 } from './errors.js';
+export {
+  DEFAULT_MAX_OUTPUT_BYTES,
+  DEFAULT_OPERATION_TIMEOUT_MS,
+  DEFAULT_POLICY_CONFIG,
+  MAX_OPERATION_TIMEOUT_MS,
+  MAX_OUTPUT_BYTES_LIMIT,
+  PolicyBoundary,
+  createPolicyBoundary,
+  type MutationMode,
+  type MutationRequest,
+  type PolicyConfig,
+} from './policy.js';
 export {
   REDACTED_CONNECTION,
   REDACTED_CREDENTIAL,
@@ -56,4 +69,4 @@ export {
 } from './diagnostics.js';
 export { formatErrorLog, formatMessageLog } from './logging.js';
 export { SERVER_NAME, SERVER_VERSION, SUPPORTED_PROTOCOL_VERSIONS } from './metadata.js';
-export { createServer } from './server.js';
+export { createServer, createServerWithPolicy, type ServerDependencies } from './server.js';
