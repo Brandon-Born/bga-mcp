@@ -45,4 +45,4 @@ Changing an existing field's meaning or removing or narrowing an accepted value 
 
 ## Verification
 
-Unit tests cover valid round trips, schema drift, version rejection, strict fact/suggestion separation, certainty rules, aggregate consistency, and invalid ranges. A real stdio MCP fixture serializes success, error, warning, heuristic, and unsupported results. Packaged E2E imports both public functions from the installed tarball and verifies that the distributed schema matches the runtime contract.
+Unit tests cover valid round trips, schema drift, version rejection, strict fact/suggestion separation, certainty rules, aggregate consistency, and invalid ranges. A real stdio MCP fixture serializes success, error, warning, heuristic, and unsupported results. Packaged E2E imports both public functions from the installed tarball and verifies that the distributed schema matches the runtime contract. [CI run 31101182339](https://github.com/Brandon-Born/bga-mcp/actions/runs/31101182339) passes this complete gate on Ubuntu, macOS, and Windows with Node 22 and 24.
