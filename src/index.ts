@@ -73,7 +73,20 @@ export {
 } from './diagnostics.js';
 export { formatErrorLog, formatMessageLog } from './logging.js';
 export { SERVER_NAME, SERVER_VERSION, SUPPORTED_PROTOCOL_VERSIONS } from './metadata.js';
-export { createServer, createServerWithPolicy, type ServerDependencies } from './server.js';
+export {
+  createDefaultServer,
+  createServer,
+  createServerWithPolicy,
+  type ServerDependencies,
+} from './server.js';
+export {
+  INSPECT_PROJECT_TOOL,
+  InspectProjectInputSchema,
+  InspectProjectOutputSchema,
+  registerInspectProject,
+  summarize,
+  type InspectProjectResult,
+} from './tools/inspect-project.js';
 export {
   detectLayout,
   type LayoutCertainty,

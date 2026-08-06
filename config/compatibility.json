@@ -10,7 +10,7 @@
       "support": "supported",
       "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata.",
       "fixtures": ["tests/fixtures/projects/modern"],
-      "scenarios": ["GATE-FIXTURE-SAFETY"]
+      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
     },
     {
       "id": "CLAIM-LAYOUT-LEGACY",
@@ -19,14 +19,14 @@
       "support": "supported",
       "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root.",
       "fixtures": ["tests/fixtures/projects/legacy"],
-      "scenarios": ["GATE-FIXTURE-SAFETY"]
+      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-LEGACY"]
     },
     {
       "id": "CLAIM-LAYOUT-UNRECOGNIZED",
       "dimension": "layout",
       "value": "unrecognized",
       "support": "unknown",
-      "notes": "A project matching neither fixture is reported as unsupported syntax rather than as a clean result. No detection code exists yet; BGA-100 owns it."
+      "notes": "A project matching neither fixture is reported as an unrecognized layout with an error finding, never as a clean result. Detection lives in BGA-100; deeper parsing of an unknown project is out of scope."
     },
     {
       "id": "CLAIM-FILEGEN-MODERN",
@@ -35,7 +35,7 @@
       "support": "supported",
       "notes": "gameinfos.jsonc, gameoptions.json, gamepreferences.json, and stats.json.",
       "fixtures": ["tests/fixtures/projects/modern"],
-      "scenarios": ["GATE-FIXTURE-SAFETY"]
+      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
     },
     {
       "id": "CLAIM-FILEGEN-LEGACY",
@@ -44,7 +44,7 @@
       "support": "supported",
       "notes": "gameinfos.inc.php, gameoptions.inc.php, states.inc.php, and stats.inc.php.",
       "fixtures": ["tests/fixtures/projects/legacy"],
-      "scenarios": ["GATE-FIXTURE-SAFETY"]
+      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-LEGACY"]
     },
     {
       "id": "CLAIM-RUNTIME-NODE-22",
@@ -137,7 +137,11 @@
       "value": "@modelcontextprotocol/client 2.0.0",
       "support": "supported",
       "notes": "The reference client used by every packaged end-to-end scenario.",
-      "scenarios": ["E2E-STDIO-UNADVERTISED-METHOD", "E2E-POLICY-CONFIG-FAILS-CLOSED"]
+      "scenarios": [
+        "E2E-STDIO-UNADVERTISED-METHOD",
+        "E2E-POLICY-CONFIG-FAILS-CLOSED",
+        "E2E-INSPECT-PROJECT-MODERN"
+      ]
     },
     {
       "id": "CLAIM-CLIENT-EDITORS",

@@ -106,7 +106,9 @@ describe('packaged bga-mcp server', () => {
             name: packageMetadata.name,
             version: packageMetadata.version,
           });
-          expect(connection.client.getServerCapabilities()).toEqual({});
+          expect(connection.client.getServerCapabilities()).toEqual({
+            tools: { listChanged: true },
+          });
           if (protocolVersion === '2025-11-25') {
             expect(await connection.client.ping()).toEqual({});
           } else {
@@ -114,7 +116,9 @@ describe('packaged bga-mcp server', () => {
               /not supported by the negotiated protocol version/iu,
             );
           }
-          expect(await connection.client.listTools()).toEqual({ tools: [] });
+          const tools = await connection.client.listTools();
+          expect(tools.tools.map((tool) => tool.name)).toEqual(['inspect_project']);
+          expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
           expect(await connection.client.listResources()).toEqual({
             resources: [],
           });
@@ -126,13 +130,13 @@ describe('packaged bga-mcp server', () => {
           if (protocolVersion === '2026-07-28') {
             expect(connection.client.getDiscoverResult()).toMatchObject({
               supportedVersions: ['2026-07-28'],
-              capabilities: {},
+              capabilities: { tools: { listChanged: true } },
               resultType: 'complete',
             });
           }
           assertManifestMatchesRuntime(manifest, {
             server: packageMetadata,
-            tools: [],
+            tools: tools.tools.map((tool) => tool.name),
             resources: [],
             prompts: [],
           });
@@ -187,8 +191,10 @@ describe('packaged bga-mcp server', () => {
       );
       const configuredProcessId = configured.transport.pid;
       try {
-        expect(configured.client.getServerCapabilities()).toEqual({});
-        expect(await configured.client.listTools()).toEqual({ tools: [] });
+        expect(configured.client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
+        expect((await configured.client.listTools()).tools.map((tool) => tool.name)).toEqual([
+          'inspect_project',
+        ]);
       } finally {
         await configured.client.close();
         if (configuredProcessId !== null) {

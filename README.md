@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in the foundation implementation stage. The installable stdio server is exercised through packaged-artifact E2E tests, but it intentionally advertises no BGA tools or resources yet.
+> This project is in early implementation. The installable stdio server advertises one verified capability, `inspect_project`. The remaining tools and resources below are still proposals.
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -20,11 +20,14 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 - Previewing and synchronizing changes to BGA Studio safely.
 - Reading and filtering Studio diagnostics without pasting logs into an agent conversation.
 
-## Planned capabilities
+## Capabilities
 
-The first useful release will be local and read-only:
+Available now, local and read-only:
 
-- `inspect_project`
+- `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
+
+Planned for the first useful release:
+
 - `validate_project`
 - `validate_state_machine`
 - `validate_action_contracts`
@@ -55,7 +58,9 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. A versioned [diagnostic contract](docs/DIAGNOSTICS.md) and [public error contract](src/errors.ts) are distributed for future validation tools, the [policy boundary](src/policy.ts) that will govern every capability is implemented, and the [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) are enforced by CI gates. No BGA-facing tool is advertised yet.
+The first BGA-facing capability is live and verified. `inspect_project` runs against the packed and installed artifact through a real MCP client in eleven scenarios covering both supported layouts, unrecognized projects, schema rejection, unlisted roots, traversal, symlink escape, redaction, deadlines, and output budgets, and it proves the project directory is unchanged after every successful call. See the [first capability verification](docs/verification/FIRST_CAPABILITY.md).
+
+Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 
 See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
@@ -100,7 +105,7 @@ Configuration is the policy boundary. Defaults are local, read-only, and network
 | `--allow-network`             | Permit network access. Off by default.                                     |
 | `--allow-mutations`           | Permit explicitly confirmed mutating operations. Off by default.           |
 
-No capability reads a project root yet, but the boundary that will govern them is implemented and tested. The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
+`inspect_project` reads only from the roots given here. The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
 
 ## Verification commands
 

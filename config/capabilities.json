@@ -20,7 +20,30 @@
     }
   ],
   "capabilities": {
-    "tools": [],
+    "tools": [
+      {
+        "name": "inspect_project",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-INSPECT-PROJECT-MODERN",
+          "E2E-INSPECT-PROJECT-LEGACY",
+          "E2E-INSPECT-PROJECT-UNRECOGNIZED",
+          "E2E-INSPECT-PROJECT-INVALID-INPUT",
+          "E2E-INSPECT-PROJECT-UNLISTED-ROOT",
+          "E2E-INSPECT-PROJECT-UNCONFIGURED",
+          "E2E-INSPECT-PROJECT-TRAVERSAL",
+          "E2E-INSPECT-PROJECT-SYMLINK-ESCAPE",
+          "E2E-INSPECT-PROJECT-REDACTION",
+          "E2E-INSPECT-PROJECT-TIMEOUT",
+          "E2E-INSPECT-PROJECT-OUTPUT-LIMIT"
+        ],
+        "liveStudioRequired": false
+      }
+    ],
     "resources": [],
     "prompts": []
   },

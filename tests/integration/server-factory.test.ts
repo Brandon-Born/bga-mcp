@@ -5,12 +5,12 @@ import { join, resolve } from 'node:path';
 import { Client, InMemoryTransport } from '@modelcontextprotocol/client';
 
 import { DEFAULT_SERVER_CONFIG } from '../../src/config.js';
-import { createServer, createServerWithPolicy } from '../../src/server.js';
+import { createDefaultServer, createServerWithPolicy } from '../../src/server.js';
 
 describe('production server factory', () => {
-  it('reports exact identity and no public capabilities', async () => {
+  it('reports exact identity and its advertised capabilities', async () => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
-    const server = createServer();
+    const server = await createDefaultServer();
     const client = new Client({ name: 'factory-test', version: '1.0.0' });
 
     try {
@@ -20,7 +20,10 @@ describe('production server factory', () => {
         name: 'bga-mcp',
         version: '0.0.0-development',
       });
-      expect(client.getServerCapabilities()).toEqual({});
+      expect(client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
+      expect((await client.listTools()).tools.map((tool) => tool.name)).toEqual([
+        'inspect_project',
+      ]);
     } finally {
       await client.close();
       await server.close();

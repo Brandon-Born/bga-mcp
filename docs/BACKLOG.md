@@ -201,17 +201,17 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Central enforcement for configured project roots, remote project allowlists, operation timeouts, network policy, mutation intent, and output limits.
 - **Acceptance:** Capabilities cannot bypass policy through alternate paths; configuration is explicit and fails closed; defaults are local, read-only, and network-off.
 - **Verification:** Packaged-server E2E covers traversal, symlink escape, unlisted roots, unlisted remotes, missing mutation confirmation, timeout, and oversized output.
-- **Evidence:** [`src/policy.ts`](../src/policy.ts) is the single gate for roots, traversal, symlink escape, remote allowlist, network, mutation intent, timeouts, and output budget, and an ESLint rule plus `GATE-POLICY-IMPORT-BOUNDARY` prevent any other module from importing filesystem, network, or subprocess APIs. `INT-POLICY-*` scenarios cover every decision against a real filesystem, and `E2E-POLICY-CONFIG-FAILS-CLOSED` and `E2E-POLICY-ROOT-UNAVAILABLE` prove the packaged artifact refuses unsafe configuration at startup. This item stays `implemented`: no public capability exists yet, so no packaged tool call exercises traversal, symlink escape, timeout, or output limits. BGA-102 must add that evidence. The gap is recorded as RR-POLICY-NO-TOOL-EVIDENCE in [THREAT_MODEL.md](THREAT_MODEL.md).
+- **Evidence:** [`src/policy.ts`](../src/policy.ts) is the single gate for roots, traversal, symlink escape, remote allowlist, network, mutation intent, timeouts, and output budget, and an ESLint rule plus `GATE-POLICY-IMPORT-BOUNDARY` prevent any other module from importing filesystem, network, or subprocess APIs. `INT-POLICY-*` scenarios cover every decision against a real filesystem, and `E2E-POLICY-CONFIG-FAILS-CLOSED` and `E2E-POLICY-ROOT-UNAVAILABLE` prove the packaged artifact refuses unsafe configuration at startup. BGA-102 added packaged tool-call evidence for five of the seven required decisions: traversal, symlink escape, unlisted roots, timeout, and oversized output all fail through `inspect_project` against the installed artifact. Unlisted remotes and missing mutation confirmation remain covered only by integration scenarios, because no capability reaches a remote target or mutates anything yet. This item stays `implemented` until BGA-304 supplies the mutating capability that can prove those two.
 
 ### BGA-016 — Implement shared error handling and redaction
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-007, BGA-013, BGA-015
 - **Deliverable:** Stable public errors and redaction utilities for paths, credentials, sessions, connection strings, player data, and internal failures.
 - **Acceptance:** Errors remain actionable without stack-trace leakage or secrets; unexpected failures receive stable codes and safe context.
 - **Verification:** Every public capability inherits negative E2E scenarios seeded with sensitive values and proves they are absent from results and evidence.
-- **Evidence:** [`src/errors.ts`](../src/errors.ts) publishes the versioned public error contract with stable codes, and [`src/redaction.ts`](../src/redaction.ts) removes private keys, tokens, sessions, connection credentials, player data, and out-of-root paths. `UNIT-REDACTION-CREDENTIALS`, `UNIT-REDACTION-PATHS`, `UNIT-REDACTION-PLAYER-DATA`, `UNIT-ERROR-UNEXPECTED-COLLAPSE`, and `GATE-LOG-REDACTION` prove seeded values never survive a published error or a log line. This item stays `implemented` until a public capability exists to inherit the negative end-to-end scenarios; BGA-102 is the first.
+- **Evidence:** [`src/errors.ts`](../src/errors.ts) publishes the versioned public error contract with stable codes, and [`src/redaction.ts`](../src/redaction.ts) removes private keys, tokens, sessions, connection credentials, player data, and out-of-root paths. `UNIT-REDACTION-CREDENTIALS`, `UNIT-REDACTION-PATHS`, `UNIT-REDACTION-PLAYER-DATA`, `UNIT-ERROR-UNEXPECTED-COLLAPSE`, and `GATE-LOG-REDACTION` prove seeded values never survive a published error or a log line. BGA-102 supplies the inherited negative scenarios: `E2E-INSPECT-PROJECT-REDACTION` proves a refusal carries a redacted path rather than an absolute one, and `E2E-INSPECT-PROJECT-SYMLINK-ESCAPE` proves seeded key material behind a link never reaches a result. Every future capability inherits the same requirement through its manifest entry.
 
 ## Phase 1 — Read-only local MVP
 
@@ -238,12 +238,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-102 — Implement `inspect_project`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-100, BGA-101
 - **Deliverable:** A read-only tool that explains the detected layout, components, capabilities, missing expected files, and uncertainty.
 - **Acceptance:** The schema is stable, paths are safe and relative, results are concise but complete, and no file changes occur.
 - **Verification:** Manifest-mapped E2E covers success for every layout plus invalid root, non-project, ambiguous syntax, traversal, permission failure, and proof of filesystem immutability.
+- **Evidence:** The first advertised capability. Eleven manifest-mapped scenarios run against the packed and installed artifact through a real MCP client: both supported layouts, an unrecognized project, schema rejection for four malformed inputs, an unlisted root, an unconfigured server, traversal, symlink escape, redaction of a seeded secret and of absolute paths, deadline expiry, and output-budget refusal. Both success scenarios hash the project directory before and after the call and prove it unchanged. See the [first capability verification](verification/FIRST_CAPABILITY.md).
 
 ### BGA-103 — Implement `bga://project/summary`
 

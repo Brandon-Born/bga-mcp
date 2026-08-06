@@ -10,13 +10,13 @@ async function loadJson(name: string): Promise<unknown> {
 }
 
 describe('capability manifest gate', () => {
-  it('accepts the current manifest and exact empty runtime discovery', async () => {
+  it('accepts the current manifest and the exact advertised capability set', async () => {
     const schema = (await loadJson('capabilities.schema.json')) as object;
     const manifest = await loadJson('capabilities.json');
     validateManifestSchema(schema, manifest);
     assertManifestMatchesRuntime(manifest as never, {
       server: { name: 'bga-mcp', version: '0.0.0-development' },
-      tools: [],
+      tools: ['inspect_project'],
       resources: [],
       prompts: [],
     });
@@ -53,7 +53,7 @@ describe('capability manifest gate', () => {
     expect(() =>
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
-        tools: [],
+        tools: ['inspect_project'],
         resources: [],
         prompts: [],
       }),
@@ -67,7 +67,7 @@ describe('capability manifest gate', () => {
     expect(() =>
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
-        tools: [],
+        tools: ['inspect_project'],
         resources: [],
         prompts: [],
       }),

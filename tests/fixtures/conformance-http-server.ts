@@ -7,14 +7,14 @@ import {
   NodeStreamableHTTPServerTransport,
 } from '@modelcontextprotocol/node';
 
-import { createServer } from '../../src/server.js';
+import { createDefaultServer } from '../../src/server.js';
 
 const validateHost = localhostHostValidation();
 const validateOrigin = localhostOriginValidation();
 const transport = new NodeStreamableHTTPServerTransport({
   sessionIdGenerator: randomUUID,
 });
-const mcpServer = createServer();
+const mcpServer = await createDefaultServer();
 await mcpServer.connect(transport);
 
 const httpServer = createHttpServer((request, response) => {

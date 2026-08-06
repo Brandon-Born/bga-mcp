@@ -3,19 +3,26 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
+import { registerInspectProject } from './tools/inspect-project.js';
 
 export interface ServerDependencies {
-  /** The prepared policy boundary every future capability must route through. */
+  /** The prepared policy boundary every capability must route through. */
   readonly policy: PolicyBoundary;
 }
 
-export function createServer(
-  config: ServerConfig = DEFAULT_SERVER_CONFIG,
-  dependencies?: ServerDependencies,
-): McpServer {
+export function createServer(config: ServerConfig, dependencies: ServerDependencies): McpServer {
   void config;
-  void dependencies;
-  return new McpServer({ name: SERVER_NAME, version: SERVER_VERSION }, { capabilities: {} });
+  const server = new McpServer(
+    { name: SERVER_NAME, version: SERVER_VERSION },
+    { capabilities: { tools: {} } },
+  );
+  registerInspectProject(server, dependencies.policy);
+  return server;
+}
+
+/** Builds a server with default, fully restrictive configuration. */
+export async function createDefaultServer(): Promise<McpServer> {
+  return (await createServerWithPolicy(DEFAULT_SERVER_CONFIG)).create();
 }
 
 /**
