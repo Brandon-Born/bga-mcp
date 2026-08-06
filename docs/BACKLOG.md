@@ -184,12 +184,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-014 — Add secret and artifact safety gates
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-004, BGA-005, BGA-013
 - **Deliverable:** Secret scanning, publisher-artwork checks where practical, log redaction tests, and CI artifact inspection.
 - **Acceptance:** Known credential formats and seeded sensitive values are blocked or redacted; scans never upload the sensitive fixture itself as an artifact.
 - **Verification:** Seeded secrets in source, tool output, logs, and evidence each fail the appropriate gate without revealing the complete value.
+- **Evidence:** `pnpm verify:safety-gates` writes a seeded credential outside the repository, proves the scanner detects it in artifact content and in a log line, proves the printed finding is masked, then scans the repository and every retained artifact directory. `GATE-SECRET-SCAN-SOURCE`, `GATE-SECRET-SCAN-ARTIFACT`, `GATE-LOG-REDACTION`, and `GATE-FIXTURE-SAFETY` cover each rule, artifact output, stderr redaction, and fixture asset safety. CI runs the scan before the upload step and skips the upload when it fails.
 
 ### BGA-015 — Implement the policy boundary
 

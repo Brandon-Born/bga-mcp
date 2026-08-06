@@ -1,3 +1,4 @@
+// secret-scan:allow-file Seeded non-secret sample credentials that prove log redaction.
 import { resolve, sep } from 'node:path';
 
 import { ERROR_CODES, PolicyViolationError } from '../../src/errors.js';

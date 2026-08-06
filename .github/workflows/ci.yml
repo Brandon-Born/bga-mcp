@@ -33,8 +33,12 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Run complete local gate
         run: pnpm check
-      - name: Retain non-secret verification output
+      - name: Scan retained output for secrets before upload
+        id: safety
         if: always()
+        run: pnpm verify:safety-gates
+      - name: Retain non-secret verification output
+        if: always() && steps.safety.outcome == 'success'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: verification-${{ matrix.os }}-node-${{ matrix.node }}

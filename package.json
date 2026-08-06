@@ -51,8 +51,9 @@
     "test:fixtures": "vitest run tests/fixture-integrity.test.ts",
     "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",
     "verify:compatibility": "tsx scripts/verify-compatibility.ts",
+    "verify:safety-gates": "tsx scripts/verify-safety-gates.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:compatibility && pnpm test:coverage && pnpm check:package && pnpm test:conformance",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:compatibility && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates",
     "prepack": "pnpm build"
   },
   "dependencies": {
