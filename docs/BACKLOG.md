@@ -102,7 +102,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Required CI workflows for supported operating systems and runtime versions, with concurrency control and least-privilege permissions.
 - **Acceptance:** CI runs every applicable gate from a clean checkout, uses locked dependencies, retains non-secret evidence, and cannot publish or mutate Studio state from untrusted contributions.
 - **Verification:** A controlled failing branch proves each required check blocks completion; a clean branch proves the full matrix passes.
-- **Evidence:** `.github/workflows/ci.yml` defines the locked macOS/Linux/Windows and Node 22/24 matrix. External failing-branch and clean-matrix proof is still required.
+- **Evidence:** `.github/workflows/ci.yml` defines the least-privilege macOS/Linux/Windows and Node 22/24 matrix with immutable current Action pins. [CI run 31072847631](https://github.com/Brandon-Born/bga-mcp/actions/runs/31072847631) proves the clean six-job matrix and retained artifacts pass. Controlled failing-branch proof for every required check is still required.
 
 ### BGA-006 — Define the machine-readable capability manifest
 
