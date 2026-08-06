@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
-import { extname, relative, resolve } from 'node:path';
+import { extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const projectsRoot = fileURLToPath(new URL('./fixtures/projects/', import.meta.url));
@@ -34,7 +34,8 @@ async function listFiles(directory: string): Promise<string[]> {
 async function hashes(directory: string): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
   for (const file of await listFiles(directory)) {
-    result[relative(directory, file)] = createHash('sha256')
+    const portablePath = relative(directory, file).split(sep).join('/');
+    result[portablePath] = createHash('sha256')
       .update(await readFile(file))
       .digest('hex');
   }

@@ -40,7 +40,7 @@ describe('packaged bga-mcp server', () => {
 
       const install = await runCommand(
         corepackCommand,
-        ['pnpm', 'add', '--offline', '--dir', installRoot, archive],
+        ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, archive],
         { timeoutMs: 60_000 },
       );
       expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);
