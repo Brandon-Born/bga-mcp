@@ -31,7 +31,10 @@ async function main(): Promise<void> {
     const prettierIgnoreSeed = resolve(seedRoot, 'empty-prettier-ignore');
     const typeSeed = resolve(seedRoot, 'type.ts');
     const testSeed = resolve(seedRoot, 'failure.test.ts');
-    await writeFile(formatSeed, 'const badlyFormatted={first:1,second:2}\n');
+    await writeFile(
+      formatSeed,
+      'const wellFormatted = { first: 1, second: 2 };\nvoid wellFormatted;\n',
+    );
     await writeFile(prettierIgnoreSeed, '');
     await writeFile(typeSeed, 'const value: string = 42;\nvoid value;\n');
     await writeFile(
