@@ -9,9 +9,7 @@ const evidenceRoot = resolve(repositoryRoot, 'conformance-results');
 const conformanceFixture = fileURLToPath(
   new URL('../tests/fixtures/conformance-http-server.ts', import.meta.url),
 );
-const conformanceGracefulExit = fileURLToPath(
-  new URL('./conformance-graceful-exit.ts', import.meta.url),
-);
+const conformanceGracefulExit = new URL('./conformance-graceful-exit.ts', import.meta.url).href;
 const conformanceCli = resolve(
   repositoryRoot,
   'node_modules/@modelcontextprotocol/conformance/dist/index.js',
