@@ -9,6 +9,9 @@ const evidenceRoot = resolve(repositoryRoot, 'conformance-results');
 const conformanceFixture = fileURLToPath(
   new URL('../tests/fixtures/conformance-http-server.ts', import.meta.url),
 );
+const conformanceGracefulExit = fileURLToPath(
+  new URL('./conformance-graceful-exit.ts', import.meta.url),
+);
 const conformanceCli = resolve(
   repositoryRoot,
   'node_modules/@modelcontextprotocol/conformance/dist/index.js',
@@ -50,6 +53,10 @@ async function runConformance(url: string, outputDirectory: string): Promise<Com
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
   return await run(process.execPath, [
+    '--import',
+    'tsx',
+    '--import',
+    conformanceGracefulExit,
     conformanceCli,
     'server',
     '--url',
