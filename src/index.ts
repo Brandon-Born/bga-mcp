@@ -81,3 +81,20 @@ export {
   type LayoutSignal,
   type ProjectLayout,
 } from './project/layout.js';
+export {
+  buildProjectModel,
+  type ComponentId,
+  type ProjectComponent,
+  type ProjectModel,
+  type ProjectReader,
+  type ProjectStates,
+} from './project/model.js';
+export {
+  parseJsonc,
+  parseLegacyMetadata,
+  parseLegacyStates,
+  parseModernMetadata,
+  type GameMetadata,
+  type ParseOutcome,
+  type StateDefinition,
+} from './project/parse.js';

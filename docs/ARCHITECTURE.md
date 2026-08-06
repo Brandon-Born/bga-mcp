@@ -37,6 +37,8 @@ Discovers supported BGA layouts and produces a normalized representation of:
 
 Validation rules operate on this normalized model instead of relying on isolated regular-expression checks.
 
+Layout detection and the first slice of the model are implemented in `src/project/`. Detection scores independent signals rather than matching one template, and the readers in `src/project/parse.ts` are textual: they never execute project code, and every construct they cannot interpret becomes an explicit unsupported finding. Action contracts, notifications, and database usage are absent from the model until their own parsers land.
+
 ### Documentation index
 
 Retrieves or builds a curated index of relevant BGA Studio documentation. Every result should include its canonical source URL, retrieval or snapshot date, and relevant framework version when known.

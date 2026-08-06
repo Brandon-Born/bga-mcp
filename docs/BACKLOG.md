@@ -227,12 +227,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-101 — Build the normalized project model
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-100
 - **Deliverable:** A normalized representation of metadata, options, states, transitions, actions, methods, notifications, database objects, statistics, templates, styles, modules, and tests.
 - **Acceptance:** Source locations and certainty survive normalization; unsupported constructs are retained as explicit unknowns; parsers do not execute project code.
 - **Verification:** Integration tests compare fixtures to declared models; public E2E proves the same model drives observable inspection and validation results.
+- **Evidence:** [`src/project/model.ts`](../src/project/model.ts) normalizes layout, metadata, twelve components, and legacy state definitions with their source locations, and [`src/project/parse.ts`](../src/project/parse.ts) reads JSONC and PHP literals without executing project code. Every construct it cannot interpret becomes an explicit `unsupported-syntax` finding: computed state keys, non-literal transition targets, and modern class-based states are reported, never dropped. Integration scenarios compare both fixtures to declared models; the same model drives `inspect_project` through the packaged server.
+- **Scope note:** Action contracts, notifications, database objects, and test files are represented as absent rather than empty, because their parsers belong to BGA-107, BGA-108, and BGA-109. This item stays `implemented` until those parsers extend the model and the E2E scenarios that prove them exist.
 
 ### BGA-102 — Implement `inspect_project`
 
