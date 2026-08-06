@@ -54,6 +54,18 @@ Live tests must:
 
 If a stable and permitted live test cannot be built, the capability must remain experimental, disabled by default, and absent from the supported-capability list.
 
+## Scenario declarations
+
+A scenario identifier links an executable test to the entry that depends on it: a capability-manifest entry, a threat-model mitigation, or a compatibility claim. A test declares its identifiers at the start of its title:
+
+```ts
+it('[INT-POLICY-TIMEOUT] aborts and reports an operation that outlives its deadline', …);
+```
+
+`pnpm verify:scenarios` fails when a required scenario has no declaring test, and when a declared identifier is required by nothing. Identifiers reserved by planned work are recorded as such and may not be claimed as evidence.
+
+The declaration proves the test exists and runs in the complete gate. The test run itself proves it passes. Machine-readable per-run results are BGA-012 and are not yet emitted.
+
 ## Capability manifest
 
 The repository will maintain a machine-readable manifest containing every advertised tool, resource, prompt, transport, and external adapter. Each entry must identify:
@@ -94,8 +106,10 @@ A change cannot be considered complete when any applicable gate is missing or fa
 4. MCP protocol conformance tests.
 5. Packaged-server local end-to-end tests.
 6. Live Studio end-to-end tests for Studio-backed changes.
-7. Capability-manifest coverage verification.
+7. Capability-manifest, threat-model, compatibility, and scenario-coverage verification.
 8. Secret scanning and test-artifact redaction checks.
+
+Every verification gate must fail on demand. Each `pnpm verify:*` command seeds its own defect, requires the gate to reject it, and only then reports on the real repository. A gate that cannot fail is not evidence.
 
 A release must publish or retain machine-readable evidence containing the package version, source commit, dependency lock digest, test environment identity, supported protocol version, scenario results, and timestamps. Secrets and private BGA data must never appear in that evidence.
 

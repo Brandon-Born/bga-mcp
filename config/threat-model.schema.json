@@ -1,0 +1,312 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/threat-model.schema.json",
+  "title": "bga-mcp threat model",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "reviewedAt",
+    "assets",
+    "actors",
+    "trustBoundaries",
+    "abuseCases",
+    "mitigations",
+    "residualRisks"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "./threat-model.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "reviewedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ASSET-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "actors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "trust", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^ACTOR-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "trust": {
+            "enum": ["trusted", "semi-trusted", "untrusted"]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "trustBoundaries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "description", "status", "gates"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^TB-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": ["reviewed", "unreviewed"]
+          },
+          "gates": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "enum": ["local-read", "network", "mutation", "subprocess", "supply-chain"]
+            }
+          }
+        }
+      }
+    },
+    "abuseCases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "actor", "assets", "boundary", "impact", "mitigations"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^AC-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "actor": {
+            "type": "string",
+            "pattern": "^ACTOR-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "assets": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^ASSET-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+            }
+          },
+          "boundary": {
+            "type": "string",
+            "pattern": "^TB-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "impact": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mitigations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^TM-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+            }
+          }
+        }
+      }
+    },
+    "mitigations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "boundary", "control", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^TM-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "boundary": {
+            "type": "string",
+            "pattern": "^TB-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "control": {
+            "enum": ["automated", "manual"]
+          },
+          "status": {
+            "enum": ["planned", "implemented", "verified"]
+          },
+          "scenarios": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+            }
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cadence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          },
+          "backlog": {
+            "type": "string",
+            "pattern": "^BGA-[0-9]{3}$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "control": {
+                  "const": "automated"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "required": ["scenarios"],
+              "properties": {
+                "scenarios": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "control": {
+                  "const": "manual"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "required": ["owner", "cadence", "evidence"],
+              "properties": {
+                "owner": {
+                  "type": "string"
+                },
+                "cadence": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "const": "planned"
+                }
+              }
+            },
+            "then": {
+              "type": "object",
+              "required": ["backlog"],
+              "properties": {
+                "backlog": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "residualRisks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "abuseCases", "acceptedBy"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^RR-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "abuseCases": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^AC-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+            }
+          },
+          "acceptedBy": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

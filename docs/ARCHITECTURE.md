@@ -108,6 +108,10 @@ Validation tools return the versioned shared contract documented in [DIAGNOSTICS
 
 Facts and suggestions are structurally distinct. Heuristics expose reduced certainty, and unsupported syntax prevents a false clean result.
 
+## Security model
+
+[THREAT_MODEL.md](THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks, and it is machine-checked. The documentation and Studio boundaries are unreviewed, which blocks any networked or mutating capability from being advertised.
+
 ## Credential and data handling
 
 - Prefer SSH keys through the user's SSH agent or a configured key path.

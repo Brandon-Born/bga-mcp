@@ -142,7 +142,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Machine-readable and human-readable matrices for BGA layouts, file generations, runtimes, MCP versions, transports, and clients.
 - **Acceptance:** Every support claim maps to a fixture and passing scenario; unknown and unsupported combinations are explicit.
 - **Verification:** CI fails when a support claim lacks a fixture or passing evidence and when runtime behavior claims support outside the matrix.
-- **Evidence:** [`config/compatibility.json`](../config/compatibility.json) and [COMPATIBILITY.md](COMPATIBILITY.md) hold 18 claims. `pnpm verify:compatibility` seeds a missing fixture, an undocumented claim, and a protocol claim beyond `SUPPORTED_PROTOCOL_VERSIONS`, and fails on each before passing the real matrix. `GATE-COMPATIBILITY-MATRIX` proves runtime discovery stays inside the matrix; `pnpm verify:scenarios` proves every claimed scenario exists.
+- **Evidence:** [`config/compatibility.json`](../config/compatibility.json) and [COMPATIBILITY.md](COMPATIBILITY.md) hold 18 claims. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:compatibility` seeds a missing fixture, an undocumented claim, and a protocol claim beyond `SUPPORTED_PROTOCOL_VERSIONS`, and fails on each before passing the real matrix. `GATE-COMPATIBILITY-MATRIX` proves runtime discovery stays inside the matrix; `pnpm verify:scenarios` proves every claimed scenario exists.
 
 ### BGA-010 — Build the packaged-server E2E harness
 
@@ -175,12 +175,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-013 — Complete the initial threat model
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-002
 - **Deliverable:** A threat model covering local file access, symlinks and traversal, tool arguments, subprocesses, documentation content, SFTP, browser sessions, logs, credentials, supply chain, and MCP-client trust.
 - **Acceptance:** Assets, actors, trust boundaries, abuse cases, mitigations, residual risk, and test requirements are recorded. Networked and mutating capabilities cannot start before their boundary is reviewed.
 - **Verification:** Each required mitigation maps to an automated negative or security scenario, or to an explicit manual control with an owner.
+- **Evidence:** [THREAT_MODEL.md](THREAT_MODEL.md) and [`config/threat-model.json`](../config/threat-model.json) record 15 abuse cases, 24 mitigations, and 5 residual risks across 7 trust boundaries. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:threat-model` seeds an unknown mitigation reference, a manual control without an owner, an adapter advertised across the unreviewed Studio boundary, and an undocumented control, and fails on each before passing the real model. TB-DOCS-NETWORK and TB-STUDIO remain unreviewed, so no networked or mutating capability can be advertised.
 
 ### BGA-014 — Add secret and artifact safety gates
 
@@ -190,7 +191,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Secret scanning, publisher-artwork checks where practical, log redaction tests, and CI artifact inspection.
 - **Acceptance:** Known credential formats and seeded sensitive values are blocked or redacted; scans never upload the sensitive fixture itself as an artifact.
 - **Verification:** Seeded secrets in source, tool output, logs, and evidence each fail the appropriate gate without revealing the complete value.
-- **Evidence:** `pnpm verify:safety-gates` writes a seeded credential outside the repository, proves the scanner detects it in artifact content and in a log line, proves the printed finding is masked, then scans the repository and every retained artifact directory. `GATE-SECRET-SCAN-SOURCE`, `GATE-SECRET-SCAN-ARTIFACT`, `GATE-LOG-REDACTION`, and `GATE-FIXTURE-SAFETY` cover each rule, artifact output, stderr redaction, and fixture asset safety. CI runs the scan before the upload step and skips the upload when it fails.
+- **Evidence:** See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:safety-gates` writes a seeded credential outside the repository, proves the scanner detects it in artifact content and in a log line, proves the printed finding is masked, then scans the repository and every retained artifact directory. `GATE-SECRET-SCAN-SOURCE`, `GATE-SECRET-SCAN-ARTIFACT`, `GATE-LOG-REDACTION`, and `GATE-FIXTURE-SAFETY` cover each rule, artifact output, stderr redaction, and fixture asset safety. CI runs the scan before the upload step and skips the upload when it fails.
 
 ### BGA-015 — Implement the policy boundary
 

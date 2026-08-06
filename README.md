@@ -55,9 +55,9 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. A versioned [diagnostic contract](docs/DIAGNOSTICS.md) is distributed for future validation tools. No BGA-facing tool is advertised yet.
+The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. A versioned [diagnostic contract](docs/DIAGNOSTICS.md) and [public error contract](src/errors.ts) are distributed for future validation tools, the [policy boundary](src/policy.ts) that will govern every capability is implemented, and the [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) are enforced by CI gates. No BGA-facing tool is advertised yet.
 
-See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
+See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
 ## Develop locally
 
@@ -108,6 +108,8 @@ No capability reads a project root yet, but the boundary that will govern them i
 - `pnpm test:coverage` runs unit, integration, fixture-integrity, harness self-tests, and packed-server E2E with coverage thresholds.
 - `pnpm check:package` builds, packs, and checks package metadata.
 - `pnpm test:conformance` proves the official suite rejects a seeded violation and accepts the candidate for its supported scenario.
+- `pnpm verify:threat-model`, `pnpm verify:compatibility`, and `pnpm verify:scenarios` prove the threat model, the compatibility matrix, and every claimed scenario stay consistent with the code and the tests. Each seeds its own defect first and fails on it.
+- `pnpm verify:safety-gates` proves the secret scanner detects a seeded credential without printing it, then scans the repository and every retained CI artifact.
 - `pnpm check` is the complete local gate.
 
 ## Contributing

@@ -33,13 +33,15 @@ Changes that add, complete, supersede, or invalidate planned work must update [d
 
 Do not describe a capability as implemented, supported, complete, or verified until its packaged-server end-to-end test passes. Studio-backed behavior additionally requires a passing test against the dedicated Studio test project.
 
-Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
+Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first. [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) records which trust boundaries are reviewed; crossing an unreviewed one fails CI.
 
 Privileged access belongs to the policy boundary. Only `src/policy.ts` may import filesystem, network, or subprocess modules, and both ESLint and the `GATE-POLICY-IMPORT-BOUNDARY` scenario enforce that.
 
+A test that provides evidence for a manifest entry, a threat-model mitigation, or a compatibility claim declares the scenario identifier at the start of its title, for example `it('[INT-POLICY-TIMEOUT] aborts a slow operation', …)`. `pnpm verify:scenarios` fails when a required scenario has no test and when a declared scenario belongs to nothing.
+
 ## Development commands
 
-Install exactly from the lockfile with `corepack pnpm install --frozen-lockfile`. Run `corepack pnpm check` before submitting. The complete gate includes formatting, linting, strict typing, seeded quality-gate self-tests, coverage, unit/integration/E2E tests, package linting, and the applicable official MCP conformance scenario.
+Install exactly from the lockfile with `corepack pnpm install --frozen-lockfile`. Run `corepack pnpm check` before submitting. The complete gate includes formatting, linting, strict typing, seeded quality-gate self-tests, threat-model, compatibility, and scenario-coverage verification, coverage, unit/integration/E2E tests, package linting, the applicable official MCP conformance scenario, and the secret and artifact safety gates.
 
 Individual commands and the reason for each layer are listed in [README.md](README.md) and [docs/TESTING.md](docs/TESTING.md).
 

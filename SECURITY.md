@@ -29,3 +29,9 @@ The project is designed around these requirements:
 - Telemetry is off unless it is introduced later as an explicit opt-in feature.
 
 These are design goals while the project is pre-release, not a claim that unreleased functionality has completed a security audit.
+
+## Threat model
+
+[docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks behind those requirements, together with the operator responsibilities that the server cannot enforce on its own. Its machine-readable form is checked in CI: a mitigation without evidence, a manual control without an owner, or a capability advertised across an unreviewed boundary fails the build.
+
+The documentation-retrieval and BGA Studio boundaries are recorded as unreviewed. No networked or mutating capability may be advertised until that review happens.

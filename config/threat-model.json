@@ -1,0 +1,516 @@
+{
+  "$schema": "./threat-model.schema.json",
+  "schemaVersion": 1,
+  "reviewedAt": "2026-08-06",
+  "assets": [
+    {
+      "id": "ASSET-LOCAL-SOURCE",
+      "name": "Local BGA project source",
+      "description": "Game code, database definitions, and options inside a configured project root."
+    },
+    {
+      "id": "ASSET-LOCAL-PRIVATE",
+      "name": "Local files outside the project roots",
+      "description": "SSH keys, environment files, browser profiles, and unrelated repositories on the developer machine."
+    },
+    {
+      "id": "ASSET-STUDIO-CREDENTIALS",
+      "name": "BGA Studio credentials",
+      "description": "SSH keys, agent sockets, and session material that authenticate to BGA Studio."
+    },
+    {
+      "id": "ASSET-STUDIO-PROJECT",
+      "name": "Remote Studio project",
+      "description": "Files, tables, and saved state belonging to a Studio project."
+    },
+    {
+      "id": "ASSET-PLAYER-DATA",
+      "name": "Player data",
+      "description": "Player identities and gameplay records reachable through Studio logs or tables."
+    },
+    {
+      "id": "ASSET-RELEASE-ARTIFACT",
+      "name": "Release artifacts and verification evidence",
+      "description": "The published package, CI logs, coverage output, conformance output, and evidence files."
+    },
+    {
+      "id": "ASSET-CLIENT-CONTEXT",
+      "name": "MCP client context",
+      "description": "The agent context window and the actions an agent takes based on server output."
+    }
+  ],
+  "actors": [
+    {
+      "id": "ACTOR-DEVELOPER",
+      "name": "BGA developer",
+      "trust": "trusted",
+      "description": "Runs the server, chooses its configuration, and owns the machine."
+    },
+    {
+      "id": "ACTOR-MCP-CLIENT",
+      "name": "MCP client or agent",
+      "trust": "semi-trusted",
+      "description": "Sends tool arguments that may be model-generated, malformed, or unintended."
+    },
+    {
+      "id": "ACTOR-PROJECT-CONTENT",
+      "name": "Project file content",
+      "trust": "untrusted",
+      "description": "File names, links, and text inside a project root, possibly authored by a third party."
+    },
+    {
+      "id": "ACTOR-DOC-CONTENT",
+      "name": "Documentation and community content",
+      "trust": "untrusted",
+      "description": "Retrieved BGA Studio documentation, wiki pages, and community examples."
+    },
+    {
+      "id": "ACTOR-STUDIO-SERVICE",
+      "name": "BGA Studio service",
+      "trust": "semi-trusted",
+      "description": "Remote SFTP and web endpoints whose responses the server would parse."
+    },
+    {
+      "id": "ACTOR-DEPENDENCY",
+      "name": "Dependency and CI supply chain",
+      "trust": "semi-trusted",
+      "description": "npm packages, GitHub Actions, and the package manager used to build and publish."
+    }
+  ],
+  "trustBoundaries": [
+    {
+      "id": "TB-CLIENT-INPUT",
+      "name": "MCP client to server",
+      "description": "Tool arguments and resource URIs crossing into the server process.",
+      "status": "reviewed",
+      "gates": ["local-read"]
+    },
+    {
+      "id": "TB-LOCAL-FILESYSTEM",
+      "name": "Server to local filesystem",
+      "description": "Every path the server resolves, opens, or lists on the developer machine.",
+      "status": "reviewed",
+      "gates": ["local-read"]
+    },
+    {
+      "id": "TB-PROCESS",
+      "name": "Server process perimeter",
+      "description": "Subprocess execution, environment access, and long-running work inside the server.",
+      "status": "reviewed",
+      "gates": ["subprocess"]
+    },
+    {
+      "id": "TB-OUTPUT",
+      "name": "Server to client and artifacts",
+      "description": "Tool results, errors, stderr logs, and retained CI evidence leaving the process.",
+      "status": "reviewed",
+      "gates": ["local-read"]
+    },
+    {
+      "id": "TB-DOCS-NETWORK",
+      "name": "Documentation retrieval",
+      "description": "Outbound requests for documentation and the untrusted content they return.",
+      "status": "unreviewed",
+      "gates": ["network"]
+    },
+    {
+      "id": "TB-STUDIO",
+      "name": "BGA Studio adapter",
+      "description": "Authenticated SFTP, session, and mutation traffic with a Studio project.",
+      "status": "unreviewed",
+      "gates": ["network", "mutation"]
+    },
+    {
+      "id": "TB-SUPPLY-CHAIN",
+      "name": "Build and release supply chain",
+      "description": "Dependencies, CI actions, and published artifacts.",
+      "status": "reviewed",
+      "gates": ["supply-chain"]
+    }
+  ],
+  "abuseCases": [
+    {
+      "id": "AC-PATH-TRAVERSAL",
+      "title": "Client requests a path outside a configured project root",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-STUDIO-CREDENTIALS"],
+      "boundary": "TB-CLIENT-INPUT",
+      "impact": "Private keys or unrelated source are read and copied into the client context.",
+      "mitigations": ["TM-POLICY-ROOTS", "TM-POLICY-TRAVERSAL", "TM-POLICY-SINGLE-GATE"]
+    },
+    {
+      "id": "AC-SYMLINK-ESCAPE",
+      "title": "A link inside a project root resolves outside it",
+      "actor": "ACTOR-PROJECT-CONTENT",
+      "assets": ["ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-LOCAL-FILESYSTEM",
+      "impact": "A crafted repository exfiltrates files the developer never configured.",
+      "mitigations": ["TM-POLICY-SYMLINK"]
+    },
+    {
+      "id": "AC-UNCONFIGURED-ROOT",
+      "title": "Server is started without an explicit root and still answers project questions",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-CLIENT-INPUT",
+      "impact": "The server reads whatever the working directory happens to contain.",
+      "mitigations": ["TM-POLICY-FAIL-CLOSED"]
+    },
+    {
+      "id": "AC-ARGUMENT-INJECTION",
+      "title": "Tool arguments reach a shell, a URL, or a raw filesystem call",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-PROCESS",
+      "impact": "Command or path injection executes code or reads arbitrary files.",
+      "mitigations": ["TM-POLICY-SINGLE-GATE", "TM-POLICY-TRAVERSAL"]
+    },
+    {
+      "id": "AC-RESOURCE-EXHAUSTION",
+      "title": "A large or pathological project floods the client or hangs the server",
+      "actor": "ACTOR-PROJECT-CONTENT",
+      "assets": ["ASSET-CLIENT-CONTEXT"],
+      "boundary": "TB-PROCESS",
+      "impact": "The agent context is swamped or the server stops responding to the client.",
+      "mitigations": ["TM-POLICY-TIMEOUT", "TM-POLICY-OUTPUT-LIMIT"]
+    },
+    {
+      "id": "AC-SECRET-IN-OUTPUT",
+      "title": "Secrets, absolute paths, or player data appear in a result or error",
+      "actor": "ACTOR-PROJECT-CONTENT",
+      "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
+      "boundary": "TB-OUTPUT",
+      "impact": "Credentials or personal data are copied into an agent transcript that may be stored remotely.",
+      "mitigations": ["TM-REDACTION", "TM-ERROR-COLLAPSE"]
+    },
+    {
+      "id": "AC-SECRET-IN-ARTIFACT",
+      "title": "Retained CI output carries a credential or private project data",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-STUDIO-CREDENTIALS"],
+      "boundary": "TB-OUTPUT",
+      "impact": "A public workflow artifact publishes a secret that must then be rotated.",
+      "mitigations": ["TM-SOURCE-SECRET-SCAN", "TM-ARTIFACT-SCAN", "TM-LOG-REDACTION"]
+    },
+    {
+      "id": "AC-ARTWORK-REDISTRIBUTION",
+      "title": "Publisher artwork or private game code enters the repository through a fixture",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-SUPPLY-CHAIN",
+      "impact": "The project redistributes material it has no right to publish.",
+      "mitigations": ["TM-FIXTURE-ASSET-BAN"]
+    },
+    {
+      "id": "AC-CREDENTIAL-AS-ARGUMENT",
+      "title": "A Studio credential is passed as an ordinary tool argument",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-STUDIO-CREDENTIALS"],
+      "boundary": "TB-STUDIO",
+      "impact": "The credential is logged in the client transcript and in server output.",
+      "mitigations": ["TM-CREDENTIAL-PROVIDER", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-STUDIO-WRONG-TARGET",
+      "title": "A synchronization writes to the wrong Studio project",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-STUDIO-PROJECT"],
+      "boundary": "TB-STUDIO",
+      "impact": "Another developer's project is overwritten and cannot be restored.",
+      "mitigations": [
+        "TM-POLICY-REMOTE-ALLOWLIST",
+        "TM-POLICY-MUTATION-INTENT",
+        "TM-BOUNDARY-REVIEW"
+      ]
+    },
+    {
+      "id": "AC-STUDIO-SESSION-REUSE",
+      "title": "A browser session or undocumented endpoint is used for Studio access",
+      "actor": "ACTOR-STUDIO-SERVICE",
+      "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA"],
+      "boundary": "TB-STUDIO",
+      "impact": "Session material is exposed and access controls or terms may be bypassed.",
+      "mitigations": ["TM-NO-BROWSER-SESSION", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-DOC-PROMPT-INJECTION",
+      "title": "Retrieved documentation contains instructions aimed at the agent",
+      "actor": "ACTOR-DOC-CONTENT",
+      "assets": ["ASSET-CLIENT-CONTEXT", "ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "The agent follows attacker text and takes actions the developer never requested.",
+      "mitigations": ["TM-DOC-PROVENANCE", "TM-DOC-UNTRUSTED", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-SOURCE-EXFILTRATION",
+      "title": "A network capability sends local project source off the machine",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "Unreleased game code leaves the developer machine without consent.",
+      "mitigations": ["TM-NETWORK-OFF-DEFAULT", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-DEPENDENCY-COMPROMISE",
+      "title": "A dependency or CI action is replaced with a malicious version",
+      "actor": "ACTOR-DEPENDENCY",
+      "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-SUPPLY-CHAIN",
+      "impact": "Arbitrary code runs on developer machines and in CI with repository access.",
+      "mitigations": ["TM-PINNED-DEPENDENCIES", "TM-PINNED-CI-ACTIONS"]
+    },
+    {
+      "id": "AC-CLIENT-OVERTRUST",
+      "title": "An agent executes a mutating operation the developer did not request",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-STUDIO-PROJECT", "ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-CLIENT-INPUT",
+      "impact": "Remote or local state changes without an explicit human decision.",
+      "mitigations": ["TM-POLICY-MUTATION-INTENT", "TM-CLIENT-TRUST-DOC"]
+    }
+  ],
+  "mitigations": [
+    {
+      "id": "TM-POLICY-ROOTS",
+      "title": "Only explicitly configured, existing project roots are accepted",
+      "boundary": "TB-LOCAL-FILESYSTEM",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-ROOT-NOT-ALLOWED", "E2E-POLICY-ROOT-UNAVAILABLE"]
+    },
+    {
+      "id": "TM-POLICY-FAIL-CLOSED",
+      "title": "Missing or invalid configuration denies the operation instead of guessing",
+      "boundary": "TB-CLIENT-INPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-ROOT-UNCONFIGURED", "E2E-POLICY-CONFIG-FAILS-CLOSED"]
+    },
+    {
+      "id": "TM-POLICY-TRAVERSAL",
+      "title": "Relative traversal, absolute paths, and null bytes are rejected lexically",
+      "boundary": "TB-CLIENT-INPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-PATH-TRAVERSAL"]
+    },
+    {
+      "id": "TM-POLICY-SYMLINK",
+      "title": "Paths are re-checked after the filesystem resolves links",
+      "boundary": "TB-LOCAL-FILESYSTEM",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-SYMLINK-ESCAPE"]
+    },
+    {
+      "id": "TM-POLICY-SINGLE-GATE",
+      "title": "Only the policy boundary may import filesystem, network, or subprocess modules",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-POLICY-IMPORT-BOUNDARY"]
+    },
+    {
+      "id": "TM-POLICY-TIMEOUT",
+      "title": "Every operation runs under a configured deadline and is aborted on expiry",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-TIMEOUT"]
+    },
+    {
+      "id": "TM-POLICY-OUTPUT-LIMIT",
+      "title": "Oversized results are refused rather than streamed into the client",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-OUTPUT-LIMIT"]
+    },
+    {
+      "id": "TM-POLICY-REMOTE-ALLOWLIST",
+      "title": "A remote target must be allowlisted before any adapter may use it",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-REMOTE-NOT-ALLOWED"]
+    },
+    {
+      "id": "TM-POLICY-MUTATION-INTENT",
+      "title": "Mutations are disabled by default and require an explicit confirmed target",
+      "boundary": "TB-CLIENT-INPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-MUTATION-NOT-REQUESTED"]
+    },
+    {
+      "id": "TM-NETWORK-OFF-DEFAULT",
+      "title": "Network access is off unless the developer enables it at startup",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-POLICY-NETWORK-DISABLED"]
+    },
+    {
+      "id": "TM-REDACTION",
+      "title": "Credentials, sessions, connection strings, player data, and outside paths are redacted",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": [
+        "UNIT-REDACTION-CREDENTIALS",
+        "UNIT-REDACTION-PATHS",
+        "UNIT-REDACTION-PLAYER-DATA"
+      ]
+    },
+    {
+      "id": "TM-ERROR-COLLAPSE",
+      "title": "Unexpected failures collapse to a stable code with no stack trace or internals",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["UNIT-ERROR-UNEXPECTED-COLLAPSE"]
+    },
+    {
+      "id": "TM-LOG-REDACTION",
+      "title": "Server logs and stderr are redacted before they are written",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-LOG-REDACTION"]
+    },
+    {
+      "id": "TM-SOURCE-SECRET-SCAN",
+      "title": "Repository content is scanned for known credential formats",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-SECRET-SCAN-SOURCE"]
+    },
+    {
+      "id": "TM-ARTIFACT-SCAN",
+      "title": "Retained CI artifacts are scanned before upload and never contain the seeded secret",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-SECRET-SCAN-ARTIFACT"]
+    },
+    {
+      "id": "TM-FIXTURE-ASSET-BAN",
+      "title": "Fixtures may not contain publisher artwork, private source, or secrets",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
+    },
+    {
+      "id": "TM-PINNED-DEPENDENCIES",
+      "title": "Every dependency is pinned exactly and installed from the frozen lockfile",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-DEPENDENCY-PINNING"]
+    },
+    {
+      "id": "TM-PINNED-CI-ACTIONS",
+      "title": "Every GitHub Action is pinned to a full commit SHA",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-CI-ACTION-PINNING"]
+    },
+    {
+      "id": "TM-BOUNDARY-REVIEW",
+      "title": "No network or mutating capability ships while its trust boundary is unreviewed",
+      "boundary": "TB-PROCESS",
+      "control": "manual",
+      "status": "implemented",
+      "owner": "Brandon Born",
+      "cadence": "Before advertising any capability or adapter that crosses an unreviewed boundary",
+      "evidence": "docs/THREAT_MODEL.md boundary table, enforced by pnpm verify:threat-model"
+    },
+    {
+      "id": "TM-CLIENT-TRUST-DOC",
+      "title": "Client and agent trust expectations are documented for the developer",
+      "boundary": "TB-CLIENT-INPUT",
+      "control": "manual",
+      "status": "implemented",
+      "owner": "Brandon Born",
+      "cadence": "Every release",
+      "evidence": "SECURITY.md security expectations and docs/THREAT_MODEL.md operator responsibilities"
+    },
+    {
+      "id": "TM-CREDENTIAL-PROVIDER",
+      "title": "Studio credentials come from a dedicated provider, never from tool arguments",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-301",
+      "scenarios": ["LIVE-STUDIO-CREDENTIAL-PROVIDER"]
+    },
+    {
+      "id": "TM-NO-BROWSER-SESSION",
+      "title": "Browser sessions and undocumented endpoints stay unused pending a separate review",
+      "boundary": "TB-STUDIO",
+      "control": "manual",
+      "status": "planned",
+      "backlog": "BGA-305",
+      "owner": "Brandon Born",
+      "cadence": "Before any Studio log or table capability is implemented",
+      "evidence": "docs/BACKLOG.md BGA-305 decision record"
+    },
+    {
+      "id": "TM-DOC-PROVENANCE",
+      "title": "Documentation results carry source URL, snapshot date, and official or community provenance",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-200",
+      "scenarios": ["E2E-DOCS-PROVENANCE"]
+    },
+    {
+      "id": "TM-DOC-UNTRUSTED",
+      "title": "Retrieved documentation is labelled as untrusted content and never as instructions",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-202",
+      "scenarios": ["E2E-DOCS-UNTRUSTED-CONTENT"]
+    }
+  ],
+  "residualRisks": [
+    {
+      "id": "RR-POLICY-NO-TOOL-EVIDENCE",
+      "description": "Policy decisions are proven by unit, integration, and startup scenarios. No public tool exists yet, so no packaged end-to-end tool call exercises them. BGA-102 must add that evidence before BGA-015 can become verified.",
+      "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-STUDIO-UNREVIEWED",
+      "description": "The Studio boundary is unreviewed. Credential handling, wrong-target writes, and session reuse are mitigated only by the shipping gate that keeps every Studio capability unreleased.",
+      "abuseCases": [
+        "AC-CREDENTIAL-AS-ARGUMENT",
+        "AC-STUDIO-WRONG-TARGET",
+        "AC-STUDIO-SESSION-REUSE"
+      ],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-DOC-CONTENT-UNREVIEWED",
+      "description": "Documentation retrieval is unreviewed and unimplemented. Prompt injection through retrieved content has no runtime mitigation yet; the network-off default is the only control.",
+      "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-SOURCE-EXFILTRATION"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-CLIENT-BEHAVIOR",
+      "description": "The server cannot control what an agent does with a correct, redacted result. Operator judgement remains part of the safety model.",
+      "abuseCases": ["AC-CLIENT-OVERTRUST"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-SECRET-SCAN-COVERAGE",
+      "description": "Secret scanning recognizes known credential formats. A novel or encoded secret can pass the gate, so redaction and the artifact allowlist remain the primary controls.",
+      "abuseCases": ["AC-SECRET-IN-ARTIFACT"],
+      "acceptedBy": "Brandon Born"
+    }
+  ]
+}

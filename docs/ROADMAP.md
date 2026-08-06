@@ -12,6 +12,7 @@ Individual deliverables, dependencies, acceptance criteria, and verification req
 - Capture representative legacy and modern BGA project fixtures.
 - Define the shared diagnostic schema and compatibility matrix.
 - Define the capability-to-end-to-end-test manifest and verification evidence format.
+- Complete the threat model and implement the policy, error, redaction, and secret-scanning boundaries it requires.
 
 Exit criterion: the first tool contracts, fixtures, and executable acceptance scenarios are specific enough to implement without guessing at their intended behavior.
 
