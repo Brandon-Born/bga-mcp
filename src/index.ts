@@ -20,6 +20,8 @@ export {
   type PublicError,
 } from './errors.js';
 export {
+  DEFAULT_MAX_LISTED_FILES,
+  DEFAULT_MAX_LIST_DEPTH,
   DEFAULT_MAX_OUTPUT_BYTES,
   DEFAULT_OPERATION_TIMEOUT_MS,
   DEFAULT_POLICY_CONFIG,
@@ -30,6 +32,8 @@ export {
   type MutationMode,
   type MutationRequest,
   type PolicyConfig,
+  type ProjectFile,
+  type ProjectListing,
 } from './policy.js';
 export {
   REDACTED_CONNECTION,
@@ -70,3 +74,10 @@ export {
 export { formatErrorLog, formatMessageLog } from './logging.js';
 export { SERVER_NAME, SERVER_VERSION, SUPPORTED_PROTOCOL_VERSIONS } from './metadata.js';
 export { createServer, createServerWithPolicy, type ServerDependencies } from './server.js';
+export {
+  detectLayout,
+  type LayoutCertainty,
+  type LayoutDetection,
+  type LayoutSignal,
+  type ProjectLayout,
+} from './project/layout.js';

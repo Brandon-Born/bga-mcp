@@ -1,4 +1,4 @@
-import { realpath } from 'node:fs/promises';
+import { lstat, readFile, readdir, realpath } from 'node:fs/promises';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import { ERROR_CODES, PolicyViolationError } from './errors.js';
@@ -29,6 +29,23 @@ export const DEFAULT_POLICY_CONFIG: PolicyConfig = {
   networkEnabled: false,
   mutationsEnabled: false,
 };
+
+export const DEFAULT_MAX_LISTED_FILES = 5_000;
+export const DEFAULT_MAX_LIST_DEPTH = 12;
+
+export interface ProjectFile {
+  /** Root-relative path with forward slashes on every platform. */
+  readonly path: string;
+  readonly bytes: number;
+}
+
+export interface ProjectListing {
+  readonly root: string;
+  readonly files: readonly ProjectFile[];
+  /** Links found inside the root. They are reported, never followed. */
+  readonly skippedLinks: readonly string[];
+  readonly truncated: boolean;
+}
 
 export type MutationMode = 'preview' | 'execute';
 
@@ -208,6 +225,90 @@ export class PolicyBoundary {
       );
     }
     return resolved;
+  }
+
+  /**
+   * Lists readable files inside an allowed root.
+   *
+   * Symlinks are never followed: an entry that is a link is skipped and
+   * reported, so a link cannot widen the set of files a capability can see.
+   * Listing stops at the entry and depth budget rather than walking forever.
+   */
+  async listProjectFiles(
+    root: string,
+    options: { readonly maxEntries?: number; readonly maxDepth?: number } = {},
+  ): Promise<ProjectListing> {
+    const allowedRoot = await this.resolveProjectRoot(root);
+    const maxEntries = options.maxEntries ?? DEFAULT_MAX_LISTED_FILES;
+    const maxDepth = options.maxDepth ?? DEFAULT_MAX_LIST_DEPTH;
+    assertPositiveInteger('maxEntries', maxEntries, DEFAULT_MAX_LISTED_FILES);
+    assertPositiveInteger('maxDepth', maxDepth, DEFAULT_MAX_LIST_DEPTH);
+
+    const files: ProjectFile[] = [];
+    const skippedLinks: string[] = [];
+    let truncated = false;
+
+    const walk = async (directory: string, depth: number): Promise<void> => {
+      if (truncated) {
+        return;
+      }
+      if (depth > maxDepth) {
+        truncated = true;
+        return;
+      }
+      const entries = await readdir(directory, { withFileTypes: true });
+      for (const entry of [...entries].sort((left, right) => left.name.localeCompare(right.name))) {
+        const absolute = join(directory, entry.name);
+        const portable = relative(allowedRoot, absolute).split(sep).join('/');
+        if (entry.isSymbolicLink()) {
+          skippedLinks.push(portable);
+          continue;
+        }
+        if (entry.isDirectory()) {
+          await walk(absolute, depth + 1);
+          continue;
+        }
+        if (!entry.isFile()) {
+          continue;
+        }
+        if (files.length >= maxEntries) {
+          truncated = true;
+          return;
+        }
+        files.push({ path: portable, bytes: (await lstat(absolute)).size });
+      }
+    };
+
+    await walk(allowedRoot, 1);
+    return { root: allowedRoot, files, skippedLinks, truncated };
+  }
+
+  /** Reads one file inside an allowed root, refusing anything above the byte budget. */
+  async readProjectFile(
+    root: string,
+    relativePath: string,
+    options: { readonly maxBytes?: number } = {},
+  ): Promise<string> {
+    const resolved = await this.resolveWithinProject(root, relativePath);
+    const maxBytes = options.maxBytes ?? this.#config.maxOutputBytes;
+    assertPositiveInteger('maxBytes', maxBytes, MAX_OUTPUT_BYTES_LIMIT);
+
+    const info = await lstat(resolved);
+    if (!info.isFile()) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyPathNotFound,
+        'The requested project path is not a regular file.',
+        { details: { requestedPath: relativePath } },
+      );
+    }
+    if (info.size > maxBytes) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyOutputTooLarge,
+        `The file is ${String(info.size)} bytes, above the ${String(maxBytes)} byte read limit.`,
+        { details: { requestedPath: relativePath, bytes: info.size, maxBytes } },
+      );
+    }
+    return await readFile(resolved, 'utf8');
   }
 
   assertRemoteProjectAllowed(identifier: string): void {

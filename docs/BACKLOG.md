@@ -217,12 +217,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-100 — Detect BGA project layouts
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-008, BGA-009, BGA-015
 - **Deliverable:** Capability-based discovery for supported modern and legacy project layouts.
 - **Acceptance:** Detection identifies present components without assuming a template, reports ambiguous or partial layouts, and never reads outside the configured root.
 - **Verification:** E2E runs every fixture plus empty, partial, ambiguous, nested, traversal, and symlink cases through the packaged server.
+- **Evidence:** [`src/project/layout.ts`](../src/project/layout.ts) scores nine independent signals instead of matching one template. A project matching both templates or neither stays `unrecognized`, and a partial match is reported as `likely` rather than `certain`. Unit scenarios cover modern, legacy, ambiguous, partial, empty, non-project, and Windows-style roots; `E2E-INSPECT-PROJECT-MODERN`, `E2E-INSPECT-PROJECT-LEGACY`, `E2E-INSPECT-PROJECT-UNRECOGNIZED`, `E2E-INSPECT-PROJECT-TRAVERSAL`, and `E2E-INSPECT-PROJECT-SYMLINK-ESCAPE` prove the same behavior through the packaged server.
 
 ### BGA-101 — Build the normalized project model
 
