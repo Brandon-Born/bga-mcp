@@ -16,7 +16,12 @@ describe('capability manifest gate', () => {
     validateManifestSchema(schema, manifest);
     assertManifestMatchesRuntime(manifest as never, {
       server: { name: 'bga-mcp', version: '0.0.0-development' },
-      tools: ['inspect_project', 'validate_action_contracts', 'validate_state_machine'],
+      tools: [
+        'inspect_project',
+        'validate_action_contracts',
+        'validate_notifications',
+        'validate_state_machine',
+      ],
       resources: [],
       prompts: [],
     });
@@ -53,7 +58,12 @@ describe('capability manifest gate', () => {
     expect(() =>
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
-        tools: ['inspect_project', 'validate_action_contracts', 'validate_state_machine'],
+        tools: [
+          'inspect_project',
+          'validate_action_contracts',
+          'validate_notifications',
+          'validate_state_machine',
+        ],
         resources: [],
         prompts: [],
       }),
@@ -67,7 +77,12 @@ describe('capability manifest gate', () => {
     expect(() =>
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
-        tools: ['inspect_project', 'validate_action_contracts', 'validate_state_machine'],
+        tools: [
+          'inspect_project',
+          'validate_action_contracts',
+          'validate_notifications',
+          'validate_state_machine',
+        ],
         resources: [],
         prompts: [],
       }),

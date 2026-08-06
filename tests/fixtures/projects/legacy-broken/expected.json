@@ -51,5 +51,21 @@
       "action.game-method.missing",
       "action.name.convention"
     ]
+  },
+  "notifications": {
+    "status": "findings",
+    "summary": {
+      "errors": 0,
+      "warnings": 4,
+      "information": 1,
+      "unsupported": 0
+    },
+    "codes": [
+      "notification.handled.not-sent",
+      "notification.payload.mismatch",
+      "notification.payload.mismatch",
+      "notification.sent.not-handled",
+      "notification.subscription.duplicate"
+    ]
   }
 }

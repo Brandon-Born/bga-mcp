@@ -54,6 +54,7 @@ describe('BGA project fixture corpus', () => {
         diagnostics: unknown[];
         stateMachine?: { status: string; codes: string[] };
         actionContracts?: { status: string; codes: string[] };
+        notifications?: { status: string; codes: string[] };
       };
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
@@ -64,7 +65,11 @@ describe('BGA project fixture corpus', () => {
       // A fixture that seeds defects must declare exactly which findings it expects,
       // so a rule change cannot silently repurpose it. A clean fixture that
       // declares expectations must declare passing ones.
-      for (const declared of [expected.stateMachine, expected.actionContracts]) {
+      for (const declared of [
+        expected.stateMachine,
+        expected.actionContracts,
+        expected.notifications,
+      ]) {
         if (declared === undefined) {
           continue;
         }
@@ -79,6 +84,7 @@ describe('BGA project fixture corpus', () => {
       if (layout.endsWith('-broken')) {
         expect(expected.stateMachine).toBeDefined();
         expect(expected.actionContracts).toBeDefined();
+        expect(expected.notifications).toBeDefined();
       }
 
       for (const file of actualFiles) {

@@ -15,13 +15,15 @@ const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const fixturesRoot = resolve(repositoryRoot, 'tests/fixtures/projects');
 const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 
-interface ValidationResult {
+interface NotificationResult {
   readonly schemaVersion: number;
   readonly layout: string;
-  readonly statesRead: boolean;
-  readonly statesSource: string | null;
-  readonly stateCount: number;
-  readonly phpSourcesRead: number;
+  readonly serverSourcesRead: number;
+  readonly clientSourcesRead: number;
+  readonly trace: {
+    sent: { name: string; payloadKeys: string[]; scope: string; source: string }[];
+    handlers: { name: string; binding: string; payloadKeys: string[]; source: string }[];
+  };
   readonly rules: { code: string; certainty: string; falsePositives: string[] }[];
   readonly diagnostics: {
     status: string;
@@ -33,7 +35,7 @@ interface ValidationResult {
 interface ToolResponse {
   readonly isError: boolean;
   readonly text: string;
-  readonly structured: ValidationResult | undefined;
+  readonly structured: NotificationResult | undefined;
 }
 
 let temporaryRoot: string;
@@ -62,20 +64,16 @@ async function digest(directory: string): Promise<string> {
   return hash.digest('hex');
 }
 
-async function callValidate(
-  client: Client,
-  argument: unknown,
-  timeoutMs = 10_000,
-): Promise<ToolResponse> {
+async function callValidate(client: Client, argument: unknown): Promise<ToolResponse> {
   const result = await client.callTool(
-    { name: 'validate_state_machine', arguments: argument as Record<string, unknown> },
-    { timeout: timeoutMs },
+    { name: 'validate_notifications', arguments: argument as Record<string, unknown> },
+    { timeout: 10_000 },
   );
   const content = result.content as { type: string; text?: string }[];
   return {
     isError: result.isError === true,
     text: content.map((entry) => entry.text ?? '').join('\n'),
-    structured: result.structuredContent as ValidationResult | undefined,
+    structured: result.structuredContent as NotificationResult | undefined,
   };
 }
 
@@ -98,12 +96,12 @@ async function withServer<T>(
 }
 
 beforeAll(async () => {
-  temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-validate-'));
+  temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-notifs-'));
   const installRoot = resolve(temporaryRoot, 'install');
   await mkdir(installRoot);
   await writeFile(
     resolve(installRoot, 'package.json'),
-    `${JSON.stringify({ name: 'bga-mcp-validate-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+    `${JSON.stringify({ name: 'bga-mcp-notifs-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
   );
 
   // The artifact is packed once for the whole run; see tests/global-setup.ts.
@@ -128,9 +126,9 @@ beforeAll(async () => {
   }
   expectedBroken = (
     JSON.parse(await readFile(resolve(brokenRoot, 'expected.json'), 'utf8')) as {
-      stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
+      notifications: { status: string; summary: Record<string, number>; codes: string[] };
     }
-  ).stateMachine;
+  ).notifications;
   for (const target of [cleanRoot, brokenRoot, modernRoot]) {
     await rm(resolve(target, 'expected.json'));
   }
@@ -140,8 +138,8 @@ afterAll(async () => {
   await rm(temporaryRoot, { recursive: true, force: true });
 });
 
-describe('packaged validate_state_machine', () => {
-  it('[E2E-VALIDATE-STATES-CLEAN] passes a valid state machine and publishes its rule catalog', async () => {
+describe('packaged validate_notifications', () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-CLEAN] traces a healthy notification contract both ways', async () => {
     const response = await withServer(
       ['--project-root', cleanRoot],
       async (client) => await callValidate(client, { projectRoot: cleanRoot }),
@@ -149,22 +147,31 @@ describe('packaged validate_state_machine', () => {
 
     expect(response.isError).toBe(false);
     const result = response.structured;
-    expect(result).toMatchObject({
-      schemaVersion: 1,
-      layout: 'legacy',
-      statesRead: true,
-      statesSource: 'states.inc.php',
-      stateCount: 3,
-    });
+    expect(result).toMatchObject({ schemaVersion: 1, layout: 'legacy' });
     expect(result?.diagnostics).toMatchObject({
       status: 'passed',
       summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
       findings: [],
     });
-    expect(result?.phpSourcesRead).toBeGreaterThan(0);
+    expect(result?.trace.sent).toEqual([
+      {
+        name: 'playerPassed',
+        payloadKeys: ['comment'],
+        scope: 'all',
+        source: 'bgamcplegacy.game.php',
+      },
+    ]);
+    expect(result?.trace.handlers).toEqual([
+      {
+        name: 'playerPassed',
+        binding: 'subscribe',
+        payloadKeys: ['comment'],
+        source: 'bgamcplegacy.js',
+      },
+    ]);
+    expect(result?.serverSourcesRead).toBeGreaterThan(0);
+    expect(result?.clientSourcesRead).toBeGreaterThan(0);
 
-    // Every rule the tool can report is published with its certainty and limits.
-    expect(result?.rules.length).toBeGreaterThanOrEqual(11);
     for (const rule of result?.rules ?? []) {
       if (rule.certainty !== 'certain') {
         expect(rule.falsePositives.length).toBeGreaterThan(0);
@@ -173,7 +180,7 @@ describe('packaged validate_state_machine', () => {
     expect(response.text).toContain('status passed');
   });
 
-  it('[E2E-VALIDATE-STATES-SEEDED-DEFECTS] finds exactly the seeded cross-file defects', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS] finds exactly the seeded notification defects', async () => {
     const response = await withServer(
       ['--project-root', brokenRoot],
       async (client) => await callValidate(client, { projectRoot: brokenRoot }),
@@ -185,37 +192,36 @@ describe('packaged validate_state_machine', () => {
     expect(diagnostics?.summary).toEqual(expectedBroken.summary);
     expect(diagnostics?.findings.map((finding) => finding.code)).toEqual(expectedBroken.codes);
 
-    const target = diagnostics?.findings.find(
-      (finding) => finding.code === 'state.transition.target-exists',
+    const duplicate = diagnostics?.findings.find(
+      (finding) => finding.code === 'notification.subscription.duplicate',
     );
-    expect(target).toMatchObject({ kind: 'issue', certainty: 'certain' });
-    expect(target?.message).toContain('undefined state 42');
+    expect(duplicate).toMatchObject({ kind: 'issue', certainty: 'certain' });
 
-    const handler = diagnostics?.findings.find(
-      (finding) => finding.code === 'state.action.handler-missing',
+    const silent = diagnostics?.findings.find(
+      (finding) => finding.code === 'notification.sent.not-handled',
     );
-    expect(handler).toMatchObject({ kind: 'heuristic', certainty: 'likely' });
+    expect(silent).toMatchObject({ kind: 'heuristic', certainty: 'likely' });
+    expect(silent?.message).toContain('ghostEvent');
 
-    expect(response.text).toContain('state.transition.target-exists');
+    expect(response.text).toContain('notification.payload.mismatch');
     expect(response.text).toContain('(likely)');
   });
 
-  it('[E2E-VALIDATE-STATES-UNSUPPORTED] never reports a clean result for states it cannot read', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-UNTRACEABLE] never reports a clean contract it could not trace', async () => {
     const response = await withServer(
       ['--project-root', modernRoot],
       async (client) => await callValidate(client, { projectRoot: modernRoot }),
     );
 
     expect(response.isError).toBe(false);
-    expect(response.structured?.statesRead).toBe(false);
-    expect(response.structured?.diagnostics).toMatchObject({
-      status: 'unsupported',
-      summary: { errors: 0, warnings: 0, information: 0, unsupported: 1 },
+    expect(response.structured?.diagnostics.status).toBe('findings');
+    expect(response.structured?.diagnostics.findings[0]).toMatchObject({
+      code: 'notification.trace.unavailable',
+      certainty: 'certain',
     });
-    expect(response.structured?.diagnostics.findings[0]?.kind).toBe('unsupported-syntax');
   });
 
-  it('[E2E-VALIDATE-STATES-IMMUTABLE] changes nothing in the project it validates', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-IMMUTABLE] changes nothing in the project it validates', async () => {
     const before = await digest(brokenRoot);
     await withServer(
       ['--project-root', brokenRoot],
@@ -224,7 +230,7 @@ describe('packaged validate_state_machine', () => {
     expect(await digest(brokenRoot)).toBe(before);
   });
 
-  it('[E2E-VALIDATE-STATES-DETERMINISTIC] returns identical results for repeated calls', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-DETERMINISTIC] returns identical results for repeated calls', async () => {
     const [first, second] = await withServer(['--project-root', brokenRoot], async (client) => [
       await callValidate(client, { projectRoot: brokenRoot }),
       await callValidate(client, { projectRoot: brokenRoot }),
@@ -232,7 +238,7 @@ describe('packaged validate_state_machine', () => {
     expect(JSON.stringify(first.structured)).toBe(JSON.stringify(second.structured));
   });
 
-  it('[E2E-VALIDATE-STATES-INVALID-INPUT] rejects input that does not match the published schema', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
       for (const argument of [{}, { projectRoot: 7 }, { projectRoot: '' }, { root: cleanRoot }]) {
         const failure = await callValidate(client, argument).catch((error: unknown) => error);
@@ -245,7 +251,7 @@ describe('packaged validate_state_machine', () => {
     });
   });
 
-  it('[E2E-VALIDATE-STATES-UNLISTED-ROOT] refuses a root the server was not started with', async () => {
+  it('[E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT] refuses a root the server was not started with', async () => {
     const response = await withServer(
       ['--project-root', cleanRoot],
       async (client) => await callValidate(client, { projectRoot: brokenRoot }),

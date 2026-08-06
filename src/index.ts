@@ -104,6 +104,28 @@ export {
   type ValidateActionContractsResult,
 } from './tools/validate-action-contracts.js';
 export {
+  VALIDATE_NOTIFICATIONS_TOOL,
+  ValidateNotificationsInputSchema,
+  ValidateNotificationsOutputSchema,
+  registerValidateNotifications,
+  summarizeNotifications,
+  type ValidateNotificationsResult,
+} from './tools/validate-notifications.js';
+export {
+  NOTIFICATION_RULES,
+  validateNotifications,
+  type NotificationRule,
+  type NotificationSource,
+  type NotificationTrace,
+} from './rules/notifications.js';
+export {
+  parseNotificationHandlers,
+  parseSentNotifications,
+  type HandlerOutcome,
+  type NotificationHandler,
+  type SentNotification,
+} from './project/notifications.js';
+export {
   ACTION_CONTRACT_RULES,
   validateActionContracts,
   type ActionContractRule,

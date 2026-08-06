@@ -5,6 +5,7 @@ import { join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { Client } from '@modelcontextprotocol/client';
+import { inject } from 'vitest';
 
 import { connectStdio } from '../helpers/mcp.js';
 import { runCommand } from '../helpers/process.js';
@@ -98,27 +99,17 @@ async function withServer<T>(
 
 beforeAll(async () => {
   temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-contracts-'));
-  const packRoot = resolve(temporaryRoot, 'pack');
   const installRoot = resolve(temporaryRoot, 'install');
-  await mkdir(packRoot);
   await mkdir(installRoot);
   await writeFile(
     resolve(installRoot, 'package.json'),
     `${JSON.stringify({ name: 'bga-mcp-contracts-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
   );
 
-  const pack = await runCommand(corepackCommand, ['pnpm', 'pack', '--pack-destination', packRoot], {
-    cwd: repositoryRoot,
-    timeoutMs: 120_000,
-  });
-  expect(pack.exitCode, `${pack.stderr}\n${pack.stdout}`).toBe(0);
-  const archive = (await readdir(packRoot)).find((file) => file.endsWith('.tgz'));
-  if (archive === undefined) {
-    throw new Error('Package manager produced no tarball');
-  }
+  // The artifact is packed once for the whole run; see tests/global-setup.ts.
   const install = await runCommand(
     corepackCommand,
-    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, resolve(packRoot, archive)],
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
     { timeoutMs: 120_000 },
   );
   expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);

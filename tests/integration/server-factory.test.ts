@@ -24,6 +24,7 @@ describe('production server factory', () => {
       expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
         'inspect_project',
         'validate_action_contracts',
+        'validate_notifications',
         'validate_state_machine',
       ]);
     } finally {

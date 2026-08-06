@@ -14,5 +14,10 @@ class BgaMcpLegacy extends Table
 
     function actPass($comment)
     {
+        $this->notifyAllPlayers('playerPassed', clienttranslate('${player_name} passes'), [
+            'player_id' => 1,
+            'player_name' => 'fixture',
+            'comment' => $comment,
+        ]);
     }
 }

@@ -34,6 +34,8 @@ Run the official MCP conformance suite for every protocol version and transport 
 
 Start the packaged server as a subprocess and communicate only through its MCP interface. These tests use isolated temporary roots and representative BGA projects to verify discovery, validation, documentation, error handling, and path confinement.
 
+The artifact is packed once per run in `tests/global-setup.ts`, and every capability suite installs that tarball. Packing runs `prepack`, which writes `dist/`, so suites that pack independently race on the same directory and fail intermittently. A new end-to-end suite must install the shared artifact rather than pack its own.
+
 The official MCP Inspector CLI may provide an additional independent client check. It supplements the automated client harness; it does not replace capability-specific assertions.
 
 The small executable-only `src/cli.ts` boundary is excluded from in-process V8 line coverage because importing it starts stdio service. Its help, version, invalid-argument, startup, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.

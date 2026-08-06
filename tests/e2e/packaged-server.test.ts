@@ -120,6 +120,7 @@ describe('packaged bga-mcp server', () => {
           expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
             'inspect_project',
             'validate_action_contracts',
+            'validate_notifications',
             'validate_state_machine',
           ]);
           expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
@@ -197,7 +198,12 @@ describe('packaged bga-mcp server', () => {
       try {
         expect(configured.client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
         expect((await configured.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual(
-          ['inspect_project', 'validate_action_contracts', 'validate_state_machine'],
+          [
+            'inspect_project',
+            'validate_action_contracts',
+            'validate_notifications',
+            'validate_state_machine',
+          ],
         );
       } finally {
         await configured.client.close();

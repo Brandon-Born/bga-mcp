@@ -78,8 +78,8 @@ Adapters for external systems require an additional live harness. A Studio-backe
 - `inspect_project` (implemented and verified)
 - `validate_state_machine` (implemented and verified for the legacy layout)
 - `validate_action_contracts` (implemented and verified for the legacy layout)
+- `validate_notifications` (implemented and verified for the legacy layout)
 - `validate_project`
-- `validate_notifications`
 - `audit_database_usage`
 - `run_pre_release_audit`
 - `search_bga_docs`

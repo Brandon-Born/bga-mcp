@@ -78,6 +78,24 @@
           "E2E-VALIDATE-ACTIONS-UNLISTED-ROOT"
         ],
         "liveStudioRequired": false
+      },
+      {
+        "name": "validate_notifications",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+          "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+          "E2E-VALIDATE-NOTIFICATIONS-UNTRACEABLE",
+          "E2E-VALIDATE-NOTIFICATIONS-IMMUTABLE",
+          "E2E-VALIDATE-NOTIFICATIONS-DETERMINISTIC",
+          "E2E-VALIDATE-NOTIFICATIONS-INVALID-INPUT",
+          "E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
       }
     ],
     "resources": [],

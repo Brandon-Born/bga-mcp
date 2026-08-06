@@ -5,6 +5,7 @@ import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
+import { registerValidateNotifications } from './tools/validate-notifications.js';
 import { registerValidateStateMachine } from './tools/validate-state-machine.js';
 
 export interface ServerDependencies {
@@ -21,6 +22,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   registerInspectProject(server, dependencies.policy);
   registerValidateStateMachine(server, dependencies.policy);
   registerValidateActionContracts(server, dependencies.policy);
+  registerValidateNotifications(server, dependencies.policy);
   return server;
 }
 

@@ -2,6 +2,21 @@ define(['dojo', 'dojo/_base/declare'], function (dojo, declare) {
   return declare('bgagame.brokengame', null, {
     setup: function () {},
 
+    setupNotifications: function () {
+      dojo.subscribe('playerPassed', this, 'notif_playerPassed');
+      // Subscribed twice: the handler runs once per notification too many.
+      dojo.subscribe('playerPassed', this, 'notif_playerPassed');
+      // Handled but never sent by the server.
+      dojo.subscribe('phantomEvent', this, 'notif_phantomEvent');
+    },
+
+    notif_playerPassed: function (notif) {
+      // Reads a key the server does not send.
+      this.showMessage(notif.args.comment, 'info');
+    },
+
+    notif_phantomEvent: function (notif) {},
+
     onPassClicked: function () {
       // Sends an argument the entry point never reads.
       this.ajaxcall(
