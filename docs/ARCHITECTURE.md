@@ -87,25 +87,22 @@ Mutating tools must support a dry-run mode. The server should reject a mutation 
 
 ## Diagnostic contract
 
-Validation tools should return a shared finding shape:
+Validation tools return the versioned shared contract documented in [DIAGNOSTICS.md](DIAGNOSTICS.md). A representative certain finding is:
 
 ```json
 {
-  "ruleId": "state.transition.target-exists",
+  "kind": "issue",
+  "code": "state.transition.target-exists",
   "severity": "error",
+  "certainty": "certain",
   "message": "Transition 'next' targets undefined state 42.",
-  "file": "states.inc.php",
-  "line": 37,
-  "evidence": {
-    "sourceState": 10,
-    "transition": "next",
-    "targetState": 42
-  },
-  "suggestion": "Define state 42 or change the transition target."
+  "locations": [{ "uri": "file:///project/states.inc.php" }],
+  "evidence": [{ "kind": "relationship", "message": "State 42 is not declared." }],
+  "suggestions": [{ "message": "Define state 42 or change the transition target." }]
 }
 ```
 
-Findings must separate facts from suggestions. If a rule is heuristic, the result should say so.
+Facts and suggestions are structurally distinct. Heuristics expose reduced certainty, and unsupported syntax prevents a false clean result.
 
 ## Credential and data handling
 

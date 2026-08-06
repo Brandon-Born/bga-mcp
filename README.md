@@ -55,7 +55,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. No BGA-facing tool is advertised yet.
+The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. A versioned [diagnostic contract](docs/DIAGNOSTICS.md) is distributed for future validation tools. No BGA-facing tool is advertised yet.
 
 See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 

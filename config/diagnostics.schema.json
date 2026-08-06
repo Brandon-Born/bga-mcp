@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": { "$ref": "#/$defs/__schema0" },
+    "status": { "$ref": "#/$defs/__schema1" },
+    "summary": { "$ref": "#/$defs/__schema2" },
+    "findings": { "$ref": "#/$defs/__schema3" }
+  },
+  "required": ["schemaVersion", "status", "summary", "findings"],
+  "additionalProperties": false,
+  "title": "bga-mcp diagnostic result",
+  "description": "Version 1 wire contract for bga-mcp diagnostic results.",
+  "$defs": {
+    "__schema0": { "type": "number", "const": 1 },
+    "__schema1": {
+      "type": "string",
+      "enum": ["passed", "findings", "unsupported"]
+    },
+    "__schema2": {
+      "type": "object",
+      "properties": {
+        "errors": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "warnings": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "information": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 },
+        "unsupported": { "type": "integer", "minimum": 0, "maximum": 9007199254740991 }
+      },
+      "required": ["errors", "warnings", "information", "unsupported"],
+      "additionalProperties": false
+    },
+    "__schema3": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "$ref": "#/$defs/__schema4" },
+              "code": { "$ref": "#/$defs/__schema5" },
+              "message": { "$ref": "#/$defs/__schema6" },
+              "locations": { "$ref": "#/$defs/__schema7" },
+              "evidence": { "$ref": "#/$defs/__schema12" },
+              "suggestions": { "$ref": "#/$defs/__schema14" },
+              "severity": { "$ref": "#/$defs/__schema15" },
+              "certainty": { "$ref": "#/$defs/__schema16" }
+            },
+            "required": [
+              "kind",
+              "code",
+              "message",
+              "locations",
+              "evidence",
+              "suggestions",
+              "severity",
+              "certainty"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "$ref": "#/$defs/__schema17" },
+              "code": { "$ref": "#/$defs/__schema5" },
+              "message": { "$ref": "#/$defs/__schema6" },
+              "locations": { "$ref": "#/$defs/__schema7" },
+              "evidence": { "$ref": "#/$defs/__schema12" },
+              "suggestions": { "$ref": "#/$defs/__schema14" },
+              "severity": { "$ref": "#/$defs/__schema15" },
+              "certainty": { "$ref": "#/$defs/__schema18" }
+            },
+            "required": [
+              "kind",
+              "code",
+              "message",
+              "locations",
+              "evidence",
+              "suggestions",
+              "severity",
+              "certainty"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "kind": { "type": "string", "const": "unsupported-syntax" },
+              "code": { "$ref": "#/$defs/__schema5" },
+              "message": { "$ref": "#/$defs/__schema6" },
+              "locations": { "$ref": "#/$defs/__schema7" },
+              "evidence": { "$ref": "#/$defs/__schema12" },
+              "suggestions": { "$ref": "#/$defs/__schema14" },
+              "certainty": { "type": "string", "const": "certain" },
+              "syntax": {
+                "type": "object",
+                "properties": {
+                  "language": { "type": "string", "minLength": 1 },
+                  "construct": { "type": "string", "minLength": 1 }
+                },
+                "required": ["language", "construct"],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kind",
+              "code",
+              "message",
+              "locations",
+              "evidence",
+              "suggestions",
+              "certainty",
+              "syntax"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "__schema4": { "type": "string", "const": "issue" },
+    "__schema5": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+    },
+    "__schema6": { "type": "string", "minLength": 1 },
+    "__schema7": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/__schema8" }
+    },
+    "__schema8": {
+      "type": "object",
+      "properties": {
+        "uri": { "$ref": "#/$defs/__schema9" },
+        "range": { "$ref": "#/$defs/__schema10" }
+      },
+      "required": ["uri"],
+      "additionalProperties": false
+    },
+    "__schema9": { "type": "string", "minLength": 1 },
+    "__schema10": {
+      "type": "object",
+      "properties": {
+        "start": { "$ref": "#/$defs/__schema11" },
+        "end": { "$ref": "#/$defs/__schema11" }
+      },
+      "required": ["start"],
+      "additionalProperties": false
+    },
+    "__schema11": {
+      "type": "object",
+      "properties": {
+        "line": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "column": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": ["line", "column"],
+      "additionalProperties": false
+    },
+    "__schema12": {
+      "minItems": 1,
+      "type": "array",
+      "items": { "$ref": "#/$defs/__schema13" }
+    },
+    "__schema13": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["source", "relationship", "runtime", "heuristic"]
+        },
+        "message": { "type": "string", "minLength": 1 },
+        "location": { "$ref": "#/$defs/__schema8" }
+      },
+      "required": ["kind", "message"],
+      "additionalProperties": false
+    },
+    "__schema14": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string", "minLength": 1 },
+          "location": { "$ref": "#/$defs/__schema8" }
+        },
+        "required": ["message"],
+        "additionalProperties": false
+      }
+    },
+    "__schema15": {
+      "type": "string",
+      "enum": ["error", "warning", "information"]
+    },
+    "__schema16": { "type": "string", "const": "certain" },
+    "__schema17": { "type": "string", "const": "heuristic" },
+    "__schema18": {
+      "type": "string",
+      "enum": ["likely", "possible"]
+    }
+  },
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/diagnostics.schema.json"
+}

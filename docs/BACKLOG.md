@@ -116,12 +116,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-007 — Define the shared diagnostic contract
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** Versioned schemas for findings, locations, evidence, severity, certainty, suggestions, unsupported syntax, and aggregate results.
 - **Acceptance:** Facts and suggestions are distinct; heuristic findings expose uncertainty; schemas support human-readable content plus stable machine fields.
 - **Verification:** Contract tests serialize and validate representative success, error, warning, heuristic, and unsupported findings through an MCP tool response.
+- **Evidence:** The version 1 runtime schemas and generated `config/diagnostics.schema.json` are exercised by strict negative contract tests, a real stdio MCP serialization proof, and installed-package E2E. Hosted matrix verification is pending.
 
 ### BGA-008 — Build the representative fixture corpus
 

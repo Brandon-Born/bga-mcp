@@ -1,6 +1,7 @@
 import { access, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { connectStdio } from '../helpers/mcp.js';
 import { assertManifestMatchesRuntime, validateManifestSchema } from '../helpers/manifest.js';
@@ -9,6 +10,12 @@ import { waitForProcessExit } from '../helpers/scenario.js';
 
 const repositoryRoot = resolve(import.meta.dirname, '../..');
 const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+
+interface PackagedApi {
+  readonly DIAGNOSTIC_CONTRACT_VERSION: number;
+  readonly getDiagnosticResultJsonSchema: () => object;
+  readonly parseDiagnosticResult: (value: unknown) => unknown;
+}
 
 describe('packaged bga-mcp server', () => {
   it('packs, installs, serves both protocol eras, shuts down, and uninstalls', async () => {
@@ -62,6 +69,28 @@ describe('packaged bga-mcp server', () => {
         await readFile(resolve(packageRoot, 'config/capabilities.schema.json'), 'utf8'),
       ) as object;
       validateManifestSchema(schema, manifest);
+
+      const diagnosticsSchema = JSON.parse(
+        await readFile(resolve(packageRoot, 'config/diagnostics.schema.json'), 'utf8'),
+      ) as object;
+      const packageApi = (await import(
+        pathToFileURL(resolve(packageRoot, 'dist/index.js')).href
+      )) as PackagedApi;
+      expect(packageApi.DIAGNOSTIC_CONTRACT_VERSION).toBe(1);
+      expect(packageApi.getDiagnosticResultJsonSchema()).toEqual(diagnosticsSchema);
+      const packagedDiagnostic = {
+        schemaVersion: 1,
+        status: 'passed',
+        summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+        findings: [],
+      } as const;
+      expect(packageApi.parseDiagnosticResult(packagedDiagnostic)).toEqual(packagedDiagnostic);
+      expect(() =>
+        packageApi.parseDiagnosticResult({
+          ...packagedDiagnostic,
+          summary: { ...packagedDiagnostic.summary, errors: 1 },
+        }),
+      ).toThrow('Summary errors must equal 0');
 
       for (const protocolVersion of ['2025-11-25', '2026-07-28'] as const) {
         const connection = await connectStdio(process.execPath, [cli], {

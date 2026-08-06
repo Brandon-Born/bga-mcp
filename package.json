@@ -30,6 +30,7 @@
     "dist",
     "config/capabilities.json",
     "config/capabilities.schema.json",
+    "config/diagnostics.schema.json",
     "LICENSE",
     "README.md"
   ],
