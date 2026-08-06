@@ -1,0 +1,37 @@
+# Contributing
+
+Thank you for helping improve `bga-mcp`.
+
+The project is currently at an early design stage. The highest-value contributions are reproducible BGA workflow examples, small representative fixtures, validation-rule proposals, and feedback on tool contracts.
+
+## Before opening an issue
+
+- Search existing issues for the same workflow or failure.
+- Remove credentials, player information, private source, table identifiers, and publisher assets from examples.
+- State whether the behavior concerns a legacy or modern BGA project layout.
+- Link to the relevant BGA documentation when proposing a framework rule.
+
+## Good validation-rule proposals
+
+A proposed rule should include:
+
+1. The developer mistake it detects.
+2. Evidence that the pattern is invalid or risky.
+3. A minimal failing example.
+4. A minimal valid example.
+5. Expected severity and any known false positives.
+
+Rules based on convention rather than documented framework behavior must be labeled as heuristics.
+
+## Pull requests
+
+Keep changes focused and explain the user-visible outcome. New behavior should include tests or fixtures that fail without the change and pass with it.
+
+Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
+
+Development commands will be documented after the initial implementation stack is selected.
+
+## Licensing contributions
+
+Unless you explicitly state otherwise, contributions submitted for inclusion in this project are provided under the Apache License 2.0, as described in section 5 of the license.
+
