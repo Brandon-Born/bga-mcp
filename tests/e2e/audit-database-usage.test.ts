@@ -1,0 +1,257 @@
+import { createHash } from 'node:crypto';
+import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import type { Client } from '@modelcontextprotocol/client';
+import { inject } from 'vitest';
+
+import { connectStdio } from '../helpers/mcp.js';
+import { runCommand } from '../helpers/process.js';
+import { waitForProcessExit } from '../helpers/scenario.js';
+
+const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
+const fixturesRoot = resolve(repositoryRoot, 'tests/fixtures/projects');
+const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+
+interface DatabaseAuditResult {
+  readonly schemaVersion: number;
+  readonly layout: string;
+  readonly schemaSource: string | null;
+  readonly phpSourcesRead: number;
+  readonly schema: { name: string; columns: string[] }[];
+  readonly queries: {
+    tables: string[];
+    columns: string[];
+    interpolated: boolean;
+    text: string;
+    source: string;
+  }[];
+  readonly rules: { code: string; certainty: string; falsePositives: string[] }[];
+  readonly diagnostics: {
+    status: string;
+    summary: Record<string, number>;
+    findings: { kind: string; code: string; certainty: string; message: string }[];
+  };
+}
+
+interface ToolResponse {
+  readonly isError: boolean;
+  readonly text: string;
+  readonly structured: DatabaseAuditResult | undefined;
+}
+
+let temporaryRoot: string;
+let cli: string;
+let cleanRoot: string;
+let brokenRoot: string;
+let modernRoot: string;
+let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
+
+async function digest(directory: string): Promise<string> {
+  const hash = createHash('sha256');
+  const walk = async (current: string): Promise<void> => {
+    for (const entry of (await readdir(current, { withFileTypes: true })).sort((left, right) =>
+      left.name.localeCompare(right.name),
+    )) {
+      const path = resolve(current, entry.name);
+      if (entry.isDirectory()) {
+        await walk(path);
+        continue;
+      }
+      hash.update(relative(directory, path).split(sep).join('/'));
+      hash.update(await readFile(path));
+    }
+  };
+  await walk(directory);
+  return hash.digest('hex');
+}
+
+async function callValidate(client: Client, argument: unknown): Promise<ToolResponse> {
+  const result = await client.callTool(
+    { name: 'audit_database_usage', arguments: argument as Record<string, unknown> },
+    { timeout: 10_000 },
+  );
+  const content = result.content as { type: string; text?: string }[];
+  return {
+    isError: result.isError === true,
+    text: content.map((entry) => entry.text ?? '').join('\n'),
+    structured: result.structuredContent as DatabaseAuditResult | undefined,
+  };
+}
+
+async function withServer<T>(
+  arguments_: readonly string[],
+  use: (client: Client) => Promise<T>,
+): Promise<T> {
+  const connection = await connectStdio(process.execPath, [cli, ...arguments_], {
+    timeoutMs: 10_000,
+  });
+  const processId = connection.transport.pid;
+  try {
+    return await use(connection.client);
+  } finally {
+    await connection.client.close();
+    if (processId !== null) {
+      await waitForProcessExit(processId);
+    }
+  }
+}
+
+beforeAll(async () => {
+  temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-dbaudit-'));
+  const installRoot = resolve(temporaryRoot, 'install');
+  await mkdir(installRoot);
+  await writeFile(
+    resolve(installRoot, 'package.json'),
+    `${JSON.stringify({ name: 'bga-mcp-dbaudit-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+  );
+
+  // The artifact is packed once for the whole run; see tests/global-setup.ts.
+  const install = await runCommand(
+    corepackCommand,
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
+    { timeoutMs: 120_000 },
+  );
+  expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);
+  cli = resolve(installRoot, 'node_modules/bga-mcp/dist/cli.js');
+
+  const projects = resolve(temporaryRoot, 'projects');
+  cleanRoot = resolve(projects, 'cleangame');
+  brokenRoot = resolve(projects, 'brokengame');
+  modernRoot = resolve(projects, 'moderngame');
+  for (const [fixture, target] of [
+    ['legacy', cleanRoot],
+    ['legacy-broken', brokenRoot],
+    ['modern', modernRoot],
+  ] as const) {
+    await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
+  }
+  expectedBroken = (
+    JSON.parse(await readFile(resolve(brokenRoot, 'expected.json'), 'utf8')) as {
+      database: { status: string; summary: Record<string, number>; codes: string[] };
+    }
+  ).database;
+  for (const target of [cleanRoot, brokenRoot, modernRoot]) {
+    await rm(resolve(target, 'expected.json'));
+  }
+}, 240_000);
+
+afterAll(async () => {
+  await rm(temporaryRoot, { recursive: true, force: true });
+});
+
+describe('packaged audit_database_usage', () => {
+  it('[E2E-AUDIT-DATABASE-CLEAN] reads the schema and its queries and reports no defect', async () => {
+    const response = await withServer(
+      ['--project-root', cleanRoot],
+      async (client) => await callValidate(client, { projectRoot: cleanRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const result = response.structured;
+    expect(result).toMatchObject({ schemaVersion: 1, layout: 'legacy' });
+    expect(result?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(result?.schemaSource).toBe('dbmodel.sql');
+    expect(result?.schema).toEqual([
+      { name: 'card', columns: ['card_id', 'card_location', 'card_owner'] },
+    ]);
+    expect(result?.queries).toHaveLength(2);
+    expect(result?.queries.every((query) => !query.interpolated)).toBe(true);
+    expect(result?.phpSourcesRead).toBeGreaterThan(0);
+
+    for (const rule of result?.rules ?? []) {
+      if (rule.certainty !== 'certain') {
+        expect(rule.falsePositives.length).toBeGreaterThan(0);
+      }
+    }
+    expect(response.text).toContain('status passed');
+  });
+
+  it('[E2E-AUDIT-DATABASE-SEEDED-DEFECTS] finds exactly the seeded database defects', async () => {
+    const response = await withServer(
+      ['--project-root', brokenRoot],
+      async (client) => await callValidate(client, { projectRoot: brokenRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const diagnostics = response.structured?.diagnostics;
+    expect(diagnostics?.status).toBe(expectedBroken.status);
+    expect(diagnostics?.summary).toEqual(expectedBroken.summary);
+    expect(diagnostics?.findings.map((finding) => finding.code)).toEqual(expectedBroken.codes);
+
+    const undeclaredTable = diagnostics?.findings.find(
+      (finding) => finding.code === 'database.table.undeclared',
+    );
+    expect(undeclaredTable).toMatchObject({ kind: 'issue', certainty: 'certain' });
+    expect(undeclaredTable?.message).toContain("'deck'");
+
+    const interpolated = diagnostics?.findings.find(
+      (finding) => finding.code === 'database.query.interpolated',
+    );
+    expect(interpolated).toMatchObject({ kind: 'heuristic', certainty: 'likely' });
+
+    expect(response.text).toContain('database.column.undeclared');
+    expect(response.text).toContain('(likely)');
+  });
+
+  it('[E2E-AUDIT-DATABASE-UNAVAILABLE] never reports a clean audit it could not run', async () => {
+    const response = await withServer(
+      ['--project-root', modernRoot],
+      async (client) => await callValidate(client, { projectRoot: modernRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    expect(response.structured?.diagnostics.status).toBe('findings');
+    expect(response.structured?.diagnostics.findings[0]).toMatchObject({
+      code: 'database.audit.unavailable',
+      certainty: 'certain',
+    });
+  });
+
+  it('[E2E-AUDIT-DATABASE-IMMUTABLE] changes nothing in the project it audits', async () => {
+    const before = await digest(brokenRoot);
+    await withServer(
+      ['--project-root', brokenRoot],
+      async (client) => await callValidate(client, { projectRoot: brokenRoot }),
+    );
+    expect(await digest(brokenRoot)).toBe(before);
+  });
+
+  it('[E2E-AUDIT-DATABASE-DETERMINISTIC] returns identical results for repeated calls', async () => {
+    const [first, second] = await withServer(['--project-root', brokenRoot], async (client) => [
+      await callValidate(client, { projectRoot: brokenRoot }),
+      await callValidate(client, { projectRoot: brokenRoot }),
+    ]);
+    expect(JSON.stringify(first.structured)).toBe(JSON.stringify(second.structured));
+  });
+
+  it('[E2E-AUDIT-DATABASE-INVALID-INPUT] rejects input that does not match the published schema', async () => {
+    await withServer(['--project-root', cleanRoot], async (client) => {
+      for (const argument of [{}, { projectRoot: 7 }, { projectRoot: '' }, { root: cleanRoot }]) {
+        const failure = await callValidate(client, argument).catch((error: unknown) => error);
+        if (failure instanceof Error) {
+          expect(failure.message).toMatch(/valid|invalid|schema|required|expected/iu);
+          continue;
+        }
+        expect((failure as ToolResponse).isError).toBe(true);
+      }
+    });
+  });
+
+  it('[E2E-AUDIT-DATABASE-UNLISTED-ROOT] refuses a root the server was not started with', async () => {
+    const response = await withServer(
+      ['--project-root', cleanRoot],
+      async (client) => await callValidate(client, { projectRoot: brokenRoot }),
+    );
+
+    expect(response.isError).toBe(true);
+    expect(response.text).toContain('policy.root.not-allowed');
+    expect(JSON.stringify(response)).not.toContain(brokenRoot);
+  });
+});

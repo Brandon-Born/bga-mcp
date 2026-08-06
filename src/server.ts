@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
+import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
 import { registerValidateNotifications } from './tools/validate-notifications.js';
@@ -23,6 +24,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   registerValidateStateMachine(server, dependencies.policy);
   registerValidateActionContracts(server, dependencies.policy);
   registerValidateNotifications(server, dependencies.policy);
+  registerAuditDatabaseUsage(server, dependencies.policy);
   return server;
 }
 

@@ -28,11 +28,11 @@ Available now, local and read-only:
 - `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
 - `validate_action_contracts` — traces each player action from the client call, to the entry point in the action class, to the game method, and reports actions no state allows, missing entry points and methods, and arguments the two sides disagree about.
 - `validate_notifications` — compares the notifications the server sends with the handlers the client declares, including payload keys. A notification nobody handles fails silently at runtime; this finds it before a player does.
+- `audit_database_usage` — compares `dbmodel.sql` with the queries the PHP sources run, reporting undeclared tables and columns, unused columns, and queries that interpolate a value instead of escaping it.
 
 Planned for the first useful release:
 
 - `validate_project`
-- `audit_database_usage`
 - `run_pre_release_audit`
 - `search_bga_docs`
 
@@ -58,7 +58,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Four BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles. All four run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), and [notification contract](docs/verification/NOTIFICATIONS.md) records.
+Five BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All five run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), and [database audit](docs/verification/DATABASE_AUDIT.md) records.
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 

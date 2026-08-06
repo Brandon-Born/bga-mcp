@@ -17,6 +17,7 @@ describe('capability manifest gate', () => {
     assertManifestMatchesRuntime(manifest as never, {
       server: { name: 'bga-mcp', version: '0.0.0-development' },
       tools: [
+        'audit_database_usage',
         'inspect_project',
         'validate_action_contracts',
         'validate_notifications',

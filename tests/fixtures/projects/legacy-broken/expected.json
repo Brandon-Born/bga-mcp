@@ -67,5 +67,20 @@
       "notification.sent.not-handled",
       "notification.subscription.duplicate"
     ]
+  },
+  "database": {
+    "status": "findings",
+    "summary": {
+      "errors": 1,
+      "warnings": 2,
+      "information": 1,
+      "unsupported": 0
+    },
+    "codes": [
+      "database.column.undeclared",
+      "database.column.unused",
+      "database.query.interpolated",
+      "database.table.undeclared"
+    ]
   }
 }

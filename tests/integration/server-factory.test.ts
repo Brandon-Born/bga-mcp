@@ -22,6 +22,7 @@ describe('production server factory', () => {
       });
       expect(client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
       expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
+        'audit_database_usage',
         'inspect_project',
         'validate_action_contracts',
         'validate_notifications',

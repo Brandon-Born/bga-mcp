@@ -308,12 +308,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-109 — Implement `audit_database_usage`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Compare `dbmodel.sql` with supported query usage and detect high-confidence schema, reference, and unsafe-pattern findings.
 - **Acceptance:** SQL is parsed without connecting to or executing against a database; dialect limits are explicit; no rule claims more certainty than the parser supports.
 - **Verification:** Tool E2E covers valid schema usage, missing objects/columns, supported unsafe patterns, dynamic SQL uncertainty, malformed SQL, and zero network/database access.
+- **Evidence:** [`src/project/database.ts`](../src/project/database.ts) reads the tables and columns `dbmodel.sql` declares and the queries the PHP sources run, attributing bare columns only when a query names exactly one table. [`src/rules/database.ts`](../src/rules/database.ts) compares them. Seven rules: undeclared tables and duplicate declarations are facts; undeclared columns, unused columns, and interpolated queries are heuristics carrying their limitations. Framework-owned tables are never reported as undeclared. Both fixtures gained a real schema and queries, and `legacy-broken` declares its four expected findings. Seven packaged scenarios prove it through a real MCP client. See the [database audit verification](verification/DATABASE_AUDIT.md).
+- **Scope note:** Column attribution needs a single-table query; a multi-table query keeps only its qualified columns and reports the rest as unsupported. A query concatenated from several expressions is reported rather than reconstructed.
 
 ### BGA-110 — Define the pre-release rule catalog
 

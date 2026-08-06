@@ -112,6 +112,28 @@ export {
   type ValidateNotificationsResult,
 } from './tools/validate-notifications.js';
 export {
+  AUDIT_DATABASE_USAGE_TOOL,
+  AuditDatabaseUsageInputSchema,
+  AuditDatabaseUsageOutputSchema,
+  registerAuditDatabaseUsage,
+  summarizeDatabaseAudit,
+  type AuditDatabaseUsageResult,
+} from './tools/audit-database-usage.js';
+export {
+  DATABASE_RULES,
+  FRAMEWORK_TABLES,
+  auditDatabaseUsage,
+  type DatabaseAudit,
+  type DatabaseRule,
+  type DatabaseSource,
+} from './rules/database.js';
+export {
+  parseQueries,
+  parseSchema,
+  type QueryReference,
+  type TableDefinition,
+} from './project/database.js';
+export {
   NOTIFICATION_RULES,
   validateNotifications,
   type NotificationRule,

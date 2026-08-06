@@ -96,6 +96,24 @@
           "E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT"
         ],
         "liveStudioRequired": false
+      },
+      {
+        "name": "audit_database_usage",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-AUDIT-DATABASE-CLEAN",
+          "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+          "E2E-AUDIT-DATABASE-UNAVAILABLE",
+          "E2E-AUDIT-DATABASE-IMMUTABLE",
+          "E2E-AUDIT-DATABASE-DETERMINISTIC",
+          "E2E-AUDIT-DATABASE-INVALID-INPUT",
+          "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
       }
     ],
     "resources": [],

@@ -55,6 +55,7 @@ describe('BGA project fixture corpus', () => {
         stateMachine?: { status: string; codes: string[] };
         actionContracts?: { status: string; codes: string[] };
         notifications?: { status: string; codes: string[] };
+        database?: { status: string; codes: string[] };
       };
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
@@ -69,6 +70,7 @@ describe('BGA project fixture corpus', () => {
         expected.stateMachine,
         expected.actionContracts,
         expected.notifications,
+        expected.database,
       ]) {
         if (declared === undefined) {
           continue;
@@ -85,6 +87,7 @@ describe('BGA project fixture corpus', () => {
         expect(expected.stateMachine).toBeDefined();
         expect(expected.actionContracts).toBeDefined();
         expect(expected.notifications).toBeDefined();
+        expect(expected.database).toBeDefined();
       }
 
       for (const file of actualFiles) {
