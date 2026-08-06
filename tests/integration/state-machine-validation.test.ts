@@ -57,7 +57,7 @@ describe('state-machine validation against the fixture corpus', () => {
     expect(byKind['state.transition.target-exists']).toBe('issue');
     expect(byKind['state.unreachable']).toBe('issue');
     expect(byKind['state.action.handler-missing']).toBe('heuristic');
-    expect(byKind['state.possible-action.handler-missing']).toBe('heuristic');
+    expect(byKind['state.args.handler-missing']).toBe('heuristic');
 
     const target = result.findings.find(
       (finding) => finding.code === 'state.transition.target-exists',

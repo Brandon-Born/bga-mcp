@@ -26,11 +26,11 @@ Available now, local and read-only:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
 - `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
+- `validate_action_contracts` — traces each player action from the client call, to the entry point in the action class, to the game method, and reports actions no state allows, missing entry points and methods, and arguments the two sides disagree about.
 
 Planned for the first useful release:
 
 - `validate_project`
-- `validate_action_contracts`
 - `validate_notifications`
 - `audit_database_usage`
 - `run_pre_release_audit`
@@ -58,7 +58,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Two BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` finds real cross-file defects in it — a transition to a state that does not exist, an unreachable state, a handler method the state names but no source declares. Both run against the packed and installed artifact through a real MCP client, and both prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md) and [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md) records.
+Three BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, an argument the server never reads. All three run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), and [action contract](docs/verification/ACTION_CONTRACTS.md) records.
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 

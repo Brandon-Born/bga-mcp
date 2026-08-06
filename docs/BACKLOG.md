@@ -286,12 +286,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-107 — Implement `validate_action_contracts`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace client action calls to server endpoints, argument validation, and game methods for supported layouts.
 - **Acceptance:** Missing endpoints, mismatched names, unsupported arguments, and broken handler links produce evidence-backed findings with exact locations.
 - **Verification:** Tool E2E exercises every supported action pattern, seeded mismatch, dynamic or uncertain pattern, invalid input, and non-execution of project code.
+- **Evidence:** [`src/project/actions.ts`](../src/project/actions.ts) reads legacy `ajaxcall` URLs, modern `bgaPerformAction` names, and the request arguments an entry point consumes; [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) traces each action from client call to entry point to game method. Eight rules: a duplicated entry point and a broken `act…` name are facts, every cross-file claim is a heuristic carrying its limitations, and a call assembled at runtime becomes unsupported syntax rather than a guess. When a side of the contract cannot be read the result says so instead of passing. Both fixtures gained real action wiring, and `legacy-broken` declares its eight expected contract findings. Seven packaged scenarios prove it through a real MCP client. See the [action contract verification](verification/ACTION_CONTRACTS.md).
+- **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; that reader is shared work with BGA-101.
 
 ### BGA-108 — Implement `validate_notifications`
 

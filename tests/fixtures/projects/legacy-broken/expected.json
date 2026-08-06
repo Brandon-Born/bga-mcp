@@ -18,7 +18,7 @@
     "status": "findings",
     "summary": {
       "errors": 1,
-      "warnings": 8,
+      "warnings": 7,
       "information": 0,
       "unsupported": 0
     },
@@ -27,11 +27,29 @@
       "state.args.handler-missing",
       "state.dead-end",
       "state.name.duplicate",
-      "state.possible-action.handler-missing",
       "state.transition.target-exists",
       "state.type.unknown",
       "state.unreachable",
       "state.unreachable"
+    ]
+  },
+  "actionContracts": {
+    "status": "findings",
+    "summary": {
+      "errors": 0,
+      "warnings": 7,
+      "information": 1,
+      "unsupported": 0
+    },
+    "codes": [
+      "action.argument.mismatch",
+      "action.argument.mismatch",
+      "action.call.not-declared",
+      "action.call.not-declared",
+      "action.entry-point.missing",
+      "action.entry-point.missing",
+      "action.game-method.missing",
+      "action.name.convention"
     ]
   }
 }

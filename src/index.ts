@@ -96,6 +96,28 @@ export {
   type ValidateStateMachineResult,
 } from './tools/validate-state-machine.js';
 export {
+  VALIDATE_ACTION_CONTRACTS_TOOL,
+  ValidateActionContractsInputSchema,
+  ValidateActionContractsOutputSchema,
+  registerValidateActionContracts,
+  summarizeActionContracts,
+  type ValidateActionContractsResult,
+} from './tools/validate-action-contracts.js';
+export {
+  ACTION_CONTRACT_RULES,
+  validateActionContracts,
+  type ActionContractRule,
+  type ActionContractSource,
+  type ActionContractTrace,
+} from './rules/action-contracts.js';
+export {
+  parseClientActionCalls,
+  parsePhpMethodNames,
+  parseServerActionEntries,
+  type ClientActionCall,
+  type ServerActionEntry,
+} from './project/actions.js';
+export {
   INITIAL_STATE_ID,
   KNOWN_STATE_TYPES,
   STATE_MACHINE_RULES,

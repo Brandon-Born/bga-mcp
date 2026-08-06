@@ -12,7 +12,7 @@ class BgaMcpLegacy extends Table
     {
     }
 
-    function actPass()
+    function actPass($comment)
     {
     }
 }

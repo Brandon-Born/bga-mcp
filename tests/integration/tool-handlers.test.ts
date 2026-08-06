@@ -73,10 +73,14 @@ describe('tool handlers over a real client connection', () => {
     await withClient([brokenRoot], async (call) => {
       const outcome = await call('validate_state_machine', { projectRoot: brokenRoot });
       expect(outcome.isError).toBe(false);
-      expect(outcome.text).toContain('1 errors, 8 warnings');
+      expect(outcome.text).toContain('1 errors, 7 warnings');
       expect(outcome.text).toContain('state.transition.target-exists');
       expect(outcome.text).toContain('(likely)');
       expect(outcome.structured).toMatchObject({ phpSourcesRead: 7, stateCount: 4 });
+
+      const contracts = await call('validate_action_contracts', { projectRoot: brokenRoot });
+      expect(contracts.text).toContain('3 client calls, 1 entry points');
+      expect(contracts.text).toContain('action.argument.mismatch');
     });
   });
 

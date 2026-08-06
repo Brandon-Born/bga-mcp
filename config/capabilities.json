@@ -60,6 +60,24 @@
           "E2E-VALIDATE-STATES-UNLISTED-ROOT"
         ],
         "liveStudioRequired": false
+      },
+      {
+        "name": "validate_action_contracts",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-VALIDATE-ACTIONS-CLEAN",
+          "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+          "E2E-VALIDATE-ACTIONS-UNTRACEABLE",
+          "E2E-VALIDATE-ACTIONS-IMMUTABLE",
+          "E2E-VALIDATE-ACTIONS-DETERMINISTIC",
+          "E2E-VALIDATE-ACTIONS-INVALID-INPUT",
+          "E2E-VALIDATE-ACTIONS-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
       }
     ],
     "resources": [],
