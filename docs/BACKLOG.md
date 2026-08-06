@@ -96,13 +96,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-005 — Establish continuous integration
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-004
 - **Deliverable:** Required CI workflows for supported operating systems and runtime versions, with concurrency control and least-privilege permissions.
 - **Acceptance:** CI runs every applicable gate from a clean checkout, uses locked dependencies, retains non-secret evidence, and cannot publish or mutate Studio state from untrusted contributions.
 - **Verification:** A controlled failing branch proves each required check blocks completion; a clean branch proves the full matrix passes.
-- **Evidence:** `.github/workflows/ci.yml` defines the least-privilege macOS/Linux/Windows and Node 22/24 matrix with immutable current Action pins. [CI run 31072847631](https://github.com/Brandon-Born/bga-mcp/actions/runs/31072847631) proves the clean six-job matrix and retained artifacts pass. Controlled failing-branch proof for every required check is still required.
+- **Evidence:** `.github/workflows/ci.yml` defines the least-privilege macOS/Linux/Windows and Node 22/24 matrix with immutable current Action pins. [CI run 31098519365](https://github.com/Brandon-Born/bga-mcp/actions/runs/31098519365) proves the clean six-job matrix passes. The [controlled failure proof](verification/CI_FAILURE_PROOF.md) records one isolated hosted rejection for every command in the enforced CI chain.
 
 ### BGA-006 — Define the machine-readable capability manifest
 
