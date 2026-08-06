@@ -2,9 +2,9 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
-import { toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
-import { buildProjectModel, type ProjectModel } from '../project/model.js';
+import type { ProjectModel } from '../project/model.js';
+import { loadProjectContext, publishFailure } from './project-context.js';
 
 export const INSPECT_PROJECT_TOOL = 'inspect_project';
 
@@ -13,6 +13,7 @@ const StateDefinitionSchema = z.strictObject({
   name: z.string().nullable(),
   type: z.string().nullable(),
   action: z.string().nullable(),
+  args: z.string().nullable(),
   possibleActions: z.array(z.string()),
   transitions: z.record(z.string(), z.number().int()),
 });
@@ -137,10 +138,7 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
     async ({ projectRoot }) => {
       try {
         const model = await policy.runWithTimeout(INSPECT_PROJECT_TOOL, async () => {
-          const listing = await policy.listProjectFiles(projectRoot);
-          return await buildProjectModel(listing, {
-            read: async (relativePath) => await policy.readProjectFile(projectRoot, relativePath),
-          });
+          return (await loadProjectContext(policy, projectRoot)).model;
         });
 
         const structuredContent = InspectProjectOutputSchema.parse(model);
@@ -151,15 +149,7 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
         );
         return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
-        // Details are already redacted, and they carry the context that makes a
-        // refusal actionable: which path, which limit, which operation.
-        const published = toPublicError(error, policy.redactionOptions);
-        const details =
-          published.details === undefined ? '' : ` ${JSON.stringify(published.details)}`;
-        return {
-          isError: true,
-          content: [{ type: 'text', text: `${published.code}: ${published.message}${details}` }],
-        };
+        return publishFailure(policy, error);
       }
     },
   );

@@ -123,7 +123,10 @@ export interface StateDefinition {
   readonly id: number;
   readonly name: string | null;
   readonly type: string | null;
+  /** The `st…` method the framework calls when the state is entered. */
   readonly action: string | null;
+  /** The `arg…` method that supplies the state's client-side arguments. */
+  readonly args: string | null;
   readonly possibleActions: readonly string[];
   readonly transitions: Readonly<Record<string, number>>;
 }
@@ -218,6 +221,7 @@ export function parseLegacyStates(source: string): ParseOutcome<readonly StateDe
       name: /'name'\s*=>\s*'([^']*)'/u.exec(entry)?.[1] ?? null,
       type: /'type'\s*=>\s*'([^']*)'/u.exec(entry)?.[1] ?? null,
       action: /'action'\s*=>\s*'([^']*)'/u.exec(entry)?.[1] ?? null,
+      args: /'args'\s*=>\s*'([^']*)'/u.exec(entry)?.[1] ?? null,
       possibleActions: [...possibleBlock.matchAll(/'([^']+)'/gu)].map((match) => match[1] ?? ''),
       transitions,
     });

@@ -43,7 +43,7 @@ async function hashes(directory: string): Promise<Record<string, string>> {
 }
 
 describe('BGA project fixture corpus', () => {
-  it.each(['modern', 'legacy'])(
+  it.each(['modern', 'legacy', 'legacy-broken'])(
     '[GATE-FIXTURE-SAFETY] %s matches its declared baseline and remains safe and immutable',
     async (layout) => {
       const directory = resolve(projectsRoot, layout);
@@ -52,12 +52,22 @@ describe('BGA project fixture corpus', () => {
         layout: string;
         files: string[];
         diagnostics: unknown[];
+        stateMachine?: { status: string; codes: string[] };
       };
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
-      expect(expected.layout).toBe(layout);
+      expect(expected.layout).toBe(layout.startsWith('legacy') ? 'legacy' : layout);
       expect(actualFiles).toEqual(expected.files);
       expect(expected.diagnostics).toEqual([]);
+
+      // A fixture that seeds defects must declare exactly which findings it expects,
+      // so a rule change cannot silently repurpose it.
+      if (layout.endsWith('-broken')) {
+        expect(expected.stateMachine?.codes.length).toBeGreaterThan(0);
+        expect(expected.stateMachine?.status).toBe('findings');
+      } else {
+        expect(expected.stateMachine).toBeUndefined();
+      }
 
       for (const file of actualFiles) {
         expect(bannedAssetExtensions.has(extname(file).toLowerCase())).toBe(false);

@@ -75,6 +75,7 @@ $machinestates = [
       name: 'playerTurn',
       type: 'activeplayer',
       action: null,
+      args: null,
       possibleActions: ['actPass', 'actPlay'],
       transitions: { pass: 99, play: 2 },
     });

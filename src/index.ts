@@ -88,6 +88,23 @@ export {
   type InspectProjectResult,
 } from './tools/inspect-project.js';
 export {
+  VALIDATE_STATE_MACHINE_TOOL,
+  ValidateStateMachineInputSchema,
+  ValidateStateMachineOutputSchema,
+  registerValidateStateMachine,
+  summarizeValidation,
+  type ValidateStateMachineResult,
+} from './tools/validate-state-machine.js';
+export {
+  INITIAL_STATE_ID,
+  KNOWN_STATE_TYPES,
+  STATE_MACHINE_RULES,
+  validateStateMachine,
+  type PhpSource,
+  type StateMachineRule,
+} from './rules/state-machine.js';
+export { loadProjectContext, type ProjectContext } from './tools/project-context.js';
+export {
   detectLayout,
   type LayoutCertainty,
   type LayoutDetection,

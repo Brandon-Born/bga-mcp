@@ -1,0 +1,1 @@
+-- Intentionally empty: the fixture uses only framework-managed tables.

@@ -4,6 +4,7 @@ import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
 import { registerInspectProject } from './tools/inspect-project.js';
+import { registerValidateStateMachine } from './tools/validate-state-machine.js';
 
 export interface ServerDependencies {
   /** The prepared policy boundary every capability must route through. */
@@ -17,6 +18,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
     { capabilities: { tools: {} } },
   );
   registerInspectProject(server, dependencies.policy);
+  registerValidateStateMachine(server, dependencies.policy);
   return server;
 }
 

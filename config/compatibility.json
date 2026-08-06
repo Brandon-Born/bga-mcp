@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata.",
+      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. Class-based state definitions are recognized but not yet interpreted, so state-machine validation returns an unsupported result rather than a clean one.",
       "fixtures": ["tests/fixtures/projects/modern"],
       "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
     },
@@ -17,9 +17,13 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. State-machine validation is supported for this layout.",
       "fixtures": ["tests/fixtures/projects/legacy"],
-      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-LEGACY"]
+      "scenarios": [
+        "GATE-FIXTURE-SAFETY",
+        "E2E-INSPECT-PROJECT-LEGACY",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS"
+      ]
     },
     {
       "id": "CLAIM-LAYOUT-UNRECOGNIZED",

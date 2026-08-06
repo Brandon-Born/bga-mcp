@@ -76,8 +76,8 @@ Adapters for external systems require an additional live harness. A Studio-backe
 ### Read-only tools
 
 - `inspect_project` (implemented and verified)
+- `validate_state_machine` (implemented and verified for the legacy layout)
 - `validate_project`
-- `validate_state_machine`
 - `validate_action_contracts`
 - `validate_notifications`
 - `audit_database_usage`

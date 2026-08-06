@@ -21,8 +21,9 @@ describe('production server factory', () => {
         version: '0.0.0-development',
       });
       expect(client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
-      expect((await client.listTools()).tools.map((tool) => tool.name)).toEqual([
+      expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
         'inspect_project',
+        'validate_state_machine',
       ]);
     } finally {
       await client.close();

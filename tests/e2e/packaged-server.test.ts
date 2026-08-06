@@ -117,7 +117,10 @@ describe('packaged bga-mcp server', () => {
             );
           }
           const tools = await connection.client.listTools();
-          expect(tools.tools.map((tool) => tool.name)).toEqual(['inspect_project']);
+          expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
+            'inspect_project',
+            'validate_state_machine',
+          ]);
           expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
           expect(await connection.client.listResources()).toEqual({
             resources: [],
@@ -192,9 +195,9 @@ describe('packaged bga-mcp server', () => {
       const configuredProcessId = configured.transport.pid;
       try {
         expect(configured.client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
-        expect((await configured.client.listTools()).tools.map((tool) => tool.name)).toEqual([
-          'inspect_project',
-        ]);
+        expect((await configured.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual(
+          ['inspect_project', 'validate_state_machine'],
+        );
       } finally {
         await configured.client.close();
         if (configuredProcessId !== null) {

@@ -1,0 +1,37 @@
+{
+  "layout": "legacy",
+  "files": [
+    "brokengame.action.php",
+    "brokengame.css",
+    "brokengame.game.php",
+    "brokengame.js",
+    "brokengame.view.php",
+    "brokengame_brokengame.tpl",
+    "dbmodel.sql",
+    "gameinfos.inc.php",
+    "gameoptions.inc.php",
+    "states.inc.php",
+    "stats.inc.php"
+  ],
+  "diagnostics": [],
+  "stateMachine": {
+    "status": "findings",
+    "summary": {
+      "errors": 1,
+      "warnings": 8,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": [
+      "state.action.handler-missing",
+      "state.args.handler-missing",
+      "state.dead-end",
+      "state.name.duplicate",
+      "state.possible-action.handler-missing",
+      "state.transition.target-exists",
+      "state.type.unknown",
+      "state.unreachable",
+      "state.unreachable"
+    ]
+  }
+}

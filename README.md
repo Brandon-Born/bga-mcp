@@ -25,11 +25,11 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 Available now, local and read-only:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
+- `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
 
 Planned for the first useful release:
 
 - `validate_project`
-- `validate_state_machine`
 - `validate_action_contracts`
 - `validate_notifications`
 - `audit_database_usage`
@@ -58,7 +58,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-The first BGA-facing capability is live and verified. `inspect_project` runs against the packed and installed artifact through a real MCP client in eleven scenarios covering both supported layouts, unrecognized projects, schema rejection, unlisted roots, traversal, symlink escape, redaction, deadlines, and output budgets, and it proves the project directory is unchanged after every successful call. See the [first capability verification](docs/verification/FIRST_CAPABILITY.md).
+Two BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` finds real cross-file defects in it — a transition to a state that does not exist, an unreachable state, a handler method the state names but no source declares. Both run against the packed and installed artifact through a real MCP client, and both prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md) and [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md) records.
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 

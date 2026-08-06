@@ -42,6 +42,24 @@
           "E2E-INSPECT-PROJECT-OUTPUT-LIMIT"
         ],
         "liveStudioRequired": false
+      },
+      {
+        "name": "validate_state_machine",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-VALIDATE-STATES-CLEAN",
+          "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+          "E2E-VALIDATE-STATES-UNSUPPORTED",
+          "E2E-VALIDATE-STATES-IMMUTABLE",
+          "E2E-VALIDATE-STATES-DETERMINISTIC",
+          "E2E-VALIDATE-STATES-INVALID-INPUT",
+          "E2E-VALIDATE-STATES-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
       }
     ],
     "resources": [],
