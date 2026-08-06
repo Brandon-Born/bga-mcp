@@ -19,12 +19,12 @@ describe('E2E harness self-tests', () => {
   it('detects startup and handshake failures', async () => {
     await expect(
       connectStdio('definitely-not-a-bga-mcp-executable', [], {
-        timeoutMs: 500,
+        timeoutMs: 5_000,
       }),
     ).rejects.toThrow();
     await expect(
       connectStdio(process.execPath, nodeArguments(nonserver, 'invalid-json'), {
-        timeoutMs: 500,
+        timeoutMs: 5_000,
       }),
     ).rejects.toThrow();
   });
@@ -57,6 +57,7 @@ describe('E2E harness self-tests', () => {
       arguments: { value: 'expected' },
       expected: [{ type: 'text', text: 'expected' }],
       message: /timed out|timeout/iu,
+      requestTimeoutMs: 500,
     },
   ])('detects a seeded $name failure and still cleans up', async (seed) => {
     const root = await mkdtemp(join(tmpdir(), `bga-mcp-${seed.name}-`));
@@ -73,7 +74,10 @@ describe('E2E harness self-tests', () => {
             BGA_MCP_FAULT_MODE: seed.mode,
             BGA_MCP_TEST_ROOT: root,
           },
-          timeoutMs: 500,
+          connectTimeoutMs: 10_000,
+          ...(seed.requestTimeoutMs === undefined
+            ? {}
+            : { requestTimeoutMs: seed.requestTimeoutMs }),
         }),
       ).rejects.toThrow(seed.message);
     } finally {

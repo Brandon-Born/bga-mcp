@@ -43,12 +43,13 @@ export async function runToolScenario(options: {
   readonly expectedResult: unknown;
   readonly root: string;
   readonly env?: NodeJS.ProcessEnv;
-  readonly timeoutMs?: number;
+  readonly connectTimeoutMs?: number;
+  readonly requestTimeoutMs?: number;
 }): Promise<void> {
   const before = await directoryDigest(options.root);
   const connection = await connectStdio(options.command, options.arguments, {
     env: { ...process.env, ...options.env },
-    ...(options.timeoutMs === undefined ? {} : { timeoutMs: options.timeoutMs }),
+    ...(options.connectTimeoutMs === undefined ? {} : { timeoutMs: options.connectTimeoutMs }),
   });
   const processId = connection.transport.pid;
 
@@ -62,7 +63,7 @@ export async function runToolScenario(options: {
         name: options.toolName,
         arguments: options.toolArguments,
       },
-      { timeout: options.timeoutMs ?? 2_000 },
+      { timeout: options.requestTimeoutMs ?? 2_000 },
     );
     if (result.isError === true) {
       throw new Error(`Tool returned an MCP error: ${JSON.stringify(result.content)}`);

@@ -9,7 +9,10 @@ const evidenceRoot = resolve(repositoryRoot, 'conformance-results');
 const conformanceFixture = fileURLToPath(
   new URL('../tests/fixtures/conformance-http-server.ts', import.meta.url),
 );
-const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+const conformanceCli = resolve(
+  repositoryRoot,
+  'node_modules/@modelcontextprotocol/conformance/dist/index.js',
+);
 
 interface CommandResult {
   readonly exitCode: number;
@@ -46,10 +49,8 @@ async function run(command: string, arguments_: readonly string[]): Promise<Comm
 async function runConformance(url: string, outputDirectory: string): Promise<CommandResult> {
   await rm(outputDirectory, { recursive: true, force: true });
   await mkdir(outputDirectory, { recursive: true });
-  return await run(corepackCommand, [
-    'pnpm',
-    'exec',
-    'conformance',
+  return await run(process.execPath, [
+    conformanceCli,
     'server',
     '--url',
     url,

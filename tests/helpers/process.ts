@@ -16,9 +16,11 @@ export async function runCommand(
   } = {},
 ): Promise<CommandResult> {
   return await new Promise((resolve, reject) => {
+    const requiresWindowsShell = process.platform === 'win32' && /\.(?:cmd|bat)$/iu.test(command);
     const child = spawn(command, arguments_, {
       cwd: options.cwd,
       env: options.env,
+      shell: requiresWindowsShell,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
     let stdout = '';

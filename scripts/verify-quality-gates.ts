@@ -4,14 +4,13 @@ import { resolve } from 'node:path';
 
 const repositoryRoot = resolve(import.meta.dirname, '..');
 const seedRoot = resolve(repositoryRoot, '.artifacts/quality-gate-seeds');
-const executableSuffix = process.platform === 'win32' ? '.cmd' : '';
 
-function tool(name: string): string {
-  return resolve(repositoryRoot, `node_modules/.bin/${name}${executableSuffix}`);
+function tool(path: string): string {
+  return resolve(repositoryRoot, 'node_modules', path);
 }
 
-function expectFailure(name: string, command: string, arguments_: string[]): void {
-  const result = spawnSync(command, arguments_, {
+function expectFailure(name: string, entryPoint: string, arguments_: string[]): void {
+  const result = spawnSync(process.execPath, [entryPoint, ...arguments_], {
     cwd: repositoryRoot,
     encoding: 'utf8',
     stdio: 'pipe',
@@ -40,13 +39,13 @@ async function main(): Promise<void> {
       "import { expect, test } from 'vitest';\ntest('seeded failure', () => expect(true).toBe(false));\n",
     );
 
-    expectFailure('formatting', tool('prettier'), [
+    expectFailure('formatting', tool('prettier/bin/prettier.cjs'), [
       '--ignore-path',
       prettierIgnoreSeed,
       '--check',
       formatSeed,
     ]);
-    expectFailure('typing', tool('tsc'), [
+    expectFailure('typing', tool('typescript/bin/tsc'), [
       '--noEmit',
       '--strict',
       '--skipLibCheck',
@@ -58,7 +57,11 @@ async function main(): Promise<void> {
       'NodeNext',
       typeSeed,
     ]);
-    expectFailure('test', tool('vitest'), ['run', '--config', 'scripts/seeded-vitest.config.ts']);
+    expectFailure('test', tool('vitest/vitest.mjs'), [
+      'run',
+      '--config',
+      'scripts/seeded-vitest.config.ts',
+    ]);
     process.stdout.write('Seeded formatting, typing, and test failures were detected.\n');
   } finally {
     await rm(seedRoot, { recursive: true, force: true });
