@@ -55,7 +55,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-We are defining the public contracts and validating the highest-value developer workflows before committing to an implementation API. See the [testing policy](docs/TESTING.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
+We are defining the public contracts and validating the highest-value developer workflows before committing to an implementation API. See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
 ## Contributing
 

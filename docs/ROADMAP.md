@@ -2,6 +2,8 @@
 
 The roadmap is organized around useful, testable outcomes rather than a fixed calendar.
 
+Individual deliverables, dependencies, acceptance criteria, and verification requirements are maintained in the [implementation backlog](BACKLOG.md). The backlog is the executable source of truth and must be updated when this roadmap changes.
+
 ## Phase 0: Foundation
 
 - Define project goals, non-goals, safety model, and contribution process.

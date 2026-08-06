@@ -29,6 +29,8 @@ Keep changes focused and explain the user-visible outcome. New behavior must inc
 
 Any change that adds or alters a public tool, resource, prompt, transport, configuration path, or external adapter must also update its end-to-end scenario and capability-manifest entry. A mocked test is useful supporting evidence, but it does not satisfy this requirement.
 
+Changes that add, complete, supersede, or invalidate planned work must update [docs/BACKLOG.md](docs/BACKLOG.md). Backlog IDs are permanent and must not be deleted or reused.
+
 Do not describe a capability as implemented, supported, complete, or verified until its packaged-server end-to-end test passes. Studio-backed behavior additionally requires a passing test against the dedicated Studio test project.
 
 Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
