@@ -22,7 +22,7 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/missing.d.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },

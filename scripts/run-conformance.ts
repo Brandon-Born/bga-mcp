@@ -137,7 +137,7 @@ async function startCandidate(): Promise<{
       const match = /CONFORMANCE_URL=(\S+)/u.exec(chunk);
       if (match?.[1] !== undefined) {
         clearTimeout(timeout);
-        resolve_(match[1]);
+        resolve_(new URL('/missing', match[1]).href);
       }
     });
     child.once('exit', (code) => {
