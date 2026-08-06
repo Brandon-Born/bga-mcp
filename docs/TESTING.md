@@ -36,6 +36,8 @@ Start the packaged server as a subprocess and communicate only through its MCP i
 
 The official MCP Inspector CLI may provide an additional independent client check. It supplements the automated client harness; it does not replace capability-specific assertions.
 
+The small executable-only `src/cli.ts` boundary is excluded from in-process V8 line coverage because importing it starts stdio service. Its help, version, invalid-argument, startup, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.
+
 ### Live Studio end-to-end tests
 
 Capabilities that connect to BGA Studio must run against a dedicated, non-production Studio test project with isolated credentials and data. Mock SFTP servers, recorded responses, and local browser fixtures are integration tests, not proof of live compatibility.

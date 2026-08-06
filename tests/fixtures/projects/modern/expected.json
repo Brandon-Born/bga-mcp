@@ -1,0 +1,14 @@
+{
+  "layout": "modern",
+  "files": [
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.json",
+    "gamepreferences.json",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/States/PlayerTurn.php",
+    "stats.json"
+  ],
+  "diagnostics": []
+}

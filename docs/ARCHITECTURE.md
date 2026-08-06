@@ -1,6 +1,6 @@
 # Architecture
 
-This document records the initial architectural direction for `bga-mcp`. It is intentionally concrete enough to guide an MVP while remaining open to changes discovered during implementation.
+This document records the initial architectural direction for `bga-mcp`. The selected implementation stack is fixed by [ADR 0001](adr/0001-implementation-stack.md); proposed BGA capabilities remain open to evidence discovered during implementation.
 
 ## Scope
 
@@ -118,7 +118,7 @@ Findings must separate facts from suggestions. If a rule is heuristic, the resul
 
 ## Compatibility strategy
 
-BGA projects exist in legacy and modern layouts. Detection should be capability-based rather than assuming one template. A supported-layout matrix and fixture projects will be added before the first release.
+BGA projects exist in legacy and modern layouts. Detection should be capability-based rather than assuming one template. Original minimal modern and legacy fixture projects now establish the structural baseline. A supported-layout compatibility matrix will be added before the first capability release.
 
 Unknown syntax should produce an explicit unsupported or uncertain result, not a clean bill of health.
 

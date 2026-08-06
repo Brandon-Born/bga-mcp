@@ -1,0 +1,17 @@
+{
+  "layout": "legacy",
+  "files": [
+    "bgamcplegacy.action.php",
+    "bgamcplegacy.css",
+    "bgamcplegacy.game.php",
+    "bgamcplegacy.js",
+    "bgamcplegacy.view.php",
+    "bgamcplegacy_bgamcplegacy.tpl",
+    "dbmodel.sql",
+    "gameinfos.inc.php",
+    "gameoptions.inc.php",
+    "states.inc.php",
+    "stats.inc.php"
+  ],
+  "diagnostics": []
+}

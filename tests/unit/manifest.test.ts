@@ -1,0 +1,76 @@
+import { readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+
+import { assertManifestMatchesRuntime, validateManifestSchema } from '../helpers/manifest.js';
+
+const configRoot = fileURLToPath(new URL('../../config/', import.meta.url));
+
+async function loadJson(name: string): Promise<unknown> {
+  return JSON.parse(await readFile(`${configRoot}${name}`, 'utf8')) as unknown;
+}
+
+describe('capability manifest gate', () => {
+  it('accepts the current manifest and exact empty runtime discovery', async () => {
+    const schema = (await loadJson('capabilities.schema.json')) as object;
+    const manifest = await loadJson('capabilities.json');
+    validateManifestSchema(schema, manifest);
+    assertManifestMatchesRuntime(manifest as never, {
+      server: { name: 'bga-mcp', version: '0.0.0-development' },
+      tools: [],
+      resources: [],
+      prompts: [],
+    });
+  });
+
+  it('detects unsupported stability and missing scenarios', async () => {
+    const schema = (await loadJson('capabilities.schema.json')) as object;
+    const manifest = (await loadJson('capabilities.json')) as {
+      transports: Record<string, unknown>[];
+    };
+    const invalid = structuredClone(manifest);
+    invalid.transports[0] = {
+      ...invalid.transports[0],
+      stability: 'certainly-ready',
+      requiredScenarios: [],
+    };
+    expect(() => validateManifestSchema(schema, invalid)).toThrow('Invalid capability manifest');
+  });
+
+  it('detects duplicate and stale runtime entries', async () => {
+    const manifest = (await loadJson('capabilities.json')) as {
+      server: { name: string; version: string };
+      capabilities: {
+        tools: {
+          name: string;
+          requiredScenarios: string[];
+        }[];
+        resources: [];
+        prompts: [];
+      };
+    };
+    const stale = structuredClone(manifest);
+    stale.capabilities.tools = [{ name: 'stale_tool', requiredScenarios: ['E2E-STALE-TOOL'] }];
+    expect(() =>
+      assertManifestMatchesRuntime(stale as never, {
+        server: manifest.server,
+        tools: [],
+        resources: [],
+        prompts: [],
+      }),
+    ).toThrow('Manifest tools differ');
+
+    const firstTool = stale.capabilities.tools[0];
+    if (firstTool === undefined) {
+      throw new Error('Seeded stale tool was not created');
+    }
+    stale.capabilities.tools.push(firstTool);
+    expect(() =>
+      assertManifestMatchesRuntime(stale as never, {
+        server: manifest.server,
+        tools: [],
+        resources: [],
+        prompts: [],
+      }),
+    ).toThrow('duplicate tools');
+  });
+});

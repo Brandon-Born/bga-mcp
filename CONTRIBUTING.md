@@ -2,7 +2,7 @@
 
 Thank you for helping improve `bga-mcp`.
 
-The project is currently at an early design stage. The highest-value contributions are reproducible BGA workflow examples, small representative fixtures, validation-rule proposals, and feedback on tool contracts.
+The project is currently implementing its local read-only foundation. The highest-value contributions are reproducible BGA workflow examples, small representative fixtures, validation-rule proposals, and feedback on tool contracts.
 
 ## Before opening an issue
 
@@ -35,7 +35,11 @@ Do not describe a capability as implemented, supported, complete, or verified un
 
 Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
 
-Development commands will be documented after the initial implementation stack is selected.
+## Development commands
+
+Install exactly from the lockfile with `corepack pnpm install --frozen-lockfile`. Run `corepack pnpm check` before submitting. The complete gate includes formatting, linting, strict typing, seeded quality-gate self-tests, coverage, unit/integration/E2E tests, package linting, and the applicable official MCP conformance scenario.
+
+Individual commands and the reason for each layer are listed in [README.md](README.md) and [docs/TESTING.md](docs/TESTING.md).
 
 See [docs/TESTING.md](docs/TESTING.md) for the required test layers and release gates.
 

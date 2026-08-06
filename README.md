@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in the planning and early implementation stage. Tool names and behavior are not stable yet.
+> This project is in the foundation implementation stage. The installable stdio server is exercised through packaged-artifact E2E tests, but it intentionally advertises no BGA tools or resources yet.
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -55,7 +55,49 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-We are defining the public contracts and validating the highest-value developer workflows before committing to an implementation API. See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
+The first foundation is executable: a strict TypeScript package builds and packs, a real MCP client verifies both supported stdio protocol eras, fixtures cover modern and legacy BGA layouts, and the official conformance runner covers the portion its current CLI supports. No BGA-facing tool is advertised yet.
+
+See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
+
+## Develop locally
+
+Requirements: Node.js 22.13 or newer on the Node 22 line, or Node.js 24 LTS or newer; Corepack; and Git.
+
+```sh
+corepack pnpm install --frozen-lockfile
+corepack pnpm check
+```
+
+Build and inspect the local executable:
+
+```sh
+corepack pnpm build
+node dist/cli.js --help
+node dist/cli.js --version
+```
+
+An MCP client can launch a development checkout after it has been built:
+
+```json
+{
+  "command": "node",
+  "args": [
+    "/absolute/path/to/bga-mcp/dist/cli.js",
+    "--project-root",
+    "/absolute/path/to/a/bga-project"
+  ]
+}
+```
+
+The project-root option is parsed and resolved as configuration groundwork; no current capability reads it. The server writes only MCP frames to stdout and diagnostics to stderr.
+
+## Verification commands
+
+- `pnpm format:check`, `pnpm lint`, and `pnpm typecheck` enforce source quality.
+- `pnpm test:coverage` runs unit, integration, fixture-integrity, harness self-tests, and packed-server E2E with coverage thresholds.
+- `pnpm check:package` builds, packs, and checks package metadata.
+- `pnpm test:conformance` proves the official suite rejects a seeded violation and accepts the candidate for its supported scenario.
+- `pnpm check` is the complete local gate.
 
 ## Contributing
 

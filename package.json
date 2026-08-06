@@ -1,0 +1,74 @@
+{
+  "name": "bga-mcp",
+  "version": "0.0.0-development",
+  "description": "Unofficial MCP server for Board Game Arena Studio development",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Brandon Born",
+  "homepage": "https://github.com/Brandon-Born/bga-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Brandon-Born/bga-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/issues"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=24.0.0"
+  },
+  "packageManager": "pnpm@11.15.1",
+  "bin": {
+    "bga-mcp": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "config/capabilities.json",
+    "config/capabilities.schema.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "vitest run tests/e2e",
+    "test:coverage": "vitest run --coverage",
+    "test:conformance": "tsx scripts/run-conformance.ts",
+    "test:fixtures": "vitest run tests/fixture-integrity.test.ts",
+    "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",
+    "check:package": "pnpm build && publint",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm test:coverage && pnpm check:package && pnpm test:conformance",
+    "prepack": "pnpm build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@modelcontextprotocol/client": "2.0.0",
+    "@modelcontextprotocol/conformance": "0.1.16",
+    "@modelcontextprotocol/node": "2.0.0",
+    "@types/node": "26.1.2",
+    "@vitest/coverage-v8": "4.1.10",
+    "ajv": "8.17.1",
+    "eslint": "10.8.0",
+    "prettier": "3.9.6",
+    "publint": "0.3.23",
+    "tsx": "4.20.6",
+    "typescript": "6.0.2",
+    "typescript-eslint": "8.66.0",
+    "vitest": "4.1.10"
+  }
+}

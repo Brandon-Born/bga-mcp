@@ -1,0 +1,28 @@
+{
+  "$schema": "./capabilities.schema.json",
+  "schemaVersion": 1,
+  "server": {
+    "name": "bga-mcp",
+    "version": "0.0.0-development"
+  },
+  "transports": [
+    {
+      "name": "stdio",
+      "stability": "implemented",
+      "protocolVersions": ["2025-11-25", "2026-07-28"],
+      "requiredScenarios": [
+        "E2E-STDIO-LEGACY-INITIALIZE",
+        "E2E-STDIO-MODERN-DISCOVER",
+        "E2E-STDIO-UNADVERTISED-METHOD",
+        "E2E-STDIO-SHUTDOWN",
+        "E2E-PACK-INSTALL-REMOVE"
+      ]
+    }
+  ],
+  "capabilities": {
+    "tools": [],
+    "resources": [],
+    "prompts": []
+  },
+  "adapters": []
+}

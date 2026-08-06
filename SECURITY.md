@@ -29,4 +29,3 @@ The project is designed around these requirements:
 - Telemetry is off unless it is introduced later as an explicit opt-in feature.
 
 These are design goals while the project is pre-release, not a claim that unreleased functionality has completed a security audit.
-

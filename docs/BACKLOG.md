@@ -56,57 +56,63 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-001 — Capture representative developer workflows
 
-- **Status:** ready
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** none
 - **Deliverable:** An evidence-backed workflow catalog covering project setup, local editing, SFTP sync, state-machine development, multi-player testing, saved states, logs, and pre-release review across modern and legacy BGA projects.
 - **Acceptance:** Each workflow records its source, current BGA behavior, pain points, security boundary, and candidate MCP assistance. Unsupported assumptions are labeled rather than normalized into requirements.
 - **Verification:** Review against current official BGA documentation and feedback from active BGA developers; no E2E applies until a public capability is derived from the catalog.
+- **Evidence:** [BGA Studio workflow catalog](workflows/BGA_STUDIO_WORKFLOWS.md) and [foundation verification](verification/FOUNDATION_MILESTONE.md), reviewed 2026-08-05.
 
 ### BGA-002 — Select and record the implementation stack
 
-- **Status:** ready
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** none
 - **Deliverable:** An architecture decision record selecting the language, supported runtime versions, official MCP SDK, package manager, test runner, schema library, and build output.
 - **Acceptance:** The decision compares viable options, verifies current maintenance and compatibility from primary sources, pins supported versions, and records why the chosen stack supports subprocess E2E and distributable packages.
 - **Verification:** A disposable proof starts a minimal server, connects with a real MCP client, lists one test capability, and shuts down cleanly on every proposed supported runtime.
+- **Evidence:** `tests/integration/stack-proof.test.ts` passed through a real stdio client on Node 22.17.1 and Node 24.19.0; see [ADR 0001](adr/0001-implementation-stack.md).
 
 ### BGA-003 — Scaffold the distributable server package
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** Package metadata, source layout, build output, executable entry point, configuration entry point, and clean install/uninstall path.
 - **Acceptance:** A fresh checkout can install, build, pack, install the packed artifact into an isolated directory, start it over stdio, and remove it without undeclared global state.
 - **Verification:** Packaged-artifact E2E performs the complete install → start → initialize → shutdown → uninstall flow.
+- **Evidence:** `tests/e2e/packaged-server.test.ts` performs the isolated tarball lifecycle on both supported Node lines.
 
 ### BGA-004 — Establish deterministic local quality gates
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-002, BGA-003
 - **Deliverable:** Formatting, linting, static typing, unit-test, integration-test, build, and dependency-integrity commands.
 - **Acceptance:** Commands are documented, non-interactive, deterministic from the lockfile, and fail on warnings designated as release-blocking.
 - **Verification:** Seeded formatting, typing, and test failures are each detected by the corresponding gate in an isolated verification job.
+- **Evidence:** `scripts/verify-quality-gates.ts` rejects all three seeded failures; the normal full gate passes.
 
 ### BGA-005 — Establish continuous integration
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-004
 - **Deliverable:** Required CI workflows for supported operating systems and runtime versions, with concurrency control and least-privilege permissions.
 - **Acceptance:** CI runs every applicable gate from a clean checkout, uses locked dependencies, retains non-secret evidence, and cannot publish or mutate Studio state from untrusted contributions.
 - **Verification:** A controlled failing branch proves each required check blocks completion; a clean branch proves the full matrix passes.
+- **Evidence:** `.github/workflows/ci.yml` defines the locked macOS/Linux/Windows and Node 22/24 matrix. External failing-branch and clean-matrix proof is still required.
 
 ### BGA-006 — Define the machine-readable capability manifest
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** A versioned schema and manifest for every tool, resource, prompt, transport, adapter, stability level, compatibility claim, and required scenario.
 - **Acceptance:** Runtime discovery and the manifest can be compared automatically; duplicate names, missing scenarios, unsupported stability values, and stale capability entries fail validation.
 - **Verification:** Manifest-gate E2E starts the packaged server, discovers capabilities, and proves exact agreement with the manifest, including seeded mismatch failures.
+- **Evidence:** The packed `config/capabilities.json` and schema pass runtime comparison in packaged E2E; `tests/unit/manifest.test.ts` proves seeded schema, duplicate, and stale entries fail.
 
 ### BGA-007 — Define the shared diagnostic contract
 
@@ -119,12 +125,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-008 — Build the representative fixture corpus
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-002
 - **Deliverable:** Minimal legal fixtures for supported modern and legacy BGA layouts, plus deliberately malformed variants for every validation rule.
 - **Acceptance:** Fixtures contain no private source or publisher artwork, identify the BGA behavior they represent, and include expected normalized models and diagnostics.
 - **Verification:** Fixture-integrity tests prove every fixture is immutable during tests, contains no banned secrets/assets, and produces its declared baseline result.
+- **Evidence:** `tests/fixture-integrity.test.ts` passes for the original modern and legacy fixture layouts documented in `tests/fixtures/README.md`.
 
 ### BGA-009 — Publish the compatibility matrix
 
@@ -137,21 +144,23 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-010 — Build the packaged-server E2E harness
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-003, BGA-006, BGA-008
 - **Deliverable:** A harness that installs or uses the packed artifact, launches it as a subprocess, connects through a real MCP client, discovers capabilities, invokes scenarios, and guarantees teardown.
 - **Acceptance:** The harness uses only the public MCP boundary, isolated temporary roots, deterministic timeouts, structured assertions, and cleanup that also runs after failure.
 - **Verification:** Self-tests prove the harness detects seeded startup, handshake, schema, response, side-effect, timeout, and cleanup failures.
+- **Evidence:** `tests/e2e/harness-self-test.test.ts` detects every named seeded fault; packaged E2E proves the real artifact lifecycle and exact discovery agreement.
 
 ### BGA-011 — Integrate official MCP conformance testing
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-003, BGA-005
 - **Deliverable:** Pinned conformance tests for every supported MCP protocol version and transport.
 - **Acceptance:** Unsupported versions are rejected clearly; supported versions pass in CI against the packaged artifact; conformance dependency updates are reviewed rather than silently floated.
 - **Verification:** A seeded protocol violation fails conformance, while the release candidate passes the complete claimed matrix.
+- **Evidence:** `pnpm test:conformance` rejects a malformed initialize response and passes the candidate's supported official `server-initialize` scenario. The official CLI's stdio and 2026 gaps are recorded in [CONFORMANCE.md](CONFORMANCE.md), so this item is not yet `verified`.
 
 ### BGA-012 — Define and emit verification evidence
 
@@ -615,21 +624,21 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 This map makes omissions visible when source documents evolve.
 
-| Commitment source | Backlog coverage |
-| --- | --- |
-| Project goals and developer workflows | BGA-001, BGA-100 through BGA-114, BGA-200 through BGA-206 |
-| Local stdio MCP deployment | BGA-002, BGA-003, BGA-010, BGA-011 |
-| Stable MCP tools and resources | BGA-006, BGA-102 through BGA-112, BGA-202 through BGA-204, BGA-303, BGA-304, BGA-306 |
-| Diagnostic schema and uncertainty | BGA-007, BGA-101, BGA-106 through BGA-113 |
-| Modern and legacy compatibility | BGA-008, BGA-009, BGA-100, BGA-101 |
-| Documentation provenance and currency | BGA-200 through BGA-206, BGA-408 |
-| Local-first, read-only, narrow permissions | BGA-013 through BGA-016, BGA-114 |
-| Credentials, SFTP, sync, and logs | BGA-300 through BGA-307 |
-| Test tables, player perspectives, saved states | BGA-308 through BGA-311 |
-| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-307, BGA-407 |
-| Security, secrets, data handling, telemetry | BGA-013 through BGA-016, BGA-300, BGA-301, BGA-405, BGA-406, BGA-410 |
-| Packaging, clients, versioning, releases | BGA-400 through BGA-408 |
-| Optional remote documentation transport | BGA-409 |
+| Commitment source                                 | Backlog coverage                                                                     |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-114, BGA-200 through BGA-206                            |
+| Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011                                                   |
+| Stable MCP tools and resources                    | BGA-006, BGA-102 through BGA-112, BGA-202 through BGA-204, BGA-303, BGA-304, BGA-306 |
+| Diagnostic schema and uncertainty                 | BGA-007, BGA-101, BGA-106 through BGA-113                                            |
+| Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101                                                   |
+| Documentation provenance and currency             | BGA-200 through BGA-206, BGA-408                                                     |
+| Local-first, read-only, narrow permissions        | BGA-013 through BGA-016, BGA-114                                                     |
+| Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307                                                              |
+| Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                              |
+| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-307, BGA-407                                            |
+| Security, secrets, data handling, telemetry       | BGA-013 through BGA-016, BGA-300, BGA-301, BGA-405, BGA-406, BGA-410                 |
+| Packaging, clients, versioning, releases          | BGA-400 through BGA-408                                                              |
+| Optional remote documentation transport           | BGA-409                                                                              |
 
 ## Explicitly preserved non-goals
 
