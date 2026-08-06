@@ -44,6 +44,7 @@ The names above are proposals, not a stable API.
 
 ## Design principles
 
+- **Verified, not assumed:** no tool or resource is complete until its public behavior passes end-to-end tests through a real MCP client.
 - **Local first:** source code and credentials stay on the developer's machine by default.
 - **Read-only by default:** inspection and validation should not change a project or Studio state.
 - **Preview before mutation:** uploads and other state-changing operations expose an exact dry run first.
@@ -54,7 +55,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-We are defining the public contracts and validating the highest-value developer workflows before committing to an implementation API. See the [roadmap](docs/ROADMAP.md) and [architecture notes](docs/ARCHITECTURE.md).
+We are defining the public contracts and validating the highest-value developer workflows before committing to an implementation API. See the [testing policy](docs/TESTING.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
 ## Contributing
 
@@ -69,4 +70,3 @@ Licensed under the [Apache License 2.0](LICENSE).
 ## Unofficial project
 
 `bga-mcp` is an independent, unofficial community project. It is not affiliated with, endorsed by, or operated by Board Game Arena or its owners. Board Game Arena, BGA, and related names and marks belong to their respective owners.
-

@@ -51,6 +51,12 @@ Optional component for authenticated Studio access. The first adapter should use
 
 Applies configured project roots, remote project allowlists, operation timeouts, output redaction, and mutation safeguards before an adapter runs.
 
+### Verification harness
+
+Starts the packaged server exactly as a user would, connects through a real MCP client, discovers its advertised capabilities, and exercises every public tool and resource. The harness owns isolated project fixtures and records machine-readable evidence for each capability.
+
+Adapters for external systems require an additional live harness. A Studio-backed capability is not verified by a mocked SFTP client or a recorded HTTP response; it must pass against a dedicated BGA Studio test project before release.
+
 ## Proposed MCP surface
 
 ### Resources
@@ -116,3 +122,16 @@ BGA projects exist in legacy and modern layouts. Detection should be capability-
 
 Unknown syntax should produce an explicit unsupported or uncertain result, not a clean bill of health.
 
+## Verification boundary
+
+The public MCP interface is the end-to-end test boundary. Tests must launch the built package, negotiate the supported MCP protocol, discover capabilities, invoke them through the client, and verify observable results and side effects.
+
+Every advertised capability must have a test-manifest entry covering at least:
+
+- A successful request.
+- Invalid or incomplete input.
+- A relevant boundary failure, such as a missing file or unavailable connection.
+- Redaction of sensitive values where the capability can encounter them.
+- Exact side effects and cleanup for any mutating operation.
+
+Unit and integration tests remain required for fast, precise fault isolation, but mocks cannot be the only evidence used to mark a public capability verified. The complete policy is in [TESTING.md](TESTING.md).

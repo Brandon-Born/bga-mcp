@@ -25,13 +25,18 @@ Rules based on convention rather than documented framework behavior must be labe
 
 ## Pull requests
 
-Keep changes focused and explain the user-visible outcome. New behavior should include tests or fixtures that fail without the change and pass with it.
+Keep changes focused and explain the user-visible outcome. New behavior must include tests or fixtures that fail without the change and pass with it.
+
+Any change that adds or alters a public tool, resource, prompt, transport, configuration path, or external adapter must also update its end-to-end scenario and capability-manifest entry. A mocked test is useful supporting evidence, but it does not satisfy this requirement.
+
+Do not describe a capability as implemented, supported, complete, or verified until its packaged-server end-to-end test passes. Studio-backed behavior additionally requires a passing test against the dedicated Studio test project.
 
 Do not introduce network access, credential handling, remote mutations, telemetry, or new data retention without documenting the threat model and obtaining maintainer agreement first.
 
 Development commands will be documented after the initial implementation stack is selected.
 
+See [docs/TESTING.md](docs/TESTING.md) for the required test layers and release gates.
+
 ## Licensing contributions
 
 Unless you explicitly state otherwise, contributions submitted for inclusion in this project are provided under the Apache License 2.0, as described in section 5 of the license.
-
