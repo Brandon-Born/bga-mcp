@@ -1,6 +1,19 @@
 import { lstat, readFile, readdir, realpath } from 'node:fs/promises';
+import { request as httpsRequest } from 'node:https';
+import type { LookupFunction } from 'node:net';
+import { lookup as dnsLookup } from 'node:dns';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
+import { createGuardedLookup } from './docs/addresses.js';
+import { readBoundedUtf8 } from './docs/read.js';
+import { describeRequestContentViolation, requestContentViolation } from './docs/request.js';
+import {
+  parseDocumentationCatalog,
+  sourceById,
+  sourceForUrl,
+  type DocumentationCatalog,
+  type DocumentationSource,
+} from './docs/catalog.js';
 import { ERROR_CODES, PolicyViolationError } from './errors.js';
 import { redactPath } from './redaction.js';
 
@@ -48,9 +61,38 @@ export interface ProjectListing {
 }
 
 /** Configuration files the package ships and may read for itself. */
-export const PACKAGED_CONFIG_NAMES = ['rule-catalog.json'] as const;
+export const PACKAGED_CONFIG_NAMES = ['rule-catalog.json', 'doc-sources.json'] as const;
 
 export type PackagedConfigName = (typeof PACKAGED_CONFIG_NAMES)[number];
+
+/** Hops allowed before a redirect chain is treated as a loop. */
+export const MAX_DOCUMENTATION_REDIRECTS = 3;
+
+/** Ceiling on a retrieved page, independent of the output budget. */
+export const MAX_DOCUMENTATION_BYTES = 524_288;
+
+export interface DocumentationRequest {
+  /** A source identifier from the reviewed catalog. */
+  readonly sourceId: string;
+  /** A page path within that source. Never a full URL, so the host cannot move. */
+  readonly path: string;
+  /** The client's explicit query, when the lookup is a search. */
+  readonly query?: string;
+}
+
+export interface DocumentationResponse {
+  readonly sourceId: string;
+  readonly authority: string;
+  /** The URL finally retrieved, after any allowed redirects. */
+  readonly url: string;
+  readonly status: number;
+  readonly body: string;
+  readonly bytes: number;
+  readonly retrievedAt: string;
+  /** The source's own last-modified signal, when it publishes one. */
+  readonly lastModified: string | null;
+  readonly redirects: readonly string[];
+}
 
 export type MutationMode = 'preview' | 'execute';
 
@@ -90,6 +132,8 @@ function contains(root: string, candidate: string): boolean {
 export class PolicyBoundary {
   readonly #config: PolicyConfig;
   readonly #resolvedRoots: readonly string[];
+  /** The reviewed documentation catalog, read once and kept for the process. */
+  #catalog: DocumentationCatalog | undefined;
 
   private constructor(config: PolicyConfig, resolvedRoots: readonly string[]) {
     this.#config = config;
@@ -371,6 +415,275 @@ export class PolicyBoundary {
         { details: { target, mode: request.mode } },
       );
     }
+  }
+
+  /**
+   * Retrieves one documentation page from an allowlisted source.
+   *
+   * This is the only outbound request the server makes, and every precondition
+   * the documentation boundary review recorded is enforced here rather than in
+   * a caller:
+   *
+   * - **Allowlist** — the source must be in the reviewed catalog, the scheme
+   *   must be HTTPS, and the URL is built here from a source identifier and a
+   *   page path, so a caller cannot name a host at all.
+   * - **Address** — every resolved address is checked and the connection is
+   *   pinned to the address that was checked, so an allowlisted name that
+   *   answers with `127.0.0.1` reaches nothing.
+   * - **Request content** — the query must look like something a developer
+   *   typed, never a path or a fragment of their source.
+   * - **Budget** — the response is bounded in bytes and in time, and a redirect
+   *   chain is bounded in hops with every hop re-checked against the allowlist.
+   *
+   * Network access is off unless configured, so with no `--allow-network` this
+   * refuses before it resolves anything.
+   */
+  async fetchDocumentation(
+    request: DocumentationRequest,
+    options: { readonly signal?: AbortSignal; readonly maxBytes?: number } = {},
+  ): Promise<DocumentationResponse> {
+    this.assertNetworkAllowed('documentation');
+
+    const catalog = await this.#documentationCatalog();
+    const source = sourceById(catalog, request.sourceId);
+    if (source === null) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'That documentation source is not in the reviewed catalog.',
+        { details: { sourceId: request.sourceId } },
+      );
+    }
+
+    if (request.query !== undefined) {
+      const violation = requestContentViolation(request.query, this.#resolvedRoots);
+      if (violation !== null) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocRequestContent,
+          `The documentation request was refused because ${describeRequestContentViolation(violation)}.`,
+          { details: { sourceId: source.id, violation } },
+        );
+      }
+    }
+
+    const target = this.#documentationUrl(source, request);
+    const maxBytes = Math.min(options.maxBytes ?? MAX_DOCUMENTATION_BYTES, MAX_DOCUMENTATION_BYTES);
+    const redirects: string[] = [];
+    let current = target;
+
+    for (let hop = 0; hop <= MAX_DOCUMENTATION_REDIRECTS; hop += 1) {
+      // Every hop is re-checked: a redirect off the allowlist is refused, not
+      // followed, because the first response is attacker-influenced too.
+      const hopSource = sourceForUrl(catalog, current);
+      if (hopSource === null) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocSourceNotAllowed,
+          'The documentation request left the allowlisted sources.',
+          { details: { url: current.href, redirects: redirects.length } },
+        );
+      }
+
+      const result = await this.#sendDocumentationRequest(
+        current,
+        hopSource,
+        maxBytes,
+        options.signal,
+      );
+      if (result.location === null) {
+        return {
+          sourceId: source.id,
+          authority: source.authority,
+          url: current.href,
+          status: result.status,
+          body: result.body,
+          bytes: Buffer.byteLength(result.body, 'utf8'),
+          retrievedAt: new Date().toISOString(),
+          lastModified: result.lastModified,
+          redirects,
+        };
+      }
+
+      redirects.push(current.href);
+      let next: URL;
+      try {
+        next = new URL(result.location, current);
+      } catch {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocFetchFailed,
+          'The documentation source returned an unusable redirect.',
+          { details: { url: current.href } },
+        );
+      }
+      current = next;
+    }
+
+    throw new PolicyViolationError(
+      ERROR_CODES.policyDocFetchFailed,
+      `The documentation request exceeded ${String(MAX_DOCUMENTATION_REDIRECTS)} redirects.`,
+      { details: { url: target.href, redirects: redirects.length } },
+    );
+  }
+
+  /** Builds the URL from catalog data and a page path, never from a caller's host. */
+  #documentationUrl(source: DocumentationSource, request: DocumentationRequest): URL {
+    if (/[^A-Za-z0-9._~:@!$'()*+,;=/%-]/u.test(request.path) || request.path.includes('..')) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'The documentation page path contains characters that are not allowed.',
+        { details: { sourceId: source.id, path: request.path } },
+      );
+    }
+    // A protocol-relative or absolute path would re-point the request, so the
+    // path must be relative to the source and stay inside it.
+    if (request.path.startsWith('/') || request.path.includes('//')) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'The documentation page path must be relative to its source.',
+        { details: { sourceId: source.id, path: request.path } },
+      );
+    }
+    const base = new URL(source.canonicalUrl);
+    const url = new URL(request.path, base);
+    if (request.query !== undefined) {
+      url.searchParams.set('search', request.query);
+    }
+    if (
+      url.protocol !== 'https:' ||
+      url.hostname !== source.host ||
+      !url.href.startsWith(source.canonicalUrl)
+    ) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'The documentation request did not stay within its source.',
+        { details: { sourceId: source.id, url: url.href } },
+      );
+    }
+    return url;
+  }
+
+  /** One HTTPS request, pinned to a checked address and bounded in size. */
+  async #sendDocumentationRequest(
+    url: URL,
+    source: DocumentationSource,
+    maxBytes: number,
+    signal?: AbortSignal,
+  ): Promise<{
+    readonly status: number;
+    readonly body: string;
+    readonly location: string | null;
+    readonly lastModified: string | null;
+  }> {
+    // The lookup both checks and pins: the address the guard approved is the
+    // address the socket connects to, so a second DNS answer cannot be
+    // substituted between the check and the connection.
+    const guarded = createGuardedLookup(
+      (hostname, callback) => {
+        dnsLookup(hostname, { all: true }, (error, addresses) => {
+          callback(error, error === null ? addresses : []);
+        });
+      },
+      (hostname, reason) =>
+        new PolicyViolationError(
+          ERROR_CODES.policyDocAddressBlocked,
+          `The documentation host resolved to a ${reason} address, which is refused.`,
+          { details: { host: hostname, reason } },
+        ),
+    );
+    const guardedLookup: LookupFunction = (hostname, _options, callback) => {
+      guarded(hostname, (error, address, family) => {
+        callback(error, address, family);
+      });
+    };
+
+    return await new Promise((resolveRequest, rejectRequest) => {
+      const outgoing = httpsRequest(
+        url,
+        {
+          method: 'GET',
+          lookup: guardedLookup,
+          headers: {
+            // Identifies this project honestly, as the source catalog requires.
+            'user-agent': source.retrieval.userAgent,
+            accept: 'text/html,text/plain',
+            'accept-encoding': 'identity',
+          },
+          ...(signal === undefined ? {} : { signal }),
+        },
+        (response) => {
+          const status = response.statusCode ?? 0;
+          const location = response.headers.location ?? null;
+          const lastModified = response.headers['last-modified'] ?? null;
+          if (status >= 300 && status < 400 && location !== null) {
+            response.resume();
+            resolveRequest({ status, body: '', location, lastModified: null });
+            return;
+          }
+          if (status < 200 || status >= 300) {
+            response.resume();
+            rejectRequest(
+              new PolicyViolationError(
+                ERROR_CODES.policyDocFetchFailed,
+                `The documentation source answered ${String(status)}.`,
+                { details: { url: url.href, status } },
+              ),
+            );
+            return;
+          }
+
+          void readBoundedUtf8(
+            response,
+            maxBytes,
+            (bytes, limit) =>
+              new PolicyViolationError(
+                ERROR_CODES.policyOutputTooLarge,
+                `The documentation page is larger than the ${String(limit)} byte limit.`,
+                { details: { url: url.href, bytes, maxBytes: limit } },
+              ),
+          ).then(
+            (body) => {
+              resolveRequest({
+                status,
+                body,
+                location: null,
+                lastModified: typeof lastModified === 'string' ? lastModified : null,
+              });
+            },
+            (error: unknown) => {
+              rejectRequest(
+                error instanceof Error
+                  ? error
+                  : new PolicyViolationError(
+                      ERROR_CODES.policyDocFetchFailed,
+                      'The documentation response could not be read.',
+                      { details: { url: url.href } },
+                    ),
+              );
+            },
+          );
+        },
+      );
+
+      outgoing.once('error', (error: unknown) => {
+        if (error instanceof PolicyViolationError) {
+          rejectRequest(error);
+          return;
+        }
+        const message = error instanceof Error ? error.message : String(error);
+        rejectRequest(
+          new PolicyViolationError(
+            ERROR_CODES.policyDocFetchFailed,
+            'The documentation request could not be completed.',
+            { details: { url: url.href, reason: message } },
+          ),
+        );
+      });
+      outgoing.end();
+    });
+  }
+
+  /** Reads and caches the reviewed catalog for the life of the process. */
+  async #documentationCatalog(): Promise<DocumentationCatalog> {
+    this.#catalog ??= parseDocumentationCatalog(await this.readPackagedConfig('doc-sources.json'));
+    return this.#catalog;
   }
 
   /** Runs an operation under the configured deadline and aborts it on expiry. */

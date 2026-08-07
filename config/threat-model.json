@@ -553,36 +553,36 @@
       "title": "Only allowlisted documentation hosts over HTTPS, with redirects confined to the allowlist",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-201",
-      "scenarios": ["E2E-DOCS-HOST-ALLOWLIST"]
+      "status": "implemented",
+      "backlog": "BGA-207",
+      "scenarios": ["UNIT-DOC-HOST-ALLOWLIST", "INT-DOC-HOST-ALLOWLIST", "INT-DOC-NETWORK-OFF"]
     },
     {
       "id": "TM-DOC-NO-LOOPBACK",
       "title": "A host resolving to a loopback, link-local, or private address is refused",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-201",
-      "scenarios": ["E2E-DOCS-NO-LOOPBACK"]
+      "status": "implemented",
+      "backlog": "BGA-207",
+      "scenarios": ["UNIT-DOC-ADDRESS-BLOCKED"]
     },
     {
       "id": "TM-DOC-REQUEST-CONTENT",
       "title": "A request carries only the client\u2019s explicit query, never project file content",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-202",
-      "scenarios": ["E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA"]
+      "status": "implemented",
+      "backlog": "BGA-207",
+      "scenarios": ["UNIT-DOC-REQUEST-CONTENT", "INT-DOC-REQUEST-CONTENT"]
     },
     {
       "id": "TM-DOC-RESPONSE-BUDGET",
       "title": "A documentation response is bounded in size and time by the policy boundary",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-201",
-      "scenarios": ["E2E-DOCS-RESPONSE-BUDGET"]
+      "status": "implemented",
+      "backlog": "BGA-207",
+      "scenarios": ["UNIT-DOC-RESPONSE-BUDGET"]
     },
     {
       "id": "TM-DOC-SNAPSHOT-INTEGRITY",

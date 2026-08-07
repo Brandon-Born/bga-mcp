@@ -107,10 +107,10 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-NO-BROWSER-SESSION      | manual    | planned     | Owner: Brandon Born, decision recorded in BGA-305                            |
 | TM-DOC-PROVENANCE          | automated | planned     | Reserved for BGA-200                                                         |
 | TM-DOC-UNTRUSTED           | automated | planned     | Reserved for BGA-202                                                         |
-| TM-DOC-HOST-ALLOWLIST      | automated | planned     | Reserved for BGA-201                                                         |
-| TM-DOC-NO-LOOPBACK         | automated | planned     | Reserved for BGA-201                                                         |
-| TM-DOC-REQUEST-CONTENT     | automated | planned     | Reserved for BGA-202                                                         |
-| TM-DOC-RESPONSE-BUDGET     | automated | planned     | Reserved for BGA-201                                                         |
+| TM-DOC-HOST-ALLOWLIST      | automated | implemented | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF         |
+| TM-DOC-NO-LOOPBACK         | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED                                                     |
+| TM-DOC-REQUEST-CONTENT     | automated | implemented | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                            |
+| TM-DOC-RESPONSE-BUDGET     | automated | implemented | UNIT-DOC-RESPONSE-BUDGET                                                     |
 | TM-DOC-SNAPSHOT-INTEGRITY  | automated | planned     | Reserved for BGA-201                                                         |
 
 ## Residual risk

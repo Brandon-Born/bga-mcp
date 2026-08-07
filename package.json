@@ -34,6 +34,8 @@
     "config/compatibility.schema.json",
     "config/rule-catalog.json",
     "config/rule-catalog.schema.json",
+    "config/doc-sources.json",
+    "config/doc-sources.schema.json",
     "config/diagnostics.schema.json",
     "LICENSE",
     "README.md"
