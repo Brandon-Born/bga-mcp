@@ -2,11 +2,9 @@ import type { McpServer } from '@modelcontextprotocol/server';
 
 import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
-import { validateActionContracts } from '../rules/action-contracts.js';
-import { aggregateStatus, aggregateValidations, type GroupRunner } from '../rules/aggregate.js';
-import { auditDatabaseUsage } from '../rules/database.js';
-import { validateNotifications } from '../rules/notifications.js';
+import { aggregateStatus, aggregateValidations } from '../rules/aggregate.js';
 import { validateStateMachine } from '../rules/state-machine.js';
+import { createValidatorRunners } from '../rules/validators.js';
 import { loadProjectContext } from '../tools/project-context.js';
 
 export const PROJECT_SUMMARY_URI = 'bga://project/summary';
@@ -136,35 +134,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
           withClientSources: true,
         });
 
-        const runners: GroupRunner[] = [
-          {
-            id: 'state-machine',
-            run: () => validateStateMachine(context.model, context.phpSources),
-          },
-          {
-            id: 'action-contracts',
-            run: () =>
-              validateActionContracts(context.model, context.clientSources, context.phpSources)
-                .diagnostics,
-          },
-          {
-            id: 'notifications',
-            run: () => validateNotifications(context.phpSources, context.clientSources).diagnostics,
-          },
-          {
-            id: 'database',
-            run: async () => {
-              const schemaPath = context.model.components
-                .find((component) => component.id === 'database')
-                ?.files.find((file) => file.endsWith('.sql'));
-              const schemaSource =
-                schemaPath === undefined
-                  ? null
-                  : { path: schemaPath, text: await policy.readProjectFile(root, schemaPath) };
-              return auditDatabaseUsage(schemaSource, context.phpSources).diagnostics;
-            },
-          },
-        ];
+        const runners = createValidatorRunners(policy, root, context);
 
         const aggregate = await aggregateValidations(runners);
         return {

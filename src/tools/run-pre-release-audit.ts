@@ -3,12 +3,9 @@ import { z } from 'zod';
 
 import { DiagnosticFindingSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { validateActionContracts } from '../rules/action-contracts.js';
-import { aggregateValidations, type GroupRunner } from '../rules/aggregate.js';
-import { auditDatabaseUsage } from '../rules/database.js';
-import { validateNotifications } from '../rules/notifications.js';
+import { aggregateValidations } from '../rules/aggregate.js';
 import { auditPreRelease, type PreReleaseAudit, type RuleCatalog } from '../rules/pre-release.js';
-import { validateStateMachine } from '../rules/state-machine.js';
+import { createValidatorRunners } from '../rules/validators.js';
 import { loadProjectContext, publishFailure } from './project-context.js';
 
 export const RUN_PRE_RELEASE_AUDIT_TOOL = 'run_pre_release_audit';
@@ -110,39 +107,7 @@ export function registerRunPreReleaseAudit(
             withClientSources: true,
           });
 
-          const runners: GroupRunner[] = [
-            {
-              id: 'state-machine',
-              run: () => validateStateMachine(context.model, context.phpSources),
-            },
-            {
-              id: 'action-contracts',
-              run: () =>
-                validateActionContracts(context.model, context.clientSources, context.phpSources)
-                  .diagnostics,
-            },
-            {
-              id: 'notifications',
-              run: () =>
-                validateNotifications(context.phpSources, context.clientSources).diagnostics,
-            },
-            {
-              id: 'database',
-              run: async () => {
-                const schemaPath = context.model.components
-                  .find((component) => component.id === 'database')
-                  ?.files.find((file) => file.endsWith('.sql'));
-                const schemaSource =
-                  schemaPath === undefined
-                    ? null
-                    : {
-                        path: schemaPath,
-                        text: await policy.readProjectFile(projectRoot, schemaPath),
-                      };
-                return auditDatabaseUsage(schemaSource, context.phpSources).diagnostics;
-              },
-            },
-          ];
+          const runners = createValidatorRunners(policy, projectRoot, context);
 
           const aggregate = await aggregateValidations(runners, { maxFindings: 5_000 });
           const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics);

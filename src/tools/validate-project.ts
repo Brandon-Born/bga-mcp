@@ -3,18 +3,14 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { validateActionContracts } from '../rules/action-contracts.js';
 import {
   DEFAULT_MAX_FINDINGS,
   RULE_GROUPS,
   aggregateStatus,
   aggregateValidations,
   type AggregateResult,
-  type GroupRunner,
 } from '../rules/aggregate.js';
-import { auditDatabaseUsage } from '../rules/database.js';
-import { validateNotifications } from '../rules/notifications.js';
-import { validateStateMachine } from '../rules/state-machine.js';
+import { createValidatorRunners } from '../rules/validators.js';
 import { loadProjectContext, publishFailure } from './project-context.js';
 
 export const VALIDATE_PROJECT_TOOL = 'validate_project';
@@ -128,41 +124,7 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
             withClientSources: true,
           });
 
-          const runners: GroupRunner[] = [
-            {
-              id: 'state-machine',
-              run: () => validateStateMachine(context.model, context.phpSources),
-            },
-            {
-              id: 'action-contracts',
-              run: () =>
-                validateActionContracts(context.model, context.clientSources, context.phpSources)
-                  .diagnostics,
-            },
-            {
-              id: 'notifications',
-              run: () =>
-                validateNotifications(context.phpSources, context.clientSources).diagnostics,
-            },
-            {
-              id: 'database',
-              run: async () => {
-                // Reading the schema can fail on its own; that failure belongs
-                // to this group and must not abort the whole run.
-                const schemaPath = context.model.components
-                  .find((component) => component.id === 'database')
-                  ?.files.find((file) => file.endsWith('.sql'));
-                const schemaSource =
-                  schemaPath === undefined
-                    ? null
-                    : {
-                        path: schemaPath,
-                        text: await policy.readProjectFile(projectRoot, schemaPath),
-                      };
-                return auditDatabaseUsage(schemaSource, context.phpSources).diagnostics;
-              },
-            },
-          ];
+          const runners = createValidatorRunners(policy, projectRoot, context);
 
           const aggregate = await aggregateValidations(runners, {
             ...(groups === undefined ? {} : { groups }),

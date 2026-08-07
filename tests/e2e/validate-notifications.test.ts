@@ -1,19 +1,15 @@
-import { createHash } from 'node:crypto';
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join, relative, resolve, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import type { Client } from '@modelcontextprotocol/client';
-import { inject } from 'vitest';
 
-import { connectStdio } from '../helpers/mcp.js';
-import { runCommand } from '../helpers/process.js';
-import { waitForProcessExit } from '../helpers/scenario.js';
-
-const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
-const fixturesRoot = resolve(repositoryRoot, 'tests/fixtures/projects');
-const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+import {
+  callTool,
+  digestDirectory,
+  expectSchemaRejections,
+  installPackagedServer,
+  readFixtureExpectations,
+  withPackagedServer,
+  type PackagedServer,
+  type ToolResponse,
+} from '../helpers/packaged.js';
 
 interface NotificationResult {
   readonly schemaVersion: number;
@@ -32,110 +28,44 @@ interface NotificationResult {
   };
 }
 
-interface ToolResponse {
-  readonly isError: boolean;
-  readonly text: string;
-  readonly structured: NotificationResult | undefined;
-}
-
-let temporaryRoot: string;
-let cli: string;
+let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame'>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
 
-async function digest(directory: string): Promise<string> {
-  const hash = createHash('sha256');
-  const walk = async (current: string): Promise<void> => {
-    for (const entry of (await readdir(current, { withFileTypes: true })).sort((left, right) =>
-      left.name.localeCompare(right.name),
-    )) {
-      const path = resolve(current, entry.name);
-      if (entry.isDirectory()) {
-        await walk(path);
-        continue;
-      }
-      hash.update(relative(directory, path).split(sep).join('/'));
-      hash.update(await readFile(path));
-    }
-  };
-  await walk(directory);
-  return hash.digest('hex');
-}
-
-async function callValidate(client: Client, argument: unknown): Promise<ToolResponse> {
-  const result = await client.callTool(
-    { name: 'validate_notifications', arguments: argument as Record<string, unknown> },
-    { timeout: 10_000 },
-  );
-  const content = result.content as { type: string; text?: string }[];
-  return {
-    isError: result.isError === true,
-    text: content.map((entry) => entry.text ?? '').join('\n'),
-    structured: result.structuredContent as NotificationResult | undefined,
-  };
+async function callValidate(
+  client: Client,
+  argument: unknown,
+): Promise<ToolResponse<NotificationResult>> {
+  return await callTool<NotificationResult>(client, 'validate_notifications', argument);
 }
 
 async function withServer<T>(
   arguments_: readonly string[],
   use: (client: Client) => Promise<T>,
 ): Promise<T> {
-  const connection = await connectStdio(process.execPath, [cli, ...arguments_], {
-    timeoutMs: 10_000,
-  });
-  const processId = connection.transport.pid;
-  try {
-    return await use(connection.client);
-  } finally {
-    await connection.client.close();
-    if (processId !== null) {
-      await waitForProcessExit(processId);
-    }
-  }
+  return (await withPackagedServer(server.cli, arguments_, use)).result;
 }
 
 beforeAll(async () => {
-  temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-notifs-'));
-  const installRoot = resolve(temporaryRoot, 'install');
-  await mkdir(installRoot);
-  await writeFile(
-    resolve(installRoot, 'package.json'),
-    `${JSON.stringify({ name: 'bga-mcp-notifs-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
-  );
-
-  // The artifact is packed once for the whole run; see tests/global-setup.ts.
-  const install = await runCommand(
-    corepackCommand,
-    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
-    { timeoutMs: 120_000 },
-  );
-  expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);
-  cli = resolve(installRoot, 'node_modules/bga-mcp/dist/cli.js');
-
-  const projects = resolve(temporaryRoot, 'projects');
-  cleanRoot = resolve(projects, 'cleangame');
-  brokenRoot = resolve(projects, 'brokengame');
-  modernRoot = resolve(projects, 'moderngame');
-  for (const [fixture, target] of [
-    ['legacy', cleanRoot],
-    ['legacy-broken', brokenRoot],
-    ['modern', modernRoot],
-  ] as const) {
-    await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
-  }
+  server = await installPackagedServer('notifs', {
+    cleangame: 'legacy',
+    brokengame: 'legacy-broken',
+    moderngame: 'modern',
+  });
+  cleanRoot = server.projects.cleangame;
+  brokenRoot = server.projects.brokengame;
+  modernRoot = server.projects.moderngame;
   expectedBroken = (
-    JSON.parse(await readFile(resolve(brokenRoot, 'expected.json'), 'utf8')) as {
+    await readFixtureExpectations<{
       notifications: { status: string; summary: Record<string, number>; codes: string[] };
-    }
+    }>('legacy-broken')
   ).notifications;
-  for (const target of [cleanRoot, brokenRoot, modernRoot]) {
-    await rm(resolve(target, 'expected.json'));
-  }
 }, 240_000);
 
 afterAll(async () => {
-  await rm(temporaryRoot, { recursive: true, force: true });
+  await server.cleanup();
 });
 
 describe('packaged validate_notifications', () => {
@@ -222,12 +152,12 @@ describe('packaged validate_notifications', () => {
   });
 
   it('[E2E-VALIDATE-NOTIFICATIONS-IMMUTABLE] changes nothing in the project it validates', async () => {
-    const before = await digest(brokenRoot);
+    const before = await digestDirectory(brokenRoot);
     await withServer(
       ['--project-root', brokenRoot],
       async (client) => await callValidate(client, { projectRoot: brokenRoot }),
     );
-    expect(await digest(brokenRoot)).toBe(before);
+    expect(await digestDirectory(brokenRoot)).toBe(before);
   });
 
   it('[E2E-VALIDATE-NOTIFICATIONS-DETERMINISTIC] returns identical results for repeated calls', async () => {
@@ -240,14 +170,12 @@ describe('packaged validate_notifications', () => {
 
   it('[E2E-VALIDATE-NOTIFICATIONS-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
-      for (const argument of [{}, { projectRoot: 7 }, { projectRoot: '' }, { root: cleanRoot }]) {
-        const failure = await callValidate(client, argument).catch((error: unknown) => error);
-        if (failure instanceof Error) {
-          expect(failure.message).toMatch(/valid|invalid|schema|required|expected/iu);
-          continue;
-        }
-        expect((failure as ToolResponse).isError).toBe(true);
-      }
+      await expectSchemaRejections(client, 'validate_notifications', [
+        {},
+        { projectRoot: 7 },
+        { projectRoot: '' },
+        { root: cleanRoot },
+      ]);
     });
   });
 
