@@ -13,7 +13,9 @@ import { waitForProcessExit } from '../helpers/scenario.js';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
 const fixturesRoot = resolve(repositoryRoot, 'tests/fixtures/projects');
-const denialModule = fileURLToPath(new URL('./network-denied.ts', import.meta.url));
+// Node's --import needs a URL: on Windows an absolute path such as C:\… is not
+// a valid ESM specifier and the process refuses to start.
+const denialModule = new URL('./network-denied.ts', import.meta.url).href;
 const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 
 const RESOURCES = ['bga://project/summary', 'bga://project/states', 'bga://project/diagnostics'];
