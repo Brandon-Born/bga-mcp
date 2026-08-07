@@ -67,13 +67,18 @@ describe('state-machine validation against the fixture corpus', () => {
     expect(target?.suggestions[0]?.message).toContain('42');
   });
 
-  it('refuses to pass a layout whose states it cannot read', async () => {
-    const { result } = await validate('modern');
-    expect(result.status).toBe('unsupported');
-    expect(result.findings.map((finding) => finding.code)).toEqual([
-      'project.states.modern-classes',
-    ]);
-    expect(result.findings[0]?.kind).toBe('unsupported-syntax');
+  it('reads modern state classes and reports what it cannot interpret', async () => {
+    const clean = await validate('modern');
+    expect(clean.result.status).toBe('passed');
+
+    const broken = await validate('modern-broken');
+    const codes = broken.result.findings.map((finding) => finding.code);
+    expect(codes).toContain('state.transition.target-exists');
+    expect(codes).toContain('project.states.unsupported');
+    const unreadable = broken.result.findings.find(
+      (finding) => finding.kind === 'unsupported-syntax',
+    );
+    expect(unreadable?.message).toContain('non-literal id');
   });
 
   it('produces byte-identical results across repeated runs', async () => {

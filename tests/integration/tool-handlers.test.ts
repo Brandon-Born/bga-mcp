@@ -58,14 +58,14 @@ describe('tool handlers over a real client connection', () => {
     });
   });
 
-  it('summarizes a project whose states cannot be read', async () => {
+  it('reads a modern project through the same tools', async () => {
     await withClient([modernRoot], async (call) => {
       const outcome = await call('inspect_project', { projectRoot: modernRoot });
-      expect(outcome.text).toContain('States: not readable');
+      expect(outcome.text).toContain('States: 3 definitions');
 
       const validation = await call('validate_state_machine', { projectRoot: modernRoot });
-      expect(validation.structured).toMatchObject({ statesRead: false, stateCount: 0 });
-      expect(validation.text).toContain('status unsupported');
+      expect(validation.structured).toMatchObject({ statesRead: true, stateCount: 3 });
+      expect(validation.text).toContain('status passed');
     });
   });
 

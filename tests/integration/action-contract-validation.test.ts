@@ -88,13 +88,16 @@ describe('action contract validation against the fixture corpus', () => {
     }
   });
 
-  it('refuses to pass a layout whose contract it cannot trace', async () => {
+  it('traces a modern contract through autowired actions', async () => {
     const { result } = await trace('modern');
-    expect(result.diagnostics.status).toBe('findings');
-    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
-      'action.trace.unavailable',
-    ]);
-    expect(result.diagnostics.findings[0]?.message).toContain('no readable action class');
+    expect(result.diagnostics.status).toBe('passed');
+    expect(result.entryPoints.map((entry) => entry.action).sort()).toEqual(['actPass', 'actPlay']);
+    expect(result.clientCalls.every((call) => call.style === 'performAction')).toBe(true);
+
+    const broken = await trace('modern-broken');
+    expect(broken.result.diagnostics.findings.map((finding) => finding.code)).toContain(
+      'action.entry-point.missing',
+    );
   });
 
   it('produces byte-identical results across repeated runs', async () => {

@@ -82,6 +82,26 @@ export async function installPackagedServer<Fixture extends string>(
   };
 }
 
+/**
+ * Copies an installed project and removes files from it.
+ *
+ * Used to build a project that is genuinely missing one side of a contract,
+ * which is a different thing from a layout the readers cannot interpret.
+ */
+export async function deriveProject(
+  server: PackagedServer,
+  from: string,
+  name: string,
+  remove: readonly string[],
+): Promise<string> {
+  const target = resolve(server.temporaryRoot, 'projects', name);
+  await cp(from, target, { recursive: true });
+  for (const path of remove) {
+    await rm(resolve(target, path), { recursive: true, force: true });
+  }
+  return target;
+}
+
 /** Reads a fixture's declared expectations before the copy strips them. */
 export async function readFixtureExpectations<T>(fixture: string): Promise<T> {
   return JSON.parse(await readFile(resolve(fixturesRoot, fixture, 'expected.json'), 'utf8')) as T;

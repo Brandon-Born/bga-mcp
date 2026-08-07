@@ -90,12 +90,16 @@ describe('notification validation against the fixture corpus', () => {
     ]);
   });
 
-  it('refuses to pass a layout whose notifications it cannot find', async () => {
+  it('reads the modern notify API and the class-based handlers', async () => {
     const { result } = await trace('modern');
-    expect(result.diagnostics.status).toBe('findings');
-    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
-      'notification.trace.unavailable',
-    ]);
+    expect(result.diagnostics.status).toBe('passed');
+    expect(result.sent.map((entry) => entry.name)).toEqual(['playerPassed']);
+    expect(result.handlers.map((entry) => entry.binding)).toEqual(['method']);
+
+    const broken = await trace('modern-broken');
+    const codes = broken.result.diagnostics.findings.map((finding) => finding.code);
+    expect(codes).toContain('notification.sent.not-handled');
+    expect(codes).toContain('notification.payload.mismatch');
   });
 
   it('produces byte-identical results across repeated runs', async () => {

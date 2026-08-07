@@ -25,7 +25,7 @@
         "name": "audit_database_usage",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -35,7 +35,9 @@
           "E2E-AUDIT-DATABASE-IMMUTABLE",
           "E2E-AUDIT-DATABASE-DETERMINISTIC",
           "E2E-AUDIT-DATABASE-INVALID-INPUT",
-          "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
+          "E2E-AUDIT-DATABASE-UNLISTED-ROOT",
+          "E2E-AUDIT-DATABASE-MODERN-CLEAN",
+          "E2E-AUDIT-DATABASE-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -67,7 +69,7 @@
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -86,7 +88,7 @@
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -96,7 +98,9 @@
           "E2E-VALIDATE-ACTIONS-IMMUTABLE",
           "E2E-VALIDATE-ACTIONS-DETERMINISTIC",
           "E2E-VALIDATE-ACTIONS-INVALID-INPUT",
-          "E2E-VALIDATE-ACTIONS-UNLISTED-ROOT"
+          "E2E-VALIDATE-ACTIONS-UNLISTED-ROOT",
+          "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
+          "E2E-VALIDATE-ACTIONS-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -105,7 +109,7 @@
         "name": "validate_notifications",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -115,7 +119,9 @@
           "E2E-VALIDATE-NOTIFICATIONS-IMMUTABLE",
           "E2E-VALIDATE-NOTIFICATIONS-DETERMINISTIC",
           "E2E-VALIDATE-NOTIFICATIONS-INVALID-INPUT",
-          "E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT"
+          "E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT",
+          "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
+          "E2E-VALIDATE-NOTIFICATIONS-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -124,7 +130,7 @@
         "name": "validate_project",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -143,7 +149,7 @@
         "name": "validate_state_machine",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -153,7 +159,9 @@
           "E2E-VALIDATE-STATES-IMMUTABLE",
           "E2E-VALIDATE-STATES-DETERMINISTIC",
           "E2E-VALIDATE-STATES-INVALID-INPUT",
-          "E2E-VALIDATE-STATES-UNLISTED-ROOT"
+          "E2E-VALIDATE-STATES-UNLISTED-ROOT",
+          "E2E-VALIDATE-STATES-MODERN-CLEAN",
+          "E2E-VALIDATE-STATES-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -181,7 +189,7 @@
         "name": "bga://project/states",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -198,7 +206,7 @@
         "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [

@@ -18,7 +18,7 @@ async function model(policy: PolicyBoundary, root: string): Promise<ProjectModel
 }
 
 describe('normalized project model', () => {
-  it('describes the modern fixture and states plainly what it cannot read', async () => {
+  it('describes the modern fixture, including its state classes', async () => {
     const policy = await createPolicyBoundary({ projectRoots: [modernRoot] });
     const result = await model(policy, modernRoot);
 
@@ -35,29 +35,20 @@ describe('normalized project model', () => {
       skippedLinks: [],
     });
 
-    const present = result.components.filter((component) => component.present).map((c) => c.id);
-    expect(present).toEqual([
-      'metadata',
-      'options',
-      'preferences',
-      'statistics',
-      'database',
-      'game-logic',
-      'client-logic',
+    // State classes are read into the same shape the legacy declaration gives.
+    expect(result.states.parsed).toBe(true);
+    expect(result.states.definitions.map((state) => state.name)).toEqual([
+      'GameSetup',
+      'PlayerTurn',
+      'GameEnd',
     ]);
-
-    // Modern state classes are recognized but not yet interpreted.
-    expect(result.states).toMatchObject({ parsed: false, definitions: [] });
-    expect(result.diagnostics.status).toBe('unsupported');
-    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
-      'project.states.modern-classes',
-    ]);
-    expect(result.diagnostics.summary).toEqual({
-      errors: 0,
-      warnings: 0,
-      information: 0,
-      unsupported: 1,
+    expect(result.states.definitions[1]).toMatchObject({
+      id: 2,
+      type: 'activeplayer',
+      args: 'getArgs',
+      transitions: { play: 2, pass: 99 },
     });
+    expect(result.diagnostics.status).toBe('passed');
   });
 
   it('describes the legacy fixture including its state machine', async () => {

@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { parseModernActions } from '../project/modern.js';
 import {
   parseClientActionCalls,
   parsePhpMethodNames,
@@ -54,6 +55,7 @@ export const ACTION_CONTRACT_RULES: readonly ActionContractRule[] = [
     summary: 'The client calls an action that no state lists as a possible action.',
     falsePositives: [
       'A state declared with computed keys or targets cannot be read, and its possible actions are invisible to this rule; that state is reported as unsupported syntax instead.',
+      'A project whose states enumerate no possible actions gives this rule nothing to compare against, so it stays silent rather than reporting every call.',
     ],
   },
   {
@@ -179,12 +181,33 @@ export function validateActionContracts(
     }
   }
 
+  // Legacy projects route actions through <game>.action.php. Modern projects
+  // deleted that file: an autowired public act… method on the game class is the
+  // entry point, and its typed parameters are the contract.
   const actionClassSources = phpSources.filter((source) => source.path.endsWith('.action.php'));
   const entryPoints: (ServerActionEntry & { source: string })[] = [];
   for (const source of actionClassSources) {
     const outcome = parseServerActionEntries(source.text);
     for (const entry of outcome.value) {
       entryPoints.push({ ...entry, source: source.path });
+    }
+    for (const construct of outcome.unsupported) {
+      findings.push(unsupported(construct, source.path));
+    }
+  }
+
+  const autowiredSources =
+    actionClassSources.length > 0
+      ? []
+      : phpSources.filter((source) => /(?:^|\/)Game\.php$/u.test(source.path));
+  for (const source of autowiredSources) {
+    const outcome = parseModernActions(source.text);
+    for (const action of outcome.value) {
+      entryPoints.push({
+        action: action.action,
+        argumentNames: [...action.argumentNames],
+        source: source.path,
+      });
     }
     for (const construct of outcome.unsupported) {
       findings.push(unsupported(construct, source.path));
@@ -203,7 +226,7 @@ export function validateActionContracts(
 
   const statesReadable = model.states.parsed;
   const clientReadable = clientSources.length > 0;
-  const entryPointsReadable = actionClassSources.length > 0;
+  const entryPointsReadable = actionClassSources.length > 0 || autowiredSources.length > 0;
 
   // A side that could not be read makes the whole trace inconclusive. Say so
   // rather than returning a clean result nobody should trust.
@@ -253,7 +276,11 @@ export function validateActionContracts(
       );
     }
 
-    if (statesReadable && !declaredActions.has(call.action)) {
+    // The rule only has an authority to compare against when some state
+    // actually enumerates its possible actions. A modern project declares its
+    // actions as autowired methods instead, so an empty set means "unknown",
+    // not "nothing is allowed".
+    if (statesReadable && declaredActions.size > 0 && !declaredActions.has(call.action)) {
       findings.push(
         heuristic(
           'action.call.not-declared',
@@ -270,7 +297,7 @@ export function validateActionContracts(
         heuristic(
           'action.entry-point.missing',
           `The client calls '${call.action}', but the action class declares no entry point of that name.`,
-          `No method named '${call.action}' was found in ${String(actionClassSources.length)} readable action class file(s).`,
+          `No method named '${call.action}' was found in ${String(actionClassSources.length + autowiredSources.length)} readable action source file(s).`,
           call.source,
           `Declare ${call.action}() in the action class, or confirm a generic dispatcher handles it.`,
         ),
@@ -306,7 +333,12 @@ export function validateActionContracts(
     }
   }
 
+  const autowired = new Set(autowiredSources.map((source) => source.path));
   for (const entry of entryPoints) {
+    if (autowired.has(entry.source)) {
+      // An autowired action is its own game method; there is no second hop.
+      continue;
+    }
     if (!gameMethods.has(entry.action) && gameMethods.size > 0) {
       findings.push(
         heuristic(
@@ -320,7 +352,7 @@ export function validateActionContracts(
     }
   }
 
-  if (statesReadable && clientReadable) {
+  if (statesReadable && clientReadable && declaredActions.size > 0) {
     const called = new Set(clientCalls.map((call) => call.action));
     for (const action of [...declaredActions].sort()) {
       if (!called.has(action)) {

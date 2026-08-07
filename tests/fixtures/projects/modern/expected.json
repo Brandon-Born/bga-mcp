@@ -7,8 +7,50 @@
     "gamepreferences.json",
     "modules/js/Game.js",
     "modules/php/Game.php",
+    "modules/php/States/GameEnd.php",
+    "modules/php/States/GameSetup.php",
     "modules/php/States/PlayerTurn.php",
     "stats.json"
   ],
-  "diagnostics": []
+  "diagnostics": [],
+  "stateMachine": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "actionContracts": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "notifications": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "database": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  }
 }

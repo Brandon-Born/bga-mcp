@@ -27,8 +27,15 @@ export interface NotificationHandler {
 /** Keys the framework adds to every notification payload. */
 const FRAMEWORK_PAYLOAD_KEYS = new Set(['i18n', 'player_name', 'player_id']);
 
-const NOTIFY = /(?:\$this->|self::|static::)?notify(All)?Player(?:s)?\s*\(/gu;
-const HANDLER_METHOD = /notif_([A-Za-z_]\w*)\s*[:=]\s*(?:function|\()/gu;
+// Legacy: notifyAllPlayers / notifyPlayer. Modern: $this->bga->notify->all /
+// ->player, documented in the BGA Studio migration guide. Both are read,
+// because the documentation marks the legacy form superseded, not removed.
+const NOTIFY =
+  /(?:\$this->|self::|static::)?notify(All)?Player(?:s)?\s*\(|->bga->notify->(all|player)\s*\(/gu;
+// Legacy object literals use `notif_x: function`, modern classes use
+// `async notif_x(notif)`. Both bind the same way as far as the framework is
+// concerned. https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide
+const HANDLER_METHOD = /(?:async\s+)?notif_([A-Za-z_]\w*)\s*(?:[:=]\s*(?:function|\()|\()/gu;
 const SUBSCRIBE =
   /(?:dojo\.subscribe|this\.subscribeNotif)\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))/gu;
 
@@ -103,7 +110,13 @@ export function parseSentNotifications(source: string): ParseOutcome<readonly Se
   const unsupported: string[] = [];
 
   for (const match of source.matchAll(NOTIFY)) {
-    const scope: 'all' | 'player' = match[1] === undefined ? 'player' : 'all';
+    const modern = match[2];
+    const scope: 'all' | 'player' =
+      modern === undefined
+        ? match[1] === undefined
+          ? 'player'
+          : 'all'
+        : (modern as 'all' | 'player');
     const parts = splitArguments(source, match.index + match[0].length - 1);
     // notifyAllPlayers(name, message, args); notifyPlayer(playerId, name, message, args)
     const nameArgument = scope === 'all' ? parts[0] : parts[1];

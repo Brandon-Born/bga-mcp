@@ -15,13 +15,17 @@ final class Game extends \Bga\GameFramework\Table
             'cardId' => $cardId,
         ]);
 
+        // Nothing on the client handles this one.
+        $this->bga->notify->all('ghostEvent', clienttranslate('unseen'), []);
+
         return 'pass';
     }
 
     #[IntParam(min: 1, max: 5)]
     public function actPlay(int $cardId): string
     {
-        $this->DbQuery("UPDATE card SET card_location = 'table' WHERE card_id = 1");
+        // Names a table the schema does not declare.
+        $this->DbQuery("INSERT INTO deck (deck_id) VALUES (1)");
 
         return 'play';
     }

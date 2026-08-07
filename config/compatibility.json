@@ -8,9 +8,14 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. Detection and project inspection are supported. Validation is not: state classes, autowired actions, and the bga->notify API are not read yet, so the validators return an explicit unsupported result. BGA-117 through BGA-121 own that work.",
-      "fixtures": ["tests/fixtures/projects/modern"],
-      "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
+      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. State classes, autowired act\u2026 methods, the bga->notify API, and the modern client action API are read, so every validator produces real results. A construct that is not literal, such as a computed state identifier, is still reported as unsupported syntax.",
+      "fixtures": ["tests/fixtures/projects/modern", "tests/fixtures/projects/modern-broken"],
+      "scenarios": [
+        "GATE-FIXTURE-SAFETY",
+        "E2E-INSPECT-PROJECT-MODERN",
+        "E2E-VALIDATE-STATES-MODERN-CLEAN",
+        "E2E-VALIDATE-STATES-MODERN-DEFECTS"
+      ]
     },
     {
       "id": "CLAIM-LAYOUT-LEGACY",
@@ -38,7 +43,7 @@
       "value": "json-metadata",
       "support": "supported",
       "notes": "gameinfos.jsonc, gameoptions.json, gamepreferences.json, and stats.json.",
-      "fixtures": ["tests/fixtures/projects/modern"],
+      "fixtures": ["tests/fixtures/projects/modern", "tests/fixtures/projects/modern-broken"],
       "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
     },
     {

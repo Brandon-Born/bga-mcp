@@ -26,10 +26,13 @@ interface ValidationResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame'>;
+let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
+let modernCleanRoot: string;
+let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
+  {} as never;
 let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
 
 async function callValidate(
@@ -50,15 +53,22 @@ beforeAll(async () => {
   server = await installPackagedServer('states', {
     cleangame: 'legacy',
     brokengame: 'legacy-broken',
-    moderngame: 'modern',
+    moderngame: 'modern-broken',
+    moderncleangame: 'modern',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
+  modernCleanRoot = server.projects.moderncleangame;
   expectedBroken = (
     await readFixtureExpectations<{
       stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
     }>('legacy-broken')
+  ).stateMachine;
+  expectedModern = (
+    await readFixtureExpectations<{
+      stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
+    }>('modern-broken')
   ).stateMachine;
 }, 240_000);
 
@@ -132,13 +142,15 @@ describe('packaged validate_state_machine', () => {
       async (client) => await callValidate(client, { projectRoot: modernRoot }),
     );
 
+    // Modern state classes are read now, so "cannot read" means a state whose
+    // identifier is computed: the reader reports it rather than skipping it.
     expect(response.isError).toBe(false);
-    expect(response.structured?.statesRead).toBe(false);
-    expect(response.structured?.diagnostics).toMatchObject({
-      status: 'unsupported',
-      summary: { errors: 0, warnings: 0, information: 0, unsupported: 1 },
-    });
-    expect(response.structured?.diagnostics.findings[0]?.kind).toBe('unsupported-syntax');
+    const unsupported = response.structured?.diagnostics.findings.filter(
+      (finding) => finding.kind === 'unsupported-syntax',
+    );
+    expect(unsupported?.length).toBeGreaterThan(0);
+    expect(unsupported?.[0]?.message).toContain('non-literal id');
+    expect(response.structured?.diagnostics.status).not.toBe('passed');
   });
 
   it('[E2E-VALIDATE-STATES-IMMUTABLE] changes nothing in the project it validates', async () => {
@@ -178,5 +190,37 @@ describe('packaged validate_state_machine', () => {
     expect(response.isError).toBe(true);
     expect(response.text).toContain('policy.root.not-allowed');
     expect(JSON.stringify(response)).not.toContain(brokenRoot);
+  });
+
+  it('[E2E-VALIDATE-STATES-MODERN-CLEAN] passes a modern project built to the documented shapes', async () => {
+    const response = await withServer(
+      ['--project-root', modernCleanRoot],
+      async (client) => await callValidate(client, { projectRoot: modernCleanRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+    expect(structured?.layout).toBe('modern');
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.statesRead).toBe(true);
+    expect(structured?.stateCount).toBe(3);
+  });
+
+  it('[E2E-VALIDATE-STATES-MODERN-DEFECTS] finds exactly the defects the modern broken fixture declares', async () => {
+    const response = await withServer(
+      ['--project-root', modernRoot],
+      async (client) => await callValidate(client, { projectRoot: modernRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    expect(response.structured?.diagnostics.status).toBe(expectedModern.status);
+    expect(response.structured?.diagnostics.summary).toEqual(expectedModern.summary);
+    expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
+      expectedModern.codes,
+    );
   });
 });

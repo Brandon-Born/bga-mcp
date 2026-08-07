@@ -1,0 +1,70 @@
+{
+  "layout": "modern",
+  "files": [
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.json",
+    "gamepreferences.json",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/States/Computed.php",
+    "modules/php/States/GameEnd.php",
+    "modules/php/States/GameSetup.php",
+    "modules/php/States/Orphan.php",
+    "modules/php/States/PlayerTurn.php",
+    "stats.json"
+  ],
+  "diagnostics": ["project.states.unsupported"],
+  "stateMachine": {
+    "status": "findings",
+    "summary": {
+      "errors": 1,
+      "warnings": 4,
+      "information": 0,
+      "unsupported": 1
+    },
+    "codes": [
+      "project.states.unsupported",
+      "state.dead-end",
+      "state.transition.target-exists",
+      "state.type.unknown",
+      "state.unreachable",
+      "state.unreachable"
+    ]
+  },
+  "actionContracts": {
+    "status": "findings",
+    "summary": {
+      "errors": 0,
+      "warnings": 1,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": ["action.entry-point.missing"]
+  },
+  "notifications": {
+    "status": "findings",
+    "summary": {
+      "errors": 0,
+      "warnings": 3,
+      "information": 1,
+      "unsupported": 0
+    },
+    "codes": [
+      "notification.handled.not-sent",
+      "notification.payload.mismatch",
+      "notification.payload.mismatch",
+      "notification.sent.not-handled"
+    ]
+  },
+  "database": {
+    "status": "findings",
+    "summary": {
+      "errors": 1,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": ["database.table.undeclared"]
+  }
+}

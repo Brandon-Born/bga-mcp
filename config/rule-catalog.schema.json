@@ -99,6 +99,14 @@
               "failing": {
                 "type": "string",
                 "minLength": 1
+              },
+              "validModern": {
+                "type": "string",
+                "minLength": 1
+              },
+              "failingModern": {
+                "type": "string",
+                "minLength": 1
               }
             }
           },

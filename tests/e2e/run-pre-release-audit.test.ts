@@ -184,14 +184,15 @@ describe('packaged run_pre_release_audit', () => {
 
     expect(response.isError).toBe(false);
     const result = response.structured;
-    expect(result?.counts.unsupported).toBeGreaterThan(0);
-
+    // The modern layout is read now, so its state checks produce verdicts.
     const stateChecks = result?.checks.filter((check) => check.group === 'state-machine') ?? [];
     expect(stateChecks.length).toBeGreaterThan(0);
     for (const check of stateChecks) {
-      expect(check.outcome).toBe('unsupported');
-      expect(check.reason ?? '').not.toBe('');
+      expect(check.outcome).not.toBe('manual-required');
     }
+    // Nothing is silently converted into a pass: every check has an outcome.
+    const total = Object.values(result?.counts ?? {}).reduce((sum, count) => sum + count, 0);
+    expect(total).toBe(result?.checks.length);
   });
 
   it('[E2E-PRE-RELEASE-MANUAL-NEVER-PASSES] never reports a manual check as passed', async () => {

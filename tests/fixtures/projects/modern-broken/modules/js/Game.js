@@ -9,11 +9,19 @@ export class Game {
     this.bga.actions.performAction('actPlay', { cardId: 3 });
   }
 
+  onGhostClicked() {
+    // Calls an action no state allows and the game class does not declare.
+    this.bga.actions.performAction('actGhost', {});
+  }
+
   setupNotifications() {
     this.bga.notifications.setupPromiseNotifications();
   }
 
   async notif_playerPassed(notif) {
-    this.showMessage(notif.args.cardId, 'info');
+    // Reads a key the server does not send.
+    this.showMessage(notif.args.comment, 'info');
   }
+
+  async notif_phantomEvent(notif) {}
 }

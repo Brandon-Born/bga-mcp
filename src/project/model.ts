@@ -1,6 +1,7 @@
 import type { DiagnosticFinding, DiagnosticResult } from '../diagnostics.js';
 import type { ProjectListing } from '../policy.js';
 import { detectLayout, type LayoutDetection, type ProjectLayout } from './layout.js';
+import { parseModernStates } from './modern.js';
 import {
   parseLegacyMetadata,
   parseLegacyStates,
@@ -248,19 +249,36 @@ async function readStates(
     (path) => path.startsWith('modules/php/States/') && path.endsWith('.php'),
   );
   if (modernStateFiles.length > 0) {
-    findings.push(
-      unsupportedSyntax(
-        'project.states.modern-classes',
-        'Modern state classes are recognized but not yet interpreted, so no transitions are reported.',
-        'class-based state definitions under modules/php/States',
-        'php',
-        modernStateFiles[0],
-      ),
+    const sources = await Promise.all(
+      modernStateFiles.map(async (path) => ({ path, text: await reader.read(path) })),
     );
+    const outcome = parseModernStates(sources);
+    for (const construct of outcome.unsupported) {
+      findings.push(
+        unsupportedSyntax(
+          'project.states.unsupported',
+          `Part of the state machine could not be read: ${construct}.`,
+          construct,
+          'php',
+          modernStateFiles[0],
+        ),
+      );
+    }
+    if (outcome.value.length === 0 && outcome.unsupported.length === 0) {
+      findings.push(
+        unsupportedSyntax(
+          'project.states.modern-classes',
+          'State classes were found but none declared a readable state.',
+          'class-based state definitions under modules/php/States',
+          'php',
+          modernStateFiles[0],
+        ),
+      );
+    }
     return {
-      parsed: false,
-      definitions: [],
-      unsupported: [`${String(modernStateFiles.length)} class-based state definitions`],
+      parsed: outcome.value.length > 0,
+      definitions: outcome.value,
+      unsupported: outcome.unsupported,
       source: modernStateFiles[0] ?? null,
     };
   }

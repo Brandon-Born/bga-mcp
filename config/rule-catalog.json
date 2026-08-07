@@ -1,8 +1,8 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.0.0",
-  "updatedAt": "2026-08-06",
+  "catalogVersion": "1.1.0",
+  "updatedAt": "2026-08-07",
   "checks": [
     {
       "id": "action.argument.mismatch",
@@ -21,7 +21,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -43,7 +44,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -64,7 +66,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -85,7 +88,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -107,7 +111,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -129,7 +135,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -151,7 +158,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -172,7 +180,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -193,7 +202,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -214,7 +224,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -236,7 +247,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -258,7 +270,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -280,7 +293,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -301,7 +315,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -323,7 +338,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -345,7 +362,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
@@ -370,7 +389,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
@@ -395,7 +416,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
@@ -420,7 +443,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
@@ -444,7 +468,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
@@ -469,7 +494,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -491,7 +517,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -513,7 +540,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -534,7 +563,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -555,7 +585,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -577,7 +608,8 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -598,7 +630,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -619,7 +652,8 @@
         }
       ],
       "fixtures": {
-        "valid": "tests/fixtures/projects/legacy"
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/modern"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -641,7 +675,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -663,7 +699,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"
@@ -685,7 +723,9 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "failing": "tests/fixtures/projects/legacy-broken"
+        "failing": "tests/fixtures/projects/legacy-broken",
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
       "owner": "Brandon Born"

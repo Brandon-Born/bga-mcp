@@ -2,6 +2,7 @@ import type { Client } from '@modelcontextprotocol/client';
 
 import {
   callTool,
+  deriveProject,
   digestDirectory,
   expectSchemaRejections,
   installPackagedServer,
@@ -32,10 +33,14 @@ interface DatabaseAuditResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame'>;
+let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
+let modernCleanRoot: string;
+let oneSidedRoot: string;
+let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
+  {} as never;
 let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
 
 async function callValidate(
@@ -56,15 +61,23 @@ beforeAll(async () => {
   server = await installPackagedServer('dbaudit', {
     cleangame: 'legacy',
     brokengame: 'legacy-broken',
-    moderngame: 'modern',
+    moderngame: 'modern-broken',
+    moderncleangame: 'modern',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
+  modernCleanRoot = server.projects.moderncleangame;
+  oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['dbmodel.sql']);
   expectedBroken = (
     await readFixtureExpectations<{
       database: { status: string; summary: Record<string, number>; codes: string[] };
     }>('legacy-broken')
+  ).database;
+  expectedModern = (
+    await readFixtureExpectations<{
+      database: { status: string; summary: Record<string, number>; codes: string[] };
+    }>('modern-broken')
   ).database;
 }, 240_000);
 
@@ -132,16 +145,17 @@ describe('packaged audit_database_usage', () => {
 
   it('[E2E-AUDIT-DATABASE-UNAVAILABLE] never reports a clean audit it could not run', async () => {
     const response = await withServer(
-      ['--project-root', modernRoot],
-      async (client) => await callValidate(client, { projectRoot: modernRoot }),
+      ['--project-root', oneSidedRoot],
+      async (client) => await callValidate(client, { projectRoot: oneSidedRoot }),
     );
 
+    // The readers understand this layout; the project is simply missing one
+    // side of the contract, and that is reported rather than passed.
     expect(response.isError).toBe(false);
     expect(response.structured?.diagnostics.status).toBe('findings');
-    expect(response.structured?.diagnostics.findings[0]).toMatchObject({
-      code: 'database.audit.unavailable',
-      certainty: 'certain',
-    });
+    expect(response.structured?.diagnostics.findings[0]?.message).toContain(
+      'no readable dbmodel.sql',
+    );
   });
 
   it('[E2E-AUDIT-DATABASE-IMMUTABLE] changes nothing in the project it audits', async () => {
@@ -181,5 +195,38 @@ describe('packaged audit_database_usage', () => {
     expect(response.isError).toBe(true);
     expect(response.text).toContain('policy.root.not-allowed');
     expect(JSON.stringify(response)).not.toContain(brokenRoot);
+  });
+
+  it('[E2E-AUDIT-DATABASE-MODERN-CLEAN] passes a modern project built to the documented shapes', async () => {
+    const response = await withServer(
+      ['--project-root', modernCleanRoot],
+      async (client) => await callValidate(client, { projectRoot: modernCleanRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+    expect(structured?.layout).toBe('modern');
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.schema).toEqual([
+      { name: 'card', columns: ['card_id', 'card_location', 'card_owner'] },
+    ]);
+  });
+
+  it('[E2E-AUDIT-DATABASE-MODERN-DEFECTS] finds exactly the defects the modern broken fixture declares', async () => {
+    const response = await withServer(
+      ['--project-root', modernRoot],
+      async (client) => await callValidate(client, { projectRoot: modernRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    expect(response.structured?.diagnostics.status).toBe(expectedModern.status);
+    expect(response.structured?.diagnostics.summary).toEqual(expectedModern.summary);
+    expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
+      expectedModern.codes,
+    );
   });
 });

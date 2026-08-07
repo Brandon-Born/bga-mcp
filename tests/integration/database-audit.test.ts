@@ -87,12 +87,17 @@ describe('database audit against the fixture corpus', () => {
     expect(unused?.message).toContain('card_unused');
   });
 
-  it('refuses to pass a project whose usage it cannot audit', async () => {
+  it('audits a modern project with the same reader', async () => {
     const { result } = await audit('modern');
-    expect(result.diagnostics.status).toBe('findings');
-    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
-      'database.audit.unavailable',
+    expect(result.diagnostics.status).toBe('passed');
+    expect(result.tables).toEqual([
+      { name: 'card', columns: ['card_id', 'card_location', 'card_owner'] },
     ]);
+
+    const broken = await audit('modern-broken');
+    expect(broken.result.diagnostics.findings.map((finding) => finding.code)).toContain(
+      'database.table.undeclared',
+    );
   });
 
   it('produces byte-identical results across repeated runs', async () => {

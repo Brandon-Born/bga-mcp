@@ -169,7 +169,8 @@ describe('packaged inspect_project', () => {
     });
     expect(response.text).toContain('modern layout (certain)');
     const diagnostics = (response.structured as { diagnostics: { status: string } }).diagnostics;
-    expect(diagnostics.status).toBe('unsupported');
+    // Modern state classes are read now, so a sound modern project is clean.
+    expect(diagnostics.status).toBe('passed');
     expect(await digest(modernRoot)).toBe(before);
   });
 

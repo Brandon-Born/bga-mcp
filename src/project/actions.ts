@@ -68,7 +68,11 @@ function nextNonSpace(source: string, from: number): number {
 }
 
 const AJAXCALL = /ajaxcall\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,]+))\s*,\s*/gu;
-const PERFORM_ACTION = /bgaPerformAction\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))\s*(,\s*)?/gu;
+// The client moved twice: ajaxcall, then bgaPerformAction, then
+// this.bga.actions.performAction. Projects exist at every point, so all three
+// are read. https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide
+const PERFORM_ACTION =
+  /(?:bga\.actions\.performAction|bgaPerformAction)\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))\s*(,\s*)?/gu;
 const AJAX_URL = /^\/[^/]+\/[^/]+\/([A-Za-z_][\w]*)\.html$/u;
 
 /**

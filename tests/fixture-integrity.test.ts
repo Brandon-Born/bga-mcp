@@ -43,7 +43,7 @@ async function hashes(directory: string): Promise<Record<string, string>> {
 }
 
 describe('BGA project fixture corpus', () => {
-  it.each(['modern', 'legacy', 'legacy-broken'])(
+  it.each(['modern', 'modern-broken', 'legacy', 'legacy-broken'])(
     '[GATE-FIXTURE-SAFETY] %s matches its declared baseline and remains safe and immutable',
     async (layout) => {
       const directory = resolve(projectsRoot, layout);
@@ -59,9 +59,14 @@ describe('BGA project fixture corpus', () => {
       };
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
-      expect(expected.layout).toBe(layout.startsWith('legacy') ? 'legacy' : layout);
+      expect(expected.layout).toBe(layout.startsWith('legacy') ? 'legacy' : 'modern');
       expect(actualFiles).toEqual(expected.files);
-      expect(expected.diagnostics).toEqual([]);
+      // A defective fixture may declare model-level findings; a clean one may not.
+      if (layout.endsWith('-broken')) {
+        expect(Array.isArray(expected.diagnostics)).toBe(true);
+      } else {
+        expect(expected.diagnostics).toEqual([]);
+      }
 
       // A fixture that seeds defects must declare exactly which findings it expects,
       // so a rule change cannot silently repurpose it. A clean fixture that
