@@ -30,6 +30,8 @@ Exit criterion: the first tool contracts, fixtures, and executable acceptance sc
 
 Exit criterion: every advertised local capability passes its mapped end-to-end scenarios through a real MCP client; the server finds seeded cross-file defects, reports precise evidence, and never modifies project files.
 
+Reached for the legacy layout on 2026-08-06. The modern layout is the remaining half: state classes, autowired actions, and the `bga->notify` API are read by nobody yet, and that work (BGA-117 through BGA-121) precedes Phase 2. A capability that only serves one of the two layouts a developer might have is not finished.
+
 ## Phase 2: Documentation
 
 - Build a curated BGA Studio documentation index.

@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. Class-based state definitions are recognized but not yet interpreted, so state-machine validation returns an unsupported result rather than a clean one.",
+      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. Detection and project inspection are supported. Validation is not: state classes, autowired actions, and the bga->notify API are not read yet, so the validators return an explicit unsupported result. BGA-117 through BGA-121 own that work.",
       "fixtures": ["tests/fixtures/projects/modern"],
       "scenarios": ["GATE-FIXTURE-SAFETY", "E2E-INSPECT-PROJECT-MODERN"]
     },

@@ -50,6 +50,8 @@ The first dependency chain is:
 
 `BGA-001` and `BGA-002` → `BGA-003` → `BGA-004` and `BGA-005` → `BGA-006` through `BGA-012` → local capabilities beginning with `BGA-100`.
 
+Phase 1 delivered every local capability against the legacy layout. The stated goal is that every capability supports both layouts, so `BGA-117` through `BGA-121` come before Phase 2 documentation work: a second layout for the capabilities that exist is worth more than a new capability that only half the projects can use. Within that group, `BGA-117` is the prerequisite, `BGA-118` is the largest piece, and `BGA-121` is expected to need only fixtures.
+
 Studio work begins only after `BGA-300` establishes a safe live test environment. Public release work begins only after all capabilities included in that release are verified.
 
 ## Phase 0 — Foundation
@@ -288,7 +290,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** Every rule has documented evidence, valid and invalid fixtures, certainty, severity, and false-positive notes. Heuristics are never reported as facts.
 - **Verification:** Tool E2E covers every rule's positive and negative fixture plus invalid input, unsupported syntax, path confinement, deterministic ordering, and immutability.
 - **Evidence:** Eleven rules in [`src/rules/state-machine.ts`](../src/rules/state-machine.ts), each carrying its severity, certainty, and known false positives, published to the client in every result. Structural rules are proven from the parsed declaration and reported as facts; the three cross-file handler rules are heuristics with `likely` certainty and heuristic evidence, and they stay silent when no PHP source could be read. A new `legacy-broken` fixture seeds nine defects and declares them in its `expected.json`, so a rule change cannot silently repurpose it; the `legacy` fixture gained its handler methods so it is a true clean baseline. Seven packaged scenarios prove the behavior through a real MCP client. See the [state-machine validation verification](verification/STATE_MACHINE_VALIDATION.md).
-- **Scope note:** Rules apply to the legacy `states.inc.php` declaration. A modern project returns an `unsupported` result rather than a clean one, because class-based state definitions are not yet interpreted; BGA-115 owns that reader; this item extends when it lands.
+- **Scope note:** Rules apply to the legacy `states.inc.php` declaration. A modern project returns an `unsupported` result rather than a clean one, because class-based state definitions are not yet interpreted; BGA-118 owns that reader; this item extends when it lands.
 
 ### BGA-107 — Implement `validate_action_contracts`
 
@@ -299,7 +301,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** Missing endpoints, mismatched names, unsupported arguments, and broken handler links produce evidence-backed findings with exact locations.
 - **Verification:** Tool E2E exercises every supported action pattern, seeded mismatch, dynamic or uncertain pattern, invalid input, and non-execution of project code.
 - **Evidence:** [`src/project/actions.ts`](../src/project/actions.ts) reads legacy `ajaxcall` URLs, modern `bgaPerformAction` names, and the request arguments an entry point consumes; [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) traces each action from client call to entry point to game method. Eight rules: a duplicated entry point and a broken `act…` name are facts, every cross-file claim is a heuristic carrying its limitations, and a call assembled at runtime becomes unsupported syntax rather than a guess. When a side of the contract cannot be read the result says so instead of passing. Both fixtures gained real action wiring, and `legacy-broken` declares its eight expected contract findings. Seven packaged scenarios prove it through a real MCP client. See the [action contract verification](verification/ACTION_CONTRACTS.md).
-- **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; BGA-115 owns that reader.
+- **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; BGA-119 owns that reader.
 
 ### BGA-108 — Implement `validate_notifications`
 
@@ -375,13 +377,60 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-115 — Read the modern project layout
 
+- **Status:** superseded
+- **Priority:** P1
+- **Superseded by:** BGA-117, BGA-118, BGA-119, BGA-120, BGA-121
+- **Reason:** Research against the official BGA Studio documentation on 2026-08-07 showed this is four separable readers plus a fixture prerequisite, with different sources and different amounts of work. Splitting them keeps each one's evidence honest. The original deliverable and the scope notes that pointed here are preserved by the replacement items.
+
+### BGA-117 — Capture a representative modern fixture pair
+
 - **Status:** ready
 - **Priority:** P1
-- **Depends on:** BGA-008, BGA-101, BGA-106, BGA-107
-- **Deliverable:** Readers for the modern layout's class-based state definitions and its action entry points, extending the normalized model so the existing validators produce real results for a modern project instead of an unsupported one.
-- **Acceptance:** A representative modern fixture and a defective variant exist alongside the legacy pair, with their expected findings declared. Every construct the readers cannot interpret is still reported as unsupported syntax rather than guessed at, and no rule silently changes meaning between layouts.
-- **Verification:** The state-machine and action-contract suites gain modern scenarios matching their legacy ones, the compatibility matrix claims modern support only where a fixture and passing scenario exist, and the rule catalog records any rule whose applicability differs by layout.
-- **Note:** This item owns work that BGA-101, BGA-106, BGA-107, BGA-108, and BGA-109 each defer to in a scope note. Until it lands, a modern project gets a description from `inspect_project` and an explicit unsupported result from the four validators. Confirming the real shape of modern state classes and action entry points against current BGA projects is part of the work: the existing modern fixture is a minimal original stub and is not evidence of what the framework actually requires.
+- **Depends on:** BGA-008
+- **Deliverable:** Original modern fixtures matching the current framework — a valid one and a defective variant — replacing the minimal stub that only proves layout detection.
+- **Acceptance:** The fixtures use the constructs the official documentation describes: state classes extending `Bga\GameFramework\States\GameState`, autowired `act…` methods, the `bga->notify` API, and the modern client API. The defective variant declares its expected findings the way `legacy-broken` does. No fixture copies a real published game.
+- **Verification:** Fixture integrity passes for the new pair, and every modern reader item below is proven against it.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory), [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide), [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
+
+### BGA-118 — Read modern state classes
+
+- **Status:** planned
+- **Priority:** P1
+- **Depends on:** BGA-101, BGA-106, BGA-117
+- **Deliverable:** A reader for state classes under `modules/php/States`, extracting the identifier, type, description, transitions, and action methods from the `parent::__construct` call and the class body, plus the `GameStateBuilder` form.
+- **Acceptance:** The state machine validator produces real findings for a modern project. A state's name defaults to its class name as the framework does; `StateType::ACTIVE_PLAYER` and its siblings map to the same rule outcomes as the legacy type strings; `getArgs`, `onEnteringState`, and `zombie` are recognised as the handlers they are. Anything the reader cannot interpret stays unsupported syntax.
+- **Verification:** The state-machine suite gains modern scenarios mirroring its legacy ones, including a seeded defect set, and the compatibility matrix claims modern support only once they pass.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory).
+
+### BGA-119 — Read modern action autowiring and the modern client action API
+
+- **Status:** planned
+- **Priority:** P1
+- **Depends on:** BGA-107, BGA-117, BGA-118
+- **Deliverable:** Action-contract tracing for projects with no `.action.php`: autowired public `act…` methods on the game class as the server side, and `this.bga.actions.performAction` alongside the existing `bgaPerformAction` and `ajaxcall` on the client side.
+- **Acceptance:** A modern project no longer reports `action.trace.unavailable` merely for lacking an action class, and the absent file is never itself reported as a defect. Parameter names are compared through the framework's typed autowiring rather than request reads, and `#[IntParam]`-style attributes are read where present.
+- **Verification:** The action-contract suite gains modern scenarios mirroring its legacy ones, including a seeded mismatch, and proves the legacy path is unchanged.
+- **Sources:** [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide), [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
+
+### BGA-120 — Read the modern notification API
+
+- **Status:** planned
+- **Priority:** P1
+- **Depends on:** BGA-108, BGA-117
+- **Deliverable:** Notification reading for `$this->bga->notify->all` and `$this->bga->notify->player`, and for the promise-based client setup that replaces `dojo.subscribe`.
+- **Acceptance:** A modern project's notifications are compared in both directions. The legacy `notifyAllPlayers` and `notifyPlayer` forms keep working, since the documentation marks them superseded rather than removed, and a project mixing both is read correctly.
+- **Verification:** The notification suite gains modern scenarios mirroring its legacy ones, including a seeded payload mismatch and a notification with no handler.
+- **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php), [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide).
+
+### BGA-121 — Confirm the database audit on the modern layout
+
+- **Status:** planned
+- **Priority:** P2
+- **Depends on:** BGA-109, BGA-117
+- **Deliverable:** Evidence that the database audit already works for modern projects, or the changes needed if it does not.
+- **Acceptance:** `dbmodel.sql`, `DbQuery`, and `getObjectListFromDB` are documented as unchanged between layouts, so this item is expected to need fixtures and scenarios rather than new reading. Any difference found is recorded rather than assumed away.
+- **Verification:** The database suite gains modern scenarios mirroring its legacy ones, and the compatibility matrix claims modern support for database auditing only once they pass.
+- **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
 
 ### BGA-116 — Reduce first-run friction
 
