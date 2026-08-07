@@ -1,6 +1,7 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
 import type { ProjectModel } from '../project/model.js';
 import type { StateDefinition } from '../project/parse.js';
+import { certainFinding, heuristicFinding, summarizeFindings } from './uncertainty.js';
 
 /**
  * State-machine rule catalog.
@@ -135,50 +136,25 @@ function rule(code: string): StateMachineRule {
   return found;
 }
 
-function certainFinding(
+/** Positional wrappers over the shared finding builders. */
+function certain(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  const definition = rule(code);
-  return {
-    kind: 'issue',
-    code,
-    severity: definition.severity,
-    certainty: 'certain',
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [{ kind: 'relationship', message: evidence }],
-    suggestions: [{ message: suggestion }],
-  };
+  return certainFinding(rule(code), { code, message, evidence, uri, suggestion });
 }
 
-function heuristicFinding(
+function heuristic(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  const definition = rule(code);
-  return {
-    kind: 'heuristic',
-    code,
-    severity: definition.severity,
-    certainty: definition.certainty === 'certain' ? 'likely' : definition.certainty,
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [
-      { kind: 'heuristic', message: evidence },
-      {
-        kind: 'source',
-        message: `Known limitation: ${definition.falsePositives.join(' ')}`,
-      },
-    ],
-    suggestions: [{ message: suggestion }],
-  };
+  return heuristicFinding(rule(code), { code, message, evidence, uri, suggestion });
 }
 
 function declaresMethod(sources: readonly PhpSource[], method: string): boolean {
@@ -207,38 +183,6 @@ function reachable(states: readonly StateDefinition[]): Set<number> {
 }
 
 /** Deterministic ordering: by code, then location, then message. */
-function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
-    const byCode = left.code.localeCompare(right.code);
-    if (byCode !== 0) {
-      return byCode;
-    }
-    const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
-    return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
-  });
-}
-
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
-  const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
-  for (const finding of findings) {
-    if (finding.kind === 'unsupported-syntax') {
-      summary.unsupported += 1;
-    } else if (finding.severity === 'error') {
-      summary.errors += 1;
-    } else if (finding.severity === 'warning') {
-      summary.warnings += 1;
-    } else {
-      summary.information += 1;
-    }
-  }
-  const status =
-    findings.length === 0
-      ? 'passed'
-      : summary.unsupported === findings.length
-        ? 'unsupported'
-        : 'findings';
-  return { schemaVersion: 1, status, summary, findings: order(findings) };
-}
 
 /**
  * Validates the state machine across its declaration and its PHP sources.
@@ -268,7 +212,7 @@ export function validateStateMachine(
   if (model.states.definitions.length === 0) {
     if (findings.length === 0) {
       findings.push(
-        certainFinding(
+        certain(
           'state.initial.missing',
           'No state definitions could be read, so the state machine cannot be validated.',
           'The project declares no readable states.',
@@ -277,7 +221,7 @@ export function validateStateMachine(
         ),
       );
     }
-    return summarize(findings);
+    return summarizeFindings(findings);
   }
 
   const states = model.states.definitions;
@@ -285,7 +229,7 @@ export function validateStateMachine(
 
   if (!declared.has(INITIAL_STATE_ID)) {
     findings.push(
-      certainFinding(
+      certain(
         'state.initial.missing',
         `State ${String(INITIAL_STATE_ID)} is not declared, so the game has no entry point.`,
         `No state declares identifier ${String(INITIAL_STATE_ID)}.`,
@@ -300,7 +244,7 @@ export function validateStateMachine(
   for (const state of states) {
     if (seenIds.has(state.id)) {
       findings.push(
-        certainFinding(
+        certain(
           'state.id.duplicate',
           `State ${String(state.id)} is declared more than once.`,
           'A later entry with the same key replaces the earlier one.',
@@ -313,7 +257,7 @@ export function validateStateMachine(
 
     if (state.name === null || state.name === '') {
       findings.push(
-        certainFinding(
+        certain(
           'state.name.missing',
           `State ${String(state.id)} has no name.`,
           'The state entry declares no literal name.',
@@ -325,7 +269,7 @@ export function validateStateMachine(
       const previous = seenNames.get(state.name);
       if (previous !== undefined) {
         findings.push(
-          certainFinding(
+          certain(
             'state.name.duplicate',
             `States ${String(previous)} and ${String(state.id)} share the name '${state.name}'.`,
             'Two state entries declare the same name.',
@@ -339,7 +283,7 @@ export function validateStateMachine(
 
     if (state.type !== null && !KNOWN_STATE_TYPES.includes(state.type as never)) {
       findings.push(
-        certainFinding(
+        certain(
           'state.type.unknown',
           `State ${String(state.id)} declares unknown type '${state.type}'.`,
           `The framework dispatches only ${KNOWN_STATE_TYPES.join(', ')}.`,
@@ -352,7 +296,7 @@ export function validateStateMachine(
     for (const [name, target] of Object.entries(state.transitions)) {
       if (!declared.has(target)) {
         findings.push(
-          certainFinding(
+          certain(
             'state.transition.target-exists',
             `Transition '${name}' of state ${String(state.id)} targets undefined state ${String(target)}.`,
             `State ${String(target)} is not declared.`,
@@ -365,7 +309,7 @@ export function validateStateMachine(
 
     if (Object.keys(state.transitions).length === 0 && state.type !== 'manager') {
       findings.push(
-        certainFinding(
+        certain(
           'state.dead-end',
           `State ${String(state.id)} has no transitions and cannot hand control back.`,
           'The state declares an empty or absent transition map and is not a manager state.',
@@ -380,7 +324,7 @@ export function validateStateMachine(
   for (const state of states) {
     if (!reachableIds.has(state.id)) {
       findings.push(
-        certainFinding(
+        certain(
           'state.unreachable',
           `State ${String(state.id)} cannot be reached from state ${String(INITIAL_STATE_ID)}.`,
           'No chain of declared transitions leads to this state.',
@@ -412,7 +356,7 @@ export function validateStateMachine(
         continue;
       }
       findings.push(
-        heuristicFinding(
+        heuristic(
           check.code,
           `State ${String(state.id)} names ${check.label} method '${check.method}', which no readable PHP source declares.`,
           `No 'function ${check.method}(' was found in ${String(sources.length)} readable PHP source files.`,
@@ -423,5 +367,5 @@ export function validateStateMachine(
     }
   }
 
-  return summarize(findings);
+  return summarizeFindings(findings);
 }

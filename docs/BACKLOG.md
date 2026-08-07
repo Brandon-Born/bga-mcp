@@ -325,12 +325,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-110 — Define the pre-release rule catalog
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-007, BGA-008
 - **Deliverable:** A versioned catalog mapping automatable BGA pre-release checks to official sources, rule implementations, fixtures, severities, and limitations.
 - **Acceptance:** Manual-only checklist items remain explicit; community conventions are labeled; every automated rule has valid and failing fixtures.
 - **Verification:** Catalog validation proves every automated rule has sources, implementation ownership, fixtures, and scenario IDs.
+- **Evidence:** [`config/rule-catalog.json`](../config/rule-catalog.json) and [RULES.md](RULES.md) hold 31 automated checks and 8 manual-only ones. Each automated check names the rule that implements it, its severity and certainty, the fixtures that prove both outcomes, and its source kind; each manual check records why it cannot be automated. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued or catalogued but not implemented, when a catalogued severity or certainty differs from the implementation, when a claimed failing fixture does not declare that finding, or when a check is missing from the documentation, and it seeds each of those defects to prove it fails on them.
 
 ### BGA-111 — Implement `run_pre_release_audit`
 
@@ -354,21 +355,23 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-113 — Implement explicit unknown-syntax handling
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-101
 - **Deliverable:** Shared behavior for syntax that cannot be parsed or relationships that cannot be proven.
 - **Acceptance:** Unknown syntax produces an `unsupported` or `uncertain` result with a location and reason, never an implicit pass or fabricated relationship.
 - **Verification:** Every parser and public validation E2E suite includes at least one unknown construct and asserts the explicit uncertainty result.
+- **Evidence:** [`src/rules/uncertainty.ts`](../src/rules/uncertainty.ts) is the shared behavior every rule module now builds its findings with: a proven claim is a fact, a claim depending on unseen code is a heuristic carrying the rule's recorded false positives, and a construct the reader cannot interpret is unsupported syntax with its location and reason. A result made entirely of unsupported syntax reports `unsupported`, never `passed`. The four rule modules previously duplicated these builders; the refactor left every existing test passing unchanged. `tests/unit/uncertainty.test.ts` asserts the three shapes, that every non-certain rule records how it can be wrong, and that all seven parsers report a construct they cannot read rather than dropping it. Each validator's packaged suite already asserts the explicit unsupported result for a project it cannot fully read.
 
 ### BGA-114 — Enforce local read-only and network-off behavior
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-015, BGA-102 through BGA-113
 - **Deliverable:** Technical enforcement and evidence that local inspection, resources, and validation cannot mutate source or initiate network access.
 - **Acceptance:** The policy applies regardless of tool inputs and detects attempted adapter or dependency escape.
 - **Verification:** E2E runs local capabilities in a network-denied environment, snapshots filesystem metadata/content, and fails on any outbound connection or mutation.
+- **Evidence:** `tests/e2e/network-denied.ts` replaces every network primitive — `net`, `tls`, `http`, `https`, `dns`, `dns/promises`, `dgram`, `fetch`, and `net.Socket.prototype.connect` — with functions that throw and record the attempt, and is loaded before the packaged server starts. `E2E-READ-ONLY-NETWORK-DENIED` runs every advertised tool and all three resources under that denial: all complete, the attempt log stays empty, and the project is unchanged by content digest and by per-file size and modification time. `E2E-READ-ONLY-NETWORK-HARNESS` proves the denial itself works by making an outbound connection fail and appear in the log, so the first scenario's empty log is evidence rather than an artifact of a harness that does nothing. `E2E-READ-ONLY-INPUT-CANNOT-ESCAPE` proves the policy holds whatever the client sends: an outside root, a traversal, and the filesystem root are all refused while a legitimate call succeeds, and a file outside the root is untouched.
 
 ## Phase 2 — Documentation
 

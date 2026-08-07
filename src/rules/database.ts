@@ -5,6 +5,12 @@ import {
   type QueryReference,
   type TableDefinition,
 } from '../project/database.js';
+import {
+  certainFinding,
+  heuristicFinding,
+  summarizeFindings,
+  unsupportedSyntaxFinding,
+} from './uncertainty.js';
 
 export interface DatabaseRule {
   readonly code: string;
@@ -89,94 +95,36 @@ function definition(code: string): DatabaseRule {
   return rule;
 }
 
-function certainFinding(
+/** Positional wrappers over the shared finding builders. */
+function certain(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  return {
-    kind: 'issue',
-    code,
-    severity: definition(code).severity,
-    certainty: 'certain',
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [{ kind: 'relationship', message: evidence }],
-    suggestions: [{ message: suggestion }],
-  };
+  return certainFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function heuristicFinding(
+function heuristic(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  const rule = definition(code);
-  return {
-    kind: 'heuristic',
-    code,
-    severity: rule.severity,
-    certainty: rule.certainty === 'certain' ? 'likely' : rule.certainty,
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [
-      { kind: 'heuristic', message: evidence },
-      { kind: 'source', message: `Known limitation: ${rule.falsePositives.join(' ')}` },
-    ],
-    suggestions: [{ message: suggestion }],
-  };
+  return heuristicFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function unsupportedFinding(construct: string, uri: string, language: string): DiagnosticFinding {
-  return {
-    kind: 'unsupported-syntax',
+function unsupported(construct: string, uri: string, language: string): DiagnosticFinding {
+  return unsupportedSyntaxFinding({
     code: 'database.unsupported-syntax',
-    certainty: 'certain',
+    construct,
+    language,
+    uri,
     message: `Part of the database usage could not be read: ${construct}.`,
-    locations: [{ uri }],
-    evidence: [{ kind: 'source', message: `Unsupported construct: ${construct}` }],
-    suggestions: [
-      { message: 'Use a single literal query string, or confirm the dynamic form is intended.' },
-    ],
-    syntax: { language, construct },
-  };
-}
-
-function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
-    const byCode = left.code.localeCompare(right.code);
-    if (byCode !== 0) {
-      return byCode;
-    }
-    const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
-    return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
+    suggestion: 'Use a single literal query string, or confirm the dynamic form is intended.',
   });
-}
-
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
-  const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
-  for (const finding of findings) {
-    if (finding.kind === 'unsupported-syntax') {
-      summary.unsupported += 1;
-    } else if (finding.severity === 'error') {
-      summary.errors += 1;
-    } else if (finding.severity === 'warning') {
-      summary.warnings += 1;
-    } else {
-      summary.information += 1;
-    }
-  }
-  const status =
-    findings.length === 0
-      ? 'passed'
-      : summary.unsupported === findings.length
-        ? 'unsupported'
-        : 'findings';
-  return { schemaVersion: 1, status, summary, findings: order(findings) };
 }
 
 export interface DatabaseSource {
@@ -206,7 +154,7 @@ export function auditDatabaseUsage(
   const schema =
     schemaSource === null ? { value: [], unsupported: [] } : parseSchema(schemaSource.text);
   for (const construct of schema.unsupported) {
-    findings.push(unsupportedFinding(construct, schemaSource?.path ?? 'dbmodel.sql', 'sql'));
+    findings.push(unsupported(construct, schemaSource?.path ?? 'dbmodel.sql', 'sql'));
   }
 
   const tables = schema.value;
@@ -214,7 +162,7 @@ export function auditDatabaseUsage(
   for (const table of tables) {
     if (tablesByName.has(table.name)) {
       findings.push(
-        certainFinding(
+        certain(
           'database.table.duplicate',
           `The schema declares table '${table.name}' more than once.`,
           'Two CREATE TABLE statements use the same name.',
@@ -229,7 +177,7 @@ export function auditDatabaseUsage(
     for (const column of table.columns) {
       if (seen.has(column)) {
         findings.push(
-          certainFinding(
+          certain(
             'database.column.duplicate',
             `Table '${table.name}' declares column '${column}' more than once.`,
             'Two column definitions in one table use the same name.',
@@ -249,7 +197,7 @@ export function auditDatabaseUsage(
       queries.push({ ...query, source: source.path });
     }
     for (const construct of outcome.unsupported) {
-      findings.push(unsupportedFinding(construct, source.path, 'php'));
+      findings.push(unsupported(construct, source.path, 'php'));
     }
   }
 
@@ -259,7 +207,7 @@ export function auditDatabaseUsage(
       queries.length === 0 ? 'no readable query' : null,
     ].filter((side): side is string => side !== null);
     findings.push(
-      certainFinding(
+      certain(
         'database.audit.unavailable',
         `Database usage could not be audited: ${missing.join(', ')}.`,
         'The schema, the queries, or both could not be read.',
@@ -267,7 +215,7 @@ export function auditDatabaseUsage(
         'Confirm the project declares its schema in dbmodel.sql and queries it from readable PHP.',
       ),
     );
-    return { tables, queries, diagnostics: summarize(findings) };
+    return { tables, queries, diagnostics: summarizeFindings(findings) };
   }
 
   const usedColumns = new Set<string>();
@@ -275,7 +223,7 @@ export function auditDatabaseUsage(
     for (const table of query.tables) {
       if (!tablesByName.has(table) && !FRAMEWORK_TABLES.has(table)) {
         findings.push(
-          certainFinding(
+          certain(
             'database.table.undeclared',
             `A query names table '${table}', which the schema does not declare.`,
             `No CREATE TABLE statement declares '${table}', and it is not a framework-owned table.`,
@@ -297,7 +245,7 @@ export function auditDatabaseUsage(
         continue;
       }
       findings.push(
-        heuristicFinding(
+        heuristic(
           'database.column.undeclared',
           `A query names '${columnName}' on table '${tableName}', which declares no such column.`,
           `Table '${tableName}' declares ${table.columns.join(', ')}.`,
@@ -309,7 +257,7 @@ export function auditDatabaseUsage(
 
     if (query.interpolated) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'database.query.interpolated',
           `A query interpolates a PHP value into its text: ${query.text.slice(0, 60)}.`,
           'The query string contains a PHP variable rather than an escaped value.',
@@ -326,7 +274,7 @@ export function auditDatabaseUsage(
       for (const column of table.columns) {
         if (!usedColumns.has(`${table.name}.${column}`)) {
           findings.push(
-            heuristicFinding(
+            heuristic(
               'database.column.unused',
               `The schema declares '${table.name}.${column}', which no readable query names.`,
               'No query in the readable PHP sources references the column.',
@@ -339,5 +287,5 @@ export function auditDatabaseUsage(
     }
   }
 
-  return { tables, queries, diagnostics: summarize(findings) };
+  return { tables, queries, diagnostics: summarizeFindings(findings) };
 }

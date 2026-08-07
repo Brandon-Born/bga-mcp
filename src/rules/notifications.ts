@@ -5,6 +5,12 @@ import {
   type NotificationHandler,
   type SentNotification,
 } from '../project/notifications.js';
+import {
+  certainFinding,
+  heuristicFinding,
+  summarizeFindings,
+  unsupportedSyntaxFinding,
+} from './uncertainty.js';
 
 export interface NotificationRule {
   readonly code: string;
@@ -71,97 +77,37 @@ function definition(code: string): NotificationRule {
   return rule;
 }
 
-function certainFinding(
+/** Positional wrappers over the shared finding builders. */
+function certain(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  return {
-    kind: 'issue',
-    code,
-    severity: definition(code).severity,
-    certainty: 'certain',
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [{ kind: 'relationship', message: evidence }],
-    suggestions: [{ message: suggestion }],
-  };
+  return certainFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function heuristicFinding(
+function heuristic(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  const rule = definition(code);
-  return {
-    kind: 'heuristic',
-    code,
-    severity: rule.severity,
-    certainty: rule.certainty === 'certain' ? 'likely' : rule.certainty,
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [
-      { kind: 'heuristic', message: evidence },
-      { kind: 'source', message: `Known limitation: ${rule.falsePositives.join(' ')}` },
-    ],
-    suggestions: [{ message: suggestion }],
-  };
+  return heuristicFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function unsupportedFinding(construct: string, uri: string, language: string): DiagnosticFinding {
-  return {
-    kind: 'unsupported-syntax',
+function unsupported(construct: string, uri: string, language: string): DiagnosticFinding {
+  return unsupportedSyntaxFinding({
     code: 'notification.unsupported-syntax',
-    certainty: 'certain',
+    construct,
+    language,
+    uri,
     message: `Part of the notification contract could not be read: ${construct}.`,
-    locations: [{ uri }],
-    evidence: [{ kind: 'source', message: `Unsupported construct: ${construct}` }],
-    suggestions: [
-      {
-        message:
-          'Use a literal notification name and payload, or confirm the dynamic form is intended.',
-      },
-    ],
-    syntax: { language, construct },
-  };
-}
-
-function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
-    const byCode = left.code.localeCompare(right.code);
-    if (byCode !== 0) {
-      return byCode;
-    }
-    const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
-    return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
+    suggestion:
+      'Use a literal notification name and payload, or confirm the dynamic form is intended.',
   });
-}
-
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
-  const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
-  for (const finding of findings) {
-    if (finding.kind === 'unsupported-syntax') {
-      summary.unsupported += 1;
-    } else if (finding.severity === 'error') {
-      summary.errors += 1;
-    } else if (finding.severity === 'warning') {
-      summary.warnings += 1;
-    } else {
-      summary.information += 1;
-    }
-  }
-  const status =
-    findings.length === 0
-      ? 'passed'
-      : summary.unsupported === findings.length
-        ? 'unsupported'
-        : 'findings';
-  return { schemaVersion: 1, status, summary, findings: order(findings) };
 }
 
 export interface NotificationSource {
@@ -196,7 +142,7 @@ export function validateNotifications(
       sent.push({ ...notification, source: source.path });
     }
     for (const construct of outcome.unsupported) {
-      findings.push(unsupportedFinding(construct, source.path, 'php'));
+      findings.push(unsupported(construct, source.path, 'php'));
     }
   }
 
@@ -207,11 +153,11 @@ export function validateNotifications(
       handlers.push({ ...handler, source: source.path });
     }
     for (const construct of outcome.unsupported) {
-      findings.push(unsupportedFinding(construct, source.path, 'javascript'));
+      findings.push(unsupported(construct, source.path, 'javascript'));
     }
     for (const name of outcome.duplicates) {
       findings.push(
-        certainFinding(
+        certain(
           'notification.subscription.duplicate',
           `The client subscribes to '${name}' more than once.`,
           'Two subscriptions in the same client source use the same notification name.',
@@ -228,7 +174,7 @@ export function validateNotifications(
   ].filter((side): side is string => side !== null);
   if (missingSides.length > 0) {
     findings.push(
-      certainFinding(
+      certain(
         'notification.trace.unavailable',
         `The notification contract could not be traced: ${missingSides.join(', ')}.`,
         'One or both sides of the server-to-client contract could not be read.',
@@ -241,7 +187,7 @@ export function validateNotifications(
     // either a project that sends none, or a form this reader cannot see. It
     // is not evidence that the contract is sound.
     findings.push(
-      certainFinding(
+      certain(
         'notification.trace.unavailable',
         'No notification send or handler was found, so nothing could be compared.',
         `Neither ${String(serverSources.length)} server source file(s) nor ${String(clientSources.length)} client source file(s) contained a recognized notification.`,
@@ -259,7 +205,7 @@ export function validateNotifications(
     for (const notification of sent) {
       if (!handlerByName.has(notification.name)) {
         findings.push(
-          heuristicFinding(
+          heuristic(
             'notification.sent.not-handled',
             `The server sends '${notification.name}', which no readable client handler receives.`,
             `No subscription or notif_${notification.name} method was found in ${String(clientSources.length)} readable client source file(s).`,
@@ -273,7 +219,7 @@ export function validateNotifications(
     for (const handler of handlers) {
       if (!sentByName.has(handler.name)) {
         findings.push(
-          heuristicFinding(
+          heuristic(
             'notification.handled.not-sent',
             `The client handles '${handler.name}', which no readable server source sends.`,
             `No notifyAllPlayers or notifyPlayer call with the name '${handler.name}' was found.`,
@@ -294,7 +240,7 @@ export function validateNotifications(
     const readKeys = new Set(handler.payloadKeys);
     for (const key of [...readKeys].filter((name) => !sentKeys.has(name)).sort()) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'notification.payload.mismatch',
           `The handler for '${notification.name}' reads '${key}', which the server payload does not contain.`,
           `'${key}' is read in the handler but absent from the sent payload.`,
@@ -305,7 +251,7 @@ export function validateNotifications(
     }
     for (const key of [...sentKeys].filter((name) => !readKeys.has(name)).sort()) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'notification.payload.mismatch',
           `The server sends '${key}' in '${notification.name}', which its handler never reads.`,
           `'${key}' is in the sent payload but absent from the handler.`,
@@ -316,5 +262,5 @@ export function validateNotifications(
     }
   }
 
-  return { sent, handlers, diagnostics: summarize(findings) };
+  return { sent, handlers, diagnostics: summarizeFindings(findings) };
 }

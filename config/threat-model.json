@@ -284,7 +284,11 @@
       "boundary": "TB-CLIENT-INPUT",
       "control": "automated",
       "status": "implemented",
-      "scenarios": ["INT-POLICY-ROOT-UNCONFIGURED", "E2E-POLICY-CONFIG-FAILS-CLOSED"]
+      "scenarios": [
+        "INT-POLICY-ROOT-UNCONFIGURED",
+        "E2E-POLICY-CONFIG-FAILS-CLOSED",
+        "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE"
+      ]
     },
     {
       "id": "TM-POLICY-TRAVERSAL",
@@ -348,7 +352,11 @@
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
-      "scenarios": ["INT-POLICY-NETWORK-DISABLED"]
+      "scenarios": [
+        "INT-POLICY-NETWORK-DISABLED",
+        "E2E-READ-ONLY-NETWORK-DENIED",
+        "E2E-READ-ONLY-NETWORK-HARNESS"
+      ]
     },
     {
       "id": "TM-REDACTION",

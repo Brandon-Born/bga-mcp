@@ -7,6 +7,12 @@ import {
   type ServerActionEntry,
 } from '../project/actions.js';
 import type { ProjectModel } from '../project/model.js';
+import {
+  certainFinding,
+  heuristicFinding,
+  summarizeFindings,
+  unsupportedSyntaxFinding,
+} from './uncertainty.js';
 
 export interface ActionContractRule {
   readonly code: string;
@@ -100,97 +106,37 @@ function definition(code: string): ActionContractRule {
   return found;
 }
 
-function certainFinding(
+/** Positional wrappers over the shared finding builders. */
+function certain(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  return {
-    kind: 'issue',
-    code,
-    severity: definition(code).severity,
-    certainty: 'certain',
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [{ kind: 'relationship', message: evidence }],
-    suggestions: [{ message: suggestion }],
-  };
+  return certainFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function heuristicFinding(
+function heuristic(
   code: string,
   message: string,
   evidence: string,
   uri: string | null,
   suggestion: string,
 ): DiagnosticFinding {
-  const rule = definition(code);
-  return {
-    kind: 'heuristic',
-    code,
-    severity: rule.severity,
-    certainty: rule.certainty === 'certain' ? 'likely' : rule.certainty,
-    message,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [
-      { kind: 'heuristic', message: evidence },
-      { kind: 'source', message: `Known limitation: ${rule.falsePositives.join(' ')}` },
-    ],
-    suggestions: [{ message: suggestion }],
-  };
+  return heuristicFinding(definition(code), { code, message, evidence, uri, suggestion });
 }
 
-function unsupportedFinding(construct: string, uri: string | null): DiagnosticFinding {
-  return {
-    kind: 'unsupported-syntax',
+function unsupported(construct: string, uri: string | null): DiagnosticFinding {
+  return unsupportedSyntaxFinding({
     code: 'action.unsupported-syntax',
-    certainty: 'certain',
+    construct,
+    language: 'javascript',
+    uri,
     message: `Part of the action contract could not be read: ${construct}.`,
-    locations: uri === null ? [] : [{ uri }],
-    evidence: [{ kind: 'source', message: `Unsupported construct: ${construct}` }],
-    suggestions: [
-      {
-        message:
-          'Use a literal action name and argument list, or confirm the dynamic call is intended.',
-      },
-    ],
-    syntax: { language: 'javascript', construct },
-  };
-}
-
-function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
-    const byCode = left.code.localeCompare(right.code);
-    if (byCode !== 0) {
-      return byCode;
-    }
-    const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
-    return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
+    suggestion:
+      'Use a literal action name and argument list, or confirm the dynamic call is intended.',
   });
-}
-
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
-  const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
-  for (const finding of findings) {
-    if (finding.kind === 'unsupported-syntax') {
-      summary.unsupported += 1;
-    } else if (finding.severity === 'error') {
-      summary.errors += 1;
-    } else if (finding.severity === 'warning') {
-      summary.warnings += 1;
-    } else {
-      summary.information += 1;
-    }
-  }
-  const status =
-    findings.length === 0
-      ? 'passed'
-      : summary.unsupported === findings.length
-        ? 'unsupported'
-        : 'findings';
-  return { schemaVersion: 1, status, summary, findings: order(findings) };
 }
 
 export interface ActionContractSource {
@@ -229,7 +175,7 @@ export function validateActionContracts(
       clientCalls.push({ ...call, source: source.path });
     }
     for (const construct of outcome.unsupported) {
-      findings.push(unsupportedFinding(construct, source.path));
+      findings.push(unsupported(construct, source.path));
     }
   }
 
@@ -241,7 +187,7 @@ export function validateActionContracts(
       entryPoints.push({ ...entry, source: source.path });
     }
     for (const construct of outcome.unsupported) {
-      findings.push(unsupportedFinding(construct, source.path));
+      findings.push(unsupported(construct, source.path));
     }
   }
 
@@ -268,7 +214,7 @@ export function validateActionContracts(
   ].filter((side): side is string => side !== null);
   if (missingSides.length > 0) {
     findings.push(
-      certainFinding(
+      certain(
         'action.trace.unavailable',
         `The action contract could not be traced: ${missingSides.join(', ')}.`,
         'One or more sides of the client-to-server contract could not be read.',
@@ -282,7 +228,7 @@ export function validateActionContracts(
   for (const entry of entryPoints) {
     if (seenEntryPoints.has(entry.action)) {
       findings.push(
-        certainFinding(
+        certain(
           'action.entry-point.duplicate',
           `Entry point '${entry.action}' is declared more than once.`,
           'Two methods of the action class share a name.',
@@ -297,7 +243,7 @@ export function validateActionContracts(
   for (const call of clientCalls) {
     if (!ACTION_PREFIX.test(call.action)) {
       findings.push(
-        certainFinding(
+        certain(
           'action.name.convention',
           `The client calls '${call.action}', which does not follow the act… naming convention.`,
           'A player action name should start with act followed by an uppercase letter.',
@@ -309,7 +255,7 @@ export function validateActionContracts(
 
     if (statesReadable && !declaredActions.has(call.action)) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'action.call.not-declared',
           `The client calls '${call.action}', which no state lists as a possible action.`,
           `No state in the readable state machine declares '${call.action}'.`,
@@ -321,7 +267,7 @@ export function validateActionContracts(
 
     if (entryPointsReadable && !seenEntryPoints.has(call.action)) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'action.entry-point.missing',
           `The client calls '${call.action}', but the action class declares no entry point of that name.`,
           `No method named '${call.action}' was found in ${String(actionClassSources.length)} readable action class file(s).`,
@@ -337,7 +283,7 @@ export function validateActionContracts(
       const read = new Set(entry.argumentNames);
       for (const argument of [...sent].filter((name) => !read.has(name)).sort()) {
         findings.push(
-          heuristicFinding(
+          heuristic(
             'action.argument.mismatch',
             `The client sends argument '${argument}' to '${call.action}', which its entry point does not read.`,
             `'${argument}' appears in the client call but in no request read of the entry point.`,
@@ -348,7 +294,7 @@ export function validateActionContracts(
       }
       for (const argument of [...read].filter((name) => !sent.has(name)).sort()) {
         findings.push(
-          heuristicFinding(
+          heuristic(
             'action.argument.mismatch',
             `The entry point for '${call.action}' reads argument '${argument}', which the client does not send.`,
             `'${argument}' is read by the entry point but absent from the client call.`,
@@ -363,7 +309,7 @@ export function validateActionContracts(
   for (const entry of entryPoints) {
     if (!gameMethods.has(entry.action) && gameMethods.size > 0) {
       findings.push(
-        heuristicFinding(
+        heuristic(
           'action.game-method.missing',
           `Entry point '${entry.action}' has no game method of the same name.`,
           `No 'function ${entry.action}(' was found outside the action class.`,
@@ -379,7 +325,7 @@ export function validateActionContracts(
     for (const action of [...declaredActions].sort()) {
       if (!called.has(action)) {
         findings.push(
-          heuristicFinding(
+          heuristic(
             'action.declared.not-called',
             `Possible action '${action}' is declared by a state but no readable client source calls it.`,
             `'${action}' appears in the state machine but in no client call.`,
@@ -396,6 +342,6 @@ export function validateActionContracts(
     entryPoints,
     gameMethods: [...gameMethods].sort(),
     declaredActions: [...declaredActions].sort(),
-    diagnostics: summarize(findings),
+    diagnostics: summarizeFindings(findings),
   };
 }
