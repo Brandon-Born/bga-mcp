@@ -67,9 +67,9 @@ Adapters for external systems require an additional live harness. A Studio-backe
 
 ### Resources
 
-- `bga://project/summary`
-- `bga://project/states`
-- `bga://project/diagnostics`
+- `bga://project/summary` (implemented and verified)
+- `bga://project/states` (implemented and verified)
+- `bga://project/diagnostics` (implemented and verified)
 - `bga://docs/{topic}`
 - `bga://framework/version`
 

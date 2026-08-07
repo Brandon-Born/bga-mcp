@@ -17,6 +17,7 @@ export const ERROR_CODES = {
   policyPathSymlinkEscape: 'policy.path.symlink-escape',
   policyPathNotFound: 'policy.path.not-found',
   policyRemoteNotAllowed: 'policy.remote.not-allowed',
+  resourceProjectAmbiguous: 'resource.project.ambiguous',
   policyNetworkDisabled: 'policy.network.disabled',
   policyMutationNotRequested: 'policy.mutation.not-requested',
   policyMutationDisabled: 'policy.mutation.disabled',

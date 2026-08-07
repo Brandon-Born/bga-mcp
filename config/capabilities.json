@@ -134,7 +134,56 @@
         "liveStudioRequired": false
       }
     ],
-    "resources": [],
+    "resources": [
+      {
+        "name": "bga://project/summary",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-RESOURCE-SUMMARY",
+          "E2E-RESOURCE-DISCOVERY",
+          "E2E-RESOURCE-UNCONFIGURED",
+          "E2E-RESOURCE-AMBIGUOUS",
+          "E2E-RESOURCE-IMMUTABLE"
+        ],
+        "liveStudioRequired": false
+      },
+      {
+        "name": "bga://project/states",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-RESOURCE-STATES",
+          "E2E-RESOURCE-DISCOVERY",
+          "E2E-RESOURCE-UNCONFIGURED",
+          "E2E-RESOURCE-AMBIGUOUS",
+          "E2E-RESOURCE-IMMUTABLE"
+        ],
+        "liveStudioRequired": false
+      },
+      {
+        "name": "bga://project/diagnostics",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-RESOURCE-DIAGNOSTICS",
+          "E2E-RESOURCE-DISCOVERY",
+          "E2E-RESOURCE-UNCONFIGURED",
+          "E2E-RESOURCE-AMBIGUOUS",
+          "E2E-RESOURCE-IMMUTABLE"
+        ],
+        "liveStudioRequired": false
+      }
+    ],
     "prompts": []
   },
   "adapters": []

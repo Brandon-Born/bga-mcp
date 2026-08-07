@@ -31,6 +31,8 @@ Available now, local and read-only:
 - `audit_database_usage` — compares `dbmodel.sql` with the queries the PHP sources run, reporting undeclared tables and columns, unused columns, and queries that interpolate a value instead of escaping it.
 - `validate_project` — runs every validator, or the groups you select, and combines the results. A validator that fails is reported as failed and makes the run incomplete rather than leaving it looking clean.
 
+It also serves three read-only resources describing the single configured project: `bga://project/summary`, `bga://project/states`, and `bga://project/diagnostics`.
+
 Planned for the first useful release:
 
 - `run_pre_release_audit`
@@ -58,7 +60,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Six BGA-facing capabilities are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All six run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), and [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md) records.
+Six tools and three resources are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All six run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), and [project resource](docs/verification/PROJECT_RESOURCES.md) records.
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 

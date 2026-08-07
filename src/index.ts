@@ -120,6 +120,12 @@ export {
   type AuditDatabaseUsageResult,
 } from './tools/audit-database-usage.js';
 export {
+  PROJECT_DIAGNOSTICS_URI,
+  PROJECT_STATES_URI,
+  PROJECT_SUMMARY_URI,
+  registerProjectResources,
+} from './resources/project-resources.js';
+export {
   VALIDATE_PROJECT_TOOL,
   ValidateProjectInputSchema,
   ValidateProjectOutputSchema,

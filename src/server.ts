@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
+import { registerProjectResources } from './resources/project-resources.js';
 import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
@@ -19,7 +20,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   void config;
   const server = new McpServer(
     { name: SERVER_NAME, version: SERVER_VERSION },
-    { capabilities: { tools: {} } },
+    { capabilities: { tools: {}, resources: {} } },
   );
   registerInspectProject(server, dependencies.policy);
   registerValidateStateMachine(server, dependencies.policy);
@@ -27,6 +28,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   registerValidateNotifications(server, dependencies.policy);
   registerAuditDatabaseUsage(server, dependencies.policy);
   registerValidateProject(server, dependencies.policy);
+  registerProjectResources(server, dependencies.policy);
   return server;
 }
 

@@ -248,30 +248,36 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-103 — Implement `bga://project/summary`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-102
 - **Deliverable:** A resource exposing the normalized project summary without triggering mutation or network access.
 - **Acceptance:** Resource content matches `inspect_project` semantics, declares media type and version, and remains bounded for large projects.
 - **Verification:** Resource E2E lists, reads, validates, and compares the resource against the fixture baseline, including missing-root and oversized-project failures.
+- **Evidence:** [`src/resources/project-resources.ts`](../src/resources/project-resources.ts) serves the normalized model from `bga://project/summary` as JSON, through the same policy boundary, timeout, and output budget the tools use. `E2E-RESOURCE-SUMMARY` reads it from the packaged artifact and checks the layout, metadata, and component set; `E2E-RESOURCE-IMMUTABLE` hashes the project before and after reading all three resources. See the [project resource verification](verification/PROJECT_RESOURCES.md).
+- **Scope note:** A resource takes no arguments, so it describes the single configured project root. With no root, or more than one, it refuses with a stable code rather than choosing; the tools remain available for a project named explicitly.
 
 ### BGA-104 — Implement `bga://project/states`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-106
 - **Deliverable:** A resource exposing normalized states, transitions, handlers, locations, and uncertainty.
 - **Acceptance:** Legacy and modern representations produce one documented shape without inventing missing relationships.
 - **Verification:** Resource E2E covers each fixture generation, malformed state data, unsupported constructs, and output limits.
+- **Evidence:** `bga://project/states` serves the state definitions with their transitions, handlers, source location, unsupported constructs, and the full state-machine validation, so uncertainty travels with the data. `E2E-RESOURCE-STATES` reads it from the packaged artifact and checks all of them. See the [project resource verification](verification/PROJECT_RESOURCES.md).
+- **Scope note:** A resource takes no arguments, so it describes the single configured project root. With no root, or more than one, it refuses with a stable code rather than choosing; the tools remain available for a project named explicitly.
 
 ### BGA-105 — Implement `bga://project/diagnostics`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-112
 - **Deliverable:** A resource exposing current aggregate validation findings.
 - **Acceptance:** Results are deterministic for unchanged files, include rule and evidence versions, and do not imply unsupported checks passed.
 - **Verification:** Resource E2E seeds known findings, validates ordering and schema, modifies an isolated fixture, and proves refresh behavior without stale results.
+- **Evidence:** `bga://project/diagnostics` serves the same aggregate `validate_project` produces, including the per-group breakdown and any group that could not run. `E2E-RESOURCE-DIAGNOSTICS` reads it from the packaged artifact for both a clean and a defective project. See the [project resource verification](verification/PROJECT_RESOURCES.md).
+- **Scope note:** A resource takes no arguments, so it describes the single configured project root. With no root, or more than one, it refuses with a stable code rather than choosing; the tools remain available for a project named explicitly.
 
 ### BGA-106 — Implement `validate_state_machine`
 

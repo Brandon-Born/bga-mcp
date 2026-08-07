@@ -20,7 +20,15 @@ describe('production server factory', () => {
         name: 'bga-mcp',
         version: '0.0.0-development',
       });
-      expect(client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
+      expect(client.getServerCapabilities()).toEqual({
+        tools: { listChanged: true },
+        resources: { listChanged: true },
+      });
+      expect((await client.listResources()).resources.map((entry) => entry.uri).sort()).toEqual([
+        'bga://project/diagnostics',
+        'bga://project/states',
+        'bga://project/summary',
+      ]);
       expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
         'audit_database_usage',
         'inspect_project',

@@ -108,6 +108,7 @@ describe('packaged bga-mcp server', () => {
           });
           expect(connection.client.getServerCapabilities()).toEqual({
             tools: { listChanged: true },
+            resources: { listChanged: true },
           });
           if (protocolVersion === '2025-11-25') {
             expect(await connection.client.ping()).toEqual({});
@@ -126,9 +127,12 @@ describe('packaged bga-mcp server', () => {
             'validate_state_machine',
           ]);
           expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
-          expect(await connection.client.listResources()).toEqual({
-            resources: [],
-          });
+          const resources = await connection.client.listResources();
+          expect(resources.resources.map((entry) => entry.uri).sort()).toEqual([
+            'bga://project/diagnostics',
+            'bga://project/states',
+            'bga://project/summary',
+          ]);
           expect(await connection.client.listPrompts()).toEqual({ prompts: [] });
           await expect(
             connection.client.callTool({ name: 'not_advertised', arguments: {} }),
@@ -137,14 +141,14 @@ describe('packaged bga-mcp server', () => {
           if (protocolVersion === '2026-07-28') {
             expect(connection.client.getDiscoverResult()).toMatchObject({
               supportedVersions: ['2026-07-28'],
-              capabilities: { tools: { listChanged: true } },
+              capabilities: { tools: { listChanged: true }, resources: { listChanged: true } },
               resultType: 'complete',
             });
           }
           assertManifestMatchesRuntime(manifest, {
             server: packageMetadata,
             tools: tools.tools.map((tool) => tool.name),
-            resources: [],
+            resources: resources.resources.map((entry) => entry.uri),
             prompts: [],
           });
         } finally {
@@ -198,7 +202,10 @@ describe('packaged bga-mcp server', () => {
       );
       const configuredProcessId = configured.transport.pid;
       try {
-        expect(configured.client.getServerCapabilities()).toEqual({ tools: { listChanged: true } });
+        expect(configured.client.getServerCapabilities()).toEqual({
+          tools: { listChanged: true },
+          resources: { listChanged: true },
+        });
         expect((await configured.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual(
           [
             'audit_database_usage',
