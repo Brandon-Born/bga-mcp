@@ -78,6 +78,8 @@ export interface DocumentationRequest {
   readonly path: string;
   /** The client's explicit query, when the lookup is a search. */
   readonly query?: string;
+  /** Query-string parameters. Every value is checked like the query itself. */
+  readonly params?: Readonly<Record<string, string>>;
 }
 
 export interface DocumentationResponse {
@@ -454,8 +456,13 @@ export class PolicyBoundary {
       );
     }
 
-    if (request.query !== undefined) {
-      const violation = requestContentViolation(request.query, this.#resolvedRoots);
+    // Everything that will appear in the URL is checked, not just the query
+    // field: a parameter is as good a place to hide a file path as any.
+    for (const value of [request.query, ...Object.values(request.params ?? {})]) {
+      if (value === undefined) {
+        continue;
+      }
+      const violation = requestContentViolation(value, this.#resolvedRoots);
       if (violation !== null) {
         throw new PolicyViolationError(
           ERROR_CODES.policyDocRequestContent,
@@ -543,8 +550,8 @@ export class PolicyBoundary {
     }
     const base = new URL(source.canonicalUrl);
     const url = new URL(request.path, base);
-    if (request.query !== undefined) {
-      url.searchParams.set('search', request.query);
+    for (const [name, value] of Object.entries(request.params ?? {})) {
+      url.searchParams.set(name, value);
     }
     if (
       url.protocol !== 'https:' ||
@@ -678,6 +685,11 @@ export class PolicyBoundary {
       });
       outgoing.end();
     });
+  }
+
+  /** The reviewed sources, for callers that need a source's own rules. */
+  async documentationSources(): Promise<readonly DocumentationSource[]> {
+    return (await this.#documentationCatalog()).sources;
   }
 
   /** Reads and caches the reviewed catalog for the life of the process. */

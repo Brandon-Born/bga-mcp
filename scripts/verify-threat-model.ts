@@ -289,9 +289,20 @@ function proveGateDetectsSeededDefects(
       ],
     },
   };
+  // The precondition being planned is seeded too, rather than relied on: as the
+  // real preconditions are implemented one by one, a gate that only worked
+  // while they were all planned would quietly stop proving anything.
+  const seededPlannedPrecondition: ThreatModel = {
+    ...model,
+    mitigations: model.mitigations.map((mitigation) =>
+      mitigation.boundary === 'TB-DOCS-NETWORK'
+        ? { ...mitigation, status: 'planned' as const }
+        : mitigation,
+    ),
+  };
   expectSeededFailure(
     'boundary precondition',
-    verify(model, seededDocsCapability, documentation, schema),
+    verify(seededPlannedPrecondition, seededDocsCapability, documentation, schema),
   );
 
   expectSeededFailure(

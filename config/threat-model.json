@@ -535,18 +535,18 @@
       "title": "Documentation results carry source URL, snapshot date, and official or community provenance",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-200",
-      "scenarios": ["E2E-DOCS-PROVENANCE"]
+      "status": "implemented",
+      "backlog": "BGA-208",
+      "scenarios": ["UNIT-DOC-PROVENANCE"]
     },
     {
       "id": "TM-DOC-UNTRUSTED",
       "title": "Retrieved documentation is labelled as untrusted content and never as instructions",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-202",
-      "scenarios": ["E2E-DOCS-UNTRUSTED-CONTENT"]
+      "status": "implemented",
+      "backlog": "BGA-208",
+      "scenarios": ["UNIT-DOC-EXCERPT", "UNIT-DOC-PROVENANCE"]
     },
     {
       "id": "TM-DOC-HOST-ALLOWLIST",
@@ -582,16 +582,16 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-207",
-      "scenarios": ["UNIT-DOC-RESPONSE-BUDGET"]
+      "scenarios": ["UNIT-DOC-RESPONSE-BUDGET", "UNIT-DOC-CACHE-BOUNDED"]
     },
     {
       "id": "TM-DOC-SNAPSHOT-INTEGRITY",
       "title": "Cached documentation carries its snapshot date and is never served as current without one",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
-      "backlog": "BGA-201",
-      "scenarios": ["E2E-DOCS-SNAPSHOT-DATE"]
+      "status": "implemented",
+      "backlog": "BGA-208",
+      "scenarios": ["UNIT-DOC-SNAPSHOT-DATE"]
     },
     {
       "id": "TM-EVIDENCE-COVERAGE",
