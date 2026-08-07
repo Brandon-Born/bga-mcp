@@ -3,7 +3,13 @@ import { resolve } from 'node:path';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
 
-import { integrityDigest, sealEvidence, type Evidence, type Manifest } from './lib/evidence.js';
+import {
+  conformanceStatus,
+  integrityDigest,
+  sealEvidence,
+  type Evidence,
+  type Manifest,
+} from './lib/evidence.js';
 import { GateReport, expectSeededFailure, reportOrExit } from './lib/gate.js';
 import { scanText } from './lib/secret-scan.js';
 
@@ -106,9 +112,22 @@ function check(
     document.tests.failed === 0,
     `Evidence records ${String(document.tests.failed)} failed test(s), so it is not evidence of a passing run`,
   );
+  // Conformance is not required to be complete — the pinned official CLI has no
+  // scenarios for the newer claimed version, which is why BGA-011 stays
+  // `implemented` (docs/CONFORMANCE.md). What is required is that the artifact
+  // says so: every claimed version appears with its own result, and the overall
+  // word may not be stronger than those results.
+  const { conformance } = document.protocol;
+  const covered = conformance.coverage.map((entry) => entry.version).sort();
+  const claimed = [...document.protocol.supportedVersions].sort();
   report.require(
-    document.protocol.conformance.status === 'passed',
-    `Evidence records conformance as ${document.protocol.conformance.status}`,
+    JSON.stringify(covered) === JSON.stringify(claimed),
+    `Conformance coverage does not account for every claimed protocol version (claimed: ${claimed.join(', ')}; covered: ${covered.join(', ')})`,
+  );
+  report.require(conformance.status !== 'failed', 'Evidence records a failed conformance run');
+  report.require(
+    conformance.status === conformanceStatus(conformance.coverage),
+    `Conformance is recorded as ${conformance.status}, but its per-version results say ${conformanceStatus(conformance.coverage)}`,
   );
 
   const digest = integrityDigest(document);
@@ -147,6 +166,7 @@ function soundEvidence(manifest: Manifest): Evidence {
       transports: ['stdio'],
       conformance: {
         status: 'passed',
+        coverage: [{ version: '2025-11-25', status: 'passed', runs: 1 }],
         runs: [
           { candidate: 'candidate-2025-11-25', scenario: 'server-initialize', status: 'passed' },
         ],
@@ -210,6 +230,30 @@ async function main(): Promise<void> {
     ),
   );
   expectSeededFailure(
+    'evidence conformance overstatement',
+    check(
+      sealEvidence({
+        ...sound,
+        protocol: {
+          ...sound.protocol,
+          supportedVersions: ['2025-11-25', '2026-07-28'],
+          conformance: {
+            // The exact overstatement this rule exists to catch: a second
+            // claimed version nobody exercised, still called `passed`.
+            ...sound.protocol.conformance,
+            status: 'passed',
+            coverage: [
+              { version: '2025-11-25', status: 'passed', runs: 1 },
+              { version: '2026-07-28', status: 'not-run', runs: 0 },
+            ],
+          },
+        },
+      }),
+      manifest,
+      validate,
+    ),
+  );
+  expectSeededFailure(
     'evidence tamper',
     check({ ...sound, generatedAt: '2026-01-01T00:00:00.000Z' }, manifest, validate),
   );
@@ -266,7 +310,11 @@ async function main(): Promise<void> {
     report,
     'Verification evidence is complete and its gate detects seeded defects: ' +
       `${String(document.capabilities.length)} capabilities and ${String(document.scenarios.required)} required scenarios recorded ` +
-      `from commit ${document.source.commit.slice(0, 7)} on Node ${document.environment.node}.`,
+      `from commit ${document.source.commit.slice(0, 7)} on Node ${document.environment.node}, ` +
+      `official conformance ${document.protocol.conformance.status} ` +
+      `(${document.protocol.conformance.coverage
+        .map((entry) => `${entry.version}: ${entry.status}`)
+        .join(', ')}).`,
   );
 }
 

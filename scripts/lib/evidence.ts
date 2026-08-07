@@ -57,7 +57,12 @@ export interface Evidence {
     readonly supportedVersions: readonly string[];
     readonly transports: readonly string[];
     readonly conformance: {
-      readonly status: ResultStatus;
+      readonly status: ResultStatus | 'partial';
+      readonly coverage: readonly {
+        readonly version: string;
+        readonly status: 'passed' | 'failed' | 'not-run';
+        readonly runs: number;
+      }[];
       readonly runs: readonly {
         readonly candidate: string;
         readonly scenario: string;
@@ -262,9 +267,17 @@ export function sealEvidence(evidence: Evidence): Evidence {
   return { ...evidence, integrity: { algorithm: 'sha256', value: integrityDigest(evidence) } };
 }
 
-/** Reads the conformance runs the official CLI recorded for the candidate. */
+/**
+ * Reads the conformance runs the official CLI recorded, per claimed version.
+ *
+ * The candidate directory carries the protocol version it was run against, so
+ * a claimed version with no directory is recorded as `not-run` rather than
+ * being absorbed into an overall "passed". Without that, an artifact listing
+ * two supported versions beside one run reads as if both were exercised.
+ */
 export async function readConformance(
   conformanceRoot: string,
+  claimedVersions: readonly string[],
 ): Promise<Evidence['protocol']['conformance']> {
   const runs: { candidate: string; scenario: string; status: 'passed' | 'failed' }[] = [];
   let candidates: string[];
@@ -273,7 +286,7 @@ export async function readConformance(
       .filter((entry) => entry.isDirectory() && entry.name.startsWith('candidate-'))
       .map((entry) => entry.name);
   } catch {
-    return { status: 'missing', runs: [] };
+    candidates = [];
   }
 
   for (const candidate of candidates.sort()) {
@@ -301,11 +314,38 @@ export async function readConformance(
     }
   }
 
-  if (runs.length === 0) {
-    return { status: 'missing', runs: [] };
+  const coverage = claimedVersions.map((version) => {
+    const forVersion = runs.filter((run) => run.candidate === `candidate-${version}`);
+    if (forVersion.length === 0) {
+      return { version, status: 'not-run' as const, runs: 0 };
+    }
+    return {
+      version,
+      status: forVersion.every((run) => run.status === 'passed')
+        ? ('passed' as const)
+        : ('failed' as const),
+      runs: forVersion.length,
+    };
+  });
+
+  return { status: conformanceStatus(coverage), coverage, runs };
+}
+
+/**
+ * A version nobody exercised keeps the whole result out of `passed`.
+ *
+ * `partial` is the honest word for what this repository currently has: the
+ * pinned official CLI offers no scenarios for the newer claimed version, which
+ * is why BGA-011 stays `implemented`. See docs/CONFORMANCE.md.
+ */
+export function conformanceStatus(
+  coverage: readonly { readonly status: 'passed' | 'failed' | 'not-run' }[],
+): ResultStatus | 'partial' {
+  if (coverage.length === 0 || coverage.every((entry) => entry.status === 'not-run')) {
+    return 'missing';
   }
-  return {
-    status: runs.every((run) => run.status === 'passed') ? 'passed' : 'failed',
-    runs,
-  };
+  if (coverage.some((entry) => entry.status === 'failed')) {
+    return 'failed';
+  }
+  return coverage.some((entry) => entry.status === 'not-run') ? 'partial' : 'passed';
 }

@@ -58,6 +58,9 @@ async function main(): Promise<void> {
   }>(resolve(repositoryRoot, 'package.json'));
   const lock = await readFile(resolve(repositoryRoot, 'pnpm-lock.yaml'));
 
+  const supportedVersions = [
+    ...new Set(manifest.transports.flatMap((transport) => transport.protocolVersions)),
+  ].sort();
   const index = indexScenarioResults(report, repositoryRoot);
   const capabilities = buildCapabilityEvidence(manifest, index);
 
@@ -83,11 +86,12 @@ async function main(): Promise<void> {
       ...(process.env.RUNNER_IMAGE === undefined ? {} : { runner: process.env.RUNNER_IMAGE }),
     },
     protocol: {
-      supportedVersions: [
-        ...new Set(manifest.transports.flatMap((transport) => transport.protocolVersions)),
-      ].sort(),
+      supportedVersions,
       transports: manifest.transports.map((transport) => transport.name).sort(),
-      conformance: await readConformance(resolve(repositoryRoot, 'conformance-results')),
+      conformance: await readConformance(
+        resolve(repositoryRoot, 'conformance-results'),
+        supportedVersions,
+      ),
     },
     capabilities,
     scenarios: summarizeScenarios(capabilities),
@@ -123,7 +127,10 @@ async function main(): Promise<void> {
     `Verification evidence written to .artifacts/verification-evidence.json: ` +
       `${String(capabilities.length)} capabilities, ${String(scenarios.required)} required scenarios ` +
       `(${String(scenarios.passed)} passed, ${String(scenarios.failed)} failed, ${String(scenarios.missing)} missing), ` +
-      `${String(tests.passed)}/${String(tests.total)} tests passed, conformance ${evidence.protocol.conformance.status}.\n`,
+      `${String(tests.passed)}/${String(tests.total)} tests passed, official conformance ${evidence.protocol.conformance.status} ` +
+      `(${evidence.protocol.conformance.coverage
+        .map((entry) => `${entry.version}: ${entry.status}`)
+        .join(', ')}).\n`,
   );
 }
 

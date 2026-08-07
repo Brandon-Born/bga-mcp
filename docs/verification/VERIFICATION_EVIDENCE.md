@@ -10,12 +10,14 @@ Every `verified` in this repository has so far been a claim a reader had to take
 
 - **Where it came from** — the commit, and whether the tree was clean. A dirty tree is recorded rather than refused, because the field is what tells a reader the run is not reproducible from the commit alone.
 - **What was run** — the package version, the `pnpm-lock.yaml` digest, the Node version, platform, architecture, package manager, and whether it was CI.
-- **What the protocol did** — the supported versions, the transports, and every conformance check the official CLI recorded for the candidate.
+- **What the protocol did** — the transports, and every claimed protocol version with its own official-conformance result. A version the official suite never exercised is `not-run`, and the overall word may not be stronger than the per-version results: this repository currently records `partial`, because the pinned CLI offers no scenarios for `2026-07-28`. That is the same fact [CONFORMANCE.md](../CONFORMANCE.md) records and the reason BGA-011 stays `implemented`.
 - **What each capability proved** — every entry in the capability manifest, with the result of each scenario it requires, down to the test file and title that produced it.
 
 ## The three properties that make it evidence
 
 **It records absence.** A required scenario with no test in the run is `missing`, not omitted. A capability with a missing or failed scenario cannot be `passed`, and the gate fails when something advertised as `verified` is anything less. `GATE-EVIDENCE-COVERAGE` proves this on a manifest requiring two scenarios where only one ran: the artifact reports the other as `missing` and the capability as `missing`, rather than looking complete by leaving it out.
+
+The same rule applies to protocol versions, and it was added because the first version of this artifact broke it: two claimed versions sat beside one conformance run under a single `"status": "passed"`, which reads as if both had been exercised. Coverage is now per version, `partial` is a distinct outcome, and the gate rejects a document whose overall word is stronger than its per-version results or whose coverage omits a claimed version.
 
 **It is sealed.** `integrity` is a SHA-256 digest over a canonical serialization of the document with that field removed, so key order cannot change it and any later edit breaks it. `GATE-EVIDENCE-TAMPER` relabels a failed scenario as passed — the edit a reader would most want to catch — and shows the digest no longer matches, while a document reserialized with every object's keys reversed still seals identically.
 
@@ -23,7 +25,7 @@ Every `verified` in this repository has so far been a claim a reader had to take
 
 ## The gate fails on demand
 
-Like every other `pnpm verify:*` command, `pnpm verify:evidence` builds five defective documents and requires itself to reject each one before it looks at the real artifact: a wrong schema version, a capability dropped from the document, a scenario that did not run, a field edited after sealing, and a credential in a test title.
+Like every other `pnpm verify:*` command, `pnpm verify:evidence` builds six defective documents and requires itself to reject each one before it looks at the real artifact: a wrong schema version, a capability dropped from the document, a scenario that did not run, a claimed protocol version that never ran while the overall status still says `passed`, a field edited after sealing, and a credential in a test title.
 
 ## What it does not do
 
@@ -33,4 +35,4 @@ Signing and per-release publication are BGA-404 and BGA-407. This item produces 
 
 ## Current run
 
-11 capabilities, 75 required scenarios, all passed; 284 tests passed; conformance passed on protocol 2025-11-25.
+11 capabilities and 78 required scenarios, all passed; 288 tests passed. Official conformance is `partial`: `2025-11-25` passed, `2026-07-28` was not run.

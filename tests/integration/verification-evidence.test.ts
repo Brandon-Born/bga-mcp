@@ -2,6 +2,7 @@
 import {
   buildCapabilityEvidence,
   canonicalize,
+  conformanceStatus,
   indexScenarioResults,
   integrityDigest,
   sealEvidence,
@@ -85,7 +86,11 @@ function evidenceFor(vitest: VitestReport): Evidence {
     protocol: {
       supportedVersions: ['2025-11-25'],
       transports: ['stdio'],
-      conformance: { status: 'passed', runs: [] },
+      conformance: {
+        status: 'passed',
+        coverage: [{ version: '2025-11-25', status: 'passed', runs: 1 }],
+        runs: [],
+      },
     },
     capabilities,
     scenarios: summarizeScenarios(capabilities),
@@ -167,6 +172,16 @@ describe('verification evidence', () => {
     // way however the document was assembled or reserialized.
     expect(integrityDigest(reverseKeys(evidence) as Evidence)).toBe(evidence.integrity?.value);
     expect(canonicalize({ b: 1, a: [2, { d: 3, c: 4 }] })).toBe('{"a":[2,{"c":4,"d":3}],"b":1}');
+  });
+
+  it('[GATE-EVIDENCE-COVERAGE] refuses to call conformance passed when a claimed version never ran', () => {
+    // The pinned official CLI offers no scenarios for the newer claimed
+    // version, so this is the repository's real situation, not a hypothetical.
+    expect(conformanceStatus([{ status: 'passed' }, { status: 'not-run' }])).toBe('partial');
+    expect(conformanceStatus([{ status: 'passed' }, { status: 'passed' }])).toBe('passed');
+    expect(conformanceStatus([{ status: 'passed' }, { status: 'failed' }])).toBe('failed');
+    expect(conformanceStatus([{ status: 'not-run' }])).toBe('missing');
+    expect(conformanceStatus([])).toBe('missing');
   });
 
   it('[GATE-EVIDENCE-REDACTION] finds a credential carried into the artifact by a test title', () => {

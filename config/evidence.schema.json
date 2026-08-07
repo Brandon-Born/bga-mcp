@@ -90,9 +90,27 @@
         "conformance": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["status", "runs"],
+          "required": ["status", "coverage", "runs"],
           "properties": {
-            "status": { "enum": ["passed", "failed", "missing"] },
+            "status": {
+              "enum": ["passed", "partial", "failed", "missing"],
+              "description": "passed only when every claimed protocol version was exercised and passed; partial when a claimed version had no run."
+            },
+            "coverage": {
+              "type": "array",
+              "minItems": 1,
+              "description": "One entry per claimed protocol version, so a version the official suite never exercised cannot be read as covered.",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["version", "status", "runs"],
+                "properties": {
+                  "version": { "type": "string", "minLength": 1 },
+                  "status": { "enum": ["passed", "failed", "not-run"] },
+                  "runs": { "type": "integer", "minimum": 0 }
+                }
+              }
+            },
             "runs": {
               "type": "array",
               "items": {
