@@ -1,0 +1,3 @@
+<?php
+
+$stats_type = [];

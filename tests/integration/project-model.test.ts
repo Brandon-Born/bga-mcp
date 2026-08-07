@@ -9,6 +9,7 @@ import { buildProjectModel, type ProjectModel } from '../../src/project/model.js
 const fixturesRoot = fileURLToPath(new URL('../fixtures/projects/', import.meta.url));
 const modernRoot = resolve(fixturesRoot, 'modern');
 const legacyRoot = resolve(fixturesRoot, 'legacy');
+const hybridRoot = resolve(fixturesRoot, 'hybrid');
 
 async function model(policy: PolicyBoundary, root: string): Promise<ProjectModel> {
   const listing = await policy.listProjectFiles(root);
@@ -78,6 +79,88 @@ describe('normalized project model', () => {
       transitions: { pass: 99 },
     });
     expect(result.diagnostics.status).toBe('passed');
+  });
+
+  it('describes the hybrid fixture, reading each component in the form it is in', async () => {
+    const policy = await createPolicyBoundary({ projectRoots: [hybridRoot] });
+    const result = await model(policy, hybridRoot);
+
+    expect(result).toMatchObject({
+      layout: 'hybrid',
+      gameKey: 'bgamcphybrid',
+      metadata: {
+        gameName: 'BgaMcpHybridFixture',
+        playerCounts: [2, 3],
+        // The metadata generation decides this, not the modern game logic.
+        source: 'gameinfos.inc.php',
+      },
+    });
+
+    // The machine is split across both sources, and both are authoritative
+    // until the last class exists, so it is read as one machine.
+    expect(result.states.sources).toEqual(['states.inc.php', 'modules/php/States/PlayerTurn.php']);
+    expect(result.states.definitions.map((state) => [state.id, state.name])).toEqual([
+      [1, 'gameSetup'],
+      [2, 'PlayerTurn'],
+      [99, 'gameEnd'],
+    ]);
+    // A transition crossing the two sources in each direction resolves.
+    expect(result.states.definitions[0]?.transitions).toEqual({ '': 2 });
+    expect(result.states.definitions[1]?.transitions).toEqual({ pass: 99 });
+
+    // Nothing is missing: an autowired project needs no <game>.action.php, and
+    // a modern game class needs no <game>.view.php.
+    expect(
+      result.components.filter((component) => component.expected && !component.present),
+    ).toEqual([]);
+    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
+      'project.states.partially-migrated',
+    ]);
+    expect(result.diagnostics.summary).toMatchObject({ errors: 0, warnings: 0, information: 1 });
+  });
+
+  it('prefers the class when a state is declared in both forms', async () => {
+    const temporaryRoot = await realpath(await mkdtemp(join(tmpdir(), 'bga-mcp-merge-')));
+    try {
+      await writeFile(
+        resolve(temporaryRoot, 'gameinfos.inc.php'),
+        "<?php\n$gameinfos = ['game_name' => 'Merge', 'players' => [2]];\n",
+      );
+      // The state is migrated but not yet removed from states.inc.php, which the
+      // migration guide describes as the interim state of a real project.
+      await writeFile(
+        resolve(temporaryRoot, 'states.inc.php'),
+        "<?php\n$machinestates = [\n  2 => ['name' => 'stale', 'type' => 'game', 'transitions' => ['done' => 99]],\n  99 => ['name' => 'gameEnd', 'type' => 'manager'],\n];\n",
+      );
+      await mkdir(resolve(temporaryRoot, 'modules/php/States'), { recursive: true });
+      await writeFile(
+        resolve(temporaryRoot, 'modules/php/Game.php'),
+        '<?php\nfinal class Game extends \\Bga\\GameFramework\\Table {}\n',
+      );
+      await writeFile(
+        resolve(temporaryRoot, 'modules/php/States/PlayerTurn.php'),
+        "<?php\nfinal class PlayerTurn extends GameState\n{\n    public function __construct(protected Game $game)\n    {\n        parent::__construct($game, id: 2, type: StateType::ACTIVE_PLAYER, description: '', transitions: ['pass' => 99]);\n    }\n}\n",
+      );
+
+      const policy = await createPolicyBoundary({ projectRoots: [temporaryRoot] });
+      const result = await model(policy, temporaryRoot);
+
+      expect(result.layout).toBe('hybrid');
+      expect(result.states.definitions.map((state) => state.id)).toEqual([2, 99]);
+      // The class is what the framework runs, so it wins over the stale entry.
+      expect(result.states.definitions[0]).toMatchObject({
+        id: 2,
+        name: 'PlayerTurn',
+        type: 'activeplayer',
+        transitions: { pass: 99 },
+      });
+      const migrated = result.diagnostics.findings.find(
+        (finding) => finding.code === 'project.states.partially-migrated',
+      );
+      expect(migrated?.evidence[0]?.message).toContain('1 state(s) declared in both forms');
+    } finally {
+      await rm(temporaryRoot, { recursive: true, force: true });
+    }
   });
 
   it('reports an unrecognized project as an error rather than a clean result', async () => {

@@ -28,6 +28,7 @@ let temporaryRoot: string;
 let cli: string;
 let modernRoot: string;
 let legacyRoot: string;
+let hybridRoot: string;
 let unrecognizedRoot: string;
 let linkedRoot: string;
 let outsideRoot: string;
@@ -112,6 +113,7 @@ beforeAll(async () => {
   const projects = resolve(temporaryRoot, 'projects');
   modernRoot = resolve(projects, 'bgamcpmodern');
   legacyRoot = resolve(projects, 'bgamcplegacy');
+  hybridRoot = resolve(projects, 'bgamcphybrid');
   unrecognizedRoot = resolve(projects, 'notagame');
   linkedRoot = resolve(projects, 'linkedgame');
   outsideRoot = resolve(temporaryRoot, 'outside');
@@ -119,8 +121,10 @@ beforeAll(async () => {
 
   await cp(resolve(fixturesRoot, 'modern'), modernRoot, { recursive: true });
   await cp(resolve(fixturesRoot, 'legacy'), legacyRoot, { recursive: true });
+  await cp(resolve(fixturesRoot, 'hybrid'), hybridRoot, { recursive: true });
   await rm(resolve(modernRoot, 'expected.json'));
   await rm(resolve(legacyRoot, 'expected.json'));
+  await rm(resolve(hybridRoot, 'expected.json'));
 
   await mkdir(unrecognizedRoot, { recursive: true });
   await writeFile(resolve(unrecognizedRoot, 'README.md'), '# not a BGA project\n');
@@ -172,6 +176,58 @@ describe('packaged inspect_project', () => {
     // Modern state classes are read now, so a sound modern project is clean.
     expect(diagnostics.status).toBe('passed');
     expect(await digest(modernRoot)).toBe(before);
+  });
+
+  it('[E2E-INSPECT-PROJECT-HYBRID] reads a part-migrated project in the form each file is in', async () => {
+    const before = await digest(hybridRoot);
+    const response = await withServer(
+      ['--project-root', hybridRoot],
+      async (client) => await callInspect(client, { projectRoot: hybridRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured as {
+      layout: string;
+      gameKey: string;
+      detection: { components: { id: string; generation: string }[] };
+      states: { parsed: boolean; sources: string[]; definitions: { id: number; name: string }[] };
+      diagnostics: { status: string; findings: { code: string; severity?: string }[] };
+    };
+
+    expect(structured.layout).toBe('hybrid');
+    expect(structured.gameKey).toBe('bgamcphybrid');
+    // Each component is reported in the form it is actually in, rather than the
+    // project being forced into one of two templates.
+    expect(
+      Object.fromEntries(
+        structured.detection.components.map((component) => [component.id, component.generation]),
+      ),
+    ).toEqual({
+      metadata: 'legacy',
+      'game-logic': 'modern',
+      states: 'both',
+      'client-logic': 'legacy',
+    });
+    // Metadata is read from the PHP file even though the game logic has moved.
+    expect(response.structured).toMatchObject({
+      metadata: {
+        gameName: 'BgaMcpHybridFixture',
+        playerCounts: [2, 3],
+        source: 'gameinfos.inc.php',
+      },
+    });
+    // The machine is one machine, read from both of its sources.
+    expect(structured.states.sources).toEqual([
+      'states.inc.php',
+      'modules/php/States/PlayerTurn.php',
+    ]);
+    expect(structured.states.definitions.map((state) => state.id)).toEqual([1, 2, 99]);
+    // Nothing here is a defect: the only finding says the migration is part-way.
+    expect(structured.diagnostics.findings.map((finding) => finding.code)).toEqual([
+      'project.states.partially-migrated',
+    ]);
+    expect(structured.diagnostics.findings[0]?.severity).toBe('information');
+    expect(await digest(hybridRoot)).toBe(before);
   });
 
   it('[E2E-INSPECT-PROJECT-LEGACY] reads a legacy state machine through the public schema', async () => {

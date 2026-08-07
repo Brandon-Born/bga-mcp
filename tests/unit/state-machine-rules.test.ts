@@ -35,6 +35,7 @@ function model(
       gameKey: 'fixture',
       certainty: 'certain',
       reason: 'test model',
+      components: [],
       signals: [],
     },
     metadata: { gameName: 'Fixture', playerCounts: [2], source: 'gameinfos.inc.php' },
@@ -44,6 +45,7 @@ function model(
       definitions,
       unsupported: [],
       source: 'states.inc.php',
+      sources: ['states.inc.php'],
     },
     fileCount: definitions.length,
     truncated: false,
@@ -225,7 +227,13 @@ describe('state-machine rule catalog', () => {
     const result = validateStateMachine(
       model([], {
         layout: 'modern',
-        states: { parsed: false, definitions: [], unsupported: ['classes'], source: null },
+        states: {
+          parsed: false,
+          definitions: [],
+          unsupported: ['classes'],
+          source: null,
+          sources: [],
+        },
         diagnostics: {
           schemaVersion: 1,
           status: 'unsupported',

@@ -214,7 +214,11 @@ export {
 export { loadProjectContext, type ProjectContext } from './tools/project-context.js';
 export {
   detectLayout,
+  generationFor,
+  type ComponentGeneration,
   type LayoutCertainty,
+  type LayoutComponent,
+  type LayoutComponentId,
   type LayoutDetection,
   type LayoutSignal,
   type ProjectLayout,

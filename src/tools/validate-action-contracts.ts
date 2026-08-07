@@ -17,7 +17,7 @@ export const ValidateActionContractsInputSchema = z.strictObject({
 
 export const ValidateActionContractsOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   clientSourcesRead: z.number().int().nonnegative(),
   phpSourcesRead: z.number().int().nonnegative(),
   trace: z.strictObject({

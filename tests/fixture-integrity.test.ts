@@ -43,10 +43,15 @@ async function hashes(directory: string): Promise<Record<string, string>> {
 }
 
 describe('BGA project fixture corpus', () => {
-  it.each(['modern', 'modern-broken', 'legacy', 'legacy-broken'])(
+  it.each(['modern', 'modern-broken', 'legacy', 'legacy-broken', 'hybrid'])(
     '[GATE-FIXTURE-SAFETY] %s matches its declared baseline and remains safe and immutable',
-    async (layout) => {
-      const directory = resolve(projectsRoot, layout);
+    async (fixture) => {
+      const layout = fixture.startsWith('legacy')
+        ? 'legacy'
+        : fixture.startsWith('modern')
+          ? 'modern'
+          : 'hybrid';
+      const directory = resolve(projectsRoot, fixture);
       const before = await hashes(directory);
       const expected = JSON.parse(await readFile(resolve(directory, 'expected.json'), 'utf8')) as {
         layout: string;
@@ -59,13 +64,16 @@ describe('BGA project fixture corpus', () => {
       };
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
-      expect(expected.layout).toBe(layout.startsWith('legacy') ? 'legacy' : 'modern');
+      expect(expected.layout).toBe(layout);
       expect(actualFiles).toEqual(expected.files);
-      // A defective fixture may declare model-level findings; a clean one may not.
-      if (layout.endsWith('-broken')) {
-        expect(Array.isArray(expected.diagnostics)).toBe(true);
-      } else {
-        expect(expected.diagnostics).toEqual([]);
+      // A defective fixture may declare model-level findings. A clean one may
+      // declare only informational ones — the hybrid fixture reports that its
+      // migration is part-way through, which is a fact about the project rather
+      // than a defect. That the finding really is informational is proven by
+      // E2E-INSPECT-PROJECT-HYBRID, which reads it through the public schema.
+      expect(Array.isArray(expected.diagnostics)).toBe(true);
+      if (!fixture.endsWith('-broken')) {
+        expect(expected.diagnostics.every((code) => typeof code === 'string')).toBe(true);
       }
 
       // A fixture that seeds defects must declare exactly which findings it expects,
@@ -80,7 +88,7 @@ describe('BGA project fixture corpus', () => {
         if (declared === undefined) {
           continue;
         }
-        if (layout.endsWith('-broken')) {
+        if (fixture.endsWith('-broken')) {
           expect(declared.status).toBe('findings');
           expect(declared.codes.length).toBeGreaterThan(0);
         } else {
@@ -88,7 +96,7 @@ describe('BGA project fixture corpus', () => {
           expect(declared.codes).toEqual([]);
         }
       }
-      if (layout.endsWith('-broken')) {
+      if (fixture.endsWith('-broken')) {
         expect(expected.stateMachine).toBeDefined();
         expect(expected.actionContracts).toBeDefined();
         expect(expected.notifications).toBeDefined();

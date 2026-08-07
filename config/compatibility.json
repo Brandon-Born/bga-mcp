@@ -31,6 +31,19 @@
       ]
     },
     {
+      "id": "CLAIM-LAYOUT-HYBRID",
+      "dimension": "layout",
+      "value": "part-migrated",
+      "support": "supported",
+      "notes": "A project part-way through the BGA migration, which the documentation describes as a per-file process: metadata, game logic, states, and client logic each move on their own schedule and the older form of each stays supported. Detection reports a generation per component and every validator reads each file in the form it is actually in. A state machine split across states.inc.php and modules/php/States is read as one machine.",
+      "fixtures": ["tests/fixtures/projects/hybrid"],
+      "scenarios": [
+        "GATE-FIXTURE-SAFETY",
+        "E2E-INSPECT-PROJECT-HYBRID",
+        "E2E-VALIDATE-PROJECT-HYBRID"
+      ]
+    },
+    {
       "id": "CLAIM-LAYOUT-UNRECOGNIZED",
       "dimension": "layout",
       "value": "unrecognized",

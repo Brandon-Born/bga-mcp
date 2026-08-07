@@ -25,7 +25,7 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 Available now, local and read-only:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
-  Every validator reads both the legacy layout (`states.inc.php`, `<game>.action.php`, `notifyAllPlayers`) and the modern one (state classes, autowired `act…` methods, `bga->notify`).
+  Every validator reads both the legacy forms (`states.inc.php`, `<game>.action.php`, `notifyAllPlayers`) and the modern ones (state classes, autowired `act…` methods, `bga->notify`), and reads each file in whichever form it is actually in. BGA migrates a project one file at a time, so most projects are part-way between; metadata, game logic, states, and client logic are each detected on their own, and a state machine split across `states.inc.php` and `modules/php/States` is read as one machine.
 
 - `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
 - `validate_action_contracts` — traces each player action from the client call, to the entry point in the action class, to the game method, and reports actions no state allows, missing entry points and methods, and arguments the two sides disagree about.

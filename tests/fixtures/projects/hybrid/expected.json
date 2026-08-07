@@ -1,0 +1,56 @@
+{
+  "layout": "hybrid",
+  "files": [
+    "bgamcphybrid.css",
+    "bgamcphybrid.js",
+    "bgamcphybrid_bgamcphybrid.tpl",
+    "dbmodel.sql",
+    "gameinfos.inc.php",
+    "gameoptions.inc.php",
+    "modules/php/Game.php",
+    "modules/php/States/PlayerTurn.php",
+    "states.inc.php",
+    "stats.inc.php"
+  ],
+  "diagnostics": ["project.states.partially-migrated"],
+  "stateMachine": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "actionContracts": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "notifications": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "database": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  }
+}

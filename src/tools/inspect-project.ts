@@ -27,13 +27,22 @@ export const InspectProjectInputSchema = z.strictObject({
 
 export const InspectProjectOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   gameKey: z.string().nullable(),
   detection: z.strictObject({
-    layout: z.enum(['modern', 'legacy', 'unrecognized']),
+    layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
     gameKey: z.string().nullable(),
     certainty: z.enum(['certain', 'likely', 'possible']),
     reason: z.string(),
+    components: z.array(
+      z.strictObject({
+        id: z.enum(['metadata', 'game-logic', 'states', 'client-logic']),
+        description: z.string(),
+        generation: z.enum(['modern', 'legacy', 'both', 'absent']),
+        legacyFiles: z.array(z.string()),
+        modernFiles: z.array(z.string()),
+      }),
+    ),
     signals: z.array(
       z.strictObject({
         id: z.string(),
@@ -61,6 +70,7 @@ export const InspectProjectOutputSchema = z.strictObject({
     definitions: z.array(StateDefinitionSchema),
     unsupported: z.array(z.string()),
     source: z.string().nullable(),
+    sources: z.array(z.string()),
   }),
   fileCount: z.number().int().nonnegative(),
   truncated: z.boolean(),

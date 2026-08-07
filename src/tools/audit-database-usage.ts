@@ -17,7 +17,7 @@ export const AuditDatabaseUsageInputSchema = z.strictObject({
 
 export const AuditDatabaseUsageOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   schemaSource: z.string().nullable(),
   phpSourcesRead: z.number().int().nonnegative(),
   schema: z.array(z.strictObject({ name: z.string(), columns: z.array(z.string()) })),

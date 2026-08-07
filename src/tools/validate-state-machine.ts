@@ -17,7 +17,7 @@ export const ValidateStateMachineInputSchema = z.strictObject({
 
 export const ValidateStateMachineOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   statesRead: z.boolean(),
   statesSource: z.string().nullable(),
   stateCount: z.number().int().nonnegative(),

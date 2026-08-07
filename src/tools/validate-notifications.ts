@@ -17,7 +17,7 @@ export const ValidateNotificationsInputSchema = z.strictObject({
 
 export const ValidateNotificationsOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   serverSourcesRead: z.number().int().nonnegative(),
   clientSourcesRead: z.number().int().nonnegative(),
   trace: z.strictObject({

@@ -109,6 +109,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
           schemaVersion: 1,
           layout: context.model.layout,
           source: context.model.states.source,
+          sources: context.model.states.sources,
           parsed: context.model.states.parsed,
           definitions: context.model.states.definitions,
           unsupported: context.model.states.unsupported,

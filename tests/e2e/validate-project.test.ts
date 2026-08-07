@@ -46,6 +46,7 @@ interface ToolResponse {
 let temporaryRoot: string;
 let cli: string;
 let cleanRoot: string;
+let hybridRoot: string;
 let brokenRoot: string;
 /** A project whose schema is too large to read, so only that group fails. */
 let unreadableSchemaRoot: string;
@@ -102,16 +103,18 @@ beforeAll(async () => {
 
   const projects = resolve(temporaryRoot, 'projects');
   cleanRoot = resolve(projects, 'cleangame');
+  hybridRoot = resolve(projects, 'hybridgame');
   brokenRoot = resolve(projects, 'brokengame');
   unreadableSchemaRoot = resolve(projects, 'hugeschema');
   for (const [fixture, target] of [
     ['legacy', cleanRoot],
+    ['hybrid', hybridRoot],
     ['legacy-broken', brokenRoot],
     ['legacy-broken', unreadableSchemaRoot],
   ] as const) {
     await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
   }
-  for (const target of [cleanRoot, brokenRoot, unreadableSchemaRoot]) {
+  for (const target of [cleanRoot, hybridRoot, brokenRoot, unreadableSchemaRoot]) {
     await rm(resolve(target, 'expected.json'));
   }
 
@@ -256,6 +259,23 @@ describe('packaged validate_project', () => {
     expect(response.structured?.diagnostics.findings).toEqual([]);
     expect(response.structured?.groups.every((group) => group.ran)).toBe(true);
     expect(response.text).toContain('status passed');
+  });
+
+  it('[E2E-VALIDATE-PROJECT-HYBRID] passes a part-migrated project without inventing findings', async () => {
+    const response = await withServer(
+      ['--project-root', hybridRoot],
+      async (client) => await call(client, 'validate_project', { projectRoot: hybridRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    expect(response.structured?.layout).toBe('hybrid');
+    // Every validator runs, and none of them reads the mixture as a defect:
+    // the state machine spans both sources, the client calls an autowired
+    // action with no action.php, and the notification is sent by the legacy
+    // call from a modern game class.
+    expect(response.structured?.groups.every((group) => group.ran)).toBe(true);
+    expect(response.structured?.status).toBe('passed');
+    expect(response.structured?.diagnostics.findings).toEqual([]);
   });
 
   it('[E2E-VALIDATE-PROJECT-INVALID-INPUT] rejects input that does not match the published schema', async () => {

@@ -30,7 +30,11 @@ Exit criterion: the first tool contracts, fixtures, and executable acceptance sc
 
 Exit criterion: every advertised local capability passes its mapped end-to-end scenarios through a real MCP client; the server finds seeded cross-file defects, reports precise evidence, and never modifies project files.
 
-Reached for the legacy layout on 2026-08-06. The modern layout is the remaining half: state classes, autowired actions, and the `bga->notify` API are read by nobody yet, and that work (BGA-117 through BGA-121) precedes Phase 2. A capability that only serves one of the two layouts a developer might have is not finished.
+Reached for the legacy layout on 2026-08-06 and for the modern layout on 2026-08-07 (BGA-117 through BGA-121).
+
+Reading the official documentation for that work showed the premise behind it was too simple: BGA migration is per file, not per project. Metadata, game logic, states, player actions, and client logic each move from the legacy form to the modern one on their own schedule, and the documentation marks the older form of each as deprecated but still supported. A real project is therefore usually a mixture, and the two-template detector reports the most common mixture as `unrecognized`. BGA-122 and BGA-123 replaced the templates with per-component generations on 2026-08-07, so a part-migrated project is read in whatever form each of its files is in.
+
+Exit criterion reached on 2026-08-07.
 
 ## Phase 2: Documentation
 

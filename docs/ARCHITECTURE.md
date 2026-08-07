@@ -125,7 +125,7 @@ Facts and suggestions are structurally distinct. Heuristics expose reduced certa
 
 ## Compatibility strategy
 
-BGA projects exist in legacy and modern layouts. Detection should be capability-based rather than assuming one template. Original minimal modern and legacy fixture projects now establish the structural baseline. The supported-layout, runtime, platform, protocol, transport, and client claims are published in [COMPATIBILITY.md](COMPATIBILITY.md) and enforced against the running server by CI.
+BGA projects exist along a range between the legacy and modern layouts rather than in one of two templates: the framework migrates metadata, game logic, states, and client logic independently, and keeps reading the older form of each. Detection is therefore capability-based and per component — it resolves a generation for each and derives the whole-project label from them, so a part-migrated project is read rather than refused. Original minimal modern, legacy, and hybrid fixture projects establish the structural baseline. The supported-layout, runtime, platform, protocol, transport, and client claims are published in [COMPATIBILITY.md](COMPATIBILITY.md) and enforced against the running server by CI.
 
 Unknown syntax should produce an explicit unsupported or uncertain result, not a clean bill of health.
 

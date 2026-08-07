@@ -19,7 +19,7 @@ export const RunPreReleaseAuditInputSchema = z.strictObject({
 
 export const RunPreReleaseAuditOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   catalogVersion: z.string(),
   counts: z.strictObject({
     passed: z.number().int().nonnegative(),

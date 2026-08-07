@@ -16,7 +16,10 @@ Support levels use the vocabulary from [TESTING.md](TESTING.md):
 | ------------------------- | -------------- | --------- | ------------------------------------- |
 | CLAIM-LAYOUT-MODERN       | modern-modules | supported | tests/fixtures/projects/modern        |
 | CLAIM-LAYOUT-LEGACY       | legacy-flat    | supported | tests/fixtures/projects/legacy        |
+| CLAIM-LAYOUT-HYBRID       | part-migrated  | supported | tests/fixtures/projects/hybrid        |
 | CLAIM-LAYOUT-UNRECOGNIZED | unrecognized   | unknown   | none — reported as unsupported syntax |
+
+BGA migrates a project one file at a time, and the documentation marks the older form of each file deprecated rather than removed. `legacy` and `modern` are therefore the two ends of a range, not two templates: detection resolves a generation for metadata, game logic, states, and client logic separately, and reports `hybrid` when they disagree. A project is `unrecognized` only when none of the four can be identified.
 
 ## File generations
 

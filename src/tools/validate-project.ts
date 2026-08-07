@@ -38,7 +38,7 @@ export const ValidateProjectInputSchema = z.strictObject({
 
 export const ValidateProjectOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
-  layout: z.enum(['modern', 'legacy', 'unrecognized']),
+  layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   status: z.enum(['passed', 'findings', 'unsupported', 'incomplete']),
   groups: z.array(
     z.strictObject({
