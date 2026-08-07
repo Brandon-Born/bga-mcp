@@ -37,7 +37,8 @@
           "E2E-AUDIT-DATABASE-INVALID-INPUT",
           "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "inspect_project",
@@ -59,7 +60,8 @@
           "E2E-INSPECT-PROJECT-TIMEOUT",
           "E2E-INSPECT-PROJECT-OUTPUT-LIMIT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "run_pre_release_audit",
@@ -77,7 +79,8 @@
           "E2E-PRE-RELEASE-INVALID-INPUT",
           "E2E-PRE-RELEASE-IMMUTABLE"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "validate_action_contracts",
@@ -95,7 +98,8 @@
           "E2E-VALIDATE-ACTIONS-INVALID-INPUT",
           "E2E-VALIDATE-ACTIONS-UNLISTED-ROOT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "validate_notifications",
@@ -113,7 +117,8 @@
           "E2E-VALIDATE-NOTIFICATIONS-INVALID-INPUT",
           "E2E-VALIDATE-NOTIFICATIONS-UNLISTED-ROOT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "validate_project",
@@ -131,7 +136,8 @@
           "E2E-VALIDATE-PROJECT-INVALID-INPUT",
           "E2E-VALIDATE-PROJECT-UNLISTED-ROOT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "validate_state_machine",
@@ -149,7 +155,8 @@
           "E2E-VALIDATE-STATES-INVALID-INPUT",
           "E2E-VALIDATE-STATES-UNLISTED-ROOT"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       }
     ],
     "resources": [
@@ -167,7 +174,8 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "bga://project/states",
@@ -183,7 +191,8 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
         "name": "bga://project/diagnostics",
@@ -199,7 +208,8 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE"
         ],
-        "liveStudioRequired": false
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
       }
     ],
     "prompts": []

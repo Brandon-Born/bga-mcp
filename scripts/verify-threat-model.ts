@@ -24,6 +24,8 @@ interface ThreatModel {
     readonly id: string;
     readonly status: 'reviewed' | 'unreviewed';
     readonly gates: readonly string[];
+    /** Mitigations that must be implemented before a capability may cross. */
+    readonly preconditions?: readonly string[];
   }[];
   readonly abuseCases: readonly {
     readonly id: string;
@@ -42,9 +44,13 @@ interface ThreatModel {
 interface Manifest {
   readonly capabilities: Record<
     'tools' | 'resources' | 'prompts',
-    readonly { readonly name: string; readonly stability: string }[]
+    readonly { readonly name: string; readonly stability: string; readonly boundary: string }[]
   >;
-  readonly adapters: readonly { readonly name: string; readonly stability: string }[];
+  readonly adapters: readonly {
+    readonly name: string;
+    readonly stability: string;
+    readonly boundary?: string;
+  }[];
 }
 
 async function loadJson<T>(path: string): Promise<T> {
@@ -135,30 +141,29 @@ function checkReferences(model: ThreatModel, report: GateReport): void {
  * planned status.
  */
 function checkBoundaryGate(model: ThreatModel, manifest: Manifest, report: GateReport): void {
-  const unreviewed = new Set(
-    model.trustBoundaries
-      .filter(
-        (boundary) =>
-          boundary.status === 'unreviewed' &&
-          (boundary.gates.includes('network') || boundary.gates.includes('mutation')),
-      )
-      .map((boundary) => boundary.id),
-  );
+  const boundaries = new Map(model.trustBoundaries.map((boundary) => [boundary.id, boundary]));
+  const mitigations = new Map(model.mitigations.map((mitigation) => [mitigation.id, mitigation]));
 
   for (const mitigation of model.mitigations) {
+    const boundary = boundaries.get(mitigation.boundary);
     report.require(
-      !unreviewed.has(mitigation.boundary) ||
+      boundary?.status !== 'unreviewed' ||
         mitigation.status !== 'verified' ||
         mitigation.control === 'automated',
       `${mitigation.id} claims verification on an unreviewed boundary without an automated control`,
     );
   }
 
-  for (const adapter of manifest.adapters) {
-    report.require(
-      adapter.stability === 'experimental',
-      `Adapter ${adapter.name} is advertised while ${[...unreviewed].join(' and ')} is unreviewed`,
-    );
+  // A reviewed boundary may still be closed: its preconditions name the
+  // mitigations that must exist before anything crosses it.
+  for (const boundary of model.trustBoundaries) {
+    for (const id of boundary.preconditions ?? []) {
+      report.require(mitigations.has(id), `${boundary.id} names unknown precondition ${id}`);
+      report.require(
+        mitigations.get(id)?.boundary === boundary.id,
+        `${boundary.id} names precondition ${id}, which belongs to another boundary`,
+      );
+    }
   }
 
   const advertised = [
@@ -166,14 +171,39 @@ function checkBoundaryGate(model: ThreatModel, manifest: Manifest, report: GateR
     ...manifest.capabilities.resources,
     ...manifest.capabilities.prompts,
   ];
-  const reviewedMitigations = model.mitigations.filter(
-    (mitigation) => mitigation.status !== 'planned' && !unreviewed.has(mitigation.boundary),
-  );
   for (const capability of advertised) {
+    const boundary = boundaries.get(capability.boundary);
     report.require(
-      reviewedMitigations.length > 0,
-      `Capability ${capability.name} is advertised with no reviewed boundary mitigation`,
+      boundary !== undefined,
+      `Capability ${capability.name} names unknown boundary ${capability.boundary}`,
     );
+    if (boundary === undefined) {
+      continue;
+    }
+    report.require(
+      boundary.status === 'reviewed',
+      `Capability ${capability.name} is advertised across unreviewed boundary ${boundary.id}`,
+    );
+    for (const id of boundary.preconditions ?? []) {
+      report.require(
+        mitigations.get(id)?.status !== 'planned',
+        `Capability ${capability.name} is advertised while ${boundary.id} precondition ${id} is still planned`,
+      );
+    }
+  }
+
+  for (const adapter of manifest.adapters) {
+    const boundary = adapter.boundary === undefined ? undefined : boundaries.get(adapter.boundary);
+    report.require(
+      boundary?.status === 'reviewed',
+      `Adapter ${adapter.name} is advertised without a reviewed boundary`,
+    );
+    for (const id of boundary?.preconditions ?? []) {
+      report.require(
+        mitigations.get(id)?.status !== 'planned',
+        `Adapter ${adapter.name} is advertised while ${boundary?.id ?? ''} precondition ${id} is still planned`,
+      );
+    }
   }
 }
 
@@ -241,11 +271,27 @@ function proveGateDetectsSeededDefects(
       model,
       {
         ...manifest,
-        adapters: [{ name: 'studio-sftp', stability: 'implemented' }],
+        adapters: [{ name: 'studio-sftp', stability: 'implemented', boundary: 'TB-STUDIO' }],
       },
       documentation,
       schema,
     ),
+  );
+
+  // A reviewed boundary whose preconditions are still planned must stay closed.
+  const seededDocsCapability = {
+    ...manifest,
+    capabilities: {
+      ...manifest.capabilities,
+      tools: [
+        ...manifest.capabilities.tools,
+        { name: 'search_bga_docs', stability: 'verified', boundary: 'TB-DOCS-NETWORK' },
+      ],
+    },
+  };
+  expectSeededFailure(
+    'boundary precondition',
+    verify(model, seededDocsCapability, documentation, schema),
   );
 
   expectSeededFailure(

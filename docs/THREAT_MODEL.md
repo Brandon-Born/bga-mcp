@@ -45,7 +45,9 @@ The client is only semi-trusted on purpose. Tool arguments may be model-generate
 | TB-STUDIO           | BGA Studio adapter             | network, mutation | unreviewed |
 | TB-SUPPLY-CHAIN     | Build and release supply chain | supply-chain      | reviewed   |
 
-An unreviewed boundary is a shipping gate, not a note. No tool, resource, prompt, or adapter that crosses TB-DOCS-NETWORK or TB-STUDIO may be advertised until that boundary is reviewed and this file records the result.
+An unreviewed boundary is a shipping gate, not a note. No tool, resource, prompt, or adapter that crosses TB-STUDIO may be advertised until that boundary is reviewed and this file records the result.
+
+A **reviewed** boundary is not automatically an open one. TB-DOCS-NETWORK was reviewed on 2026-08-07 and records preconditions: the mitigations that must be implemented before any capability may cross it. Every capability in the manifest names the boundary it crosses, and the gate refuses a capability whose boundary is unreviewed _or_ whose preconditions are still planned. See the [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md).
 
 ## Abuse cases and mitigations
 
@@ -63,6 +65,11 @@ An unreviewed boundary is a shipping gate, not a note. No tool, resource, prompt
 | AC-STUDIO-WRONG-TARGET    | Synchronization writes to the wrong project          | TB-STUDIO           | TM-POLICY-REMOTE-ALLOWLIST, TM-POLICY-MUTATION-INTENT, TM-BOUNDARY-REVIEW |
 | AC-STUDIO-SESSION-REUSE   | Browser session or undocumented endpoint used        | TB-STUDIO           | TM-NO-BROWSER-SESSION, TM-BOUNDARY-REVIEW                                 |
 | AC-DOC-PROMPT-INJECTION   | Retrieved documentation instructs the agent          | TB-DOCS-NETWORK     | TM-DOC-PROVENANCE, TM-DOC-UNTRUSTED, TM-BOUNDARY-REVIEW                   |
+| AC-DOC-SSRF               | A fetch is aimed at an internal or loopback service  | TB-DOCS-NETWORK     | TM-DOC-HOST-ALLOWLIST, TM-DOC-NO-LOOPBACK                                 |
+| AC-DOC-REQUEST-LEAK       | Project content leaves inside a request              | TB-DOCS-NETWORK     | TM-DOC-REQUEST-CONTENT, TM-NETWORK-OFF-DEFAULT                            |
+| AC-DOC-OVERSIZED          | A response is slow or enormous                       | TB-DOCS-NETWORK     | TM-DOC-RESPONSE-BUDGET                                                    |
+| AC-DOC-STALE-SNAPSHOT     | Cached documentation is served as current            | TB-DOCS-NETWORK     | TM-DOC-SNAPSHOT-INTEGRITY, TM-DOC-PROVENANCE                              |
+| AC-DOC-TRACKING           | Requests reveal what a developer is working on       | TB-DOCS-NETWORK     | TM-NETWORK-OFF-DEFAULT, TM-DOC-REQUEST-CONTENT                            |
 | AC-SOURCE-EXFILTRATION    | Network capability sends local source away           | TB-DOCS-NETWORK     | TM-NETWORK-OFF-DEFAULT, TM-BOUNDARY-REVIEW                                |
 | AC-DEPENDENCY-COMPROMISE  | Dependency or CI action replaced                     | TB-SUPPLY-CHAIN     | TM-PINNED-DEPENDENCIES, TM-PINNED-CI-ACTIONS                              |
 | AC-CLIENT-OVERTRUST       | Agent executes an unrequested mutation               | TB-CLIENT-INPUT     | TM-POLICY-MUTATION-INTENT, TM-CLIENT-TRUST-DOC                            |
@@ -97,6 +104,11 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-NO-BROWSER-SESSION      | manual    | planned     | Owner: Brandon Born, decision recorded in BGA-305                            |
 | TM-DOC-PROVENANCE          | automated | planned     | Reserved for BGA-200                                                         |
 | TM-DOC-UNTRUSTED           | automated | planned     | Reserved for BGA-202                                                         |
+| TM-DOC-HOST-ALLOWLIST      | automated | planned     | Reserved for BGA-201                                                         |
+| TM-DOC-NO-LOOPBACK         | automated | planned     | Reserved for BGA-201                                                         |
+| TM-DOC-REQUEST-CONTENT     | automated | planned     | Reserved for BGA-202                                                         |
+| TM-DOC-RESPONSE-BUDGET     | automated | planned     | Reserved for BGA-201                                                         |
+| TM-DOC-SNAPSHOT-INTEGRITY  | automated | planned     | Reserved for BGA-201                                                         |
 
 ## Residual risk
 
@@ -107,6 +119,8 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | RR-DOC-CONTENT-UNREVIEWED  | Prompt injection through retrieved documentation has no runtime control; the network-off default is the only barrier.         | Brandon Born |
 | RR-CLIENT-BEHAVIOR         | The server cannot control what an agent does with a correct, redacted result.                                                 | Brandon Born |
 | RR-SECRET-SCAN-COVERAGE    | Secret scanning recognizes known formats only; a novel or encoded secret can pass.                                            | Brandon Born |
+| RR-DOC-INJECTION-RESIDUAL  | Labelling retrieved content as untrusted does not stop an agent acting on it. No server-side control can.                     | Brandon Born |
+| RR-DOC-ALLOWLIST-TRUST     | An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel.                  | Brandon Born |
 
 ## Operator responsibilities
 

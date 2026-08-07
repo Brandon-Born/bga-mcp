@@ -377,12 +377,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-200 — Define the documentation source and provenance policy
 
-- **Status:** planned
+- **Status:** ready
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-013
 - **Deliverable:** An allowlisted source catalog distinguishing official BGA documentation from community examples, with licensing, attribution, retrieval, and trust rules.
 - **Acceptance:** Every source has canonical URL, authority, allowed use, update signal, and retention policy; prompt-like content is treated as untrusted data.
 - **Verification:** Catalog validation rejects unapproved, unattributed, or incompletely classified sources.
+- **Note:** TB-DOCS-NETWORK was reviewed on 2026-08-07, so Phase 2 work may begin. The review records seven preconditions that must be implemented before any documentation capability can be advertised, and the capability gate enforces them. See the [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md).
 
 ### BGA-201 — Build the documentation index pipeline
 

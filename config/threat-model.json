@@ -1,7 +1,7 @@
 {
   "$schema": "./threat-model.schema.json",
   "schemaVersion": 1,
-  "reviewedAt": "2026-08-06",
+  "reviewedAt": "2026-08-07",
   "assets": [
     {
       "id": "ASSET-LOCAL-SOURCE",
@@ -109,9 +109,19 @@
     {
       "id": "TB-DOCS-NETWORK",
       "name": "Documentation retrieval",
-      "description": "Outbound requests for documentation and the untrusted content they return.",
-      "status": "unreviewed",
-      "gates": ["network"]
+      "description": "Outbound requests for documentation and the untrusted content they return. Reviewed 2026-08-07: a capability may cross only when every mitigation listed in preconditions is implemented.",
+      "status": "reviewed",
+      "gates": ["network"],
+      "reviewedAt": "2026-08-07",
+      "preconditions": [
+        "TM-DOC-HOST-ALLOWLIST",
+        "TM-DOC-NO-LOOPBACK",
+        "TM-DOC-REQUEST-CONTENT",
+        "TM-DOC-RESPONSE-BUDGET",
+        "TM-DOC-PROVENANCE",
+        "TM-DOC-UNTRUSTED",
+        "TM-DOC-SNAPSHOT-INTEGRITY"
+      ]
     },
     {
       "id": "TB-STUDIO",
@@ -267,6 +277,51 @@
       "boundary": "TB-CLIENT-INPUT",
       "impact": "Remote or local state changes without an explicit human decision.",
       "mitigations": ["TM-POLICY-MUTATION-INTENT", "TM-CLIENT-TRUST-DOC"]
+    },
+    {
+      "id": "AC-DOC-SSRF",
+      "title": "A documentation fetch is aimed at an internal or loopback service",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "The server becomes a proxy into the developer network, reaching services the client could not reach itself.",
+      "mitigations": ["TM-DOC-HOST-ALLOWLIST", "TM-DOC-NO-LOOPBACK"]
+    },
+    {
+      "id": "AC-DOC-REQUEST-LEAK",
+      "title": "Project content leaves the machine inside a request",
+      "actor": "ACTOR-MCP-CLIENT",
+      "assets": ["ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "A search built from file content sends unreleased game code to a third party in a URL or body.",
+      "mitigations": ["TM-DOC-REQUEST-CONTENT", "TM-NETWORK-OFF-DEFAULT"]
+    },
+    {
+      "id": "AC-DOC-OVERSIZED",
+      "title": "A documentation response is slow or enormous",
+      "actor": "ACTOR-DOC-CONTENT",
+      "assets": ["ASSET-CLIENT-CONTEXT"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "The agent context is flooded or the server hangs waiting on a remote host.",
+      "mitigations": ["TM-DOC-RESPONSE-BUDGET"]
+    },
+    {
+      "id": "AC-DOC-STALE-SNAPSHOT",
+      "title": "Cached documentation is served as current",
+      "actor": "ACTOR-DOC-CONTENT",
+      "assets": ["ASSET-CLIENT-CONTEXT"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "A developer follows guidance that the framework has since changed, with nothing to reveal its age.",
+      "mitigations": ["TM-DOC-SNAPSHOT-INTEGRITY", "TM-DOC-PROVENANCE"]
+    },
+    {
+      "id": "AC-DOC-TRACKING",
+      "title": "Outbound requests reveal what a developer is working on",
+      "actor": "ACTOR-DOC-CONTENT",
+      "assets": ["ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-DOCS-NETWORK",
+      "impact": "A third party learns which game and which problem a developer is working on, from timing and query terms alone.",
+      "mitigations": ["TM-NETWORK-OFF-DEFAULT", "TM-DOC-REQUEST-CONTENT"]
     }
   ],
   "mitigations": [
@@ -483,6 +538,51 @@
       "status": "planned",
       "backlog": "BGA-202",
       "scenarios": ["E2E-DOCS-UNTRUSTED-CONTENT"]
+    },
+    {
+      "id": "TM-DOC-HOST-ALLOWLIST",
+      "title": "Only allowlisted documentation hosts over HTTPS, with redirects confined to the allowlist",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-201",
+      "scenarios": ["E2E-DOCS-HOST-ALLOWLIST"]
+    },
+    {
+      "id": "TM-DOC-NO-LOOPBACK",
+      "title": "A host resolving to a loopback, link-local, or private address is refused",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-201",
+      "scenarios": ["E2E-DOCS-NO-LOOPBACK"]
+    },
+    {
+      "id": "TM-DOC-REQUEST-CONTENT",
+      "title": "A request carries only the client\u2019s explicit query, never project file content",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-202",
+      "scenarios": ["E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA"]
+    },
+    {
+      "id": "TM-DOC-RESPONSE-BUDGET",
+      "title": "A documentation response is bounded in size and time by the policy boundary",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-201",
+      "scenarios": ["E2E-DOCS-RESPONSE-BUDGET"]
+    },
+    {
+      "id": "TM-DOC-SNAPSHOT-INTEGRITY",
+      "title": "Cached documentation carries its snapshot date and is never served as current without one",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-201",
+      "scenarios": ["E2E-DOCS-SNAPSHOT-DATE"]
     }
   ],
   "residualRisks": [
@@ -518,6 +618,18 @@
       "id": "RR-SECRET-SCAN-COVERAGE",
       "description": "Secret scanning recognizes known credential formats. A novel or encoded secret can pass the gate, so redaction and the artifact allowlist remain the primary controls.",
       "abuseCases": ["AC-SECRET-IN-ARTIFACT"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-DOC-INJECTION-RESIDUAL",
+      "description": "Labelling retrieved content as untrusted does not stop an agent from acting on it. No server-side control can; the mitigation reduces the chance an agent treats documentation as instruction, and the operator responsibilities carry the rest.",
+      "abuseCases": ["AC-DOC-PROMPT-INJECTION"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-DOC-ALLOWLIST-TRUST",
+      "description": "An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel. Provenance and untrusted-content labelling limit the damage; the allowlist cannot prevent it.",
+      "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-DOC-STALE-SNAPSHOT"],
       "acceptedBy": "Brandon Born"
     }
   ]

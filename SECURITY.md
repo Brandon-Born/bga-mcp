@@ -34,4 +34,6 @@ These are design goals while the project is pre-release, not a claim that unrele
 
 [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks behind those requirements, together with the operator responsibilities that the server cannot enforce on its own. Its machine-readable form is checked in CI: a mitigation without evidence, a manual control without an owner, or a capability advertised across an unreviewed boundary fails the build.
 
-The documentation-retrieval and BGA Studio boundaries are recorded as unreviewed. No networked or mutating capability may be advertised until that review happens.
+The BGA Studio boundary is recorded as unreviewed, so no Studio capability may be advertised.
+
+The documentation-retrieval boundary was reviewed on 2026-08-07. It is reviewed, not open: the review records the mitigations that must exist before any capability may retrieve documentation, and the same gate refuses to advertise a capability whose boundary preconditions are still outstanding.

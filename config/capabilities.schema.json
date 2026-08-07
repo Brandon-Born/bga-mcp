@@ -6,35 +6,64 @@
   "additionalProperties": false,
   "required": ["$schema", "schemaVersion", "server", "transports", "capabilities", "adapters"],
   "properties": {
-    "$schema": { "const": "./capabilities.schema.json" },
-    "schemaVersion": { "const": 1 },
+    "$schema": {
+      "const": "./capabilities.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
     "server": {
       "type": "object",
       "additionalProperties": false,
       "required": ["name", "version"],
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "version": { "type": "string", "minLength": 1 }
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "transports": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/transport" }
+      "items": {
+        "$ref": "#/$defs/transport"
+      }
     },
     "capabilities": {
       "type": "object",
       "additionalProperties": false,
       "required": ["tools", "resources", "prompts"],
       "properties": {
-        "tools": { "type": "array", "items": { "$ref": "#/$defs/capability" } },
-        "resources": { "type": "array", "items": { "$ref": "#/$defs/capability" } },
-        "prompts": { "type": "array", "items": { "$ref": "#/$defs/capability" } }
+        "tools": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capability"
+          }
+        }
       }
     },
     "adapters": {
       "type": "array",
-      "items": { "$ref": "#/$defs/adapter" }
+      "items": {
+        "$ref": "#/$defs/adapter"
+      }
     }
   },
   "$defs": {
@@ -42,22 +71,33 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": { "type": "string", "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$" }
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+      }
     },
     "transport": {
       "type": "object",
       "additionalProperties": false,
       "required": ["name", "stability", "protocolVersions", "requiredScenarios"],
       "properties": {
-        "name": { "enum": ["stdio"] },
-        "stability": { "enum": ["experimental", "implemented", "verified"] },
+        "name": {
+          "enum": ["stdio"]
+        },
+        "stability": {
+          "enum": ["experimental", "implemented", "verified"]
+        },
         "protocolVersions": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["2025-11-25", "2026-07-28"] }
+          "items": {
+            "enum": ["2025-11-25", "2026-07-28"]
+          }
         },
-        "requiredScenarios": { "$ref": "#/$defs/scenarioIds" }
+        "requiredScenarios": {
+          "$ref": "#/$defs/scenarioIds"
+        }
       }
     },
     "capability": {
@@ -71,43 +111,91 @@
         "environments",
         "protocolVersions",
         "requiredScenarios",
-        "liveStudioRequired"
+        "liveStudioRequired",
+        "boundary"
       ],
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "owner": { "type": "string", "minLength": 1 },
-        "stability": { "enum": ["experimental", "implemented", "verified"] },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stability": {
+          "enum": ["experimental", "implemented", "verified"]
+        },
         "supportedLayouts": {
           "type": "array",
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "environments": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 }
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "protocolVersions": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
-          "items": { "enum": ["2025-11-25", "2026-07-28"] }
+          "items": {
+            "enum": ["2025-11-25", "2026-07-28"]
+          }
         },
-        "requiredScenarios": { "$ref": "#/$defs/scenarioIds" },
-        "liveStudioRequired": { "type": "boolean" }
+        "requiredScenarios": {
+          "$ref": "#/$defs/scenarioIds"
+        },
+        "liveStudioRequired": {
+          "type": "boolean"
+        },
+        "boundary": {
+          "type": "string",
+          "pattern": "^TB-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+        }
       }
     },
     "adapter": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "owner", "stability", "requiredScenarios", "liveExternalRequired"],
+      "required": [
+        "name",
+        "owner",
+        "stability",
+        "requiredScenarios",
+        "liveExternalRequired",
+        "boundary"
+      ],
       "properties": {
-        "name": { "type": "string", "minLength": 1 },
-        "owner": { "type": "string", "minLength": 1 },
-        "stability": { "enum": ["experimental", "implemented", "verified"] },
-        "requiredScenarios": { "$ref": "#/$defs/scenarioIds" },
-        "liveExternalRequired": { "type": "boolean" }
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stability": {
+          "enum": ["experimental", "implemented", "verified"]
+        },
+        "requiredScenarios": {
+          "$ref": "#/$defs/scenarioIds"
+        },
+        "liveExternalRequired": {
+          "type": "boolean"
+        },
+        "boundary": {
+          "type": "string",
+          "pattern": "^TB-[A-Z0-9]+(?:-[A-Z0-9]+)*$"
+        }
       }
     }
   }
