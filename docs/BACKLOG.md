@@ -288,7 +288,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** Every rule has documented evidence, valid and invalid fixtures, certainty, severity, and false-positive notes. Heuristics are never reported as facts.
 - **Verification:** Tool E2E covers every rule's positive and negative fixture plus invalid input, unsupported syntax, path confinement, deterministic ordering, and immutability.
 - **Evidence:** Eleven rules in [`src/rules/state-machine.ts`](../src/rules/state-machine.ts), each carrying its severity, certainty, and known false positives, published to the client in every result. Structural rules are proven from the parsed declaration and reported as facts; the three cross-file handler rules are heuristics with `likely` certainty and heuristic evidence, and they stay silent when no PHP source could be read. A new `legacy-broken` fixture seeds nine defects and declares them in its `expected.json`, so a rule change cannot silently repurpose it; the `legacy` fixture gained its handler methods so it is a true clean baseline. Seven packaged scenarios prove the behavior through a real MCP client. See the [state-machine validation verification](verification/STATE_MACHINE_VALIDATION.md).
-- **Scope note:** Rules apply to the legacy `states.inc.php` declaration. A modern project returns an `unsupported` result rather than a clean one, because class-based state definitions are not yet interpreted; BGA-101 and this item both extend when that reader lands.
+- **Scope note:** Rules apply to the legacy `states.inc.php` declaration. A modern project returns an `unsupported` result rather than a clean one, because class-based state definitions are not yet interpreted; BGA-115 owns that reader; this item extends when it lands.
 
 ### BGA-107 — Implement `validate_action_contracts`
 
@@ -299,7 +299,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** Missing endpoints, mismatched names, unsupported arguments, and broken handler links produce evidence-backed findings with exact locations.
 - **Verification:** Tool E2E exercises every supported action pattern, seeded mismatch, dynamic or uncertain pattern, invalid input, and non-execution of project code.
 - **Evidence:** [`src/project/actions.ts`](../src/project/actions.ts) reads legacy `ajaxcall` URLs, modern `bgaPerformAction` names, and the request arguments an entry point consumes; [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) traces each action from client call to entry point to game method. Eight rules: a duplicated entry point and a broken `act…` name are facts, every cross-file claim is a heuristic carrying its limitations, and a call assembled at runtime becomes unsupported syntax rather than a guess. When a side of the contract cannot be read the result says so instead of passing. Both fixtures gained real action wiring, and `legacy-broken` declares its eight expected contract findings. Seven packaged scenarios prove it through a real MCP client. See the [action contract verification](verification/ACTION_CONTRACTS.md).
-- **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; that reader is shared work with BGA-101.
+- **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; BGA-115 owns that reader.
 
 ### BGA-108 — Implement `validate_notifications`
 
@@ -372,6 +372,25 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** The policy applies regardless of tool inputs and detects attempted adapter or dependency escape.
 - **Verification:** E2E runs local capabilities in a network-denied environment, snapshots filesystem metadata/content, and fails on any outbound connection or mutation.
 - **Evidence:** `tests/e2e/network-denied.ts` replaces every network primitive — `net`, `tls`, `http`, `https`, `dns`, `dns/promises`, `dgram`, `fetch`, and `net.Socket.prototype.connect` — with functions that throw and record the attempt, and is loaded before the packaged server starts. `E2E-READ-ONLY-NETWORK-DENIED` runs every advertised tool and all three resources under that denial: all complete, the attempt log stays empty, and the project is unchanged by content digest and by per-file size and modification time. `E2E-READ-ONLY-NETWORK-HARNESS` proves the denial itself works by making an outbound connection fail and appear in the log, so the first scenario's empty log is evidence rather than an artifact of a harness that does nothing. `E2E-READ-ONLY-INPUT-CANNOT-ESCAPE` proves the policy holds whatever the client sends: an outside root, a traversal, and the filesystem root are all refused while a legitimate call succeeds, and a file outside the root is untouched.
+
+### BGA-115 — Read the modern project layout
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-008, BGA-101, BGA-106, BGA-107
+- **Deliverable:** Readers for the modern layout's class-based state definitions and its action entry points, extending the normalized model so the existing validators produce real results for a modern project instead of an unsupported one.
+- **Acceptance:** A representative modern fixture and a defective variant exist alongside the legacy pair, with their expected findings declared. Every construct the readers cannot interpret is still reported as unsupported syntax rather than guessed at, and no rule silently changes meaning between layouts.
+- **Verification:** The state-machine and action-contract suites gain modern scenarios matching their legacy ones, the compatibility matrix claims modern support only where a fixture and passing scenario exist, and the rule catalog records any rule whose applicability differs by layout.
+- **Note:** This item owns work that BGA-101, BGA-106, BGA-107, BGA-108, and BGA-109 each defer to in a scope note. Until it lands, a modern project gets a description from `inspect_project` and an explicit unsupported result from the four validators. Confirming the real shape of modern state classes and action entry points against current BGA projects is part of the work: the existing modern fixture is a minimal original stub and is not evidence of what the framework actually requires.
+
+### BGA-116 — Reduce first-run friction
+
+- **Status:** ready
+- **Priority:** P2
+- **Depends on:** BGA-102, BGA-112
+- **Deliverable:** Input and documentation changes that make a correctly configured server pleasant to use: `projectRoot` optional when exactly one root is configured, help text that states a project root must be an absolute path, and tool descriptions that state which layouts a validator supports.
+- **Acceptance:** Omitting `projectRoot` with one configured root behaves as if it had been passed; omitting it with none or several fails with the existing stable codes rather than guessing. No change weakens a policy check.
+- **Verification:** Packaged scenarios cover the omitted argument with zero, one, and several configured roots, and prove the refusals keep their current error codes.
 
 ## Phase 2 — Documentation
 
@@ -556,7 +575,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Status:** planned
 - **Priority:** P1
 - **Depends on:** BGA-003, BGA-009
-- **Deliverable:** Verified setup, configuration, troubleshooting, update, and removal instructions for each supported MCP client and platform.
+- **Deliverable:** Verified setup, configuration, troubleshooting, update, and removal instructions for each supported MCP client and platform, including a first-run walkthrough that states the supported layouts and what a modern-layout project will and will not get today.
 - **Acceptance:** Commands use released artifacts, explain permissions and data flow, and never require copying secrets into agent prompts.
 - **Verification:** Fresh-environment E2E follows each guide verbatim from install through capability call and clean removal.
 
