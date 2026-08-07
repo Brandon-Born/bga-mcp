@@ -33,6 +33,7 @@ describe('production server factory', () => {
         'audit_database_usage',
         'inspect_project',
         'run_pre_release_audit',
+        'search_bga_docs',
         'validate_action_contracts',
         'validate_notifications',
         'validate_project',

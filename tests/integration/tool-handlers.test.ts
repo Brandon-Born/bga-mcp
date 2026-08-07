@@ -164,6 +164,8 @@ describe('tool handlers over a real client connection', () => {
         'audit_database_usage',
         'validate_project',
         'run_pre_release_audit',
+        // search_bga_docs is not here: it takes no projectRoot, because it
+        // reads documentation rather than a project.
       ]) {
         const outcome = await call(tool, { projectRoot: brokenRoot });
         expect(outcome.isError).toBe(true);

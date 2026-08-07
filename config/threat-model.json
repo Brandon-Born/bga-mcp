@@ -545,8 +545,8 @@
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
-      "backlog": "BGA-208",
-      "scenarios": ["UNIT-DOC-EXCERPT", "UNIT-DOC-PROVENANCE"]
+      "backlog": "BGA-202",
+      "scenarios": ["UNIT-DOC-EXCERPT", "UNIT-DOC-PROVENANCE", "UNIT-DOC-SEARCH-PARSE"]
     },
     {
       "id": "TM-DOC-HOST-ALLOWLIST",

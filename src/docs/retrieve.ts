@@ -75,7 +75,7 @@ export async function retrieveDocumentation(
     const stored = cache.write({
       url: page.url,
       sourceId: source.id,
-      authority: source.authority as SourceAuthority,
+      authority: source.authority,
       retrievedAt: page.retrievedAt,
       lastModified: page.lastModified,
       title: titleOf(page.body, source.title),

@@ -89,6 +89,23 @@
         "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
+        "name": "search_bga_docs",
+        "owner": "Brandon Born",
+        "stability": "implemented",
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-DOCS-NETWORK-OFF",
+          "E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA",
+          "E2E-DOCS-UNKNOWN-SOURCE",
+          "E2E-DOCS-INVALID-INPUT",
+          "E2E-DOCS-ADVERTISED"
+        ],
+        "liveStudioRequired": false,
+        "boundary": "TB-DOCS-NETWORK"
+      },
+      {
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
         "stability": "verified",

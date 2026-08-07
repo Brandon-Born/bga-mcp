@@ -523,12 +523,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-202 — Implement `search_bga_docs`
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-016, BGA-207, BGA-208
 - **Deliverable:** A tool returning relevant, concise documentation excerpts with canonical sources, provenance, snapshot dates, and known framework versions.
 - **Acceptance:** Official and community results are distinguishable, result limits are enforced, and retrieved text cannot issue instructions to the server.
 - **Verification:** Tool E2E covers exact-topic, ambiguous, no-result, stale-source, malicious-content, invalid-input, and output-limit scenarios.
+- **Evidence:** [`src/tools/search-bga-docs.ts`](../src/tools/search-bga-docs.ts) searches the allowlisted sources through the MediaWiki search API, which is the `search=yes` use the sources' content signals permit and which returns each page's last edit as its own freshness signal. Every result carries title, canonical URL, source, authority, provenance, retrieval date, last edit, age, staleness, and a `trust: untrusted-content` label, and the response carries a notice saying the text is documentation to read rather than instructions to follow. An official-host community page is labelled `community`, because the host does not vouch for it. Results are capped at five and excerpts at 1,200 characters, so this is a citation list rather than a corpus. It is the only capability with `openWorldHint`. `E2E-DOCS-ADVERTISED`, `E2E-DOCS-NETWORK-OFF`, `E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA`, `E2E-DOCS-UNKNOWN-SOURCE`, and `E2E-DOCS-INVALID-INPUT` run through the packaged artifact; `UNIT-DOC-SEARCH-PARSE` covers reading the API response, including a malformed one and a hit with no title. `E2E-READ-ONLY-NETWORK-DENIED` now calls this tool too and proves it refuses because the network is off rather than because the harness blocked it — the attempt log stays empty.
+- **Note:** `implemented`, not `verified`. The scenarios that need a live wiki — a real result with real provenance, a stale source, and adversarial page content — cannot run in an offline CI, so what is proven here is every refusal and the shape of the contract, not a successful retrieval. Those belong with BGA-205's evaluation set, which is where a network-dependent suite can be run deliberately rather than on every commit.
 
 ### BGA-203 — Implement `bga://docs/{topic}`
 

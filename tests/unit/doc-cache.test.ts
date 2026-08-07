@@ -1,6 +1,7 @@
 import { DocumentationCache, ageInDays, type DocumentationEntry } from '../../src/docs/cache.js';
 import { excerptFor, htmlToText, titleOf } from '../../src/docs/excerpt.js';
 import { provenanceOf, retrieveDocumentation } from '../../src/docs/retrieve.js';
+import { parseSearchResponse, pathForTitle, searchParams } from '../../src/docs/search.js';
 
 const NOW = new Date('2026-08-07T12:00:00.000Z');
 
@@ -163,7 +164,7 @@ describe('documentation retrieval', () => {
       source,
       cache,
       { url: page.url, query: 'state classes', maxExcerptChars: 500 },
-      async () => page,
+      () => Promise.resolve(page),
       NOW,
     );
 
@@ -206,9 +207,7 @@ describe('documentation retrieval', () => {
       source,
       cache,
       { url: page.url, query: 'state classes', maxExcerptChars: 500 },
-      async () => {
-        throw new Error('network unreachable');
-      },
+      () => Promise.reject(new Error('network unreachable')),
       NOW,
     );
     expect(offline).toMatchObject({ stale: true, cached: true, excerpt: 'an old excerpt' });
@@ -220,9 +219,9 @@ describe('documentation retrieval', () => {
       source,
       cache,
       { url: page.url, query: 'state classes', maxExcerptChars: 500 },
-      async () => {
+      () => {
         fetches += 1;
-        return page;
+        return Promise.resolve(page);
       },
       NOW,
     );
@@ -233,9 +232,9 @@ describe('documentation retrieval', () => {
       source,
       cache,
       { url: page.url, query: 'state classes', maxExcerptChars: 500 },
-      async () => {
+      () => {
         fetches += 1;
-        return page;
+        return Promise.resolve(page);
       },
       NOW,
     );
@@ -250,11 +249,62 @@ describe('documentation retrieval', () => {
         source,
         cache,
         { url: page.url, query: 'x', maxExcerptChars: 500 },
-        async () => {
-          throw new Error('network unreachable');
-        },
+        () => Promise.reject(new Error('network unreachable')),
         NOW,
       ),
     ).rejects.toThrow('network unreachable');
+  });
+});
+
+describe('documentation search results', () => {
+  it('[UNIT-DOC-SEARCH-PARSE] reads titles, paths, and edit dates, and strips wiki markup', () => {
+    const body = JSON.stringify({
+      query: {
+        search: [
+          {
+            title: 'State classes: State directory',
+            snippet: "a <span class='searchmatch'>state</span> machine &#039;s parts",
+            timestamp: '2026-04-29T08:34:11Z',
+          },
+          { title: 'Main game logic: Game.php', snippet: 'game logic', timestamp: null },
+        ],
+      },
+    });
+
+    const hits = parseSearchResponse(body, 5);
+    expect(hits).toHaveLength(2);
+    expect(hits[0]).toMatchObject({
+      title: 'State classes: State directory',
+      path: 'State_classes:_State_directory',
+      lastEdited: '2026-04-29T08:34:11Z',
+    });
+    // The snippet is wiki-authored HTML, so it is stripped like any other
+    // retrieved content before it reaches a result.
+    expect(hits[0]?.snippet).toBe("a state machine 's parts");
+    expect(hits[0]?.snippet).not.toContain('span');
+    expect(hits[1]?.lastEdited).toBeNull();
+  });
+
+  it('[UNIT-DOC-SEARCH-PARSE] survives a response that is empty, malformed, or incomplete', () => {
+    expect(parseSearchResponse('not json', 5)).toEqual([]);
+    expect(parseSearchResponse('{}', 5)).toEqual([]);
+    expect(parseSearchResponse(JSON.stringify({ query: { search: 'nope' } }), 5)).toEqual([]);
+    // A hit with no title cannot be cited or fetched, so it is dropped rather
+    // than shown with a gap where the source should be.
+    const partial = JSON.stringify({ query: { search: [{ snippet: 'orphan' }, { title: 'Ok' }] } });
+    expect(parseSearchResponse(partial, 5).map((hit) => hit.title)).toEqual(['Ok']);
+  });
+
+  it('[UNIT-DOC-SEARCH-PARSE] honours the result limit and keeps only fixed parameters', () => {
+    const body = JSON.stringify({
+      query: { search: [{ title: 'A' }, { title: 'B' }, { title: 'C' }] },
+    });
+    expect(parseSearchResponse(body, 2)).toHaveLength(2);
+
+    const params = searchParams('state classes', 3);
+    // Only the query varies; everything else is a constant this code chose.
+    expect(params).toMatchObject({ action: 'query', list: 'search', format: 'json', srlimit: '3' });
+    expect(params.srsearch).toBe('state classes');
+    expect(pathForTitle('Game interface logic: Game.js')).toBe('Game_interface_logic:_Game.js');
   });
 });

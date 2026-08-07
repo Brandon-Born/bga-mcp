@@ -114,27 +114,46 @@ describe('local capabilities are read-only and network-off', () => {
       async (client) => {
         const tools = (await client.listTools()).tools.map((tool) => tool.name);
         const outcomes: Record<string, boolean> = {};
+        const messages: Record<string, string> = {};
         for (const name of tools) {
           const response = await client.callTool(
-            { name, arguments: { projectRoot } },
+            // The documentation tool takes a query rather than a project; it is
+            // called too, because a capability that reaches the network is
+            // exactly the one this scenario must watch.
+            {
+              name,
+              arguments: name === 'search_bga_docs' ? { query: 'state classes' } : { projectRoot },
+            },
             { timeout: 20_000 },
           );
           outcomes[name] = response.isError === true;
+          messages[name] = (response.content as { text?: string }[])
+            .map((entry) => entry.text ?? '')
+            .join('\n');
         }
         for (const uri of RESOURCES) {
           const contents = (await client.readResource({ uri }, { timeout: 20_000 }))
             .contents as unknown[];
           expect(contents).toHaveLength(1);
         }
-        return { tools, outcomes };
+        return { tools, outcomes, messages };
       },
     );
 
-    // Every advertised tool ran to completion without the network.
-    expect(result.tools.length).toBeGreaterThanOrEqual(7);
+    // Every local tool ran to completion without the network.
+    expect(result.tools.length).toBeGreaterThanOrEqual(8);
     for (const [name, isError] of Object.entries(result.outcomes)) {
+      if (name === 'search_bga_docs') {
+        continue;
+      }
       expect(isError, `${name} failed with the network denied`).toBe(false);
     }
+
+    // The one capability that would use the network refuses because the network
+    // is off by default, not because the harness blocked it: it never gets far
+    // enough to be blocked, which the empty attempt log below confirms.
+    expect(result.outcomes.search_bga_docs).toBe(true);
+    expect(result.messages.search_bga_docs).toContain('policy.network.disabled');
 
     // Nothing tried to leave the machine.
     expect(await readFile(networkLog, 'utf8')).toBe('');
