@@ -11,7 +11,7 @@ import {
   type AggregateResult,
 } from '../rules/aggregate.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_PROJECT_TOOL = 'validate_project';
 
@@ -19,7 +19,10 @@ export const ValidateProjectInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
   groups: z
     .array(z.enum(RULE_GROUPS))
     .min(1)
@@ -71,6 +74,8 @@ Runs the state machine, action contract, notification, and database validators,
 or only the groups requested, and returns their findings together with a
 per-group breakdown.
 
+Every validator reads the legacy, modern, and part-migrated layouts.
+
 Findings keep the evidence, certainty, and locations their validator produced;
 aggregation reorders, it never rewrites. A validator that fails is reported as
 failed with its error code and makes the whole run 'incomplete' — a broken part
@@ -118,13 +123,14 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
     },
     async ({ projectRoot, groups, maxFindings }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, {
+          const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
           });
 
-          const runners = createValidatorRunners(policy, projectRoot, context);
+          const runners = createValidatorRunners(policy, root, context);
 
           const aggregate = await aggregateValidations(runners, {
             ...(groups === undefined ? {} : { groups }),

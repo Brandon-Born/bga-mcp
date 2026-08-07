@@ -66,7 +66,7 @@ it('[INT-POLICY-TIMEOUT] aborts and reports an operation that outlives its deadl
 
 `pnpm verify:scenarios` fails when a required scenario has no declaring test, and when a declared identifier is required by nothing. Identifiers reserved by planned work are recorded as such and may not be claimed as evidence.
 
-The declaration proves the test exists and runs in the complete gate. The test run itself proves it passes. Machine-readable per-run results are BGA-012 and are not yet emitted.
+The declaration proves the test exists and runs in the complete gate. The test run itself proves it passes, and the evidence artifact below records which of the two happened for every required scenario.
 
 ## Capability manifest
 
@@ -114,6 +114,18 @@ A change cannot be considered complete when any applicable gate is missing or fa
 Every verification gate must fail on demand. Each `pnpm verify:*` command seeds its own defect, requires the gate to reject it, and only then reports on the real repository. A gate that cannot fail is not evidence.
 
 A release must publish or retain machine-readable evidence containing the package version, source commit, dependency lock digest, test environment identity, supported protocol version, scenario results, and timestamps. Secrets and private BGA data must never appear in that evidence.
+
+## Verification evidence
+
+`pnpm check` ends by writing `.artifacts/verification-evidence.json` and checking it. The document is described by [`config/evidence.schema.json`](../config/evidence.schema.json) and records the commit and whether the tree was clean, the package version and lock digest, the Node version and platform, the supported protocol versions and conformance runs, and every advertised capability with the result of each scenario it requires.
+
+Three properties make it evidence rather than a summary:
+
+- **It records absence.** A required scenario with no test in the run is `missing`, not omitted, and a capability with a missing or failed scenario cannot be `passed`. The gate fails when a capability advertised as `verified` has anything less.
+- **It is sealed.** `integrity` is a SHA-256 digest of the document with that field removed, computed over a canonical serialization, so an artifact edited after its run no longer matches itself.
+- **It is scanned before it is written.** The emitter refuses to write a document containing a known credential format, and the gate scans it again, because a test title or file path is a plausible carrier into a published artifact.
+
+`pnpm evidence` records a run; it never creates one. It reads the Vitest results and conformance output that `pnpm check` has already produced, so the artifact always describes the run that gated the change.
 
 Flaky tests are failures. They must be fixed or the affected capability must be removed from the supported set; retries cannot be used to turn intermittent behavior into a passing release gate.
 

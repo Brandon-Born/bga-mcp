@@ -182,7 +182,9 @@ describe('packaged validate_action_contracts', () => {
   it('[E2E-VALIDATE-ACTIONS-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
       await expectSchemaRejections(client, 'validate_action_contracts', [
-        {},
+        // An omitted projectRoot now means the sole configured root, so it is
+        // valid input rather than malformed; the refusals are proven by the
+        // default-root scenarios.
         { projectRoot: 7 },
         { projectRoot: '' },
         { root: cleanRoot },

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { STATE_MACHINE_RULES, validateStateMachine } from '../rules/state-machine.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_STATE_MACHINE_TOOL = 'validate_state_machine';
 
@@ -12,7 +12,10 @@ export const ValidateStateMachineInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const ValidateStateMachineOutputSchema = z.strictObject({
@@ -41,6 +44,9 @@ const DESCRIPTION = `Validate a BGA project's state machine across its files.
 Checks the entry state, duplicate identifiers and names, unknown state types,
 transition targets, unreachable states, dead ends, and whether the action, args,
 and possible-action methods a state names are declared in readable PHP source.
+
+Reads states from states.inc.php, from state classes under modules/php/States,
+or from both at once while a project is part-way through migrating them.
 
 Structural findings are reported as facts. Cross-file handler findings are
 reported as heuristics with their known limitations, never as facts. Syntax the
@@ -85,8 +91,9 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_STATE_MACHINE_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, { withPhpSources: true });
+          const context = await loadProjectContext(policy, root, { withPhpSources: true });
           const diagnostics = validateStateMachine(context.model, context.phpSources);
           return {
             schemaVersion: 1,

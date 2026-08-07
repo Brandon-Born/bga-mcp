@@ -61,6 +61,7 @@ A **reviewed** boundary is not automatically an open one. TB-DOCS-NETWORK was re
 | AC-SECRET-IN-OUTPUT       | Secrets or player data appear in results or errors   | TB-OUTPUT           | TM-REDACTION, TM-ERROR-COLLAPSE                                           |
 | AC-SECRET-IN-ARTIFACT     | Retained CI output carries a credential              | TB-OUTPUT           | TM-SOURCE-SECRET-SCAN, TM-ARTIFACT-SCAN, TM-LOG-REDACTION                 |
 | AC-ARTWORK-REDISTRIBUTION | Publisher artwork enters the repository              | TB-SUPPLY-CHAIN     | TM-FIXTURE-ASSET-BAN                                                      |
+| AC-FALSE-VERIFICATION     | A release claims verification the tests never ran    | TB-SUPPLY-CHAIN     | TM-EVIDENCE-COVERAGE, TM-EVIDENCE-INTEGRITY                               |
 | AC-CREDENTIAL-AS-ARGUMENT | Studio credential passed as a tool argument          | TB-STUDIO           | TM-CREDENTIAL-PROVIDER, TM-BOUNDARY-REVIEW                                |
 | AC-STUDIO-WRONG-TARGET    | Synchronization writes to the wrong project          | TB-STUDIO           | TM-POLICY-REMOTE-ALLOWLIST, TM-POLICY-MUTATION-INTENT, TM-BOUNDARY-REVIEW |
 | AC-STUDIO-SESSION-REUSE   | Browser session or undocumented endpoint used        | TB-STUDIO           | TM-NO-BROWSER-SESSION, TM-BOUNDARY-REVIEW                                 |
@@ -94,8 +95,10 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-ERROR-COLLAPSE          | automated | implemented | UNIT-ERROR-UNEXPECTED-COLLAPSE                                               |
 | TM-LOG-REDACTION           | automated | implemented | GATE-LOG-REDACTION                                                           |
 | TM-SOURCE-SECRET-SCAN      | automated | implemented | GATE-SECRET-SCAN-SOURCE                                                      |
-| TM-ARTIFACT-SCAN           | automated | implemented | GATE-SECRET-SCAN-ARTIFACT                                                    |
+| TM-ARTIFACT-SCAN           | automated | implemented | GATE-SECRET-SCAN-ARTIFACT, GATE-EVIDENCE-REDACTION                           |
 | TM-FIXTURE-ASSET-BAN       | automated | implemented | GATE-FIXTURE-SAFETY                                                          |
+| TM-EVIDENCE-COVERAGE       | automated | implemented | GATE-EVIDENCE-COVERAGE                                                       |
+| TM-EVIDENCE-INTEGRITY      | automated | implemented | GATE-EVIDENCE-TAMPER                                                         |
 | TM-PINNED-DEPENDENCIES     | automated | implemented | GATE-DEPENDENCY-PINNING                                                      |
 | TM-PINNED-CI-ACTIONS       | automated | implemented | GATE-CI-ACTION-PINNING                                                       |
 | TM-BOUNDARY-REVIEW         | manual    | implemented | Owner: Brandon Born, before any capability crosses an unreviewed boundary    |

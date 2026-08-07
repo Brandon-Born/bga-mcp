@@ -280,8 +280,9 @@ describe('packaged validate_project', () => {
 
   it('[E2E-VALIDATE-PROJECT-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
+      // `{}` is valid now: an omitted projectRoot means the sole configured
+      // root, proven by the default-root scenarios.
       for (const argument of [
-        {},
         { projectRoot: 7 },
         { projectRoot: cleanRoot, groups: ['not-a-group'] },
         { projectRoot: cleanRoot, groups: [] },

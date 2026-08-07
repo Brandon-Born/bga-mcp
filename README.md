@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in early implementation. The installable stdio server advertises one verified capability, `inspect_project`. The remaining tools and resources below are still proposals.
+> This project is in early implementation. The installable stdio server advertises seven verified tools and three verified resources; the documentation and Studio capabilities below are still proposals.
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -63,9 +63,9 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Seven tools and three resources are live and verified against both project layouts, and Phase 1 is complete. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All seven run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), [project resource](docs/verification/PROJECT_RESOURCES.md), and [read-only and network-off](docs/verification/READ_ONLY_NETWORK_OFF.md) records.
+Seven tools and three resources are live and verified against the legacy, modern, and part-migrated layouts, and Phase 0 and Phase 1 are complete. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All seven run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), [project resource](docs/verification/PROJECT_RESOURCES.md), and [read-only and network-off](docs/verification/READ_ONLY_NETWORK_OFF.md) records.
 
-Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
+Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 
 See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
@@ -101,16 +101,18 @@ An MCP client can launch a development checkout after it has been built:
 
 Configuration is the policy boundary. Defaults are local, read-only, and network-off, and every relaxation is an explicit flag:
 
-| Option                        | Effect                                                                     |
-| ----------------------------- | -------------------------------------------------------------------------- |
-| `--project-root <path>`       | Allow one local project root. Repeatable. A missing root fails at startup. |
-| `--allow-remote-project <id>` | Allowlist a BGA Studio project for a future mutation. Repeatable.          |
-| `--operation-timeout-ms <n>`  | Deadline for a single operation.                                           |
-| `--max-output-bytes <n>`      | Maximum bytes one result may return.                                       |
-| `--allow-network`             | Permit network access. Off by default.                                     |
-| `--allow-mutations`           | Permit explicitly confirmed mutating operations. Off by default.           |
+| Option                        | Effect                                                                                          |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| `--project-root <path>`       | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup. |
+| `--allow-remote-project <id>` | Allowlist a BGA Studio project for a future mutation. Repeatable.                               |
+| `--operation-timeout-ms <n>`  | Deadline for a single operation.                                                                |
+| `--max-output-bytes <n>`      | Maximum bytes one result may return.                                                            |
+| `--allow-network`             | Permit network access. Off by default.                                                          |
+| `--allow-mutations`           | Permit explicitly confirmed mutating operations. Off by default.                                |
 
-`inspect_project` reads only from the roots given here. The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
+Every tool reads only from the roots given here. `projectRoot` may be omitted when exactly one root is configured, and then means that root; with none or several configured, the call is refused with a stable error code rather than guessing which project was meant.
+
+The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
 
 ## Verification commands
 
@@ -118,6 +120,7 @@ Configuration is the policy boundary. Defaults are local, read-only, and network
 - `pnpm test:coverage` runs unit, integration, fixture-integrity, harness self-tests, and packed-server E2E with coverage thresholds.
 - `pnpm check:package` builds, packs, and checks package metadata.
 - `pnpm test:conformance` proves the official suite rejects a seeded violation and accepts the candidate for its supported scenario.
+- `pnpm evidence` and `pnpm verify:evidence` write and check `.artifacts/verification-evidence.json`, which records what the run actually proved: see [docs/TESTING.md](docs/TESTING.md#verification-evidence).
 - `pnpm verify:threat-model`, `pnpm verify:compatibility`, and `pnpm verify:scenarios` prove the threat model, the compatibility matrix, and every claimed scenario stay consistent with the code and the tests. Each seeds its own defect first and fails on it.
 - `pnpm verify:safety-gates` proves the secret scanner detects a seeded credential without printing it, then scans the repository and every retained CI artifact.
 - `pnpm check` is the complete local gate.

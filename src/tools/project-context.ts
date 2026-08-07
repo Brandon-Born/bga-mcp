@@ -1,4 +1,4 @@
-import { toPublicError } from '../errors.js';
+import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { buildProjectModel, type ProjectModel } from '../project/model.js';
 import type { PhpSource } from '../rules/state-machine.js';
@@ -13,6 +13,45 @@ export interface ProjectContext {
   readonly phpSources: readonly PhpSource[];
   /** Readable client sources, used by rules that span client and server. */
   readonly clientSources: readonly PhpSource[];
+}
+
+/**
+ * Resolves which project a call is about.
+ *
+ * A developer who configured one root should not have to repeat its absolute
+ * path on every call, so an omitted `projectRoot` means that root. With no
+ * root, or with several, the server refuses with its existing stable code
+ * rather than guessing which project was meant. An explicit root is passed
+ * through untouched: the policy boundary, not this function, decides whether
+ * it is allowed.
+ */
+export function resolveProjectRoot(
+  policy: PolicyBoundary,
+  projectRoot?: string,
+  /** Overrides the ambiguity message for callers that cannot take an argument. */
+  ambiguous?: (roots: number) => string,
+): string {
+  if (projectRoot !== undefined) {
+    return projectRoot;
+  }
+
+  const roots = policy.projectRoots;
+  const sole = roots.length === 1 ? roots[0] : undefined;
+  if (sole !== undefined) {
+    return sole;
+  }
+  if (roots.length === 0) {
+    throw new BgaMcpError(
+      ERROR_CODES.policyRootUnconfigured,
+      'No project root is configured. Start the server with --project-root <absolute path>.',
+    );
+  }
+  throw new BgaMcpError(
+    ERROR_CODES.resourceProjectAmbiguous,
+    ambiguous?.(roots.length) ??
+      `projectRoot was omitted, but ${String(roots.length)} roots are configured, so the project is ambiguous. Pass the absolute path of the one to inspect.`,
+    { details: { configuredRoots: roots.length } },
+  );
 }
 
 /**

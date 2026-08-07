@@ -49,3 +49,4 @@ jobs:
           path: |
             coverage/coverage-summary.json
             conformance-results/
+            .artifacts/verification-evidence.json

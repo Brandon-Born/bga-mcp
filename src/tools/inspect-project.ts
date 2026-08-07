@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import type { ProjectModel } from '../project/model.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const INSPECT_PROJECT_TOOL = 'inspect_project';
 
@@ -22,7 +22,10 @@ export const InspectProjectInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const InspectProjectOutputSchema = z.strictObject({
@@ -84,8 +87,11 @@ const DESCRIPTION = `Inspect a configured BGA project root and explain its struc
 
 Reports the detected layout and why it was chosen, the game metadata, which
 components are present or missing, the state machine where it can be read, and
-explicit findings for anything unsupported or uncertain. Read-only: it never
-writes to the project and never uses the network.`;
+explicit findings for anything unsupported or uncertain.
+
+Reads the legacy, modern, and part-migrated layouts: each of metadata, game
+logic, states, and client logic is read in whichever form the project has it in.
+Read-only: it never writes to the project and never uses the network.`;
 
 /** Renders the model as the short text an agent or a human reads first. */
 export function summarize(model: ProjectModel): string {
@@ -147,8 +153,9 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const model = await policy.runWithTimeout(INSPECT_PROJECT_TOOL, async () => {
-          return (await loadProjectContext(policy, projectRoot)).model;
+          return (await loadProjectContext(policy, root)).model;
         });
 
         const structuredContent = InspectProjectOutputSchema.parse(model);

@@ -279,7 +279,10 @@ describe('packaged inspect_project', () => {
 
   it('[E2E-INSPECT-PROJECT-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', modernRoot], async (client) => {
-      for (const argument of [{}, { projectRoot: 42 }, { projectRoot: '' }, { root: modernRoot }]) {
+      // `{}` is no longer here: an omitted projectRoot means the sole configured
+      // root, proven by E2E-INSPECT-PROJECT-DEFAULT-ROOT. Everything else that
+      // does not match the published schema is still refused.
+      for (const argument of [{ projectRoot: 42 }, { projectRoot: '' }, { root: modernRoot }]) {
         const failure = await callInspect(client, argument).catch((error: unknown) => error);
         if (failure instanceof Error) {
           expect(failure.message).toMatch(/valid|invalid|schema|required|expected/iu);
@@ -299,6 +302,50 @@ describe('packaged inspect_project', () => {
     expect(response.isError).toBe(true);
     expect(response.text).toContain('policy.root.not-allowed');
     expect(response.structured).toBeUndefined();
+  });
+
+  it('[E2E-INSPECT-PROJECT-DEFAULT-ROOT] uses the only configured root when the argument is omitted', async () => {
+    const explicit = await withServer(
+      ['--project-root', legacyRoot],
+      async (client) => await callInspect(client, { projectRoot: legacyRoot }),
+    );
+    const omitted = await withServer(
+      ['--project-root', legacyRoot],
+      async (client) => await callInspect(client, {}),
+    );
+
+    expect(omitted.isError).toBe(false);
+    // Omitting the argument is the same call, not a weaker one.
+    expect(omitted.structured).toEqual(explicit.structured);
+    expect(omitted.text).toContain('legacy layout');
+  });
+
+  it('[E2E-INSPECT-PROJECT-DEFAULT-ROOT-AMBIGUOUS] refuses an omitted root when several are configured', async () => {
+    const response = await withServer(
+      ['--project-root', legacyRoot, '--project-root', modernRoot],
+      async (client) => await callInspect(client, {}),
+    );
+
+    expect(response.isError).toBe(true);
+    expect(response.text).toContain('resource.project.ambiguous');
+    // The refusal says how to proceed without naming either project for the
+    // developer, and an explicit root still works on the same server.
+    expect(response.text).toContain('2 roots are configured');
+
+    const explicit = await withServer(
+      ['--project-root', legacyRoot, '--project-root', modernRoot],
+      async (client) => await callInspect(client, { projectRoot: modernRoot }),
+    );
+    expect(explicit.isError).toBe(false);
+  });
+
+  it('[E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED] refuses an omitted root when none is configured', async () => {
+    const response = await withServer([], async (client) => await callInspect(client, {}));
+
+    expect(response.isError).toBe(true);
+    // The same stable code an explicit root gets, so a client can handle one case.
+    expect(response.text).toContain('policy.root.unconfigured');
+    expect(response.text).toContain('--project-root');
   });
 
   it('[E2E-INSPECT-PROJECT-UNCONFIGURED] denies every project when no root is configured', async () => {

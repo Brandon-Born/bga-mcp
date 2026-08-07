@@ -25,7 +25,7 @@
         "name": "audit_database_usage",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -46,12 +46,13 @@
         "name": "inspect_project",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
           "E2E-INSPECT-PROJECT-MODERN",
           "E2E-INSPECT-PROJECT-LEGACY",
+          "E2E-INSPECT-PROJECT-HYBRID",
           "E2E-INSPECT-PROJECT-UNRECOGNIZED",
           "E2E-INSPECT-PROJECT-INVALID-INPUT",
           "E2E-INSPECT-PROJECT-UNLISTED-ROOT",
@@ -60,7 +61,10 @@
           "E2E-INSPECT-PROJECT-SYMLINK-ESCAPE",
           "E2E-INSPECT-PROJECT-REDACTION",
           "E2E-INSPECT-PROJECT-TIMEOUT",
-          "E2E-INSPECT-PROJECT-OUTPUT-LIMIT"
+          "E2E-INSPECT-PROJECT-OUTPUT-LIMIT",
+          "E2E-INSPECT-PROJECT-DEFAULT-ROOT",
+          "E2E-INSPECT-PROJECT-DEFAULT-ROOT-AMBIGUOUS",
+          "E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -69,7 +73,7 @@
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -88,7 +92,7 @@
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -109,7 +113,7 @@
         "name": "validate_notifications",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -130,7 +134,7 @@
         "name": "validate_project",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -140,7 +144,8 @@
           "E2E-VALIDATE-PROJECT-PARTIAL-FAILURE",
           "E2E-VALIDATE-PROJECT-CLEAN",
           "E2E-VALIDATE-PROJECT-INVALID-INPUT",
-          "E2E-VALIDATE-PROJECT-UNLISTED-ROOT"
+          "E2E-VALIDATE-PROJECT-UNLISTED-ROOT",
+          "E2E-VALIDATE-PROJECT-HYBRID"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM"
@@ -149,7 +154,7 @@
         "name": "validate_state_machine",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -172,7 +177,7 @@
         "name": "bga://project/summary",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -189,7 +194,7 @@
         "name": "bga://project/states",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
@@ -206,7 +211,7 @@
         "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["modern-modules", "legacy-flat"],
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [

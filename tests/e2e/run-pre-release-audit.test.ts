@@ -232,7 +232,9 @@ describe('packaged run_pre_release_audit', () => {
 
   it('[E2E-PRE-RELEASE-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
-      for (const argument of [{}, { projectRoot: 7 }, { projectRoot: '' }, { root: cleanRoot }]) {
+      // `{}` is valid now: an omitted projectRoot means the sole configured
+      // root, proven by the default-root scenarios.
+      for (const argument of [{ projectRoot: 7 }, { projectRoot: '' }, { root: cleanRoot }]) {
         const failure = await audit(client, argument).catch((error: unknown) => error);
         if (failure instanceof Error) {
           expect(failure.message).toMatch(/valid|invalid|schema|required|expected/iu);

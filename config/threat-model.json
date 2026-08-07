@@ -322,6 +322,15 @@
       "boundary": "TB-DOCS-NETWORK",
       "impact": "A third party learns which game and which problem a developer is working on, from timing and query terms alone.",
       "mitigations": ["TM-NETWORK-OFF-DEFAULT", "TM-DOC-REQUEST-CONTENT"]
+    },
+    {
+      "id": "AC-FALSE-VERIFICATION",
+      "title": "A release claims verification the tests did not produce",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-SUPPLY-CHAIN",
+      "impact": "A capability is released as verified while a scenario proving it never ran, or the artifact saying so was edited afterwards.",
+      "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY"]
     }
   ],
   "mitigations": [
@@ -451,11 +460,11 @@
     },
     {
       "id": "TM-ARTIFACT-SCAN",
-      "title": "Retained CI artifacts are scanned before upload and never contain the seeded secret",
+      "title": "Retained CI artifacts, including the verification evidence, are scanned before upload and never contain the seeded secret",
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
-      "scenarios": ["GATE-SECRET-SCAN-ARTIFACT"]
+      "scenarios": ["GATE-SECRET-SCAN-ARTIFACT", "GATE-EVIDENCE-REDACTION"]
     },
     {
       "id": "TM-FIXTURE-ASSET-BAN",
@@ -583,6 +592,22 @@
       "status": "planned",
       "backlog": "BGA-201",
       "scenarios": ["E2E-DOCS-SNAPSHOT-DATE"]
+    },
+    {
+      "id": "TM-EVIDENCE-COVERAGE",
+      "title": "Verification evidence records every advertised capability, and a scenario that did not run is recorded as missing",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-EVIDENCE-COVERAGE"]
+    },
+    {
+      "id": "TM-EVIDENCE-INTEGRITY",
+      "title": "Verification evidence carries a digest of its own content, so an artifact edited after its run is detectable",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-EVIDENCE-TAMPER"]
     }
   ],
   "residualRisks": [

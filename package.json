@@ -48,7 +48,7 @@
     "test:unit": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "vitest run tests/e2e",
-    "test:coverage": "vitest run --coverage",
+    "test:coverage": "vitest run --coverage --reporter=default --reporter=json --outputFile.json=.artifacts/test-results.json",
     "test:conformance": "tsx scripts/run-conformance.ts",
     "test:fixtures": "vitest run tests/fixture-integrity.test.ts",
     "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",
@@ -57,8 +57,10 @@
     "verify:rule-catalog": "tsx scripts/verify-rule-catalog.ts",
     "verify:scenarios": "tsx scripts/verify-scenarios.ts",
     "verify:safety-gates": "tsx scripts/verify-safety-gates.ts",
+    "evidence": "tsx scripts/emit-evidence.ts",
+    "verify:evidence": "tsx scripts/verify-evidence.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:rule-catalog && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:rule-catalog && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence",
     "prepack": "pnpm build"
   },
   "dependencies": {

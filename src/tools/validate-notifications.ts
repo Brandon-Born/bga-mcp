@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_NOTIFICATIONS_TOOL = 'validate_notifications';
 
@@ -12,7 +12,10 @@ export const ValidateNotificationsInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const ValidateNotificationsOutputSchema = z.strictObject({
@@ -59,6 +62,10 @@ interface simply never updates. This tool reports notifications sent with no
 handler, handlers with no sender, duplicate subscriptions, and payload keys the
 two sides disagree about.
 
+Reads notifyAllPlayers and notifyPlayer as well as the bga->notify API, and both
+the dojo.subscribe and promise-based client forms, including a project that
+mixes them.
+
 A duplicate subscription is reported as a fact. Every claim spanning the two
 sides is a heuristic that carries its known limitations, and a notification
 built at runtime is reported as unsupported rather than guessed at. Read-only,
@@ -101,8 +108,9 @@ export function registerValidateNotifications(server: McpServer, policy: PolicyB
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_NOTIFICATIONS_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, {
+          const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
           });

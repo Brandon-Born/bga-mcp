@@ -6,7 +6,7 @@ import type { PolicyBoundary } from '../policy.js';
 import { aggregateValidations } from '../rules/aggregate.js';
 import { auditPreRelease, type PreReleaseAudit, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const RUN_PRE_RELEASE_AUDIT_TOOL = 'run_pre_release_audit';
 
@@ -14,7 +14,10 @@ export const RunPreReleaseAuditInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const RunPreReleaseAuditOutputSchema = z.strictObject({
@@ -47,6 +50,9 @@ const DESCRIPTION = `Run the catalogued pre-release checks against a BGA project
 
 Reports passed, failed, unsupported, and manual-required checks separately, and
 names the rule-catalog version it used.
+
+Every validator behind these checks reads the legacy, modern, and part-migrated
+layouts.
 
 A check passes only when the validator that owns it ran and produced no finding
 for it. A validator that failed, was skipped, or could not read the part of the
@@ -101,13 +107,14 @@ export function registerRunPreReleaseAudit(
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, {
+          const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
           });
 
-          const runners = createValidatorRunners(policy, projectRoot, context);
+          const runners = createValidatorRunners(policy, root, context);
 
           const aggregate = await aggregateValidations(runners, { maxFindings: 5_000 });
           const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics);

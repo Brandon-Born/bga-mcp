@@ -173,7 +173,9 @@ describe('packaged validate_state_machine', () => {
   it('[E2E-VALIDATE-STATES-INVALID-INPUT] rejects input that does not match the published schema', async () => {
     await withServer(['--project-root', cleanRoot], async (client) => {
       await expectSchemaRejections(client, 'validate_state_machine', [
-        {},
+        // An omitted projectRoot now means the sole configured root, so it is
+        // valid input rather than malformed; the refusals are proven by the
+        // default-root scenarios.
         { projectRoot: 7 },
         { projectRoot: '' },
         { root: cleanRoot },

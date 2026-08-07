@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const AUDIT_DATABASE_USAGE_TOOL = 'audit_database_usage';
 
@@ -12,7 +12,10 @@ export const AuditDatabaseUsageInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const AuditDatabaseUsageOutputSchema = z.strictObject({
@@ -49,6 +52,9 @@ const DESCRIPTION = `Compare a BGA project's dbmodel.sql with the queries its PH
 Reports tables a query names that the schema never declares, columns a query
 names that its table does not have, columns declared but never used, and
 queries that interpolate a PHP value into their text instead of escaping it.
+
+dbmodel.sql, DbQuery, and getObjectListFromDB are unchanged across the layouts,
+so this applies equally to a legacy, modern, or part-migrated project.
 
 A table that is missing from the schema is reported as a fact. Column-level
 claims are heuristics, because aliases, expressions, and SELECT * all limit
@@ -93,8 +99,9 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, { withPhpSources: true });
+          const context = await loadProjectContext(policy, root, { withPhpSources: true });
           const schemaPath = context.model.components
             .find((component) => component.id === 'database')
             ?.files.find((file) => file.endsWith('.sql'));
@@ -103,7 +110,7 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
               ? null
               : {
                   path: schemaPath,
-                  text: await policy.readProjectFile(projectRoot, schemaPath),
+                  text: await policy.readProjectFile(root, schemaPath),
                 };
 
           const audit = auditDatabaseUsage(schemaSource, context.phpSources);

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { ACTION_CONTRACT_RULES, validateActionContracts } from '../rules/action-contracts.js';
-import { loadProjectContext, publishFailure } from './project-context.js';
+import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_ACTION_CONTRACTS_TOOL = 'validate_action_contracts';
 
@@ -12,7 +12,10 @@ export const ValidateActionContractsInputSchema = z.strictObject({
   projectRoot: z
     .string()
     .min(1)
-    .describe('Absolute path of a project root the server was started with.'),
+    .optional()
+    .describe(
+      'Absolute path of a project root the server was started with. Optional when exactly one root is configured; with none or several, the call is refused rather than guessed.',
+    ),
 });
 
 export const ValidateActionContractsOutputSchema = z.strictObject({
@@ -61,6 +64,10 @@ expects. Reports actions the client calls that no state allows, actions a state
 declares that nothing calls, missing entry points and game methods, and
 argument disagreements.
 
+Reads both the legacy path (<game>.action.php with ajaxcall or bgaPerformAction)
+and the modern one (autowired act… methods with this.bga.actions.performAction),
+including a project that mixes them.
+
 Only a duplicated entry point and a broken naming convention are reported as
 facts; every cross-file claim is a heuristic that carries its known limitations.
 A call assembled at runtime is reported as unsupported, never guessed at.
@@ -103,8 +110,9 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
     },
     async ({ projectRoot }) => {
       try {
+        const root = resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_ACTION_CONTRACTS_TOOL, async () => {
-          const context = await loadProjectContext(policy, projectRoot, {
+          const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
           });

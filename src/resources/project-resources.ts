@@ -1,11 +1,11 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 
-import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
+import { toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { aggregateStatus, aggregateValidations } from '../rules/aggregate.js';
 import { validateStateMachine } from '../rules/state-machine.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext } from '../tools/project-context.js';
+import { loadProjectContext, resolveProjectRoot } from '../tools/project-context.js';
 
 export const PROJECT_SUMMARY_URI = 'bga://project/summary';
 export const PROJECT_STATES_URI = 'bga://project/states';
@@ -16,28 +16,16 @@ export const PROJECT_DIAGNOSTICS_URI = 'bga://project/diagnostics';
  *
  * The single configured root is that project. Zero roots, or more than one,
  * is ambiguous: the resource refuses rather than picking for the developer,
- * and the tools remain available for a project named explicitly.
+ * and the tools remain available for a project named explicitly. The rule is
+ * the tools' own omitted-argument rule, so the two cannot drift apart.
  */
 function soleProjectRoot(policy: PolicyBoundary): string {
-  const roots = policy.projectRoots;
-  if (roots.length === 0) {
-    throw new BgaMcpError(
-      ERROR_CODES.policyRootUnconfigured,
-      'No project root is configured. Start the server with --project-root.',
-    );
-  }
-  if (roots.length > 1) {
-    throw new BgaMcpError(
-      ERROR_CODES.resourceProjectAmbiguous,
-      `This resource describes one project, but ${String(roots.length)} roots are configured. Use the tools with an explicit projectRoot instead.`,
-      { details: { configuredRoots: roots.length } },
-    );
-  }
-  const root = roots[0];
-  if (root === undefined) {
-    throw new BgaMcpError(ERROR_CODES.policyRootUnconfigured, 'No project root is configured.');
-  }
-  return root;
+  return resolveProjectRoot(
+    policy,
+    undefined,
+    (roots) =>
+      `This resource describes one project, but ${String(roots)} roots are configured. Use the tools with an explicit projectRoot instead.`,
+  );
 }
 
 /**
