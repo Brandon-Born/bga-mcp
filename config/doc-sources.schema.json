@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/config/doc-sources.schema.json",
+  "title": "bga-mcp documentation source catalog",
+  "description": "The allowlisted sources any documentation capability may retrieve, and what each one permits. A source that is not here may not be fetched.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "reviewedAt", "sources"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "reviewedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "canonicalUrl",
+          "host",
+          "authority",
+          "editable",
+          "license",
+          "allowedUse",
+          "contentSignals",
+          "retrieval",
+          "updateSignal",
+          "retention",
+          "trust",
+          "verifiedAt"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "title": { "type": "string", "minLength": 1 },
+          "canonicalUrl": {
+            "type": "string",
+            "pattern": "^https://",
+            "description": "HTTPS only. The prefix every retrievable URL for this source must start with."
+          },
+          "host": { "type": "string", "minLength": 1 },
+          "authority": {
+            "enum": ["official-maintained", "official-host-community-edited", "community"],
+            "description": "official-maintained is written by the BGA team. official-host-community-edited sits on the official host but anyone may edit it, so the host does not vouch for the content. community is neither."
+          },
+          "editable": {
+            "type": "boolean",
+            "description": "True when a third party can change what this source serves. An editable source is an attacker-controlled input."
+          },
+          "license": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "statedAt"],
+            "properties": {
+              "id": {
+                "enum": ["none-stated", "cc-by-sa-4.0", "cc-by-4.0", "mit", "apache-2.0", "other"],
+                "description": "none-stated means no reuse licence was published, so the content is all rights reserved and may only be linked and briefly quoted."
+              },
+              "statedAt": {
+                "type": "string",
+                "description": "Where the licence was looked for, so 'none-stated' is a finding rather than an assumption."
+              },
+              "notes": { "type": "string" }
+            }
+          },
+          "allowedUse": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "link",
+              "shortExcerpt",
+              "fullTextRedistribution",
+              "localIndexing",
+              "bulkCrawl",
+              "aiTraining"
+            ],
+            "properties": {
+              "link": { "type": "boolean" },
+              "shortExcerpt": { "type": "boolean" },
+              "fullTextRedistribution": { "type": "boolean" },
+              "localIndexing": { "type": "boolean" },
+              "bulkCrawl": { "type": "boolean" },
+              "aiTraining": { "type": "boolean" }
+            }
+          },
+          "contentSignals": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["retrievedAt", "robotsUrl", "raw"],
+            "description": "What the source itself says a machine may do, copied from its robots.txt rather than inferred.",
+            "properties": {
+              "retrievedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+              "robotsUrl": { "type": "string", "pattern": "^https://" },
+              "raw": { "type": "string", "minLength": 1 },
+              "search": { "enum": ["yes", "no", "unspecified"] },
+              "aiInput": { "enum": ["yes", "no", "unspecified"] },
+              "aiTrain": { "enum": ["yes", "no", "unspecified"] },
+              "use": { "enum": ["immediate", "reference", "full", "unspecified"] },
+              "disallowedAgents": {
+                "type": "array",
+                "items": { "type": "string", "minLength": 1 },
+                "description": "User agents the source refuses outright."
+              }
+            }
+          },
+          "retrieval": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mode", "respectRobots", "userAgent"],
+            "properties": {
+              "mode": {
+                "enum": ["on-demand-single-page", "approved-snapshot"],
+                "description": "on-demand-single-page fetches one page for one explicit request. approved-snapshot consumes a snapshot obtained under a licence that permits it."
+              },
+              "respectRobots": { "type": "boolean" },
+              "userAgent": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Identifies this project honestly. Never a browser or another crawler's string."
+              },
+              "notes": { "type": "string" }
+            }
+          },
+          "updateSignal": {
+            "type": "string",
+            "minLength": 1,
+            "description": "How staleness is detected, so a snapshot date can be checked rather than trusted."
+          },
+          "retention": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["storesFullText", "storesProvenance", "maxCacheDays"],
+            "properties": {
+              "storesFullText": { "type": "boolean" },
+              "storesProvenance": { "type": "boolean" },
+              "maxCacheDays": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "trust": {
+            "const": "untrusted-content",
+            "description": "Every source is untrusted. Retrieved text is data an agent reads, never instruction it follows."
+          },
+          "verifiedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "notes": { "type": "string" }
+        }
+      }
+    }
+  }
+}

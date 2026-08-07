@@ -1,0 +1,119 @@
+{
+  "$schema": "./doc-sources.schema.json",
+  "schemaVersion": 1,
+  "reviewedAt": "2026-08-07",
+  "sources": [
+    {
+      "id": "bga-studio-framework-reference",
+      "title": "BGA Studio framework reference",
+      "canonicalUrl": "https://en.doc.boardgamearena.com/",
+      "host": "en.doc.boardgamearena.com",
+      "authority": "official-maintained",
+      "editable": true,
+      "license": {
+        "id": "none-stated",
+        "statedAt": "Checked the Main Page footer, the About and Disclaimers links, and the page footers on 2026-08-07. No content licence is published.",
+        "notes": "No stated licence means all rights reserved, not public domain. Linking and short attributed quotation only; the full text of a page is never reproduced or redistributed."
+      },
+      "allowedUse": {
+        "link": true,
+        "shortExcerpt": true,
+        "fullTextRedistribution": false,
+        "localIndexing": false,
+        "bulkCrawl": false,
+        "aiTraining": false
+      },
+      "contentSignals": {
+        "retrievedAt": "2026-08-07",
+        "robotsUrl": "https://en.doc.boardgamearena.com/robots.txt",
+        "raw": "User-agent: *\nContent-Signal: search=yes,ai-train=no,use=reference\nAllow: /",
+        "search": "yes",
+        "aiInput": "unspecified",
+        "aiTrain": "no",
+        "use": "reference",
+        "disallowedAgents": [
+          "Amazonbot",
+          "Applebot-Extended",
+          "Bytespider",
+          "CCBot",
+          "ClaudeBot",
+          "CloudflareBrowserRenderingCrawler",
+          "Google-Extended",
+          "GPTBot",
+          "meta-externalagent"
+        ]
+      },
+      "retrieval": {
+        "mode": "on-demand-single-page",
+        "respectRobots": true,
+        "userAgent": "bga-mcp (+https://github.com/Brandon-Born/bga-mcp)",
+        "notes": "One page per explicit developer request. The site refuses every named AI crawler outright, so building a corpus from it is out of the question whatever the general Allow says; a single requested lookup is what search=yes and use=reference describe."
+      },
+      "updateSignal": "The MediaWiki page footer carries a last-edited timestamp, and Special:RecentChanges lists edits. Both are read to date a snapshot rather than assume it is current.",
+      "retention": {
+        "storesFullText": false,
+        "storesProvenance": true,
+        "maxCacheDays": 30
+      },
+      "trust": "untrusted-content",
+      "verifiedAt": "2026-08-07",
+      "notes": "The framework reference pages are maintained by the BGA team, but the wiki is editable, so this source is authoritative about the framework and still attacker-influenced. Both facts are recorded because both matter."
+    },
+    {
+      "id": "bga-studio-community-pages",
+      "title": "BGA Studio community pages on the official wiki",
+      "canonicalUrl": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+      "host": "en.doc.boardgamearena.com",
+      "authority": "official-host-community-edited",
+      "editable": true,
+      "license": {
+        "id": "none-stated",
+        "statedAt": "Same wiki, same footers, checked 2026-08-07. No content licence is published.",
+        "notes": "Contributed recipes carry no separate licence and no individual attribution, so they are quoted briefly with a link and never reproduced."
+      },
+      "allowedUse": {
+        "link": true,
+        "shortExcerpt": true,
+        "fullTextRedistribution": false,
+        "localIndexing": false,
+        "bulkCrawl": false,
+        "aiTraining": false
+      },
+      "contentSignals": {
+        "retrievedAt": "2026-08-07",
+        "robotsUrl": "https://en.doc.boardgamearena.com/robots.txt",
+        "raw": "User-agent: *\nContent-Signal: search=yes,ai-train=no,use=reference\nAllow: /",
+        "search": "yes",
+        "aiInput": "unspecified",
+        "aiTrain": "no",
+        "use": "reference",
+        "disallowedAgents": [
+          "Amazonbot",
+          "Applebot-Extended",
+          "Bytespider",
+          "CCBot",
+          "ClaudeBot",
+          "CloudflareBrowserRenderingCrawler",
+          "Google-Extended",
+          "GPTBot",
+          "meta-externalagent"
+        ]
+      },
+      "retrieval": {
+        "mode": "on-demand-single-page",
+        "respectRobots": true,
+        "userAgent": "bga-mcp (+https://github.com/Brandon-Born/bga-mcp)",
+        "notes": "Same host and same signals as the framework reference. The distinction is authority, not access."
+      },
+      "updateSignal": "Page last-edited timestamp. These pages change more often and less predictably than the maintained reference, so a result from here is dated more conservatively.",
+      "retention": {
+        "storesFullText": false,
+        "storesProvenance": true,
+        "maxCacheDays": 7
+      },
+      "trust": "untrusted-content",
+      "verifiedAt": "2026-08-07",
+      "notes": "The page invites anyone to add recipes and BGA does not vouch for individual entries, so a rule derived from here is a heuristic and a result from here is labelled community, never official — even though the URL is on the official host."
+    }
+  ]
+}

@@ -477,13 +477,16 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-200 — Define the documentation source and provenance policy
 
-- **Status:** ready
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-013
 - **Deliverable:** An allowlisted source catalog distinguishing official BGA documentation from community examples, with licensing, attribution, retrieval, and trust rules.
 - **Acceptance:** Every source has canonical URL, authority, allowed use, update signal, and retention policy; prompt-like content is treated as untrusted data.
 - **Verification:** Catalog validation rejects unapproved, unattributed, or incompletely classified sources.
-- **Note:** TB-DOCS-NETWORK was reviewed on 2026-08-07, so Phase 2 work may begin. The review records seven preconditions that must be implemented before any documentation capability can be advertised, and the capability gate enforces them. See the [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md).
+- **Evidence:** [`config/doc-sources.json`](../config/doc-sources.json) allowlists two sources with canonical URL, host, authority, licence, permitted use, the source's own content signals, retrieval mode, update signal, retention, and trust class; [DOCUMENTATION_SOURCES.md](DOCUMENTATION_SOURCES.md) is its human-readable view. `pnpm verify:doc-sources` seeds seven defects — a non-HTTPS URL, a host that disagrees with its canonical URL, a source that retains no provenance, one classified as trusted, one permitting full-text redistribution against `use=reference`, one permitting bulk crawling from a site that refuses named crawlers, and one missing a required field — and fails on each before reporting on the real catalog. Every source is classified `untrusted-content`, and no source permits training, bulk crawling, or full-text redistribution.
+- **Note:** The sources' own robots.txt decided the design rather than the other way round. `en.doc.boardgamearena.com` publishes `Content-Signal: search=yes,ai-train=no,use=reference` and refuses nine named AI crawlers outright, and publishes no content licence at all. So: one page per explicit request, link and short attributed excerpt only, no corpus and no vendored snapshot, honest user agent. Authority is recorded separately from host, because the BGA Studio Cookbook sits on the official wiki and invites anyone to edit it.
+- **Sources:** [robots.txt](https://en.doc.boardgamearena.com/robots.txt), [Main Page](https://en.doc.boardgamearena.com/Main_Page), [Studio](https://en.doc.boardgamearena.com/Studio), [BGA Studio Cookbook](https://en.doc.boardgamearena.com/BGA_Studio_Cookbook), checked 2026-08-07.
+- **Boundary:** TB-DOCS-NETWORK was reviewed on 2026-08-07, so Phase 2 work may begin. The review records seven preconditions that must be implemented before any documentation capability can be advertised, and the capability gate enforces them. See the [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md).
 
 ### BGA-201 — Build the documentation index pipeline
 
@@ -493,6 +496,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A reproducible pipeline that retrieves or consumes approved snapshots, normalizes them, preserves provenance, and builds a bounded local index.
 - **Acceptance:** Builds are deterministic from recorded inputs; source failures and stale snapshots are explicit; private project data is never indexed.
 - **Verification:** Integration tests build from controlled snapshots; E2E starts the packaged server with the built index and proves source metadata survives retrieval.
+- **Note:** BGA-200 found that this item's premise needs rework. Both approved sources set `bulkCrawl: false` and publish no content licence, so a pipeline that crawls the wiki and ships an index would exceed what the sources permit and redistribute content that is all rights reserved. The pipeline must therefore build its index from what a developer's own on-demand lookups return, or from a source that later grants a licence permitting snapshots — not from a crawl. Reconcile this before starting, and update the deliverable rather than working around it.
 
 ### BGA-202 — Implement `search_bga_docs`
 

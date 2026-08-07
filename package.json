@@ -55,12 +55,13 @@
     "verify:threat-model": "tsx scripts/verify-threat-model.ts",
     "verify:compatibility": "tsx scripts/verify-compatibility.ts",
     "verify:rule-catalog": "tsx scripts/verify-rule-catalog.ts",
+    "verify:doc-sources": "tsx scripts/verify-doc-sources.ts",
     "verify:scenarios": "tsx scripts/verify-scenarios.ts",
     "verify:safety-gates": "tsx scripts/verify-safety-gates.ts",
     "evidence": "tsx scripts/emit-evidence.ts",
     "verify:evidence": "tsx scripts/verify-evidence.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:rule-catalog && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence",
     "prepack": "pnpm build"
   },
   "dependencies": {
