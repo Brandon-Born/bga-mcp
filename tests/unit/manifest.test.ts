@@ -26,7 +26,13 @@ describe('capability manifest gate', () => {
         'validate_project',
         'validate_state_machine',
       ],
-      resources: ['bga://project/diagnostics', 'bga://project/states', 'bga://project/summary'],
+      resources: [
+        'bga://docs/{topic}',
+        'bga://framework/version',
+        'bga://project/diagnostics',
+        'bga://project/states',
+        'bga://project/summary',
+      ],
       prompts: [],
     });
   });

@@ -100,7 +100,10 @@
           "E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA",
           "E2E-DOCS-UNKNOWN-SOURCE",
           "E2E-DOCS-INVALID-INPUT",
-          "E2E-DOCS-ADVERTISED"
+          "E2E-DOCS-ADVERTISED",
+          "INT-DOCS-NETWORK-OFF",
+          "INT-DOCS-REFUSALS",
+          "INT-DOCS-SUMMARY"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK"
@@ -191,14 +194,48 @@
     ],
     "resources": [
       {
-        "name": "bga://project/summary",
+        "name": "bga://docs/{topic}",
+        "owner": "Brandon Born",
+        "stability": "implemented",
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-DOCS-TOPIC-LISTED",
+          "E2E-DOCS-TOPIC-UNKNOWN",
+          "E2E-DOCS-TOPIC-NETWORK-OFF",
+          "INT-DOCS-TOPICS",
+          "INT-DOCS-NETWORK-OFF",
+          "INT-DOCS-REFUSALS"
+        ],
+        "liveStudioRequired": false,
+        "boundary": "TB-DOCS-NETWORK"
+      },
+      {
+        "name": "bga://framework/version",
+        "owner": "Brandon Born",
+        "stability": "implemented",
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-FRAMEWORK-VERSION-LISTED",
+          "E2E-FRAMEWORK-VERSION-NETWORK-OFF",
+          "UNIT-DOC-FRAMEWORK-VERSION",
+          "INT-DOCS-NETWORK-OFF"
+        ],
+        "liveStudioRequired": false,
+        "boundary": "TB-DOCS-NETWORK"
+      },
+      {
+        "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
         "stability": "verified",
         "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
-          "E2E-RESOURCE-SUMMARY",
+          "E2E-RESOURCE-DIAGNOSTICS",
           "E2E-RESOURCE-DISCOVERY",
           "E2E-RESOURCE-UNCONFIGURED",
           "E2E-RESOURCE-AMBIGUOUS",
@@ -225,14 +262,14 @@
         "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
-        "name": "bga://project/diagnostics",
+        "name": "bga://project/summary",
         "owner": "Brandon Born",
         "stability": "verified",
         "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
-          "E2E-RESOURCE-DIAGNOSTICS",
+          "E2E-RESOURCE-SUMMARY",
           "E2E-RESOURCE-DISCOVERY",
           "E2E-RESOURCE-UNCONFIGURED",
           "E2E-RESOURCE-AMBIGUOUS",

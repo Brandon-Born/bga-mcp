@@ -2,6 +2,7 @@ import { DocumentationCache, ageInDays, type DocumentationEntry } from '../../sr
 import { excerptFor, htmlToText, titleOf } from '../../src/docs/excerpt.js';
 import { provenanceOf, retrieveDocumentation } from '../../src/docs/retrieve.js';
 import { parseSearchResponse, pathForTitle, searchParams } from '../../src/docs/search.js';
+import { parseFrameworkVersions } from '../../src/docs/versions.js';
 
 const NOW = new Date('2026-08-07T12:00:00.000Z');
 
@@ -306,5 +307,38 @@ describe('documentation search results', () => {
     expect(params).toMatchObject({ action: 'query', list: 'search', format: 'json', srlimit: '3' });
     expect(params.srsearch).toBe('state classes');
     expect(pathForTitle('Game interface logic: Game.js')).toBe('Game_interface_logic:_Game.js');
+  });
+});
+
+describe('framework versions', () => {
+  it('[UNIT-DOC-FRAMEWORK-VERSION] reads the published versions and nothing else', () => {
+    const text = [
+      'BGA Studio',
+      'Software Versions',
+      'Dojo Toolkit: 1.15 - deprecated, avoid at all cost',
+      'PHP: 8.4',
+      'SQL: MySQL 5.7 (prod) - on studio 8.0',
+      'Font Awesome: 4.7 and 6.4.0',
+      'Getting started',
+      'Some prose that follows the section.',
+    ].join('\n');
+
+    const versions = parseFrameworkVersions(text);
+    expect(versions.map((entry) => [entry.software, entry.version])).toEqual([
+      ['Dojo Toolkit', '1.15 - deprecated, avoid at all cost'],
+      ['PHP', '8.4'],
+      ['SQL', 'MySQL 5.7 (prod) - on studio 8.0'],
+      ['Font Awesome', '4.7 and 6.4.0'],
+    ]);
+    // The line is kept so a developer can check the reading rather than trust it.
+    expect(versions[1]?.statedAs).toBe('PHP: 8.4');
+  });
+
+  it('[UNIT-DOC-FRAMEWORK-VERSION] reports nothing rather than guessing when the section is absent', () => {
+    // A wrong version is worse than no version to a developer choosing syntax.
+    expect(parseFrameworkVersions('BGA Studio\nGetting started\nNo versions here.')).toEqual([]);
+    expect(parseFrameworkVersions('')).toEqual([]);
+    // A section with prose but no versions yields no facts.
+    expect(parseFrameworkVersions('Software Versions\nWe run current software.')).toEqual([]);
   });
 });

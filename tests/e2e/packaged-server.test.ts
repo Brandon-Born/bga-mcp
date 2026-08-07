@@ -131,6 +131,16 @@ describe('packaged bga-mcp server', () => {
           expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
           const resources = await connection.client.listResources();
           expect(resources.resources.map((entry) => entry.uri).sort()).toEqual([
+            // The documentation template lists one entry per known topic, so
+            // a client sees the topics rather than a URI shape to guess at.
+            'bga://docs/client',
+            'bga://docs/cookbook',
+            'bga://docs/file-reference',
+            'bga://docs/game-logic',
+            'bga://docs/migration',
+            'bga://docs/states',
+            'bga://docs/studio',
+            'bga://framework/version',
             'bga://project/diagnostics',
             'bga://project/states',
             'bga://project/summary',

@@ -534,21 +534,26 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-203 — Implement `bga://docs/{topic}`
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-202, BGA-208
 - **Deliverable:** Topic-addressable documentation resources with stable media types and provenance metadata.
 - **Acceptance:** Topic resolution is deterministic, unknown topics fail clearly, and resources never hide source authority or snapshot age.
 - **Verification:** Resource E2E lists templates, reads valid topics, rejects invalid/traversal topics, and verifies provenance and size bounds.
+- **Evidence:** [`src/docs/topics.ts`](../src/docs/topics.ts) resolves a topic through a fixed table rather than a search, for two reasons: a resource must mean the same page every time, and a topic that became an arbitrary path would hand URI text to the request builder. Every page in the table was retrieved and read while writing it. The template lists one entry per topic, so a client sees the topics instead of guessing at a URI shape, and the community page says so in its description. An unknown topic is refused with the list of known ones, and a topic shaped like a path or a wiki special page is refused the same way, before any request is built. `E2E-DOCS-TOPIC-LISTED`, `E2E-DOCS-TOPIC-UNKNOWN`, and `E2E-DOCS-TOPIC-NETWORK-OFF` run through the packaged artifact.
+- **Note:** `implemented`. Reading a real topic needs a live wiki, so what is proven offline is the listing, the refusals, and the network-off behaviour.
 
 ### BGA-204 — Implement `bga://framework/version`
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-200, BGA-207, BGA-208
 - **Deliverable:** A resource describing verified current BGA framework/runtime information and the snapshot supporting it.
 - **Acceptance:** Unknown or stale version data is labeled; no value is guessed from examples or historical fixtures.
 - **Verification:** Resource E2E covers current, stale, missing, and conflicting source snapshots.
+- **Evidence:** The resource reads the Studio page's "Software Versions" section, which is where BGA publishes what the platform runs — PHP 8.4, MySQL 5.7 in production and 8.0 on Studio, Dojo 1.15 marked deprecated at the time of writing. [`src/docs/versions.ts`](../src/docs/versions.ts) reports only lines that name software and a version, keeps the line each reading came from so a developer can check it rather than trust it, and returns `status: unknown` with a reason when the section cannot be found. Nothing is defaulted or carried over from a fixture: a wrong version is worse than no version to a developer choosing which syntax to write. `UNIT-DOC-FRAMEWORK-VERSION`, `E2E-FRAMEWORK-VERSION-LISTED`, and `E2E-FRAMEWORK-VERSION-NETWORK-OFF` cover it.
+- **Note:** `implemented`. Current, stale, and conflicting snapshots need a live source; offline coverage is the parser, the advertisement, and the refusal when the network is off.
+- **Sources:** [Studio § Software Versions](https://en.doc.boardgamearena.com/Studio#Software_Versions), checked 2026-08-07.
 
 ### BGA-205 — Build the retrieval evaluation set
 

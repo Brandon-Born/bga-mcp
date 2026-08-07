@@ -25,6 +25,14 @@ describe('production server factory', () => {
         resources: { listChanged: true },
       });
       expect((await client.listResources()).resources.map((entry) => entry.uri).sort()).toEqual([
+        'bga://docs/client',
+        'bga://docs/cookbook',
+        'bga://docs/file-reference',
+        'bga://docs/game-logic',
+        'bga://docs/migration',
+        'bga://docs/states',
+        'bga://docs/studio',
+        'bga://framework/version',
         'bga://project/diagnostics',
         'bga://project/states',
         'bga://project/summary',

@@ -53,9 +53,25 @@ export function assertManifestMatchesRuntime(manifest: Manifest, runtime: Runtim
     if (new Set(manifestNames).size !== manifestNames.length) {
       throw new Error(`Manifest has duplicate ${kind}`);
     }
-    const runtimeNames = [...runtime[kind]].sort();
+    // A templated resource is one manifest capability that discovery lists once
+    // per instance, so every instance is folded back onto its template before
+    // the sets are compared. Anything that matches no template is compared as
+    // itself, so an unadvertised capability is still caught.
+    const templates = manifestNames.filter((name) => name.includes('{'));
+    const runtimeNames = [
+      ...new Set(
+        [...runtime[kind]].map((name) => {
+          const template = templates.find((candidate) =>
+            name.startsWith(candidate.slice(0, candidate.indexOf('{'))),
+          );
+          return template ?? name;
+        }),
+      ),
+    ].sort();
     if (JSON.stringify(manifestNames) !== JSON.stringify(runtimeNames)) {
-      throw new Error(`Manifest ${kind} differ from runtime discovery`);
+      throw new Error(
+        `Manifest ${kind} differ from runtime discovery (manifest: ${manifestNames.join(', ')}; runtime: ${runtimeNames.join(', ')})`,
+      );
     }
   }
 }

@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
+import { registerDocumentationResources } from './resources/docs-resources.js';
 import { registerProjectResources } from './resources/project-resources.js';
 import type { RuleCatalog } from './rules/pre-release.js';
 import { registerRunPreReleaseAudit } from './tools/run-pre-release-audit.js';
@@ -37,6 +38,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   // without --allow-network every call refuses with the same stable code.
   registerSearchBgaDocs(server, dependencies.policy);
   registerProjectResources(server, dependencies.policy);
+  registerDocumentationResources(server, dependencies.policy);
   registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog);
   return server;
 }

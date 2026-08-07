@@ -109,11 +109,13 @@ describe('packaged project resources', () => {
       async (client) => await client.listResources(),
     );
 
-    expect(listed.resources.map((entry) => entry.uri).sort()).toEqual([
-      DIAGNOSTICS,
-      STATES,
-      SUMMARY,
-    ]);
+    // The project resources, alongside the documentation ones this scenario
+    // does not own.
+    const projectResources = listed.resources
+      .map((entry) => entry.uri)
+      .filter((uri) => uri.startsWith('bga://project/'))
+      .sort();
+    expect(projectResources).toEqual([DIAGNOSTICS, STATES, SUMMARY]);
     for (const entry of listed.resources) {
       expect(entry.mimeType).toBe('application/json');
       expect(entry.description ?? '').not.toBe('');
@@ -182,7 +184,10 @@ describe('packaged project resources', () => {
         await expect(client.readResource({ uri })).rejects.toThrow(/policy\.root\.unconfigured/u);
       }
       // The resources are still advertised; only reading them fails.
-      expect((await client.listResources()).resources).toHaveLength(3);
+      const advertised = (await client.listResources()).resources.filter((entry) =>
+        entry.uri.startsWith('bga://project/'),
+      );
+      expect(advertised).toHaveLength(3);
     });
   });
 
