@@ -47,6 +47,11 @@ export interface ProjectListing {
   readonly truncated: boolean;
 }
 
+/** Configuration files the package ships and may read for itself. */
+export const PACKAGED_CONFIG_NAMES = ['rule-catalog.json'] as const;
+
+export type PackagedConfigName = (typeof PACKAGED_CONFIG_NAMES)[number];
+
 export type MutationMode = 'preview' | 'execute';
 
 export interface MutationRequest {
@@ -309,6 +314,25 @@ export class PolicyBoundary {
       );
     }
     return await readFile(resolved, 'utf8');
+  }
+
+  /**
+   * Reads a configuration file the package ships with itself.
+   *
+   * This is not project content and never comes from client input: the name
+   * must be one of a fixed set, and the file is read from the package's own
+   * config directory. It lives here so that every filesystem read in the
+   * server still passes through this class.
+   */
+  async readPackagedConfig(name: PackagedConfigName): Promise<string> {
+    if (!PACKAGED_CONFIG_NAMES.includes(name)) {
+      throw new PolicyViolationError(
+        ERROR_CODES.configInvalid,
+        'That configuration file is not part of the package.',
+        { details: { requested: name } },
+      );
+    }
+    return await readFile(resolve(import.meta.dirname, '../config', name), 'utf8');
   }
 
   assertRemoteProjectAllowed(identifier: string): void {

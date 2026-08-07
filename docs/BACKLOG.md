@@ -334,12 +334,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-111 — Implement `run_pre_release_audit`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-102, BGA-106, BGA-107, BGA-108, BGA-109, BGA-110
 - **Deliverable:** A read-only audit that runs supported pre-release rules and returns passed, failed, unsupported, and manual-required checks separately.
 - **Acceptance:** The tool never converts an unimplemented or manual check into a pass and identifies the rule-catalog version used.
 - **Verification:** Tool E2E covers clean, failing, partial-support, malformed, and manual-required projects and proves no project mutation.
+- **Evidence:** [`src/rules/pre-release.ts`](../src/rules/pre-release.ts) turns validator output into a verdict per catalogued check. A check passes only when the validator that owns it ran and produced no finding for it; a validator that failed, was skipped, or could not read what the check examines leaves it `unsupported`, and a manual check is always `manual-required`. The tool reports the catalog version it applied, read from the catalog the package ships. Seven packaged scenarios cover a clean project, a defective one, a partially supported one, the manual checks, the catalog version, malformed input, and immutability.
 
 ### BGA-112 — Implement `validate_project`
 

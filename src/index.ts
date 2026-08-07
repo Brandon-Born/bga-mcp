@@ -27,10 +27,12 @@ export {
   DEFAULT_POLICY_CONFIG,
   MAX_OPERATION_TIMEOUT_MS,
   MAX_OUTPUT_BYTES_LIMIT,
+  PACKAGED_CONFIG_NAMES,
   PolicyBoundary,
   createPolicyBoundary,
   type MutationMode,
   type MutationRequest,
+  type PackagedConfigName,
   type PolicyConfig,
   type ProjectFile,
   type ProjectListing,
@@ -119,6 +121,22 @@ export {
   summarizeDatabaseAudit,
   type AuditDatabaseUsageResult,
 } from './tools/audit-database-usage.js';
+export {
+  RUN_PRE_RELEASE_AUDIT_TOOL,
+  RunPreReleaseAuditInputSchema,
+  RunPreReleaseAuditOutputSchema,
+  registerRunPreReleaseAudit,
+  summarizePreRelease,
+  type RunPreReleaseAuditResult,
+} from './tools/run-pre-release-audit.js';
+export {
+  auditPreRelease,
+  type CatalogCheck,
+  type CheckOutcome,
+  type CheckResult,
+  type PreReleaseAudit,
+  type RuleCatalog,
+} from './rules/pre-release.js';
 export {
   PROJECT_DIAGNOSTICS_URI,
   PROJECT_STATES_URI,

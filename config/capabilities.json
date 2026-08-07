@@ -22,6 +22,24 @@
   "capabilities": {
     "tools": [
       {
+        "name": "audit_database_usage",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-AUDIT-DATABASE-CLEAN",
+          "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+          "E2E-AUDIT-DATABASE-UNAVAILABLE",
+          "E2E-AUDIT-DATABASE-IMMUTABLE",
+          "E2E-AUDIT-DATABASE-DETERMINISTIC",
+          "E2E-AUDIT-DATABASE-INVALID-INPUT",
+          "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
+      },
+      {
         "name": "inspect_project",
         "owner": "Brandon Born",
         "stability": "verified",
@@ -44,20 +62,20 @@
         "liveStudioRequired": false
       },
       {
-        "name": "validate_state_machine",
+        "name": "run_pre_release_audit",
         "owner": "Brandon Born",
         "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25", "2026-07-28"],
         "requiredScenarios": [
-          "E2E-VALIDATE-STATES-CLEAN",
-          "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
-          "E2E-VALIDATE-STATES-UNSUPPORTED",
-          "E2E-VALIDATE-STATES-IMMUTABLE",
-          "E2E-VALIDATE-STATES-DETERMINISTIC",
-          "E2E-VALIDATE-STATES-INVALID-INPUT",
-          "E2E-VALIDATE-STATES-UNLISTED-ROOT"
+          "E2E-PRE-RELEASE-CLEAN",
+          "E2E-PRE-RELEASE-FAILING",
+          "E2E-PRE-RELEASE-PARTIAL-SUPPORT",
+          "E2E-PRE-RELEASE-MANUAL-NEVER-PASSES",
+          "E2E-PRE-RELEASE-CATALOG-VERSION",
+          "E2E-PRE-RELEASE-INVALID-INPUT",
+          "E2E-PRE-RELEASE-IMMUTABLE"
         ],
         "liveStudioRequired": false
       },
@@ -98,24 +116,6 @@
         "liveStudioRequired": false
       },
       {
-        "name": "audit_database_usage",
-        "owner": "Brandon Born",
-        "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
-        "environments": ["local"],
-        "protocolVersions": ["2025-11-25", "2026-07-28"],
-        "requiredScenarios": [
-          "E2E-AUDIT-DATABASE-CLEAN",
-          "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
-          "E2E-AUDIT-DATABASE-UNAVAILABLE",
-          "E2E-AUDIT-DATABASE-IMMUTABLE",
-          "E2E-AUDIT-DATABASE-DETERMINISTIC",
-          "E2E-AUDIT-DATABASE-INVALID-INPUT",
-          "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
-        ],
-        "liveStudioRequired": false
-      },
-      {
         "name": "validate_project",
         "owner": "Brandon Born",
         "stability": "verified",
@@ -130,6 +130,24 @@
           "E2E-VALIDATE-PROJECT-CLEAN",
           "E2E-VALIDATE-PROJECT-INVALID-INPUT",
           "E2E-VALIDATE-PROJECT-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
+      },
+      {
+        "name": "validate_state_machine",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-VALIDATE-STATES-CLEAN",
+          "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+          "E2E-VALIDATE-STATES-UNSUPPORTED",
+          "E2E-VALIDATE-STATES-IMMUTABLE",
+          "E2E-VALIDATE-STATES-DETERMINISTIC",
+          "E2E-VALIDATE-STATES-INVALID-INPUT",
+          "E2E-VALIDATE-STATES-UNLISTED-ROOT"
         ],
         "liveStudioRequired": false
       }

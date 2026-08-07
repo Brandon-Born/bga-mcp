@@ -19,6 +19,7 @@ describe('capability manifest gate', () => {
       tools: [
         'audit_database_usage',
         'inspect_project',
+        'run_pre_release_audit',
         'validate_action_contracts',
         'validate_notifications',
         'validate_project',
@@ -61,9 +62,12 @@ describe('capability manifest gate', () => {
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
         tools: [
+          'audit_database_usage',
           'inspect_project',
+          'run_pre_release_audit',
           'validate_action_contracts',
           'validate_notifications',
+          'validate_project',
           'validate_state_machine',
         ],
         resources: [],
@@ -80,9 +84,12 @@ describe('capability manifest gate', () => {
       assertManifestMatchesRuntime(stale as never, {
         server: manifest.server,
         tools: [
+          'audit_database_usage',
           'inspect_project',
+          'run_pre_release_audit',
           'validate_action_contracts',
           'validate_notifications',
+          'validate_project',
           'validate_state_machine',
         ],
         resources: [],

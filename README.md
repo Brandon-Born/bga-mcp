@@ -33,9 +33,10 @@ Available now, local and read-only:
 
 It also serves three read-only resources describing the single configured project: `bga://project/summary`, `bga://project/states`, and `bga://project/diagnostics`.
 
+- `run_pre_release_audit` — runs the catalogued pre-release checks and reports passed, failed, unsupported, and manual-required separately. It never counts a check it could not run, or one that needs a human, as passed.
+
 Planned for the first useful release:
 
-- `run_pre_release_audit`
 - `search_bga_docs`
 
 Later releases may add authenticated Studio operations:
@@ -60,7 +61,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Six tools and three resources are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All six run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), and [project resource](docs/verification/PROJECT_RESOURCES.md) records.
+Seven tools and three resources are live and verified. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All seven run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), and [project resource](docs/verification/PROJECT_RESOURCES.md) records.
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, and a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates.
 

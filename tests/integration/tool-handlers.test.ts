@@ -122,6 +122,30 @@ describe('tool handlers over a real client connection', () => {
     });
   });
 
+  it('audits a project against the catalogued pre-release checks', async () => {
+    await withClient([brokenRoot], async (call) => {
+      const outcome = await call('run_pre_release_audit', { projectRoot: brokenRoot });
+      expect(outcome.isError).toBe(false);
+      expect(outcome.text).toContain('rule catalog');
+      expect(outcome.text).toContain('manual-required');
+      expect(outcome.text).toContain('never counted as passed');
+
+      const result = outcome.structured as unknown as {
+        catalogVersion: string;
+        counts: Record<string, number>;
+        checks: { id: string; outcome: string }[];
+      };
+      expect(result.catalogVersion).toMatch(/^\d+\.\d+\.\d+$/u);
+      expect(result.counts['manual-required']).toBeGreaterThan(0);
+      expect(result.counts.failed).toBeGreaterThan(0);
+      expect(
+        result.checks
+          .filter((check) => check.id.startsWith('manual.'))
+          .every((check) => check.outcome === 'manual-required'),
+      ).toBe(true);
+    });
+  });
+
   it('reports a clean project as passed across every validator', async () => {
     await withClient([legacyRoot], async (call) => {
       const outcome = await call('validate_project', { projectRoot: legacyRoot });
@@ -139,6 +163,7 @@ describe('tool handlers over a real client connection', () => {
         'validate_notifications',
         'audit_database_usage',
         'validate_project',
+        'run_pre_release_audit',
       ]) {
         const outcome = await call(tool, { projectRoot: brokenRoot });
         expect(outcome.isError).toBe(true);

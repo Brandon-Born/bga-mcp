@@ -4,6 +4,8 @@ import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
 import { registerProjectResources } from './resources/project-resources.js';
+import type { RuleCatalog } from './rules/pre-release.js';
+import { registerRunPreReleaseAudit } from './tools/run-pre-release-audit.js';
 import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
@@ -14,6 +16,8 @@ import { registerValidateStateMachine } from './tools/validate-state-machine.js'
 export interface ServerDependencies {
   /** The prepared policy boundary every capability must route through. */
   readonly policy: PolicyBoundary;
+  /** The pre-release checks shipped with the package. */
+  readonly ruleCatalog: RuleCatalog;
 }
 
 export function createServer(config: ServerConfig, dependencies: ServerDependencies): McpServer {
@@ -29,6 +33,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   registerAuditDatabaseUsage(server, dependencies.policy);
   registerValidateProject(server, dependencies.policy);
   registerProjectResources(server, dependencies.policy);
+  registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog);
   return server;
 }
 
@@ -46,5 +51,8 @@ export async function createServerWithPolicy(config: ServerConfig): Promise<{
   readonly create: () => McpServer;
 }> {
   const policy = await PolicyBoundary.create(config);
-  return { policy, create: () => createServer(config, { policy }) };
+  const ruleCatalog = JSON.parse(
+    await policy.readPackagedConfig('rule-catalog.json'),
+  ) as RuleCatalog;
+  return { policy, create: () => createServer(config, { policy, ruleCatalog }) };
 }
