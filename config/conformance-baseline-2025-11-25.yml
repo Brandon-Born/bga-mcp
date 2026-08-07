@@ -1,0 +1,57 @@
+# Expected conformance failures for protocol revision 2025-11-25.
+#
+# The official suite measures the whole server surface of the specification
+# against its own reference fixture. `bga-mcp` implements a deliberately narrow
+# surface, so some scenarios can never pass here — not because the server is
+# wrong, but because they are asking about something it does not claim to be.
+#
+# Every entry below states which of those it is. An entry that starts passing
+# fails the run as a stale baseline, so this file cannot quietly outlive its
+# reasons, and any failure NOT listed here is a regression that fails the gate.
+#
+# Reviewed: 2026-08-07, against @modelcontextprotocol/conformance@0.2.0-alpha.11.
+# Adding an entry requires the same review: a scenario is baselined for a stated
+# reason, never because it is inconvenient.
+
+server:
+  # --- Capabilities the server does not advertise -------------------------
+  # It answers "Method not found", which is the correct response for a
+  # capability it never offered. Advertising them to pass a test would be the
+  # defect. See docs/ARCHITECTURE.md for why the surface is this narrow.
+  - completion-complete # no completions capability
+  - logging-set-level # no logging capability
+  - prompts-list # no prompts capability
+  - prompts-get-simple
+  - prompts-get-with-args
+  - prompts-get-embedded-resource
+  - prompts-get-with-image
+  - resources-subscribe # resources are read-only snapshots, not subscriptions
+  - resources-unsubscribe
+  - tools-call-with-logging # requires the logging capability above
+  - tools-call-sampling # no sampling: the server never calls back into an LLM
+  - tools-call-elicitation # no elicitation: every tool takes its input up front
+  - elicitation-sep1034-defaults
+  - elicitation-sep1330-enums
+
+  # --- Scenarios that require the suite's reference fixture ---------------
+  # These call a tool or read a resource by a name only the "everything"
+  # reference server has (test_simple_text, test://static-text, and so on).
+  # A real product server cannot pass them without impersonating that fixture.
+  - tools-call-simple-text
+  - tools-call-image
+  - tools-call-audio
+  - tools-call-embedded-resource
+  - tools-call-mixed-content
+  - tools-call-error
+  - tools-call-with-progress
+  - resources-read-text
+  - resources-read-binary
+  - resources-templates-read
+  - json-schema-2020-12 # calls json_schema_2020_12_tool
+
+  # --- Streamable HTTP semantics the product does not ship ----------------
+  # `bga-mcp` ships stdio only. These scenarios exercise the loopback HTTP
+  # harness in tests/fixtures/conformance-stdio-proxy.ts, which exists to let
+  # the suite reach the real binary at all, so neither their failure nor their
+  # success says anything about the product. Recorded rather than hidden.
+  - server-session-lifecycle # HTTP session termination status codes

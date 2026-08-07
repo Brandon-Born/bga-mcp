@@ -10,7 +10,7 @@ Every `verified` in this repository has so far been a claim a reader had to take
 
 - **Where it came from** — the commit, and whether the tree was clean. A dirty tree is recorded rather than refused, because the field is what tells a reader the run is not reproducible from the commit alone.
 - **What was run** — the package version, the `pnpm-lock.yaml` digest, the Node version, platform, architecture, package manager, and whether it was CI.
-- **What the protocol did** — the transports, and every claimed protocol version with its own official-conformance result. A version the official suite never exercised is `not-run`, and the overall word may not be stronger than the per-version results: this repository currently records `partial`, because the pinned CLI offers no scenarios for `2026-07-28`. That is the same fact [CONFORMANCE.md](../CONFORMANCE.md) records and the reason BGA-011 stays `implemented`.
+- **What the protocol did** — the transports, and every claimed protocol version with its own official-conformance result. A version nobody exercised is `not-run`; one the official suite cannot measure for the shipped transport is `not-applicable` and carries the reason. A revision that passed against a reviewed baseline also records how many scenarios the baseline excused, because a pass means much less when that number is large. The overall word may not be stronger than the per-version results: this repository records `partial` — `2025-11-25` passed with 26 baselined scenarios, `2026-07-28` is not applicable. See [CONFORMANCE.md](../CONFORMANCE.md), which is also why BGA-011 stays `implemented`.
 - **What each capability proved** — every entry in the capability manifest, with the result of each scenario it requires, down to the test file and title that produced it.
 
 ## The three properties that make it evidence
@@ -35,4 +35,4 @@ Signing and per-release publication are BGA-404 and BGA-407. This item produces 
 
 ## Current run
 
-11 capabilities and 78 required scenarios, all passed; 288 tests passed. Official conformance is `partial`: `2025-11-25` passed, `2026-07-28` was not run.
+11 capabilities and 78 required scenarios, all passed; 288 tests passed. Official conformance is `partial`: `2025-11-25` passed against the packaged binary with 26 baselined scenarios, `2026-07-28` is not applicable to a stdio product.

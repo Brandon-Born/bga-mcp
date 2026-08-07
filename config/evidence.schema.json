@@ -106,8 +106,17 @@
                 "required": ["version", "status", "runs"],
                 "properties": {
                   "version": { "type": "string", "minLength": 1 },
-                  "status": { "enum": ["passed", "failed", "not-run"] },
-                  "runs": { "type": "integer", "minimum": 0 }
+                  "status": {
+                    "enum": ["passed", "failed", "not-run", "not-applicable"],
+                    "description": "not-applicable means the official suite cannot measure this revision for the shipped transport; `reason` says why."
+                  },
+                  "runs": { "type": "integer", "minimum": 0 },
+                  "reason": { "type": "string", "minLength": 1 },
+                  "baselinedScenarios": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Scenarios excused by the reviewed baseline for this revision. A pass means much less when this is large."
+                  }
                 }
               }
             },

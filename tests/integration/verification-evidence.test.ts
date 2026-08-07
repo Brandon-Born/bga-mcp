@@ -174,13 +174,17 @@ describe('verification evidence', () => {
     expect(canonicalize({ b: 1, a: [2, { d: 3, c: 4 }] })).toBe('{"a":[2,{"c":4,"d":3}],"b":1}');
   });
 
-  it('[GATE-EVIDENCE-COVERAGE] refuses to call conformance passed when a claimed version never ran', () => {
-    // The pinned official CLI offers no scenarios for the newer claimed
-    // version, so this is the repository's real situation, not a hypothetical.
-    expect(conformanceStatus([{ status: 'passed' }, { status: 'not-run' }])).toBe('partial');
+  it('[GATE-EVIDENCE-COVERAGE] refuses to call conformance passed when a claimed version was not measured', () => {
     expect(conformanceStatus([{ status: 'passed' }, { status: 'passed' }])).toBe('passed');
+    expect(conformanceStatus([{ status: 'passed' }, { status: 'not-run' }])).toBe('partial');
+    // A stated reason does not upgrade the result. 2026-07-28 is the repository's
+    // real case: the official server suite tests it over Streamable HTTP, which
+    // this product does not ship, so it measures the harness rather than the
+    // server. Recording why it was not measured is not the same as measuring it.
+    expect(conformanceStatus([{ status: 'passed' }, { status: 'not-applicable' }])).toBe('partial');
     expect(conformanceStatus([{ status: 'passed' }, { status: 'failed' }])).toBe('failed');
     expect(conformanceStatus([{ status: 'not-run' }])).toBe('missing');
+    expect(conformanceStatus([{ status: 'not-applicable' }])).toBe('missing');
     expect(conformanceStatus([])).toBe('missing');
   });
 

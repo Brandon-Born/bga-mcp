@@ -22,8 +22,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0
       '@modelcontextprotocol/conformance':
-        specifier: 0.1.16
-        version: 0.1.16(supports-color@7.2.0)
+        specifier: 0.2.0-alpha.11
+        version: 0.2.0-alpha.11(supports-color@7.2.0)
       '@modelcontextprotocol/node':
         specifier: 2.0.0
         version: 2.0.0(@modelcontextprotocol/server@2.0.0)(hono@4.13.0)
@@ -478,8 +478,8 @@ packages:
     resolution: {integrity: sha512-8f1OghQ2rjzIOfqgUCP+8GiUWqRs89njoWLNqAe8kWmDePv3s1fZXseej+QXemssEuuOvLLmLO/kqM3IQHtISw==}
     engines: {node: '>=20'}
 
-  '@modelcontextprotocol/conformance@0.1.16':
-    resolution: {integrity: sha512-GI7qiN0r39/MH2srVUR3AXaEN0YLCro20lIBbnvc1frBhszenxvUifBuTzxeVQVagILfBzCIcnungUOma8OrgA==}
+  '@modelcontextprotocol/conformance@0.2.0-alpha.11':
+    resolution: {integrity: sha512-imPK9tx5gQsL6ZKQq4MrsyDYfSaIwpRmX6+ogjbeAXs9LGvxkBxWcY7KcS7TvwaBk/ZiVWl6b/naF4q83UwDRA==}
     hasBin: true
 
   '@modelcontextprotocol/core@2.0.0':
@@ -1961,10 +1961,12 @@ snapshots:
       pkce-challenge: 5.0.1
       zod: 4.4.3
 
-  '@modelcontextprotocol/conformance@0.1.16(supports-color@7.2.0)':
+  '@modelcontextprotocol/conformance@0.2.0-alpha.11(supports-color@7.2.0)':
     dependencies:
       '@modelcontextprotocol/sdk': 1.30.0(supports-color@7.2.0)(zod@4.4.3)
       '@octokit/rest': 22.0.1
+      ajv: 8.20.0
+      ajv-formats: 3.0.1(ajv@8.20.0)
       commander: 14.0.3
       eventsource-parser: 3.1.0
       express: 5.2.1(supports-color@7.2.0)
@@ -1990,8 +1992,8 @@ snapshots:
   '@modelcontextprotocol/sdk@1.30.0(supports-color@7.2.0)(zod@4.4.3)':
     dependencies:
       '@hono/node-server': 2.1.0(hono@4.13.0)
-      ajv: 8.20.0
-      ajv-formats: 3.0.1(ajv@8.20.0)
+      ajv: 8.17.1
+      ajv-formats: 3.0.1(ajv@8.17.1)
       content-type: 1.0.5
       cors: 2.8.6
       cross-spawn: 7.0.6
@@ -2308,6 +2310,10 @@ snapshots:
       acorn: 8.18.0
 
   acorn@8.18.0: {}
+
+  ajv-formats@3.0.1(ajv@8.17.1):
+    optionalDependencies:
+      ajv: 8.17.1
 
   ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:

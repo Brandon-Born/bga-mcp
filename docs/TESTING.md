@@ -121,7 +121,7 @@ A release must publish or retain machine-readable evidence containing the packag
 
 Three properties make it evidence rather than a summary:
 
-- **It records absence.** A required scenario with no test in the run is `missing`, not omitted, and a capability with a missing or failed scenario cannot be `passed`. The gate fails when a capability advertised as `verified` has anything less. Protocol versions follow the same rule: each claimed version carries its own official-conformance result, a version nobody exercised is `not-run`, and the overall status may not be stronger than the per-version results.
+- **It records absence.** A required scenario with no test in the run is `missing`, not omitted, and a capability with a missing or failed scenario cannot be `passed`. The gate fails when a capability advertised as `verified` has anything less. Protocol versions follow the same rule: each claimed version carries its own official-conformance result, a version nobody exercised is `not-run`, one the suite cannot measure for the shipped transport is `not-applicable` with its reason, and the overall status may not be stronger than the per-version results. A revision that passed against a reviewed baseline also records how many scenarios that baseline excused, because a pass means much less when the exclusion list is long.
 - **It is sealed.** `integrity` is a SHA-256 digest of the document with that field removed, computed over a canonical serialization, so an artifact edited after its run no longer matches itself.
 - **It is scanned before it is written.** The emitter refuses to write a document containing a known credential format, and the gate scans it again, because a test title or file path is a plausible carrier into a published artifact.
 

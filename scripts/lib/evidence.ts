@@ -60,8 +60,10 @@ export interface Evidence {
       readonly status: ResultStatus | 'partial';
       readonly coverage: readonly {
         readonly version: string;
-        readonly status: 'passed' | 'failed' | 'not-run';
+        readonly status: 'passed' | 'failed' | 'not-run' | 'not-applicable';
         readonly runs: number;
+        readonly reason?: string;
+        readonly baselinedScenarios?: number;
       }[];
       readonly runs: readonly {
         readonly candidate: string;
@@ -314,19 +316,36 @@ export async function readConformance(
     }
   }
 
-  const coverage = claimedVersions.map((version) => {
-    const forVersion = runs.filter((run) => run.candidate === `candidate-${version}`);
-    if (forVersion.length === 0) {
-      return { version, status: 'not-run' as const, runs: 0 };
-    }
-    return {
-      version,
-      status: forVersion.every((run) => run.status === 'passed')
-        ? ('passed' as const)
-        : ('failed' as const),
-      runs: forVersion.length,
-    };
-  });
+  const coverage = await Promise.all(
+    claimedVersions.map(async (version) => {
+      const forVersion = runs.filter((run) => run.candidate === `candidate-${version}`);
+      if (forVersion.length === 0) {
+        // A revision the suite cannot measure records why, so the gap reads as a
+        // stated limitation rather than as an absence someone forgot to explain.
+        const reason = await readNotApplicable(resolve(conformanceRoot, `candidate-${version}`));
+        return reason === null
+          ? { version, status: 'not-run' as const, runs: 0 }
+          : { version, status: 'not-applicable' as const, runs: 0, reason };
+      }
+      // The recorded outcome wins over the raw checks, because only it knows
+      // which failures the reviewed baseline expected. Without a record, the
+      // checks are all there is and every one of them must have passed.
+      const recorded = await readRunResult(resolve(conformanceRoot, `candidate-${version}`));
+      const status =
+        recorded?.status ??
+        (forVersion.every((run) => run.status === 'passed')
+          ? ('passed' as const)
+          : ('failed' as const));
+      return {
+        version,
+        status,
+        runs: forVersion.length,
+        ...(recorded?.baselinedScenarios === undefined
+          ? {}
+          : { baselinedScenarios: recorded.baselinedScenarios }),
+      };
+    }),
+  );
 
   return { status: conformanceStatus(coverage), coverage, runs };
 }
@@ -339,13 +358,51 @@ export async function readConformance(
  * is why BGA-011 stays `implemented`. See docs/CONFORMANCE.md.
  */
 export function conformanceStatus(
-  coverage: readonly { readonly status: 'passed' | 'failed' | 'not-run' }[],
+  coverage: readonly { readonly status: 'passed' | 'failed' | 'not-run' | 'not-applicable' }[],
 ): ResultStatus | 'partial' {
-  if (coverage.length === 0 || coverage.every((entry) => entry.status === 'not-run')) {
-    return 'missing';
+  if (coverage.length === 0 || coverage.every((entry) => entry.status !== 'passed')) {
+    return coverage.some((entry) => entry.status === 'failed') ? 'failed' : 'missing';
   }
   if (coverage.some((entry) => entry.status === 'failed')) {
     return 'failed';
   }
-  return coverage.some((entry) => entry.status === 'not-run') ? 'partial' : 'passed';
+  // `not-applicable` keeps the overall word off `passed` exactly as `not-run`
+  // does. A revision the official suite cannot measure is still a revision it
+  // did not measure, whatever the reason, and the artifact says which.
+  return coverage.every((entry) => entry.status === 'passed') ? 'passed' : 'partial';
+}
+
+/** Reads the outcome the runner recorded from the official CLI's exit code. */
+async function readRunResult(
+  candidateRoot: string,
+): Promise<{ status: 'passed' | 'failed'; baselinedScenarios?: number } | null> {
+  try {
+    const recorded = JSON.parse(await readFile(resolve(candidateRoot, 'result.json'), 'utf8')) as {
+      status?: string;
+      baselinedScenarios?: number;
+    };
+    if (recorded.status !== 'passed' && recorded.status !== 'failed') {
+      return null;
+    }
+    return {
+      status: recorded.status,
+      ...(typeof recorded.baselinedScenarios === 'number'
+        ? { baselinedScenarios: recorded.baselinedScenarios }
+        : {}),
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Reads the marker a runner writes for a revision the suite cannot measure. */
+async function readNotApplicable(candidateRoot: string): Promise<string | null> {
+  try {
+    const marker = JSON.parse(
+      await readFile(resolve(candidateRoot, 'not-applicable.json'), 'utf8'),
+    ) as { reason?: string };
+    return marker.reason ?? 'No reason recorded.';
+  } catch {
+    return null;
+  }
 }
