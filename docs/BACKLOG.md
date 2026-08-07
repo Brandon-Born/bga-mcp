@@ -52,6 +52,8 @@ The first dependency chain is:
 
 Phase 1 delivered every local capability against the legacy layout, and `BGA-117` through `BGA-121` added the modern one. Research against the official documentation on 2026-08-07 then showed that "legacy" and "modern" are not two templates but the two ends of a per-file migration: metadata, game logic, states, player actions, and client logic each move independently, so a real project is usually part-way between. `BGA-122` and `BGA-123` closed that gap on 2026-08-07, for the same reason the modern readers did: a capability that refuses the shape most projects are actually in is not finished. Phase 1 is complete; `BGA-116` remains as a usability follow-up and Phase 2 documentation work may begin.
 
+Phase 2 begins at `BGA-207`, the first network path in the server. `BGA-201` was superseded before it started: reading the sources under `BGA-200` showed a crawl-and-ship index is not something they permit.
+
 Studio work begins only after `BGA-300` establishes a safe live test environment. Public release work begins only after all capabilities included in that release are verified.
 
 ## Phase 0 — Foundation
@@ -490,19 +492,36 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-201 — Build the documentation index pipeline
 
-- **Status:** planned
+- **Status:** superseded
 - **Priority:** P1
-- **Depends on:** BGA-004, BGA-200
-- **Deliverable:** A reproducible pipeline that retrieves or consumes approved snapshots, normalizes them, preserves provenance, and builds a bounded local index.
-- **Acceptance:** Builds are deterministic from recorded inputs; source failures and stale snapshots are explicit; private project data is never indexed.
-- **Verification:** Integration tests build from controlled snapshots; E2E starts the packaged server with the built index and proves source metadata survives retrieval.
-- **Note:** BGA-200 found that this item's premise needs rework. Both approved sources set `bulkCrawl: false` and publish no content licence, so a pipeline that crawls the wiki and ships an index would exceed what the sources permit and redistribute content that is all rights reserved. The pipeline must therefore build its index from what a developer's own on-demand lookups return, or from a source that later grants a licence permitting snapshots — not from a crawl. Reconcile this before starting, and update the deliverable rather than working around it.
+- **Superseded by:** BGA-207, BGA-208
+- **Reason:** The premise was wrong, and BGA-200 found it by reading the sources rather than assuming them. Both approved sources refuse bulk collection and publish no content licence, so a pipeline that crawls the wiki, builds an index and ships it would exceed what the sources permit and redistribute content that is all rights reserved. There is no version of "build the index pipeline" that survives that, so it is replaced by the two things actually needed: a guarded fetch that may cross the boundary at all (BGA-207), and a dated cache built from what a developer's own lookups returned (BGA-208). The original acceptance criteria are preserved by the replacements — determinism becomes reproducibility of a cached result, explicit staleness becomes the snapshot-date rule, and "private project data is never indexed" becomes a request-content rule enforced at the boundary.
+
+### BGA-207 — Implement the guarded documentation fetch boundary
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-015, BGA-114, BGA-200
+- **Deliverable:** The first network path in the server: a fetch confined to allowlisted documentation sources, owned by the policy boundary, implementing the boundary review's preconditions TM-DOC-HOST-ALLOWLIST, TM-DOC-NO-LOOPBACK, TM-DOC-REQUEST-CONTENT, and TM-DOC-RESPONSE-BUDGET.
+- **Acceptance:** Only a host in [`config/doc-sources.json`](../config/doc-sources.json) may be reached, over HTTPS, with redirects confined to the allowlist and a redirect out of it refused rather than followed. A host resolving to a loopback, link-local, or private address is refused after resolution, not merely by name. A request carries only the client's explicit query — never project file content, path, or game name — and that is enforced where the request is built rather than trusted to the caller. Response size and time are bounded by the same policy budget every other capability uses. Network access stays off by default: with `--allow-network` absent, every one of these paths refuses before it resolves anything.
+- **Verification:** Negative scenarios cover an unlisted host, an HTTP URL, a redirect that leaves the allowlist, a DNS name resolving to loopback and to a private range, an oversized response, a slow response, and a request built from project content. `E2E-READ-ONLY-NETWORK-DENIED` must keep passing unchanged, proving the local capabilities still reach no network at all.
+- **Sources:** [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md), [DOCUMENTATION_SOURCES.md](DOCUMENTATION_SOURCES.md).
+
+### BGA-208 — Implement the dated documentation cache
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-200, BGA-207
+- **Deliverable:** A bounded local cache of what a developer's own lookups returned, carrying provenance and snapshot dates, implementing TM-DOC-PROVENANCE, TM-DOC-UNTRUSTED, and TM-DOC-SNAPSHOT-INTEGRITY.
+- **Acceptance:** A cache entry stores the canonical URL, the retrieval timestamp, the source's own last-modified signal where it publishes one, and the source's authority. Nothing is served without its date. An entry older than its source's `maxCacheDays` is refetched or reported as stale, never served as current. Retrieved text is stored and returned labelled as untrusted content. The cache holds excerpts, never whole pages, because no approved source permits retaining full text. It is per-developer local state, never part of the published package, and it is never populated by anything but an explicit lookup.
+- **Verification:** Integration scenarios cover a cold lookup, a warm hit, an expired entry, an entry whose source authority is community, and a source that changed upstream. A packaged scenario proves provenance and snapshot date survive to the client, and that a cached excerpt is never returned without them.
+- **Sources:** [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md), [DOCUMENTATION_SOURCES.md](DOCUMENTATION_SOURCES.md).
 
 ### BGA-202 — Implement `search_bga_docs`
 
 - **Status:** planned
 - **Priority:** P1
-- **Depends on:** BGA-006, BGA-016, BGA-201
+- **Depends on:** BGA-006, BGA-016, BGA-207, BGA-208
 - **Deliverable:** A tool returning relevant, concise documentation excerpts with canonical sources, provenance, snapshot dates, and known framework versions.
 - **Acceptance:** Official and community results are distinguishable, result limits are enforced, and retrieved text cannot issue instructions to the server.
 - **Verification:** Tool E2E covers exact-topic, ambiguous, no-result, stale-source, malicious-content, invalid-input, and output-limit scenarios.
@@ -511,7 +530,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 - **Status:** planned
 - **Priority:** P1
-- **Depends on:** BGA-006, BGA-201, BGA-202
+- **Depends on:** BGA-006, BGA-202, BGA-208
 - **Deliverable:** Topic-addressable documentation resources with stable media types and provenance metadata.
 - **Acceptance:** Topic resolution is deterministic, unknown topics fail clearly, and resources never hide source authority or snapshot age.
 - **Verification:** Resource E2E lists templates, reads valid topics, rejects invalid/traversal topics, and verifies provenance and size bounds.
@@ -520,7 +539,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 - **Status:** planned
 - **Priority:** P1
-- **Depends on:** BGA-006, BGA-200, BGA-201
+- **Depends on:** BGA-006, BGA-200, BGA-207, BGA-208
 - **Deliverable:** A resource describing verified current BGA framework/runtime information and the snapshot supporting it.
 - **Acceptance:** Unknown or stale version data is labeled; no value is guessed from examples or historical fixtures.
 - **Verification:** Resource E2E covers current, stale, missing, and conflicting source snapshots.
@@ -538,7 +557,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 - **Status:** planned
 - **Priority:** P2
-- **Depends on:** BGA-200, BGA-201, BGA-204
+- **Depends on:** BGA-200, BGA-204, BGA-208
 - **Deliverable:** A scheduled, non-mutating process that detects source/version drift and opens a reviewable update signal.
 - **Acceptance:** Changes never auto-publish as verified guidance; removed or conflicting facts mark affected capabilities stale until reviewed and retested.
 - **Verification:** Controlled source changes prove detection, staleness propagation, and refusal to silently update verified evidence.
@@ -765,7 +784,7 @@ This map makes omissions visible when source documents evolve.
 | Stable MCP tools and resources                    | BGA-006, BGA-102 through BGA-112, BGA-202 through BGA-204, BGA-303, BGA-304, BGA-306 |
 | Diagnostic schema and uncertainty                 | BGA-007, BGA-101, BGA-106 through BGA-113                                            |
 | Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101, BGA-117 through BGA-123                          |
-| Documentation provenance and currency             | BGA-200 through BGA-206, BGA-408                                                     |
+| Documentation provenance and currency             | BGA-200 through BGA-208, BGA-408                                                     |
 | Local-first, read-only, narrow permissions        | BGA-013 through BGA-016, BGA-114                                                     |
 | Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307                                                              |
 | Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                              |

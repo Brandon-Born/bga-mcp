@@ -38,12 +38,16 @@ Exit criterion reached on 2026-08-07.
 
 ## Phase 2: Documentation
 
-- Build a curated BGA Studio documentation index.
+- Allowlist documentation sources and record what each one permits.
+- Guard the first network path: allowlisted hosts, no private addresses, bounded responses, requests carrying only the client's query.
+- Cache what a developer's own lookups return, dated and attributed.
 - Return source URLs, snapshot dates, and official or community provenance.
 - Add version-aware framework and file-reference lookup.
 - Test retrieval quality against a maintained question set.
 
 Exit criterion: every documentation capability passes end-to-end retrieval scenarios, and the maintained question set returns current, attributable answers without flooding the client context.
+
+Started on 2026-08-07 with the source catalog (BGA-200). The sources decided the shape of the rest: `en.doc.boardgamearena.com` refuses bulk AI collection and publishes no content licence, so there is no curated index to build and ship. Retrieval is one page per explicit request, cached locally with its date, quoted and attributed rather than reproduced. The original index-pipeline item was superseded before it started.
 
 ## Phase 3: Studio bridge
 
