@@ -188,7 +188,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A threat model covering local file access, symlinks and traversal, tool arguments, subprocesses, documentation content, SFTP, browser sessions, logs, credentials, supply chain, and MCP-client trust.
 - **Acceptance:** Assets, actors, trust boundaries, abuse cases, mitigations, residual risk, and test requirements are recorded. Networked and mutating capabilities cannot start before their boundary is reviewed.
 - **Verification:** Each required mitigation maps to an automated negative or security scenario, or to an explicit manual control with an owner.
-- **Evidence:** [THREAT_MODEL.md](THREAT_MODEL.md) and [`config/threat-model.json`](../config/threat-model.json) record 15 abuse cases, 24 mitigations, and 5 residual risks across 7 trust boundaries. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:threat-model` seeds an unknown mitigation reference, a manual control without an owner, an adapter advertised across the unreviewed Studio boundary, and an undocumented control, and fails on each before passing the real model. TB-DOCS-NETWORK and TB-STUDIO remain unreviewed, so no networked or mutating capability can be advertised.
+- **Evidence:** [THREAT_MODEL.md](THREAT_MODEL.md) and [`config/threat-model.json`](../config/threat-model.json) record 15 abuse cases, 24 mitigations, and 5 residual risks across 7 trust boundaries. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:threat-model` seeds an unknown mitigation reference, a manual control without an owner, an adapter advertised across an unreviewed boundary, a reviewed boundary whose preconditions are still planned, and an undocumented control, and fails on each before passing the real model. Both boundaries were reviewed on 2026-08-07; each records preconditions, and the gate keeps a capability closed until its own preconditions are implemented.
 
 ### BGA-014 — Add secret and artifact safety gates
 
@@ -626,21 +626,24 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-305 — Decide whether Studio log access is stable and permitted
 
-- **Status:** planned
+- **Status:** rejected
 - **Priority:** P2
 - **Depends on:** BGA-001, BGA-013, BGA-300
 - **Deliverable:** An evidence-backed architecture decision covering documented access, authentication, fragility, data sensitivity, and allowed automation.
 - **Acceptance:** Undocumented endpoints are not accepted as a core dependency; an unavailable safe mechanism results in a recorded rejection or experimental-only scope.
 - **Verification:** A read-only proof against the test project demonstrates the chosen boundary without bypassing access controls; otherwise BGA-306 remains blocked.
+- **Decision:** Rejected on 2026-08-07. Studio logs are a panel on an authenticated web page, with production errors behind a button and Sentry behind its own interface. There is no documented programmatic access, so automating it means driving a session and parsing HTML nobody promised to keep stable — which this project already lists as a non-goal. Separately, the documentation shows production logs and Sentry carrying user identifiers and affected users: reading them puts other people's data into an agent's context, and no redaction rule this server can write makes that safe, because it cannot tell which identifiers matter. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md). Worth re-reading if BGA publishes an API for logs.
+- **Sources:** [Studio logs](https://en.doc.boardgamearena.com/Studio_logs), [Practical debugging](https://en.doc.boardgamearena.com/Practical_debugging), checked 2026-08-07.
 
 ### BGA-306 — Implement `read_studio_logs`
 
-- **Status:** planned
+- **Status:** blocked
 - **Priority:** P2
 - **Depends on:** BGA-016, BGA-305, BGA-307
 - **Deliverable:** A read-only tool for permitted Studio diagnostics filtered by project, table/test marker, time, severity, and result limits.
 - **Acceptance:** Output is structured, bounded, source-identifiable, and redacts credentials, sessions, player information, and unrelated project data.
 - **Verification:** Live E2E creates an allowed unique diagnostic marker, retrieves only the expected entry, exercises filters/no-results/errors, and proves redaction and project isolation.
+- **Blocked by:** BGA-305, which was rejected. There is no permitted mechanism to build this on. It stays recorded rather than deleted, because a published BGA logs API would make it worth revisiting.
 
 ### BGA-307 — Build the live Studio E2E harness
 
@@ -659,6 +662,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision for creating, starting, stopping, and identifying Studio test tables using stable and permitted interfaces.
 - **Acceptance:** The decision records authorization, cleanup, multi-user behavior, rate/abuse risks, and whether automation may be supported, experimental, or rejected.
 - **Verification:** A constrained live proof is required before any public capability is proposed.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-309 — Implement verified test-table workflows
 
@@ -668,6 +672,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Only the test-table operations approved by BGA-308, each as a separate manifest capability.
 - **Acceptance:** Operations are isolated to the test project/accounts, explicitly mutating, idempotent where possible, bounded, and always stop/clean up created tables.
 - **Verification:** Each operation receives its own live E2E success, invalid-input, wrong-target, interruption, repeat, and cleanup scenarios.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-310 — Research and implement player-perspective workflows
 
@@ -677,6 +682,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision followed, only if approved, by safe access to allowed test-player perspectives.
 - **Acceptance:** No real player impersonation or session leakage; behavior is confined to Studio test accounts and documented interfaces.
 - **Verification:** Live E2E proves identity boundaries, allowed perspective switching, rejection of non-test users, and session redaction.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-311 — Research and implement saved-state workflows
 
@@ -686,6 +692,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision followed, only if approved, by save/restore operations for isolated test tables.
 - **Acceptance:** Slots and table ownership are explicit; restore cannot target another table; test cleanup restores or ends the table safely.
 - **Verification:** Live E2E saves, mutates, restores, verifies exact state, rejects cross-table restore, handles unavailable/ended states, and cleans up.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ## Phase 4 — Public release and maintenance
 

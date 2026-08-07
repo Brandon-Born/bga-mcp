@@ -67,4 +67,4 @@ Neither is a reason to refuse the boundary. Both are reasons the network stays o
 
 ## What this review does not cover
 
-TB-STUDIO remains **unreviewed**. Credential handling, wrong-target writes, and session reuse are untouched by this review, and every Studio capability remains blocked by the same gate.
+TB-STUDIO is untouched by this review. It was reviewed separately later the same day; see the [Studio boundary review](STUDIO_BOUNDARY_REVIEW.md). Every Studio capability remains blocked by the same gate.

@@ -126,9 +126,19 @@
     {
       "id": "TB-STUDIO",
       "name": "BGA Studio adapter",
-      "description": "Authenticated SFTP, session, and mutation traffic with a Studio project.",
-      "status": "unreviewed",
-      "gates": ["network", "mutation"]
+      "description": "Authenticated SFTP, session, and mutation traffic with a Studio project. Reviewed 2026-08-07: file synchronization may cross once every precondition is implemented; log, table, saved-state, and browser-session access stays closed for want of a documented interface and because production logs carry player data.",
+      "status": "reviewed",
+      "gates": ["network", "mutation"],
+      "reviewedAt": "2026-08-07",
+      "preconditions": [
+        "TM-STUDIO-CREDENTIAL-PROVIDER",
+        "TM-STUDIO-HOST-PINNED",
+        "TM-STUDIO-TARGET-CONFIRMED",
+        "TM-STUDIO-UPLOAD-SCOPE",
+        "TM-STUDIO-PREVIEW-FIRST",
+        "TM-STUDIO-NO-REMOTE-DELETE",
+        "TM-STUDIO-CREDENTIAL-REDACTION"
+      ]
     },
     {
       "id": "TB-SUPPLY-CHAIN",
@@ -218,7 +228,12 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS"],
       "boundary": "TB-STUDIO",
       "impact": "The credential is logged in the client transcript and in server output.",
-      "mitigations": ["TM-CREDENTIAL-PROVIDER", "TM-BOUNDARY-REVIEW"]
+      "mitigations": [
+        "TM-CREDENTIAL-PROVIDER",
+        "TM-BOUNDARY-REVIEW",
+        "TM-STUDIO-CREDENTIAL-PROVIDER",
+        "TM-STUDIO-CREDENTIAL-REDACTION"
+      ]
     },
     {
       "id": "AC-STUDIO-WRONG-TARGET",
@@ -230,7 +245,10 @@
       "mitigations": [
         "TM-POLICY-REMOTE-ALLOWLIST",
         "TM-POLICY-MUTATION-INTENT",
-        "TM-BOUNDARY-REVIEW"
+        "TM-BOUNDARY-REVIEW",
+        "TM-STUDIO-HOST-PINNED",
+        "TM-STUDIO-TARGET-CONFIRMED",
+        "TM-STUDIO-PREVIEW-FIRST"
       ]
     },
     {
@@ -240,7 +258,7 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA"],
       "boundary": "TB-STUDIO",
       "impact": "Session material is exposed and access controls or terms may be bypassed.",
-      "mitigations": ["TM-NO-BROWSER-SESSION", "TM-BOUNDARY-REVIEW"]
+      "mitigations": ["TM-NO-BROWSER-SESSION", "TM-BOUNDARY-REVIEW", "TM-NO-STUDIO-LOGS"]
     },
     {
       "id": "AC-DOC-PROMPT-INJECTION",
@@ -331,6 +349,42 @@
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "A capability is released as verified while a scenario proving it never ran, or the artifact saying so was edited afterwards.",
       "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY"]
+    },
+    {
+      "id": "AC-STUDIO-UPLOAD-SCOPE",
+      "title": "A synchronization uploads files from outside the project",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-STUDIO",
+      "impact": "Keys, environment files, or notes that never belonged to the game are copied to a third-party server.",
+      "mitigations": ["TM-STUDIO-UPLOAD-SCOPE", "TM-STUDIO-PREVIEW-FIRST"]
+    },
+    {
+      "id": "AC-STUDIO-PLAYER-DATA",
+      "title": "Studio logs carry player identifiers into an agent's context",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
+      "boundary": "TB-STUDIO",
+      "impact": "Production error logs and Sentry issues name affected users, so reading them exports other people's data to wherever the agent's context goes.",
+      "mitigations": ["TM-NO-STUDIO-LOGS", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-STUDIO-DESTRUCTIVE-SYNC",
+      "title": "A synchronization deletes or overwrites remote-only files",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-STUDIO-PROJECT"],
+      "boundary": "TB-STUDIO",
+      "impact": "SFTP has no version history, so a file that exists only on Studio is gone with no local copy to restore it from.",
+      "mitigations": ["TM-STUDIO-NO-REMOTE-DELETE", "TM-STUDIO-PREVIEW-FIRST"]
+    },
+    {
+      "id": "AC-STUDIO-CREDENTIAL-LOG",
+      "title": "A Studio credential or host reaches a result, a log line, or an artifact",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-STUDIO",
+      "impact": "A credential that appears in stderr or a retained CI artifact must be rotated, and the developer may not know it leaked.",
+      "mitigations": ["TM-STUDIO-CREDENTIAL-REDACTION", "TM-REDACTION"]
     }
   ],
   "mitigations": [
@@ -608,6 +662,79 @@
       "control": "automated",
       "status": "implemented",
       "scenarios": ["GATE-EVIDENCE-TAMPER"]
+    },
+    {
+      "id": "TM-STUDIO-CREDENTIAL-PROVIDER",
+      "title": "Studio credentials come from the environment or an agent, never from a tool argument",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-301",
+      "scenarios": ["E2E-STUDIO-CREDENTIAL-NOT-AN-ARGUMENT"]
+    },
+    {
+      "id": "TM-STUDIO-HOST-PINNED",
+      "title": "Only the documented Studio host and port over SFTP, with the host key verified against a stored fingerprint",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-302",
+      "scenarios": ["E2E-STUDIO-HOST-PINNED"]
+    },
+    {
+      "id": "TM-STUDIO-TARGET-CONFIRMED",
+      "title": "A mutation names its exact remote project and the client repeats it back before anything is written",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-304",
+      "scenarios": ["E2E-STUDIO-TARGET-CONFIRMED"]
+    },
+    {
+      "id": "TM-STUDIO-UPLOAD-SCOPE",
+      "title": "Only files inside the configured project root are uploaded, resolved through the policy that guards local reads",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-303",
+      "scenarios": ["E2E-STUDIO-UPLOAD-SCOPE"]
+    },
+    {
+      "id": "TM-STUDIO-PREVIEW-FIRST",
+      "title": "Every mutation has a dry run listing exactly what would change, and execution requires explicit intent",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-303",
+      "scenarios": ["E2E-STUDIO-PREVIEW-FIRST"]
+    },
+    {
+      "id": "TM-STUDIO-NO-REMOTE-DELETE",
+      "title": "Deleting or overwriting a remote file with no local counterpart is refused rather than resolved",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-304",
+      "scenarios": ["E2E-STUDIO-NO-REMOTE-DELETE"]
+    },
+    {
+      "id": "TM-STUDIO-CREDENTIAL-REDACTION",
+      "title": "Credentials, hosts, and account names are redacted from every result, error, log line, and artifact",
+      "boundary": "TB-STUDIO",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-301",
+      "scenarios": ["E2E-STUDIO-CREDENTIAL-REDACTION"]
+    },
+    {
+      "id": "TM-NO-STUDIO-LOGS",
+      "title": "Studio logs, test tables, saved states, and player perspectives are not automated, because no documented interface exists and production logs carry player data",
+      "boundary": "TB-STUDIO",
+      "control": "manual",
+      "status": "implemented",
+      "owner": "Brandon Born",
+      "cadence": "Re-read if BGA publishes an API for logs or tables",
+      "evidence": "docs/verification/STUDIO_BOUNDARY_REVIEW.md decision, recorded against BGA-305"
     }
   ],
   "residualRisks": [
@@ -619,7 +746,7 @@
     },
     {
       "id": "RR-STUDIO-UNREVIEWED",
-      "description": "The Studio boundary is unreviewed. Credential handling, wrong-target writes, and session reuse are mitigated only by the shipping gate that keeps every Studio capability unreleased.",
+      "description": "Superseded by the 2026-08-07 review. The boundary is reviewed: synchronization may be built once its preconditions exist, and log, table, saved-state, and browser access stay closed. Every Studio capability remains unreleased until its preconditions are implemented.",
       "abuseCases": [
         "AC-CREDENTIAL-AS-ARGUMENT",
         "AC-STUDIO-WRONG-TARGET",
@@ -655,6 +782,18 @@
       "id": "RR-DOC-ALLOWLIST-TRUST",
       "description": "An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel. Provenance and untrusted-content labelling limit the damage; the allowlist cannot prevent it.",
       "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-DOC-STALE-SNAPSHOT"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-STUDIO-NO-UNDO",
+      "description": "SFTP has no version history. A previewed, confirmed synchronization that writes the intended file to the intended project can still overwrite something the developer wanted, and nothing on this side of the connection can undo it.",
+      "abuseCases": ["AC-STUDIO-WRONG-TARGET", "AC-STUDIO-DESTRUCTIVE-SYNC"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-STUDIO-SHARED-ACCOUNT",
+      "description": "The documentation describes multiple developer accounts per person and says nothing about credential confidentiality. A credential the developer has already shared is outside this server's control.",
+      "abuseCases": ["AC-CREDENTIAL-AS-ARGUMENT", "AC-STUDIO-CREDENTIAL-LOG"],
       "acceptedBy": "Brandon Born"
     }
   ]

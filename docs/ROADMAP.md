@@ -56,11 +56,11 @@ The exit criterion is not met. Every capability is `implemented`, not `verified`
 - Add SFTP connection diagnostics using SSH keys.
 - Preview local-to-Studio synchronization as a structured diff.
 - Add guarded, explicitly requested synchronization.
-- Retrieve and filter relevant Studio logs if a stable, permitted mechanism is available.
-- Research test-table, player-perspective, and saved-state automation separately.
 - Run every Studio adapter scenario against a dedicated, isolated BGA Studio test project.
 
 Exit criterion: live end-to-end tests prove that every advertised Studio capability can safely preview and perform its operation, verify the exact target and result, clean up test state, and avoid exposing credentials. Capabilities without this evidence remain unreleased.
+
+The boundary was reviewed on 2026-08-07 and the phase is now narrower than it was. Synchronization stays, behind seven preconditions. Log retrieval, test tables, player perspectives, and saved states came out: each is an authenticated web page with no documented interface, and the production logs carry other players' identifiers. Scraping someone else's platform to read other people's data is not worth the capability. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md); the items stay in the backlog in case BGA publishes an API.
 
 ## Phase 4: Public release
 
