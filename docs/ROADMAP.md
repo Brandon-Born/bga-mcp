@@ -47,7 +47,9 @@ Exit criterion reached on 2026-08-07.
 
 Exit criterion: every documentation capability passes end-to-end retrieval scenarios, and the maintained question set returns current, attributable answers without flooding the client context.
 
-Started on 2026-08-07 with the source catalog (BGA-200). The sources decided the shape of the rest: `en.doc.boardgamearena.com` refuses bulk AI collection and publishes no content licence, so there is no curated index to build and ship. Retrieval is one page per explicit request, cached locally with its date, quoted and attributed rather than reproduced. The original index-pipeline item was superseded before it started.
+Built on 2026-08-07 (BGA-200, BGA-202 through BGA-208). The sources decided the shape of it: `en.doc.boardgamearena.com` refuses bulk AI collection and publishes no content licence, so there is no curated index to build and ship. Retrieval is one page per explicit request, cached locally with its date, quoted and attributed rather than reproduced. The original index-pipeline item was superseded before it started.
+
+The exit criterion is not met. Every capability is `implemented`, not `verified`: the refusals, the contracts, and the scoring are proven offline, but a real retrieval needs a third party's wiki, and a commit gate that depends on someone else's uptime is not a gate. The maintained question set (`pnpm test:docs-eval`) and the drift monitor (`pnpm docs:drift`) are the deliberate, network-dependent runs that close it, before a documentation release rather than on every commit.
 
 ## Phase 3: Studio bridge
 

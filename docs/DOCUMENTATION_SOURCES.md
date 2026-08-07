@@ -55,6 +55,12 @@ That is unusually explicit, and it decides the design:
 4. Set `allowedUse` no wider than the signals and the licence permit. The gate rejects an entry that exceeds either.
 5. Add the entry, update this file, and run `pnpm check`.
 
+## Keeping it current
+
+- `pnpm docs:drift` compares every tracked page with the baseline it was reviewed at and fails when the text has changed. It never records a new baseline by itself: `--record` is run by a person after reading what changed, because "the wiki changed" and "the new text is correct" are different claims.
+- `pnpm test:docs-eval` runs the maintained question set in [`config/doc-evaluation.json`](../config/doc-evaluation.json) against the live wiki and fails below its thresholds. Attribution is fixed at 1: an unattributable answer fails the run however good it is.
+- Both need the network, so neither is in `pnpm check`. They run before a documentation release, and drift triggers the evaluation.
+
 ## Shipping is still blocked
 
 The boundary is reviewed, not open. The [boundary review](verification/DOCS_BOUNDARY_REVIEW.md) records seven preconditions; this item implements the provenance and trust half of one of them (TM-DOC-PROVENANCE). No documentation capability may be advertised until all seven exist, and the capability gate enforces that.

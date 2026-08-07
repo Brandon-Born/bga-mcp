@@ -557,21 +557,25 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-205 — Build the retrieval evaluation set
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-200, BGA-202
 - **Deliverable:** Maintained questions, expected source facts, relevance requirements, token/size limits, and regression thresholds.
 - **Acceptance:** The set covers common and adversarial BGA questions, official/community distinctions, version sensitivity, and no-answer behavior.
 - **Verification:** Packaged-server E2E runs the complete set and release gates fail below thresholds or when required attribution is absent.
+- **Evidence:** [`config/doc-evaluation.json`](../config/doc-evaluation.json) holds nine questions with the page each should be answered from, the fact the excerpt must contain, and the provenance expected. Two of them are the cases a retrieval capability gets wrong: a question the documentation cannot answer, which must return nothing rather than the nearest page, and a question shaped like an instruction. `pnpm test:docs-eval` runs the set against the live wiki through the packaged server and fails below the thresholds. `pnpm verify:doc-evaluation` runs on every commit and checks the set is usable — every expected topic exists, every answerable question names a page so something is actually measured, an unanswerable question is present, a community-sourced question is present, and `minAttributed` is 1 — seeding each of those defects and requiring itself to reject them. `UNIT-DOC-EVALUATION` covers the scoring: a wrong page, a missing fact, flattened provenance, an oversized excerpt, an unattributable answer, an invented answer to an unanswerable question, and the thresholds.
+- **Note:** `implemented`. `pnpm test:docs-eval` is deliberately outside `pnpm check`: it needs a third party's wiki, and putting it in the commit gate would make every commit depend on someone else's uptime and send traffic nobody asked for. It runs before a documentation release and whenever the drift monitor reports a change.
 
 ### BGA-206 — Monitor BGA documentation and framework changes
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P2
 - **Depends on:** BGA-200, BGA-204, BGA-208
 - **Deliverable:** A scheduled, non-mutating process that detects source/version drift and opens a reviewable update signal.
 - **Acceptance:** Changes never auto-publish as verified guidance; removed or conflicting facts mark affected capabilities stale until reviewed and retested.
 - **Verification:** Controlled source changes prove detection, staleness propagation, and refusal to silently update verified evidence.
+- **Evidence:** `pnpm docs:drift` retrieves every tracked topic through the policy boundary and compares it with the baseline it was reviewed at, reporting changed text, an edit that changed no text, a page that could not be read, a tracked page that has gone, and a page nobody reviewed. It never writes a baseline as a side effect: recording one is `--record`, run by a person after reading what changed, because "the wiki changed" and "the new text is correct" are different claims and only the second one needs judgement. Changed, missing, and untracked pages fail the run and the message says the derived guidance is stale until it is re-read and `pnpm test:docs-eval` passes again. The digest covers extracted text rather than markup, so a formatting edit is reported as an edit and not as drift. `UNIT-DOC-DRIFT` covers all five outcomes, including that an unreachable page is never treated as unchanged.
+- **Note:** `implemented`. The comparison is fully covered offline; running it needs the network, so like the evaluation set it is a scheduled and pre-release command rather than a commit gate.
 
 ## Phase 3 — Studio bridge
 

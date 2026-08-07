@@ -105,13 +105,13 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-CLIENT-TRUST-DOC        | manual    | implemented | Owner: Brandon Born, every release                                           |
 | TM-CREDENTIAL-PROVIDER     | automated | planned     | Reserved for BGA-301                                                         |
 | TM-NO-BROWSER-SESSION      | manual    | planned     | Owner: Brandon Born, decision recorded in BGA-305                            |
-| TM-DOC-PROVENANCE          | automated | implemented | UNIT-DOC-PROVENANCE                                                          |
+| TM-DOC-PROVENANCE          | automated | implemented | UNIT-DOC-PROVENANCE, UNIT-DOC-EVALUATION                                     |
 | TM-DOC-UNTRUSTED           | automated | implemented | UNIT-DOC-EXCERPT, UNIT-DOC-PROVENANCE, UNIT-DOC-SEARCH-PARSE                 |
 | TM-DOC-HOST-ALLOWLIST      | automated | implemented | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF         |
 | TM-DOC-NO-LOOPBACK         | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED                                                     |
 | TM-DOC-REQUEST-CONTENT     | automated | implemented | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                            |
 | TM-DOC-RESPONSE-BUDGET     | automated | implemented | UNIT-DOC-RESPONSE-BUDGET, UNIT-DOC-CACHE-BOUNDED                             |
-| TM-DOC-SNAPSHOT-INTEGRITY  | automated | implemented | UNIT-DOC-SNAPSHOT-DATE                                                       |
+| TM-DOC-SNAPSHOT-INTEGRITY  | automated | implemented | UNIT-DOC-SNAPSHOT-DATE, UNIT-DOC-DRIFT                                       |
 
 ## Residual risk
 

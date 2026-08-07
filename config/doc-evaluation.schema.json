@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/config/doc-evaluation.schema.json",
+  "title": "bga-mcp documentation retrieval evaluation set",
+  "description": "The maintained questions a documentation release is measured against, with what each answer must contain and the thresholds a release must clear.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "updatedAt", "thresholds", "questions"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "updatedAt": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minAnswered", "minAttributed", "maxExcerptChars"],
+      "properties": {
+        "minAnswered": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Fraction of answerable questions that must be answered from the expected page."
+        },
+        "minAttributed": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1,
+          "description": "Fraction of results that must carry a URL, a date, and a provenance. Attribution is not negotiable, so this is fixed at 1."
+        },
+        "maxExcerptChars": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "question",
+          "expectedTopic",
+          "expectedUrlContains",
+          "requiredTerms",
+          "expectedProvenance"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "question": { "type": "string", "minLength": 3 },
+          "expectedTopic": {
+            "type": ["string", "null"],
+            "description": "The topic whose page should answer it, or null when nothing should."
+          },
+          "expectedUrlContains": { "type": ["string", "null"] },
+          "requiredTerms": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+          "expectedProvenance": { "enum": ["official", "community", null] },
+          "expectNoAnswer": { "type": "boolean" },
+          "expectUntrustedLabel": { "type": "boolean" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

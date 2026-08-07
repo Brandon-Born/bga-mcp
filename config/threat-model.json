@@ -536,8 +536,8 @@
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
-      "backlog": "BGA-208",
-      "scenarios": ["UNIT-DOC-PROVENANCE"]
+      "backlog": "BGA-205",
+      "scenarios": ["UNIT-DOC-PROVENANCE", "UNIT-DOC-EVALUATION"]
     },
     {
       "id": "TM-DOC-UNTRUSTED",
@@ -590,8 +590,8 @@
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
-      "backlog": "BGA-208",
-      "scenarios": ["UNIT-DOC-SNAPSHOT-DATE"]
+      "backlog": "BGA-206",
+      "scenarios": ["UNIT-DOC-SNAPSHOT-DATE", "UNIT-DOC-DRIFT"]
     },
     {
       "id": "TM-EVIDENCE-COVERAGE",
