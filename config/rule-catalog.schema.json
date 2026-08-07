@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/rule-catalog.schema.json",
+  "title": "bga-mcp pre-release rule catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "catalogVersion", "updatedAt", "checks"],
+  "properties": {
+    "$schema": {
+      "const": "./rule-catalog.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "catalogVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "automatable", "summary", "owner"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)*$"
+          },
+          "automatable": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 10
+          },
+          "owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "group": {
+            "enum": ["state-machine", "action-contracts", "notifications", "database"]
+          },
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "severity": {
+            "enum": ["error", "warning", "information"]
+          },
+          "certainty": {
+            "enum": ["certain", "likely", "possible"]
+          },
+          "implementation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sources": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["kind", "reference"],
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "official-documentation",
+                    "framework-behavior",
+                    "community-convention",
+                    "project-inference"
+                  ]
+                },
+                "reference": {
+                  "type": "string",
+                  "minLength": 10
+                },
+                "url": {
+                  "type": "string",
+                  "pattern": "^https?://"
+                }
+              }
+            }
+          },
+          "fixtures": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["valid"],
+            "properties": {
+              "valid": {
+                "type": "string",
+                "minLength": 1
+              },
+              "failing": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+            }
+          },
+          "manualReason": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "automatable": {
+                  "const": true
+                }
+              },
+              "required": ["automatable"]
+            },
+            "then": {
+              "type": "object",
+              "required": [
+                "group",
+                "tool",
+                "severity",
+                "certainty",
+                "implementation",
+                "sources",
+                "fixtures",
+                "scenarios"
+              ],
+              "properties": {
+                "group": {
+                  "type": "string"
+                },
+                "tool": {
+                  "type": "string"
+                },
+                "severity": {
+                  "type": "string"
+                },
+                "certainty": {
+                  "type": "string"
+                },
+                "implementation": {
+                  "type": "string"
+                },
+                "sources": {
+                  "type": "array"
+                },
+                "fixtures": {
+                  "type": "object"
+                },
+                "scenarios": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "automatable": {
+                  "const": false
+                }
+              },
+              "required": ["automatable"]
+            },
+            "then": {
+              "type": "object",
+              "required": ["manualReason"],
+              "properties": {
+                "manualReason": {
+                  "type": "string"
+                }
+              },
+              "not": {
+                "type": "object",
+                "anyOf": [
+                  {
+                    "required": ["scenarios"]
+                  },
+                  {
+                    "required": ["implementation"]
+                  },
+                  {
+                    "required": ["severity"]
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

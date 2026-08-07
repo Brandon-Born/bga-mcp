@@ -30,6 +30,10 @@ interface ThreatModel {
   }[];
 }
 
+interface RuleCatalog {
+  readonly checks: readonly { readonly id: string; readonly scenarios?: readonly string[] }[];
+}
+
 interface Compatibility {
   readonly claims: readonly { readonly id: string; readonly scenarios?: readonly string[] }[];
 }
@@ -49,6 +53,7 @@ function collectRequirements(
   manifest: Manifest,
   model: ThreatModel,
   compatibility: Compatibility,
+  catalog: RuleCatalog,
 ): Requirements {
   const required = new Map<string, string[]>();
   const reserved = new Set<string>();
@@ -81,6 +86,9 @@ function collectRequirements(
   }
   for (const claim of compatibility.claims) {
     add(`compatibility claim ${claim.id}`, claim.scenarios ?? []);
+  }
+  for (const check of catalog.checks) {
+    add(`rule catalog check ${check.id}`, check.scenarios ?? []);
   }
 
   return { required, reserved };
@@ -126,6 +134,7 @@ async function main(): Promise<void> {
     await loadJson<Manifest>('config/capabilities.json'),
     await loadJson<ThreatModel>('config/threat-model.json'),
     await loadJson<Compatibility>('config/compatibility.json'),
+    await loadJson<RuleCatalog>('config/rule-catalog.json'),
   );
   const declared = await collectDeclaredScenarios(testsRoot);
 

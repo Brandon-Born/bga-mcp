@@ -1,0 +1,750 @@
+{
+  "$schema": "./rule-catalog.schema.json",
+  "schemaVersion": 1,
+  "catalogVersion": "1.0.0",
+  "updatedAt": "2026-08-06",
+  "checks": [
+    {
+      "id": "action.argument.mismatch",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "The client and the entry point disagree about an action argument.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.call.not-declared",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "The client calls an action that no state lists as a possible action.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.declared.not-called",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "A state declares a possible action that no readable client source calls.",
+      "severity": "information",
+      "certainty": "possible",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "project-inference",
+          "reference": "Inferred from comparing declared possible actions with readable client calls; not a documented requirement."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.entry-point.duplicate",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "Two entry points in the action class share a name.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.entry-point.missing",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "An action the client calls has no matching entry point in the action class.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.game-method.missing",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "An action has an entry point but no game method of the same name.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.name.convention",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "A player action the client calls should be named act\u2026 so the framework routes it.",
+      "severity": "information",
+      "certainty": "certain",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "community-convention",
+          "reference": "Player action methods are named act\u2026 in the modern framework; older projects vary."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.trace.unavailable",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "The contract could not be traced because one side of it could not be read.",
+      "severity": "information",
+      "certainty": "certain",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.audit.unavailable",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "The audit could not run because the schema or the queries could not be read.",
+      "severity": "information",
+      "certainty": "certain",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.column.duplicate",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "A table declares one column more than once.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.column.undeclared",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "A query names a column its table does not declare.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.column.unused",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "The schema declares a column no readable query names.",
+      "severity": "information",
+      "certainty": "possible",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "project-inference",
+          "reference": "Inferred from comparing the declared schema with readable queries; not a documented requirement."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.query.interpolated",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "A query interpolates a PHP value into its text rather than escaping it.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "community-convention",
+          "reference": "Values are escaped with the framework helper rather than interpolated into query text."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.table.duplicate",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "The schema declares one table more than once.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "database.table.undeclared",
+      "automatable": true,
+      "group": "database",
+      "tool": "audit_database_usage",
+      "summary": "A query names a table the schema does not declare.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/database.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "notification.handled.not-sent",
+      "automatable": true,
+      "group": "notifications",
+      "tool": "validate_notifications",
+      "summary": "The client handles a notification no readable server source sends.",
+      "severity": "information",
+      "certainty": "possible",
+      "implementation": "src/rules/notifications.ts",
+      "sources": [
+        {
+          "kind": "project-inference",
+          "reference": "Inferred from comparing handlers with readable sends; not a documented requirement."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "notification.payload.mismatch",
+      "automatable": true,
+      "group": "notifications",
+      "tool": "validate_notifications",
+      "summary": "The server payload and the client handler disagree about a key.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/notifications.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "notification.sent.not-handled",
+      "automatable": true,
+      "group": "notifications",
+      "tool": "validate_notifications",
+      "summary": "The server sends a notification no readable client handler receives.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/notifications.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "notification.subscription.duplicate",
+      "automatable": true,
+      "group": "notifications",
+      "tool": "validate_notifications",
+      "summary": "The client subscribes to one notification name more than once.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/notifications.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "notification.trace.unavailable",
+      "automatable": true,
+      "group": "notifications",
+      "tool": "validate_notifications",
+      "summary": "The contract could not be traced because one side of it could not be read.",
+      "severity": "information",
+      "certainty": "certain",
+      "implementation": "src/rules/notifications.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.action.handler-missing",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "The state names an action method that no readable PHP source declares.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.args.handler-missing",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "The state names an args method that no readable PHP source declares.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.dead-end",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A player-facing or game state with no transitions cannot hand control back.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.id.duplicate",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A repeated state identifier silently discards the earlier definition.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.initial.missing",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "The framework enters state 1 first, so it must be declared.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.name.duplicate",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "Two states sharing a name make client-side state checks ambiguous.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.name.missing",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A state without a name cannot be addressed by the client.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.possible-action.handler-missing",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A possible action names a method that no readable PHP source declares.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.transition.target-exists",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "Every transition must target a declared state.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.type.unknown",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A state type outside activeplayer, multipleactiveplayer, game, and manager is not dispatched by the framework.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.unreachable",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "No chain of declared transitions reaches this state from state 1.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "framework-behavior",
+          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "failing": "tests/fixtures/projects/legacy-broken"
+      },
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.artwork.rights",
+      "automatable": false,
+      "summary": "Every image, font, and sound shipped with the game is originally created or licensed for redistribution.",
+      "manualReason": "A tool cannot judge provenance or licensing of a binary asset.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.rules.fidelity",
+      "automatable": false,
+      "summary": "The implemented rules match the published game rules, including edge cases and scoring.",
+      "manualReason": "Requires reading the physical rulebook against the implementation.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.translation.strings",
+      "automatable": false,
+      "summary": "Player-visible strings are wrapped for translation and read naturally when translated.",
+      "manualReason": "Judging whether a string reads naturally is a human decision.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.tutorial.quality",
+      "automatable": false,
+      "summary": "The in-game help and tutorial explain the game to a first-time player.",
+      "manualReason": "Quality of explanation cannot be measured statically.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.accessibility.colour",
+      "automatable": false,
+      "summary": "Game state is distinguishable without relying on colour alone.",
+      "manualReason": "Requires visual inspection of the rendered interface.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.multiplayer.testing",
+      "automatable": false,
+      "summary": "The game has been played end to end at every supported player count, including a turn-order edge case.",
+      "manualReason": "Requires running real tables with real players.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.spectator.replay",
+      "automatable": false,
+      "summary": "Spectator view and replay show the same game state a player would see.",
+      "manualReason": "Requires observing a live table and its replay.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "manual.performance.table",
+      "automatable": false,
+      "summary": "The game stays responsive with the largest supported board and player count.",
+      "manualReason": "Requires measuring a live table.",
+      "owner": "Brandon Born"
+    }
+  ]
+}

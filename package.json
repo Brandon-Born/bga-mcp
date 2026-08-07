@@ -32,6 +32,8 @@
     "config/capabilities.schema.json",
     "config/compatibility.json",
     "config/compatibility.schema.json",
+    "config/rule-catalog.json",
+    "config/rule-catalog.schema.json",
     "config/diagnostics.schema.json",
     "LICENSE",
     "README.md"
@@ -52,10 +54,11 @@
     "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",
     "verify:threat-model": "tsx scripts/verify-threat-model.ts",
     "verify:compatibility": "tsx scripts/verify-compatibility.ts",
+    "verify:rule-catalog": "tsx scripts/verify-rule-catalog.ts",
     "verify:scenarios": "tsx scripts/verify-scenarios.ts",
     "verify:safety-gates": "tsx scripts/verify-safety-gates.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:rule-catalog && pnpm verify:scenarios && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates",
     "prepack": "pnpm build"
   },
   "dependencies": {
