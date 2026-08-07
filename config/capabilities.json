@@ -114,6 +114,24 @@
           "E2E-AUDIT-DATABASE-UNLISTED-ROOT"
         ],
         "liveStudioRequired": false
+      },
+      {
+        "name": "validate_project",
+        "owner": "Brandon Born",
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-VALIDATE-PROJECT-MATCHES-PARTS",
+          "E2E-VALIDATE-PROJECT-GROUP-SELECTION",
+          "E2E-VALIDATE-PROJECT-BOUNDED",
+          "E2E-VALIDATE-PROJECT-PARTIAL-FAILURE",
+          "E2E-VALIDATE-PROJECT-CLEAN",
+          "E2E-VALIDATE-PROJECT-INVALID-INPUT",
+          "E2E-VALIDATE-PROJECT-UNLISTED-ROOT"
+        ],
+        "liveStudioRequired": false
       }
     ],
     "resources": [],

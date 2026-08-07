@@ -21,6 +21,7 @@ describe('capability manifest gate', () => {
         'inspect_project',
         'validate_action_contracts',
         'validate_notifications',
+        'validate_project',
         'validate_state_machine',
       ],
       resources: [],

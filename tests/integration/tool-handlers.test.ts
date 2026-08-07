@@ -84,9 +84,62 @@ describe('tool handlers over a real client connection', () => {
     });
   });
 
+  it('traces action contracts, notifications, and database usage in one connection', async () => {
+    await withClient([brokenRoot], async (call) => {
+      const actions = await call('validate_action_contracts', { projectRoot: brokenRoot });
+      expect(actions.isError).toBe(false);
+      expect(actions.text).toContain('3 client calls, 1 entry points');
+      expect(actions.text).toContain('action.name.convention');
+
+      const notifications = await call('validate_notifications', { projectRoot: brokenRoot });
+      expect(notifications.text).toContain('2 sent, 2 handlers');
+      expect(notifications.text).toContain('notification.subscription.duplicate');
+
+      const database = await call('audit_database_usage', { projectRoot: brokenRoot });
+      expect(database.text).toContain('1 declared tables, 3 readable queries');
+      expect(database.text).toContain('database.table.undeclared');
+    });
+  });
+
+  it('aggregates every validator, honours group selection, and bounds the result', async () => {
+    await withClient([brokenRoot], async (call) => {
+      const everything = await call('validate_project', { projectRoot: brokenRoot });
+      expect(everything.isError).toBe(false);
+      expect(everything.text).toContain('status findings');
+      expect(everything.structured).toMatchObject({ status: 'findings' });
+
+      const selected = await call('validate_project', {
+        projectRoot: brokenRoot,
+        groups: ['state-machine'],
+      });
+      expect(selected.text).toContain('database: skipped');
+
+      const bounded = await call('validate_project', { projectRoot: brokenRoot, maxFindings: 1 });
+      expect(bounded.text).toContain('findings were omitted');
+      expect(
+        (bounded.structured as { diagnostics: { findings: unknown[] } }).diagnostics.findings,
+      ).toHaveLength(1);
+    });
+  });
+
+  it('reports a clean project as passed across every validator', async () => {
+    await withClient([legacyRoot], async (call) => {
+      const outcome = await call('validate_project', { projectRoot: legacyRoot });
+      expect(outcome.structured).toMatchObject({ status: 'passed' });
+      expect(outcome.text).toContain('status passed');
+    });
+  });
+
   it('publishes a stable error for a root the server does not allow', async () => {
     await withClient([legacyRoot], async (call) => {
-      for (const tool of ['inspect_project', 'validate_state_machine']) {
+      for (const tool of [
+        'inspect_project',
+        'validate_state_machine',
+        'validate_action_contracts',
+        'validate_notifications',
+        'audit_database_usage',
+        'validate_project',
+      ]) {
         const outcome = await call(tool, { projectRoot: brokenRoot });
         expect(outcome.isError).toBe(true);
         expect(outcome.text).toContain('policy.root.not-allowed');

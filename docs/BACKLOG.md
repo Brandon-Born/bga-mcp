@@ -337,12 +337,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-112 — Implement `validate_project`
 
-- **Status:** planned
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-106, BGA-107, BGA-108, BGA-109
 - **Deliverable:** A deterministic aggregator for project validations with selectable rule groups and bounded results.
 - **Acceptance:** Aggregation preserves underlying evidence and certainty, reports skipped and unsupported groups, and cannot hide a failed validator.
 - **Verification:** Tool E2E compares aggregate results with individual tools, covers selection and limits, and seeds one validator failure to prove safe partial-failure reporting.
+- **Evidence:** [`src/rules/aggregate.ts`](../src/rules/aggregate.ts) runs the four validators and combines them under three guarantees: a validator that throws is reported as `failed` with its public error code and makes the whole run `incomplete`; findings keep the evidence, certainty, and locations their validator produced, so aggregation reorders but never rewrites; and a bounded result drops the least severe findings first and reports how many were omitted, while the per-group breakdown still reports full counts. `E2E-VALIDATE-PROJECT-MATCHES-PARTS` calls all four tools individually in the same connection and proves the aggregate agrees with each of them, finding for finding. `E2E-VALIDATE-PROJECT-PARTIAL-FAILURE` seeds a schema larger than the read budget so exactly one validator fails, and proves the other three still run. See the [aggregate validation verification](verification/AGGREGATE_VALIDATION.md).
 
 ### BGA-113 — Implement explicit unknown-syntax handling
 

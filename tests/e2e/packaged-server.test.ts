@@ -122,6 +122,7 @@ describe('packaged bga-mcp server', () => {
             'inspect_project',
             'validate_action_contracts',
             'validate_notifications',
+            'validate_project',
             'validate_state_machine',
           ]);
           expect(tools.tools[0]?.annotations).toMatchObject({ readOnlyHint: true });
@@ -204,6 +205,7 @@ describe('packaged bga-mcp server', () => {
             'inspect_project',
             'validate_action_contracts',
             'validate_notifications',
+            'validate_project',
             'validate_state_machine',
           ],
         );

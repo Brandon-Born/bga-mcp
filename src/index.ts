@@ -120,6 +120,24 @@ export {
   type AuditDatabaseUsageResult,
 } from './tools/audit-database-usage.js';
 export {
+  VALIDATE_PROJECT_TOOL,
+  ValidateProjectInputSchema,
+  ValidateProjectOutputSchema,
+  registerValidateProject,
+  summarizeProjectValidation,
+  type ValidateProjectResult,
+} from './tools/validate-project.js';
+export {
+  DEFAULT_MAX_FINDINGS,
+  RULE_GROUPS,
+  aggregateStatus,
+  aggregateValidations,
+  type AggregateResult,
+  type GroupOutcome,
+  type GroupRunner,
+  type RuleGroup,
+} from './rules/aggregate.js';
+export {
   DATABASE_RULES,
   FRAMEWORK_TABLES,
   auditDatabaseUsage,

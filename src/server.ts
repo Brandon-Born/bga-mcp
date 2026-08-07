@@ -7,6 +7,7 @@ import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
 import { registerValidateNotifications } from './tools/validate-notifications.js';
+import { registerValidateProject } from './tools/validate-project.js';
 import { registerValidateStateMachine } from './tools/validate-state-machine.js';
 
 export interface ServerDependencies {
@@ -25,6 +26,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   registerValidateActionContracts(server, dependencies.policy);
   registerValidateNotifications(server, dependencies.policy);
   registerAuditDatabaseUsage(server, dependencies.policy);
+  registerValidateProject(server, dependencies.policy);
   return server;
 }
 
