@@ -43,7 +43,7 @@ export function pathForTitle(title: string): string {
 export function parseSearchResponse(body: string, limit: number): readonly SearchHit[] {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(body);
+    parsed = JSON.parse(sanitizeJson(body));
   } catch {
     return [];
   }
@@ -72,12 +72,31 @@ export function parseSearchResponse(body: string, limit: number): readonly Searc
   return hits;
 }
 
+/**
+ * Escapes raw control characters inside the response.
+ *
+ * The wiki returns snippets containing literal newlines, which `JSON.parse`
+ * rejects outright. Without this the whole response fails to parse and the
+ * search silently returns nothing — a wrong answer that looks like no answer.
+ */
+function sanitizeJson(body: string): string {
+  // eslint-disable-next-line no-control-regex -- control characters are the defect
+  return body.replace(/[\u0000-\u001F]/gu, (character) => {
+    const code = character.codePointAt(0) ?? 0;
+    return `\\u${code.toString(16).padStart(4, '0')}`;
+  });
+}
+
 /** The API parameters for one search, all values fixed except the query. */
 export function searchParams(query: string, limit: number): Readonly<Record<string, string>> {
   return {
     action: 'query',
     list: 'search',
     srsearch: query,
+    // Without this the wiki matches titles only, and a search for
+    // "notifyAllPlayers" or "getArgs" returns nothing at all while the pages
+    // documenting them sit in the index. Measured 2026-08-08.
+    srwhat: 'text',
     srlimit: String(limit),
     format: 'json',
     formatversion: '1',

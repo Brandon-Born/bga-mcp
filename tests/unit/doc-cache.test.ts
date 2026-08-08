@@ -286,6 +286,17 @@ describe('documentation search results', () => {
     expect(hits[1]?.lastEdited).toBeNull();
   });
 
+  it('[UNIT-DOC-SEARCH-PARSE] reads a snippet containing raw control characters', () => {
+    // The wiki emits literal newlines inside snippets, which JSON.parse
+    // rejects. Unhandled, the whole response fails and the search returns
+    // nothing — a wrong answer wearing the costume of no answer.
+    const body = '{"query":{"search":[{"title":"State classes","snippet":"one\ntwo\ttab"}]}}';
+    const hits = parseSearchResponse(body, 5);
+    expect(hits).toHaveLength(1);
+    expect(hits[0]?.snippet).toContain('one');
+    expect(hits[0]?.snippet).toContain('two');
+  });
+
   it('[UNIT-DOC-SEARCH-PARSE] survives a response that is empty, malformed, or incomplete', () => {
     expect(parseSearchResponse('not json', 5)).toEqual([]);
     expect(parseSearchResponse('{}', 5)).toEqual([]);
@@ -305,6 +316,10 @@ describe('documentation search results', () => {
     const params = searchParams('state classes', 3);
     // Only the query varies; everything else is a constant this code chose.
     expect(params).toMatchObject({ action: 'query', list: 'search', format: 'json', srlimit: '3' });
+    // Without srwhat=text the wiki matches titles only: measured on 2026-08-08,
+    // "notifyAllPlayers" and "getArgs" returned nothing at all, while the same
+    // queries with this parameter returned the pages that document them.
+    expect(params.srwhat).toBe('text');
     expect(params.srsearch).toBe('state classes');
     expect(pathForTitle('Game interface logic: Game.js')).toBe('Game_interface_logic:_Game.js');
   });
