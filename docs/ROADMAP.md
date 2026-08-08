@@ -51,6 +51,17 @@ Built on 2026-08-07 (BGA-200, BGA-202 through BGA-208). The sources decided the 
 
 The exit criterion is not met. Every capability is `implemented`, not `verified`: the refusals, the contracts, and the scoring are proven offline, but a real retrieval needs a third party's wiki, and a commit gate that depends on someone else's uptime is not a gate. The maintained question set (`pnpm test:docs-eval`) and the drift monitor (`pnpm docs:drift`) are the deliberate, network-dependent runs that close it, before a documentation release rather than on every commit.
 
+## First-run experience
+
+- Take project roots from the client's `roots/list` rather than a command-line flag.
+- Ask for a missing non-secret setting through the client, at the moment it is needed.
+- Expose the setup state to the agent, not only to a terminal the agent cannot read.
+- Remember the answers, if writing a configuration file survives a boundary decision.
+
+Exit criterion: a developer installs the server, points their client at it, and is told what to do next by the agent they are already talking to — without editing a launcher configuration file by hand.
+
+Opened on 2026-08-08 (BGA-314 through BGA-317). The prompt was fair criticism: the Studio setup was a paragraph of manual steps, and a preflight command addressed to a terminal is the wrong audience when the developer is talking to an agent. The MCP protocol already carries what is needed — client roots and elicitation — so most of this is using what is there rather than inventing a mechanism.
+
 ## Phase 3: Studio bridge
 
 - Add SFTP connection diagnostics using SSH keys.

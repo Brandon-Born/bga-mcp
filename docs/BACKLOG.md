@@ -589,6 +589,46 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Evidence:** `pnpm docs:drift` retrieves every tracked topic through the policy boundary and compares it with the baseline it was reviewed at, reporting changed text, an edit that changed no text, a page that could not be read, a tracked page that has gone, and a page nobody reviewed. It never writes a baseline as a side effect: recording one is `--record`, run by a person after reading what changed, because "the wiki changed" and "the new text is correct" are different claims and only the second one needs judgement. Changed, missing, and untracked pages fail the run and the message says the derived guidance is stale until it is re-read and `pnpm test:docs-eval` passes again. The digest covers extracted text rather than markup, so a formatting edit is reported as an edit and not as drift. `UNIT-DOC-DRIFT` covers all five outcomes, including that an unreachable page is never treated as unchanged.
 - **Note:** `implemented`. The comparison is fully covered offline; running it needs the network, so like the evaluation set it is a scheduled and pre-release command rather than a commit gate.
 
+### BGA-314 — Take project roots from the client instead of a flag
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-015, BGA-116
+- **Deliverable:** Project roots discovered from the MCP `roots/list` request when the client offers it, with `--project-root` remaining as the override rather than the requirement.
+- **Acceptance:** A client that advertises roots needs no `--project-root` at all. A root offered by the client is subject to every check a configured root is: it is resolved, it is contained, and a path outside it is refused exactly as now. Roots that appear or disappear during a session are picked up rather than cached forever. A client that offers no roots behaves exactly as today, so nothing regresses for a launcher that only knows how to pass arguments.
+- **Verification:** Packaged scenarios cover a client offering one root, several, none, and a root that vanishes mid-session; the traversal and symlink refusals are re-run against a client-offered root to prove the policy is the same policy.
+- **Note:** This is the single biggest reduction in setup: for most clients it removes the only argument a developer currently must edit a JSON file to provide.
+
+### BGA-315 — Ask for what is missing instead of failing
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-314
+- **Deliverable:** Setup values requested through MCP elicitation at the moment they are needed, rather than required up front — starting with the Studio dev account names, which are not secret.
+- **Acceptance:** A capability that lacks a non-secret setting asks for it through the client and proceeds when it is supplied, rather than refusing with instructions the developer has to go and act on elsewhere. Declining is a first-class answer: the capability refuses cleanly and does not ask again in the same session. A client that does not support elicitation gets the current behaviour, refusal with instructions, so this is an improvement and never a new dependency.
+- **Verification:** Scenarios cover supply, decline, an unsupported client, and a second call after a decline.
+- **Open question — must be answered before any credential is elicited:** whether the Studio session may be requested this way at all. It is not a tool argument, which is the property BGA-312 protects, but an elicited value still crosses the client, and whether it lands in a transcript is a property of the client rather than of this server. Until that is reviewed, elicitation covers non-secret settings only, and the session continues to come from the environment or a file. Do not widen this without a boundary review.
+
+### BGA-316 — Make the setup state legible to the agent
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-312
+- **Deliverable:** The `--studio-check` report, and the equivalent for local and documentation capabilities, exposed as a capability an agent can call — machine-readable, with the same one-problem-at-a-time ordering and an explicit next action per finding.
+- **Acceptance:** An agent can determine what is configured, what is missing, and what to do about it without a human reading terminal output. Each finding carries a stable code, a human sentence, and a next action. It reports on capabilities that are off, saying how to turn them on, rather than pretending they do not exist. It never reports a credential, only whether one was found and from where.
+- **Verification:** Packaged scenarios cover a server with nothing configured, one fully configured, and one part-way; the result is asserted against its schema rather than its prose.
+- **Note:** `--studio-check` was built for a terminal, which is the wrong audience: the developer is talking to an agent, and the agent cannot read a terminal it did not run. Same checks, addressed to the reader who is actually there.
+
+### BGA-317 — Remember the setup between runs
+
+- **Status:** planned
+- **Priority:** P2
+- **Depends on:** BGA-315, BGA-316
+- **Deliverable:** A local configuration file the setup flow can write, so a developer answers a question once rather than at every launch.
+- **Acceptance:** Configuration resolves in a stated order — command line, then file, then client-offered roots, then defaults — and the file's location is documented and per-user rather than per-project. Nothing is written without the developer asking for it in that moment. A secret is never written to it.
+- **Verification:** Scenarios cover each precedence level, a malformed file, an unreadable file, and a refusal to write a secret.
+- **Blocked on a boundary decision:** this server has never written to disk. `GATE-POLICY-IMPORT-BOUNDARY` and the read-only guarantee in `E2E-READ-ONLY-NETWORK-DENIED` are both built on that, and every capability today is advertised `readOnlyHint`. Writing a configuration file is a small write, but it is the first one, and "the server only ever reads" is a sentence this project currently gets to say without qualification. Decide deliberately whether to give that up for the convenience, and record the answer either way before implementing.
+
 ## Phase 3 — Studio bridge
 
 ### BGA-300 — Establish the dedicated BGA Studio test environment
@@ -830,7 +870,7 @@ This map makes omissions visible when source documents evolve.
 
 | Commitment source                                 | Backlog coverage                                                                     |
 | ------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-114, BGA-200 through BGA-206                            |
+| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-114, BGA-200 through BGA-206, BGA-314 through BGA-317   |
 | Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011                                                   |
 | Stable MCP tools and resources                    | BGA-006, BGA-102 through BGA-112, BGA-202 through BGA-204, BGA-303, BGA-304, BGA-306 |
 | Diagnostic schema and uncertainty                 | BGA-007, BGA-101, BGA-106 through BGA-113                                            |
