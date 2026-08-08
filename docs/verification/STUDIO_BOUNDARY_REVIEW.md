@@ -30,7 +30,12 @@ Three were already recorded: a credential passed as an ordinary tool argument (A
 | AC-STUDIO-DESTRUCTIVE-SYNC | A sync deletes or overwrites remote files that exist only on Studio, with no local copy to restore them from           |
 | AC-STUDIO-CREDENTIAL-LOG   | A credential, host, or account name reaches stderr, an error message, or a retained CI artifact                        |
 
-AC-STUDIO-PLAYER-DATA is the one that changes the shape of Phase 3. The documentation shows Sentry tagging issues with user IDs and listing affected users, and production error logs carrying request URLs and queries. Those are not the developer's data.
+AC-STUDIO-PLAYER-DATA needs a distinction this review originally missed. Studio has more than one kind of log, and they are not equally sensitive:
+
+- **Your own Studio test tables.** You, playing your own game, with the dev accounts issued to you (`myusername0`, `myusername1`, …). Any identifier in those logs is yours. Reading them is reading your own work, and there is nothing sensitive about it.
+- **Production errors and Sentry.** Real players of a published game. The documentation shows Sentry tagging issues with user IDs and listing affected users, and production error logs carrying request URLs and queries. Those are not the developer's data.
+
+Only the second is an abuse case. The first is the ordinary thing a developer does all day.
 
 ## What this review opens
 
@@ -50,15 +55,17 @@ The capability gate already enforces this shape: a reviewed boundary with planne
 
 ## What this review does not open
 
-**Studio logs, test tables, saved states, and player perspectives stay closed, and not merely pending more work.** Three separate reasons, each sufficient on its own:
+**Studio logs, test tables, saved states, and player perspectives stay closed.** The reason is narrower than it first looks, and worth stating precisely, because the wrong reason would rule out something reasonable.
 
-1. **There is no documented interface.** Every one of these is a web page. Automating them means driving an authenticated session and parsing HTML that BGA never promised to keep stable. "Depending on undocumented Studio endpoints for core functionality" is an explicit non-goal of this project, recorded before this review and unchanged by it.
-2. **Production logs contain other people's data.** A capability that pipes them into an agent's context window exports player identifiers to wherever that context goes. No redaction rule this project can write makes that safe, because the server cannot tell which identifiers matter.
-3. **A browser session is a credential.** Reusing one is the abuse case AC-STUDIO-SESSION-REUSE describes, and nothing in the documentation offers an alternative.
+**The blocker is that there is no documented interface.** Every one of these is a web page. The logs are a panel at the bottom of the Studio game page; production errors are behind a button on it; Sentry has its own interface. Automating any of them means driving an authenticated session and parsing HTML that BGA never promised to keep stable. "Depending on undocumented Studio endpoints for core functionality" is an explicit non-goal of this project, recorded before this review and unchanged by it, and a browser session is itself a credential — which is what AC-STUDIO-SESSION-REUSE describes.
 
-So BGA-305 has its answer: **no**. Studio log access is not a stable, permitted mechanism, and BGA-306 should not be built on the current evidence. BGA-308 through BGA-311 — test tables, player perspectives, saved states — are blocked for reason 1 and, where a real table is involved, reason 2.
+That reason applies to all of it equally, including the logs from your own test tables. It is not about sensitivity; it is about building a core capability on something undocumented that belongs to someone else.
 
-This is not permanent. If BGA publishes an API for logs or tables, the decision is worth re-reading. Until then, the honest position is that the value of those capabilities does not exceed the cost of scraping an authenticated session belonging to someone else's platform.
+**Player data is a separate, narrower constraint.** It does not apply to a developer reading their own Studio test tables — those identifiers are their own dev accounts. It applies to production errors and Sentry, where the identifiers belong to real players. If a documented interface ever arrives, that distinction is the one to build to: own-table logs are ordinary developer data, production logs are not, and the second needs a decision about redaction that the first does not.
+
+So BGA-305 has its answer: **no, on the current evidence**. Not because a developer should not read their own logs — they obviously should — but because there is no permitted way for this server to do it for them. BGA-306 is blocked on that, and BGA-308 through BGA-311 carry the same finding.
+
+This is not permanent. If BGA publishes an API for logs or tables, it is worth re-reading, and own-table logs would be the first thing to reconsider.
 
 ## Residual risk
 

@@ -632,7 +632,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** An evidence-backed architecture decision covering documented access, authentication, fragility, data sensitivity, and allowed automation.
 - **Acceptance:** Undocumented endpoints are not accepted as a core dependency; an unavailable safe mechanism results in a recorded rejection or experimental-only scope.
 - **Verification:** A read-only proof against the test project demonstrates the chosen boundary without bypassing access controls; otherwise BGA-306 remains blocked.
-- **Decision:** Rejected on 2026-08-07. Studio logs are a panel on an authenticated web page, with production errors behind a button and Sentry behind its own interface. There is no documented programmatic access, so automating it means driving a session and parsing HTML nobody promised to keep stable — which this project already lists as a non-goal. Separately, the documentation shows production logs and Sentry carrying user identifiers and affected users: reading them puts other people's data into an agent's context, and no redaction rule this server can write makes that safe, because it cannot tell which identifiers matter. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md). Worth re-reading if BGA publishes an API for logs.
+- **Decision:** Rejected on 2026-08-07, on the current evidence. Studio logs are a panel on an authenticated web page, with production errors behind a button and Sentry behind its own interface. There is no documented programmatic access, so automating it means driving a session and parsing HTML nobody promised to keep stable — which this project already lists as a non-goal, and a session is itself a credential. That is the blocker, and it applies to every kind of log equally. Player data is a separate and narrower constraint: it applies to production errors and Sentry, where the identifiers belong to real players, and not to a developer's own Studio test tables, where they are their own dev accounts. Nothing here says a developer should not read their own logs; it says this server has no permitted way to do it for them. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md). Worth re-reading if BGA publishes an API — own-table logs first.
 - **Sources:** [Studio logs](https://en.doc.boardgamearena.com/Studio_logs), [Practical debugging](https://en.doc.boardgamearena.com/Practical_debugging), checked 2026-08-07.
 
 ### BGA-306 — Implement `read_studio_logs`
@@ -662,7 +662,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision for creating, starting, stopping, and identifying Studio test tables using stable and permitted interfaces.
 - **Acceptance:** The decision records authorization, cleanup, multi-user behavior, rate/abuse risks, and whether automation may be supported, experimental, or rejected.
 - **Verification:** A constrained live proof is required before any public capability is proposed.
-- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-309 — Implement verified test-table workflows
 
@@ -672,7 +672,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Only the test-table operations approved by BGA-308, each as a separate manifest capability.
 - **Acceptance:** Operations are isolated to the test project/accounts, explicitly mutating, idempotent where possible, bounded, and always stop/clean up created tables.
 - **Verification:** Each operation receives its own live E2E success, invalid-input, wrong-target, interruption, repeat, and cleanup scenarios.
-- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-310 — Research and implement player-perspective workflows
 
@@ -682,7 +682,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision followed, only if approved, by safe access to allowed test-player perspectives.
 - **Acceptance:** No real player impersonation or session leakage; behavior is confined to Studio test accounts and documented interfaces.
 - **Verification:** Live E2E proves identity boundaries, allowed perspective switching, rejection of non-test users, and session redaction.
-- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ### BGA-311 — Research and implement saved-state workflows
 
@@ -692,7 +692,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** A feasibility decision followed, only if approved, by save/restore operations for isolated test tables.
 - **Acceptance:** Slots and table ownership are explicit; restore cannot target another table; test cleanup restores or ends the table safely.
 - **Verification:** Live E2E saves, mutates, restores, verifies exact state, rejects cross-table restore, handles unavailable/ended states, and cleans up.
-- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Where a real table is involved, production logs and Sentry also carry other players' identifiers. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
+- **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
 ## Phase 4 — Public release and maintenance
 

@@ -60,7 +60,7 @@ The exit criterion is not met. Every capability is `implemented`, not `verified`
 
 Exit criterion: live end-to-end tests prove that every advertised Studio capability can safely preview and perform its operation, verify the exact target and result, clean up test state, and avoid exposing credentials. Capabilities without this evidence remain unreleased.
 
-The boundary was reviewed on 2026-08-07 and the phase is now narrower than it was. Synchronization stays, behind seven preconditions. Log retrieval, test tables, player perspectives, and saved states came out: each is an authenticated web page with no documented interface, and the production logs carry other players' identifiers. Scraping someone else's platform to read other people's data is not worth the capability. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md); the items stay in the backlog in case BGA publishes an API.
+The boundary was reviewed on 2026-08-07 and the phase is now narrower than it was. Synchronization stays, behind seven preconditions. Log retrieval, test tables, player perspectives, and saved states came out, because each is an authenticated web page with no documented interface — automating them means scraping someone else's platform, which is a non-goal. Player data is a separate and narrower concern that applies to production errors, not to a developer's own test tables. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md); the items stay in the backlog in case BGA publishes an API.
 
 ## Phase 4: Public release
 

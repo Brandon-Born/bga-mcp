@@ -361,11 +361,11 @@
     },
     {
       "id": "AC-STUDIO-PLAYER-DATA",
-      "title": "Studio logs carry player identifiers into an agent's context",
+      "title": "Production Studio logs carry other players' identifiers into an agent's context",
       "actor": "ACTOR-DEVELOPER",
       "assets": ["ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-STUDIO",
-      "impact": "Production error logs and Sentry issues name affected users, so reading them exports other people's data to wherever the agent's context goes.",
+      "impact": "Production error logs and Sentry issues name affected users, so reading them exports real players' data to wherever the agent's context goes. Logs from a developer's own Studio test tables are not this case: those identifiers are their own dev accounts.",
       "mitigations": ["TM-NO-STUDIO-LOGS", "TM-BOUNDARY-REVIEW"]
     },
     {
