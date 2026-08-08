@@ -9,6 +9,7 @@ export const DEFAULT_SERVER_CONFIG: ServerConfig = DEFAULT_POLICY_CONFIG;
 
 export type CliAction =
   | { readonly kind: 'serve'; readonly config: ServerConfig }
+  | { readonly kind: 'studio-check'; readonly config: ServerConfig; readonly gameId: string | null }
   | { readonly kind: 'help' }
   | { readonly kind: 'version' };
 
@@ -29,6 +30,10 @@ Options:
   --experimental-studio-logs     Enable the experimental Studio log reader (see docs)
   --studio-dev-account <name>    A Studio dev account you own (repeatable). Only log
                                  lines about these accounts are ever returned
+  --studio-session-file <path>   Read the Studio session from a file instead of the
+                                 BGA_STUDIO_SESSION environment variable
+  --studio-check [gameId]        Check the Studio setup and exit, reporting exactly
+                                 what is missing and what to do about it
   --allow-mutations              Permit explicitly confirmed mutating operations
   --help                         Show this help text
   --version                      Show the package version
@@ -63,6 +68,9 @@ export function parseCliArguments(
   let networkEnabled = false;
   let mutationsEnabled = false;
   let experimentalStudioLogs = false;
+  let studioSessionFile: string | undefined;
+  let studioCheck = false;
+  let studioCheckGameId: string | null = null;
   const studioDevAccounts: string[] = [];
 
   for (let index = 0; index < arguments_.length; index += 1) {
@@ -88,6 +96,27 @@ export function parseCliArguments(
 
     if (argument === '--experimental-studio-logs') {
       experimentalStudioLogs = true;
+      continue;
+    }
+
+    if (argument === '--studio-session-file') {
+      studioSessionFile = resolve(
+        workingDirectory,
+        requireValue('--studio-session-file', arguments_[index + 1]),
+      );
+      index += 1;
+      continue;
+    }
+
+    if (argument === '--studio-check') {
+      studioCheck = true;
+      // The game id is optional: without one the check still reports on
+      // configuration, which is where most setups go wrong.
+      const next = arguments_[index + 1];
+      if (next !== undefined && !next.startsWith('-')) {
+        studioCheckGameId = next;
+        index += 1;
+      }
       continue;
     }
 
@@ -132,17 +161,19 @@ export function parseCliArguments(
     throw new CliUsageError(`Unknown option: ${argument ?? ''}`);
   }
 
-  return {
-    kind: 'serve',
-    config: {
-      projectRoots: [...new Set(projectRoots)],
-      remoteProjects: [...new Set(remoteProjects)],
-      operationTimeoutMs,
-      maxOutputBytes,
-      networkEnabled,
-      mutationsEnabled,
-      experimentalStudioLogs,
-      studioDevAccounts: [...new Set(studioDevAccounts)],
-    },
+  const config = {
+    projectRoots: [...new Set(projectRoots)],
+    remoteProjects: [...new Set(remoteProjects)],
+    operationTimeoutMs,
+    maxOutputBytes,
+    networkEnabled,
+    mutationsEnabled,
+    experimentalStudioLogs,
+    studioDevAccounts: [...new Set(studioDevAccounts)],
+    ...(studioSessionFile === undefined ? {} : { studioSessionFile }),
   };
+
+  return studioCheck
+    ? { kind: 'studio-check', config, gameId: studioCheckGameId }
+    : { kind: 'serve', config };
 }

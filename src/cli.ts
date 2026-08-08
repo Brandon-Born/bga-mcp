@@ -7,6 +7,7 @@ import { BgaMcpError } from './errors.js';
 import { formatErrorLog, formatMessageLog } from './logging.js';
 import { SERVER_VERSION } from './metadata.js';
 import { createServerWithPolicy } from './server.js';
+import { checkStudioSetup, formatStudioCheck } from './studio/check.js';
 
 export async function runCli(arguments_: readonly string[]): Promise<number> {
   let action;
@@ -28,6 +29,15 @@ export async function runCli(arguments_: readonly string[]): Promise<number> {
   if (action.kind === 'version') {
     process.stdout.write(`${SERVER_VERSION}\n`);
     return 0;
+  }
+
+  if (action.kind === 'studio-check') {
+    // Runs and exits rather than serving: this is a setup question, and the
+    // answer belongs in the operator's terminal, not in an agent's context.
+    const checked = await createServerWithPolicy(action.config);
+    const report = await checkStudioSetup(checked.policy, action.gameId);
+    process.stdout.write(`${formatStudioCheck(report)}\n`);
+    return report.ok ? 0 : 1;
   }
 
   let prepared;

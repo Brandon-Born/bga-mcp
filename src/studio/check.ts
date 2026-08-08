@@ -1,0 +1,177 @@
+import { STUDIO_HOST, STUDIO_SESSION_ENV, type PolicyBoundary } from '../policy.js';
+import { htmlToText } from '../docs/excerpt.js';
+import { parseStudioLog } from './logline.js';
+import { screenStudioLog } from './privacy.js';
+
+/**
+ * Checks a Studio setup and says what to do about whatever is wrong.
+ *
+ * This exists because the first version of this capability failed in the worst
+ * possible way: a mistyped account name returned an empty result, which is
+ * indistinguishable from a quiet game. Every check below turns a silent nothing
+ * into a sentence.
+ */
+
+export interface CheckLine {
+  readonly ok: boolean;
+  readonly text: string;
+  /** What to do about it, when it is not ok. */
+  readonly fix?: string;
+}
+
+export interface StudioCheckReport {
+  readonly lines: readonly CheckLine[];
+  readonly ok: boolean;
+}
+
+function line(ok: boolean, text: string, fix?: string): CheckLine {
+  return fix === undefined ? { ok, text } : { ok, text, fix };
+}
+
+/**
+ * Runs the checks in the order they block each other, stopping at the first
+ * failure so the report names one problem rather than a cascade.
+ */
+export async function checkStudioSetup(
+  policy: PolicyBoundary,
+  gameId: string | null,
+  // Injectable so the interesting half — what the page turned out to contain —
+  // can be exercised without a live account.
+  fetchPage: (id: string) => Promise<{ url: string; body: string }> = async (id) =>
+    await policy.fetchStudioPage({ path: 'studiogame', params: { game: id } }),
+): Promise<StudioCheckReport> {
+  const lines: CheckLine[] = [];
+  const { config } = policy;
+
+  if (!config.networkEnabled) {
+    lines.push(
+      line(false, 'Network access is disabled.', 'Start the server with --allow-network.'),
+    );
+    return { lines, ok: false };
+  }
+  lines.push(line(true, 'Network access is enabled.'));
+
+  if (!config.experimentalStudioLogs) {
+    lines.push(
+      line(
+        false,
+        'The experimental Studio log reader is disabled.',
+        'Add --experimental-studio-logs. It is off by default because it reads a page BGA does not version.',
+      ),
+    );
+    return { lines, ok: false };
+  }
+  lines.push(line(true, 'The experimental Studio log reader is enabled.'));
+
+  const session = await policy.studioSession();
+  if (session === null) {
+    lines.push(
+      line(
+        false,
+        'No Studio session was found.',
+        `Set ${STUDIO_SESSION_ENV}, or use --studio-session-file. Sign in to https://${STUDIO_HOST}, open developer tools, and copy the entire Cookie header from any request to that host.`,
+      ),
+    );
+    return { lines, ok: false };
+  }
+  lines.push(
+    line(
+      true,
+      config.studioSessionFile === undefined
+        ? `A session was found in ${STUDIO_SESSION_ENV}.`
+        : `A session was found in ${config.studioSessionFile}.`,
+    ),
+  );
+
+  if (config.studioDevAccounts.length === 0) {
+    lines.push(
+      line(
+        false,
+        'No Studio dev accounts were declared, so no log line could ever be returned.',
+        'Add --studio-dev-account <name> for each account you own, exactly as it appears in Studio, for example mytest0.',
+      ),
+    );
+    return { lines, ok: false };
+  }
+  lines.push(line(true, `Declared accounts: ${config.studioDevAccounts.join(', ')}.`));
+
+  if (gameId === null) {
+    lines.push(
+      line(
+        true,
+        'Configuration looks complete. Pass a game id to check a real page: bga-mcp --studio-check <gameId>.',
+      ),
+    );
+    return { lines, ok: true };
+  }
+
+  let body: string;
+  try {
+    const page = await fetchPage(gameId);
+    body = page.body;
+    lines.push(line(true, `Retrieved ${page.url}.`));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    lines.push(
+      line(
+        false,
+        `Could not retrieve the Studio page: ${message}`,
+        'A redirect usually means the session has expired; sign in again and copy a fresh Cookie header.',
+      ),
+    );
+    return { lines, ok: false };
+  }
+
+  const parsed = parseStudioLog(htmlToText(body));
+  const withActors = parsed.filter((entry) => entry.actorName !== null);
+  if (withActors.length === 0) {
+    lines.push(
+      line(
+        false,
+        'The page was retrieved but contains no recognisable log lines.',
+        'The log panel is probably loaded separately by the page rather than served in its HTML, which this tool cannot follow. Please report this with the game id: it is the known open question about this capability.',
+      ),
+    );
+    return { lines, ok: false };
+  }
+  lines.push(line(true, `Found ${String(withActors.length)} log line(s) in the page.`));
+
+  const screened = screenStudioLog(parsed, config.studioDevAccounts);
+  if (screened.kept.length === 0) {
+    const seen = [...new Set(withActors.map((entry) => entry.actorName))].slice(0, 5);
+    lines.push(
+      line(
+        false,
+        'Log lines were found, but none belong to a declared account.',
+        // The likeliest cause by far, and the one that used to fail silently.
+        `The page shows lines for: ${seen.join(', ')}. Check --studio-dev-account matches one of those exactly.`,
+      ),
+    );
+    return { lines, ok: false };
+  }
+
+  lines.push(
+    line(
+      true,
+      `${String(screened.kept.length)} line(s) are yours and would be returned; ` +
+        `${String(screened.withheld.foreign)} belong to others and ${String(screened.withheld.sensitive)} carry credentials, and are withheld.`,
+    ),
+  );
+  return { lines, ok: true };
+}
+
+/** Renders the report for a terminal. */
+export function formatStudioCheck(report: StudioCheckReport): string {
+  const lines = report.lines.map((entry) => {
+    const mark = entry.ok ? 'ok  ' : 'FAIL';
+    return entry.fix === undefined
+      ? `${mark} ${entry.text}`
+      : `${mark} ${entry.text}\n     ${entry.fix}`;
+  });
+  lines.push(
+    report.ok
+      ? 'Studio setup looks usable. Nothing here has been verified against a live account before, so treat the first real result as the test.'
+      : 'Studio setup is not usable yet. Fix the item above and run this again.',
+  );
+  return lines.join('\n');
+}

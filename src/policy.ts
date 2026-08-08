@@ -33,6 +33,8 @@ export interface PolicyConfig {
   readonly mutationsEnabled: boolean;
   /** Experimental Studio log reading. Off unless asked for. */
   readonly experimentalStudioLogs: boolean;
+  /** File holding the Studio session, for setups that would rather not use an environment variable. */
+  readonly studioSessionFile?: string;
   /**
    * Studio dev accounts the developer owns.
    *
@@ -112,6 +114,23 @@ export const STUDIO_HOST = 'studio.boardgamearena.com';
 
 /** Environment variable carrying the developer's own Studio session cookie. */
 export const STUDIO_SESSION_ENV = 'BGA_STUDIO_SESSION';
+
+/**
+ * Says how to obtain a session, rather than only that one is missing.
+ *
+ * A refusal that names an environment variable and stops assumes the reader
+ * already knows what to put in it. This one does not.
+ */
+export function missingSessionMessage(): string {
+  return [
+    'No Studio session.',
+    `Set ${STUDIO_SESSION_ENV}, or point --studio-session-file at a file containing it.`,
+    'To get the value: sign in to https://studio.boardgamearena.com in a browser, open developer tools,',
+    'find any request to that host, and copy its entire Cookie request header.',
+    'Run `bga-mcp --studio-check <gameId>` to confirm it works before wiring it into a client.',
+    'It is never accepted as a tool argument, so it stays out of the client transcript.',
+  ].join(' ');
+}
 
 export interface StudioPageRequest {
   /** Path on the Studio host. Built by the caller from fixed strings. */
@@ -746,12 +765,9 @@ export class PolicyBoundary {
       );
     }
 
-    const session = process.env[STUDIO_SESSION_ENV];
-    if (session === undefined || session.trim().length === 0) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyStudioNoSession,
-        `No Studio session. Set ${STUDIO_SESSION_ENV} to your own session cookie; it is never accepted as a tool argument.`,
-      );
+    const session = await this.studioSession();
+    if (session === null) {
+      throw new PolicyViolationError(ERROR_CODES.policyStudioNoSession, missingSessionMessage());
     }
 
     if (
@@ -808,6 +824,28 @@ export class PolicyBoundary {
       body: result.body,
       retrievedAt: new Date().toISOString(),
     };
+  }
+
+  /**
+   * Reads the Studio session, from a file when one is configured.
+   *
+   * Either way it comes from the operator's machine and never from a tool
+   * argument. The file exists because pasting a cookie into an MCP client's
+   * launcher configuration means it lives in that file, in that client's
+   * backups, and often in a repository.
+   */
+  async studioSession(): Promise<string | null> {
+    const file = this.#config.studioSessionFile;
+    if (file !== undefined) {
+      try {
+        const contents = (await readFile(file, 'utf8')).trim();
+        return contents.length === 0 ? null : contents;
+      } catch {
+        return null;
+      }
+    }
+    const value = process.env[STUDIO_SESSION_ENV];
+    return value === undefined || value.trim().length === 0 ? null : value.trim();
   }
 
   /** The reviewed sources, for callers that need a source's own rules. */

@@ -85,7 +85,10 @@
           "UNIT-STUDIO-SESSION-REDACTION",
           "INT-STUDIO-SESSION-NOT-AN-ARGUMENT",
           "INT-STUDIO-HOST-PINNED",
-          "INT-STUDIO-NO-PRODUCTION-LOGS"
+          "INT-STUDIO-NO-PRODUCTION-LOGS",
+          "INT-STUDIO-CHECK-GUIDANCE",
+          "INT-STUDIO-CHECK-PAGE",
+          "INT-STUDIO-SUMMARY"
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ"

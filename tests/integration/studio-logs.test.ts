@@ -3,7 +3,7 @@ import { Client, InMemoryTransport } from '@modelcontextprotocol/client';
 import { DEFAULT_SERVER_CONFIG } from '../../src/config.js';
 import { redactText } from '../../src/redaction.js';
 import { STUDIO_HOST, STUDIO_SESSION_ENV, createPolicyBoundary } from '../../src/policy.js';
-import { READ_STUDIO_LOGS_TOOL } from '../../src/tools/read-studio-logs.js';
+import { READ_STUDIO_LOGS_TOOL, summarizeStudioLogs } from '../../src/tools/read-studio-logs.js';
 import { createServerWithPolicy } from '../../src/server.js';
 
 const SESSION = 'PHPSESSID=abcdef0123456789abcdef';
@@ -112,5 +112,35 @@ describe('experimental Studio log reading', () => {
     clearSession();
     const withoutSession = await createPolicyBoundary({ networkEnabled: true });
     expect(withoutSession.redactionOptions.secretValues).toEqual([]);
+  });
+});
+
+describe('studio log summary', () => {
+  it('[INT-STUDIO-SUMMARY] says what it withheld without showing any of it', () => {
+    const text = summarizeStudioLogs({
+      schemaVersion: 1,
+      gameId: '1234',
+      url: 'https://studio.boardgamearena.com/studiogame?game=1234',
+      retrievedAt: '2026-08-07T00:00:00.000Z',
+      lines: [
+        {
+          timestamp: '20/06 21:50:56',
+          level: 'info',
+          tableId: '403',
+          actor: 'mytest0',
+          message: 'SELECT player_id FROM player',
+        },
+      ],
+      withheld: { foreign: 2, unattributable: 1, sensitive: 0 },
+      ownAccounts: ['mytest0'],
+      stability: 'experimental',
+      notice: 'n',
+    });
+
+    expect(text).toContain('1 log line(s) for game 1234');
+    expect(text).toContain('Withheld: 2 foreign, 1 unattributable.');
+    // Counting is not showing: nothing about the withheld lines appears.
+    expect(text).not.toContain('sensitive');
+    expect(text).toContain('Experimental');
   });
 });
