@@ -19,8 +19,8 @@ export const PROJECT_DIAGNOSTICS_URI = 'bga://project/diagnostics';
  * and the tools remain available for a project named explicitly. The rule is
  * the tools' own omitted-argument rule, so the two cannot drift apart.
  */
-function soleProjectRoot(policy: PolicyBoundary): string {
-  return resolveProjectRoot(
+async function soleProjectRoot(policy: PolicyBoundary): Promise<string> {
+  return await resolveProjectRoot(
     policy,
     undefined,
     (roots) =>
@@ -74,7 +74,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
     },
     async (uri) =>
       await readJson(policy, uri, 'project-summary', async () => {
-        const root = soleProjectRoot(policy);
+        const root = await soleProjectRoot(policy);
         const context = await loadProjectContext(policy, root);
         return context.model;
       }),
@@ -91,7 +91,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
     },
     async (uri) =>
       await readJson(policy, uri, 'project-states', async () => {
-        const root = soleProjectRoot(policy);
+        const root = await soleProjectRoot(policy);
         const context = await loadProjectContext(policy, root, { withPhpSources: true });
         return {
           schemaVersion: 1,
@@ -117,7 +117,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
     },
     async (uri) =>
       await readJson(policy, uri, 'project-diagnostics', async () => {
-        const root = soleProjectRoot(policy);
+        const root = await soleProjectRoot(policy);
         const context = await loadProjectContext(policy, root, {
           withPhpSources: true,
           withClientSources: true,

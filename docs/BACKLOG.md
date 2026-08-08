@@ -591,13 +591,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-314 — Take project roots from the client instead of a flag
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-015, BGA-116
 - **Deliverable:** Project roots discovered from the MCP `roots/list` request when the client offers it, with `--project-root` remaining as the override rather than the requirement.
 - **Acceptance:** A client that advertises roots needs no `--project-root` at all. A root offered by the client is subject to every check a configured root is: it is resolved, it is contained, and a path outside it is refused exactly as now. Roots that appear or disappear during a session are picked up rather than cached forever. A client that offers no roots behaves exactly as today, so nothing regresses for a launcher that only knows how to pass arguments.
 - **Verification:** Packaged scenarios cover a client offering one root, several, none, and a root that vanishes mid-session; the traversal and symlink refusals are re-run against a client-offered root to prove the policy is the same policy.
-- **Note:** This is the single biggest reduction in setup: for most clients it removes the only argument a developer currently must edit a JSON file to provide.
+- **Evidence:** `PolicyBoundary` gained a client-roots provider, set by the server factory rather than by configuration, because whether a client can offer roots is a property of the connection. An offered root is resolved through the filesystem and checked exactly like a configured one — `INT-CLIENT-ROOTS-ADOPTED` proves a path outside it is still refused with the same code, and that a traversal out of it still fails. Configured roots outrank offered ones, a root that does not exist is skipped rather than failing the others, and a duplicate appears once. The list is fetched once per connection and again when the client sends `notifications/roots/list_changed`, so opening another project mid-session works without reconnecting. A client that cannot answer is treated as a client without roots, and the refusal now names both ways to fix it.
+- **Note:** Only the 2025 era adopts roots this way, and that is a protocol fact rather than a shortcut. `roots/list` was deprecated in 2026-07-28 (SEP-2577) and the SDK throws rather than sending it; on that era roots arrive through the multi-round-trip input-required flow, which a capability must ask for in its own result. The push path is therefore wired only where it works, and the newer era keeps requiring an explicit root until that flow is built — which is BGA-315's mechanism, so it lands there.
 
 ### BGA-315 — Ask for what is missing instead of failing
 

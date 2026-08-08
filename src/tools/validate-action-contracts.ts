@@ -110,7 +110,7 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
     },
     async ({ projectRoot }) => {
       try {
-        const root = resolveProjectRoot(policy, projectRoot);
+        const root = await resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_ACTION_CONTRACTS_TOOL, async () => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,

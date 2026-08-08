@@ -99,7 +99,7 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
     },
     async ({ projectRoot }) => {
       try {
-        const root = resolveProjectRoot(policy, projectRoot);
+        const root = await resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async () => {
           const context = await loadProjectContext(policy, root, { withPhpSources: true });
           const schemaPath = context.model.components

@@ -123,7 +123,7 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
     },
     async ({ projectRoot, groups, maxFindings }) => {
       try {
-        const root = resolveProjectRoot(policy, projectRoot);
+        const root = await resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async () => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,

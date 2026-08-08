@@ -153,7 +153,7 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
     },
     async ({ projectRoot }) => {
       try {
-        const root = resolveProjectRoot(policy, projectRoot);
+        const root = await resolveProjectRoot(policy, projectRoot);
         const model = await policy.runWithTimeout(INSPECT_PROJECT_TOOL, async () => {
           return (await loadProjectContext(policy, root)).model;
         });

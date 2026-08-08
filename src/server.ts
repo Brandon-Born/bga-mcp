@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import { McpServer } from '@modelcontextprotocol/server';
 
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
@@ -56,11 +58,62 @@ export async function createDefaultServer(): Promise<McpServer> {
  */
 export async function createServerWithPolicy(config: ServerConfig): Promise<{
   readonly policy: PolicyBoundary;
-  readonly create: () => McpServer;
+  readonly create: (context?: { readonly era?: 'legacy' | 'modern' }) => McpServer;
 }> {
   const policy = await PolicyBoundary.create(config);
   const ruleCatalog = JSON.parse(
     await policy.readPackagedConfig('rule-catalog.json'),
   ) as RuleCatalog;
-  return { policy, create: () => createServer(config, { policy, ruleCatalog }) };
+
+  return {
+    policy,
+    create: (context) => {
+      const server = createServer(config, { policy, ruleCatalog });
+      wireClientRoots(server, policy, context?.era ?? 'legacy');
+      return server;
+    },
+  };
+}
+
+/**
+ * Lets the client tell the server which projects it has open.
+ *
+ * This is the difference between a developer editing a launcher configuration
+ * file and one that simply works, so it is worth the era handling below.
+ *
+ * `roots/list` is a server-to-client request on the 2025 era. On 2026-07-28 it
+ * was deprecated (SEP-2577) and the SDK throws rather than sending it: there,
+ * roots arrive through the multi-round-trip input-required flow instead, which
+ * a capability has to ask for in its own result. So the push-style adoption
+ * below is wired only on the era that supports it, and the newer era keeps the
+ * existing behaviour — an explicit root — until that flow is built.
+ */
+function wireClientRoots(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern',
+): void {
+  if (era !== 'legacy') {
+    return;
+  }
+
+  policy.setClientRootsProvider(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- deprecated on the 2026 era only, and this path is legacy-only by construction
+    const capabilities = server.server.getClientCapabilities();
+    if (capabilities?.roots === undefined) {
+      return [];
+    }
+    // eslint-disable-next-line @typescript-eslint/no-deprecated -- same: roots/list is a wire request on the era this branch serves
+    const listed = await server.server.listRoots();
+    return listed.roots
+      .map((root) => root.uri)
+      .filter((uri) => uri.startsWith('file://'))
+      .map((uri) => fileURLToPath(uri));
+  });
+
+  // A client that opens another project mid-session should not have to
+  // reconnect for the server to notice.
+  server.server.setNotificationHandler('notifications/roots/list_changed', () => {
+    policy.invalidateClientRoots();
+  });
 }

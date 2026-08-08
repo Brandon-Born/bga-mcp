@@ -107,7 +107,7 @@ export function registerRunPreReleaseAudit(
     },
     async ({ projectRoot }) => {
       try {
-        const root = resolveProjectRoot(policy, projectRoot);
+        const root = await resolveProjectRoot(policy, projectRoot);
         const result = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async () => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,

@@ -183,6 +183,10 @@ function contains(root: string, candidate: string): boolean {
 export class PolicyBoundary {
   readonly #config: PolicyConfig;
   readonly #resolvedRoots: readonly string[];
+  /** Roots the client offered, resolved and checked exactly like configured ones. */
+  #clientRoots: readonly string[] = [];
+  #requestClientRoots: (() => Promise<readonly string[]>) | undefined;
+  #clientRootsFetched = false;
   /** The reviewed documentation catalog, read once and kept for the process. */
   #catalog: DocumentationCatalog | undefined;
 
@@ -240,9 +244,68 @@ export class PolicyBoundary {
     return this.#config;
   }
 
+  /**
+   * Lets the transport supply roots the client advertises.
+   *
+   * The provider is set by the server factory rather than by configuration,
+   * because whether a client can offer roots is a property of the connection.
+   */
+  setClientRootsProvider(provider: () => Promise<readonly string[]>): void {
+    this.#requestClientRoots = provider;
+    this.#clientRootsFetched = false;
+  }
+
+  /** Forgets adopted roots, so the next use asks the client again. */
+  invalidateClientRoots(): void {
+    this.#clientRoots = [];
+    this.#clientRootsFetched = false;
+  }
+
+  /**
+   * Adopts the client's roots, once per connection unless invalidated.
+   *
+   * A client-offered root is not trusted more than a configured one: each is
+   * resolved through the filesystem and checked the same way, and one that
+   * cannot be resolved is dropped rather than failing the others. A client
+   * that offers nothing, or a provider that fails, leaves the configured roots
+   * exactly as they were.
+   */
+  async ensureClientRoots(): Promise<void> {
+    if (this.#requestClientRoots === undefined || this.#clientRootsFetched) {
+      return;
+    }
+    this.#clientRootsFetched = true;
+    let offered: readonly string[];
+    try {
+      offered = await this.#requestClientRoots();
+    } catch {
+      // A client that cannot answer is a client without roots, not an error.
+      return;
+    }
+
+    const adopted: string[] = [];
+    for (const candidate of offered) {
+      try {
+        const resolved = await realpath(normalize(candidate));
+        if (!adopted.includes(resolved)) {
+          adopted.push(resolved);
+        }
+      } catch {
+        // A root that does not exist is skipped, exactly as a configured one
+        // would be refused at startup.
+      }
+    }
+    this.#clientRoots = adopted;
+  }
+
   /** Real, existing project roots in configuration order. */
   get projectRoots(): readonly string[] {
-    return this.#resolvedRoots;
+    // Configured roots first: an explicit argument outranks what a client
+    // happened to have open.
+    return [
+      ...this.#resolvedRoots,
+      ...this.#clientRoots.filter((root) => !this.#resolvedRoots.includes(root)),
+    ];
   }
 
   /** Redaction options that keep in-root paths readable and hide everything else. */
@@ -254,17 +317,21 @@ export class PolicyBoundary {
     // removed from every published error and log line by value, not by shape.
     const session = process.env[STUDIO_SESSION_ENV];
     return {
-      projectRoots: this.#resolvedRoots,
+      projectRoots: this.projectRoots,
       secretValues: session === undefined || session.length === 0 ? [] : [session],
     };
   }
 
   /** Accepts a client-supplied project root only when it is explicitly allowed. */
   async resolveProjectRoot(candidate: string): Promise<string> {
-    if (this.#resolvedRoots.length === 0) {
+    // A client that advertises roots is asked before anything is refused for
+    // want of one.
+    await this.ensureClientRoots();
+    const allowed = this.projectRoots;
+    if (allowed.length === 0) {
       throw new PolicyViolationError(
         ERROR_CODES.policyRootUnconfigured,
-        'No project root is configured. Start the server with --project-root.',
+        'No project root is configured, and the client offered none. Start the server with --project-root, or use a client that advertises its roots.',
       );
     }
 
@@ -279,7 +346,7 @@ export class PolicyBoundary {
       );
     }
 
-    const match = this.#resolvedRoots.find((root) => root === resolved);
+    const match = allowed.find((root) => root === resolved);
     if (match === undefined) {
       throw new PolicyViolationError(
         ERROR_CODES.policyRootNotAllowed,

@@ -25,16 +25,19 @@ export interface ProjectContext {
  * through untouched: the policy boundary, not this function, decides whether
  * it is allowed.
  */
-export function resolveProjectRoot(
+export async function resolveProjectRoot(
   policy: PolicyBoundary,
   projectRoot?: string,
   /** Overrides the ambiguity message for callers that cannot take an argument. */
   ambiguous?: (roots: number) => string,
-): string {
+): Promise<string> {
   if (projectRoot !== undefined) {
     return projectRoot;
   }
 
+  // Ask the client for its roots before concluding there are none: for most
+  // clients this is what makes --project-root unnecessary.
+  await policy.ensureClientRoots();
   const roots = policy.projectRoots;
   const sole = roots.length === 1 ? roots[0] : undefined;
   if (sole !== undefined) {
@@ -43,7 +46,7 @@ export function resolveProjectRoot(
   if (roots.length === 0) {
     throw new BgaMcpError(
       ERROR_CODES.policyRootUnconfigured,
-      'No project root is configured. Start the server with --project-root <absolute path>.',
+      'No project root is configured and the client offered none. Start the server with --project-root <absolute path>, or use a client that advertises its roots.',
     );
   }
   throw new BgaMcpError(
