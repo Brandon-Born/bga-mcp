@@ -21,6 +21,8 @@ describe('policy boundary defaults', () => {
       maxOutputBytes: DEFAULT_MAX_OUTPUT_BYTES,
       networkEnabled: false,
       mutationsEnabled: false,
+      experimentalStudioLogs: false,
+      studioDevAccounts: [],
     });
   });
 

@@ -626,24 +626,40 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-305 — Decide whether Studio log access is stable and permitted
 
-- **Status:** rejected
+- **Status:** superseded
+- **Superseded by:** BGA-312
 - **Priority:** P2
 - **Depends on:** BGA-001, BGA-013, BGA-300
 - **Deliverable:** An evidence-backed architecture decision covering documented access, authentication, fragility, data sensitivity, and allowed automation.
 - **Acceptance:** Undocumented endpoints are not accepted as a core dependency; an unavailable safe mechanism results in a recorded rejection or experimental-only scope.
 - **Verification:** A read-only proof against the test project demonstrates the chosen boundary without bypassing access controls; otherwise BGA-306 remains blocked.
-- **Decision:** Rejected on 2026-08-07, on the current evidence. Studio logs are a panel on an authenticated web page, with production errors behind a button and Sentry behind its own interface. There is no documented programmatic access, so automating it means driving a session and parsing HTML nobody promised to keep stable, using a session that is itself a credential. The rule against that is this project's own recorded non-goal, not a BGA prohibition: `studio.boardgamearena.com/robots.txt` allows `/studiogame`, no Studio terms-of-use page was found, and nothing in the documentation addresses automation. That is the blocker, and it applies to every kind of log equally. Player data is a separate and narrower constraint: it applies to production errors and Sentry, where the identifiers belong to real players, and not to a developer's own Studio test tables, where they are their own dev accounts. Nothing here says a developer should not read their own logs, and nothing says BGA objects; it says this project will not build a core capability on an undocumented page it does not control. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md). Worth re-reading if BGA publishes an API — own-table logs first.
+- **Decision:** Rejected on 2026-08-07 by this review, then **overturned the same day by the project owner**, who accepted the fragility trade on the condition that the capability returns no personal data belonging to anyone else. That condition is not a note: it is implemented as an allowlist that fails closed (TM-STUDIO-OWN-DATA-ONLY) and the capability is BGA-312. The original reasoning, unchanged, follows, because it is still why the capability is experimental rather than supported.
+
+  Rejected on the current evidence. Studio logs are a panel on an authenticated web page, with production errors behind a button and Sentry behind its own interface. There is no documented programmatic access, so automating it means driving a session and parsing HTML nobody promised to keep stable, using a session that is itself a credential. The rule against that is this project's own recorded non-goal, not a BGA prohibition: `studio.boardgamearena.com/robots.txt` allows `/studiogame`, no Studio terms-of-use page was found, and nothing in the documentation addresses automation. That is the blocker, and it applies to every kind of log equally. Player data is a separate and narrower constraint: it applies to production errors and Sentry, where the identifiers belong to real players, and not to a developer's own Studio test tables, where they are their own dev accounts. Nothing here says a developer should not read their own logs, and nothing says BGA objects; it says this project will not build a core capability on an undocumented page it does not control. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md). Worth re-reading if BGA publishes an API — own-table logs first.
+
 - **Sources:** [Studio logs](https://en.doc.boardgamearena.com/Studio_logs), [Practical debugging](https://en.doc.boardgamearena.com/Practical_debugging), checked 2026-08-07.
 
 ### BGA-306 — Implement `read_studio_logs`
 
-- **Status:** blocked
+- **Status:** superseded
+- **Superseded by:** BGA-312
 - **Priority:** P2
 - **Depends on:** BGA-016, BGA-305, BGA-307
 - **Deliverable:** A read-only tool for permitted Studio diagnostics filtered by project, table/test marker, time, severity, and result limits.
 - **Acceptance:** Output is structured, bounded, source-identifiable, and redacts credentials, sessions, player information, and unrelated project data.
 - **Verification:** Live E2E creates an allowed unique diagnostic marker, retrieves only the expected entry, exercises filters/no-results/errors, and proves redaction and project isolation.
-- **Blocked by:** BGA-305, which was rejected. There is no permitted mechanism to build this on. It stays recorded rather than deleted, because a published BGA logs API would make it worth revisiting.
+- **Reason:** Written for a supported capability with a documented mechanism, and no such mechanism exists. What was actually built is narrower on every axis — experimental, own-data-only, read-only, off by default — so it carries a new identifier rather than quietly reusing this one's acceptance criteria. See BGA-312.
+
+### BGA-312 — Implement experimental own-account Studio log reading
+
+- **Status:** implemented
+- **Priority:** P3
+- **Depends on:** BGA-015, BGA-016
+- **Deliverable:** `read_studio_logs`, an experimental, read-only tool returning the developer's own Studio request and SQL log lines for one game, off unless explicitly enabled.
+- **Acceptance:** It returns no personal data belonging to anyone but the developer running it, and that is enforced rather than documented: only lines whose actor matches a declared `--studio-dev-account` are returned, and a line about anyone else, or one whose owner cannot be determined, is withheld entirely rather than redacted. With no declared account it returns nothing. Production error logs and Sentry are never requested. The session comes from the environment and is never accepted as a tool argument. The tool is advertised as `experimental`, refuses without `--experimental-studio-logs`, and states in its own description that it scrapes an unversioned page and can break.
+- **Verification:** The screening rule is proven against the documented log shape, including a real player's line, an unreadable line, a credential, and an account name that is a prefix of a declared one. Packaged scenarios prove the refusals: disabled, no session, and a session offered as an argument.
+- **Evidence:** [`src/studio/logline.ts`](../src/studio/logline.ts) reads the documented shape — `20/06 21:50:56 [info] [T403] [4/mytest0] …` — which is what makes the privacy rule enforceable: every line names its actor. [`src/studio/privacy.ts`](../src/studio/privacy.ts) keeps a line only when its actor exactly matches a declared account, case-insensitively but never by prefix, and withholds foreign, unattributable, and credential-bearing lines while reporting how many of each it withheld. `policy.fetchStudioPage` fixes the host as a constant, takes the session from `BGA_STUDIO_SESSION`, refuses a redirect rather than following it with a stale cookie, and applies the same address guard and response budget as documentation retrieval. The session is removed from every published string by value, since an opaque cookie has no shape to match. `UNIT-STUDIO-LOG-PARSE`, `UNIT-STUDIO-LOG-PRIVACY`, `UNIT-STUDIO-SESSION-REDACTION`, `INT-STUDIO-SESSION-NOT-AN-ARGUMENT`, `INT-STUDIO-HOST-PINNED`, `INT-STUDIO-NO-PRODUCTION-LOGS`, `E2E-STUDIO-LOGS-DISABLED`, `E2E-STUDIO-LOGS-NO-SESSION`, and `E2E-STUDIO-LOGS-INVALID-INPUT` cover it. `E2E-READ-ONLY-NETWORK-DENIED` calls it too and proves it refuses because the network is off.
+- **Note:** `implemented`, and it cannot become `verified` without a live Studio account, which BGA-300 has not established. Nothing here has ever talked to Studio: the parser is proven against the documented log format and the guards against synthetic input. Treat the first live run as the real test. `RR-STUDIO-UNDOCUMENTED-PAGE` records the standing risk — the page is unversioned, so this can break without warning, which is exactly why it is experimental and off by default.
 
 ### BGA-307 — Build the live Studio E2E harness
 

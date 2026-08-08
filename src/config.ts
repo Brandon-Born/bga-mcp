@@ -26,6 +26,9 @@ Options:
   --operation-timeout-ms <n>     Deadline for a single operation (default ${String(DEFAULT_POLICY_CONFIG.operationTimeoutMs)})
   --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)})
   --allow-network                Permit network access for capabilities that need it
+  --experimental-studio-logs     Enable the experimental Studio log reader (see docs)
+  --studio-dev-account <name>    A Studio dev account you own (repeatable). Only log
+                                 lines about these accounts are ever returned
   --allow-mutations              Permit explicitly confirmed mutating operations
   --help                         Show this help text
   --version                      Show the package version
@@ -59,6 +62,8 @@ export function parseCliArguments(
   let maxOutputBytes = DEFAULT_POLICY_CONFIG.maxOutputBytes;
   let networkEnabled = false;
   let mutationsEnabled = false;
+  let experimentalStudioLogs = false;
+  const studioDevAccounts: string[] = [];
 
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
@@ -78,6 +83,17 @@ export function parseCliArguments(
 
     if (argument === '--allow-mutations') {
       mutationsEnabled = true;
+      continue;
+    }
+
+    if (argument === '--experimental-studio-logs') {
+      experimentalStudioLogs = true;
+      continue;
+    }
+
+    if (argument === '--studio-dev-account') {
+      studioDevAccounts.push(requireValue('--studio-dev-account', arguments_[index + 1]));
+      index += 1;
       continue;
     }
 
@@ -125,6 +141,8 @@ export function parseCliArguments(
       maxOutputBytes,
       networkEnabled,
       mutationsEnabled,
+      experimentalStudioLogs,
+      studioDevAccounts: [...new Set(studioDevAccounts)],
     },
   };
 }

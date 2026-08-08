@@ -42,7 +42,8 @@ The client is only semi-trusted on purpose. Tool arguments may be model-generate
 | TB-PROCESS          | Server process perimeter       | subprocess        | reviewed   |
 | TB-OUTPUT           | Server to client and artifacts | local-read        | reviewed   |
 | TB-DOCS-NETWORK     | Documentation retrieval        | network           | unreviewed |
-| TB-STUDIO           | BGA Studio adapter             | network, mutation | reviewed   |
+| TB-STUDIO           | BGA Studio synchronization     | network, mutation | reviewed   |
+| TB-STUDIO-READ      | BGA Studio own-account reads   | network           | reviewed   |
 | TB-SUPPLY-CHAIN     | Build and release supply chain | supply-chain      | reviewed   |
 
 An unreviewed boundary is a shipping gate, not a note, and a reviewed one is not automatically open: a boundary with planned preconditions stays closed, and the capability gate refuses to advertise anything that crosses it.
@@ -68,7 +69,7 @@ A **reviewed** boundary is not automatically an open one. TB-DOCS-NETWORK was re
 | AC-STUDIO-WRONG-TARGET     | Synchronization writes to the wrong project          | TB-STUDIO           | TM-POLICY-REMOTE-ALLOWLIST, TM-POLICY-MUTATION-INTENT, TM-BOUNDARY-REVIEW |
 | AC-STUDIO-SESSION-REUSE    | Browser session or undocumented endpoint used        | TB-STUDIO           | TM-NO-BROWSER-SESSION, TM-BOUNDARY-REVIEW                                 |
 | AC-STUDIO-UPLOAD-SCOPE     | A sync uploads files from outside the project        | TB-STUDIO           | TM-STUDIO-UPLOAD-SCOPE, TM-STUDIO-PREVIEW-FIRST                           |
-| AC-STUDIO-PLAYER-DATA      | Studio logs carry player identifiers into context    | TB-STUDIO           | TM-NO-STUDIO-LOGS, TM-BOUNDARY-REVIEW                                     |
+| AC-STUDIO-PLAYER-DATA      | Production logs carry real players' identifiers      | TB-STUDIO           | TM-STUDIO-OWN-DATA-ONLY, TM-STUDIO-NO-PRODUCTION-LOGS, TM-BOUNDARY-REVIEW |
 | AC-STUDIO-DESTRUCTIVE-SYNC | A sync deletes or overwrites remote-only files       | TB-STUDIO           | TM-STUDIO-NO-REMOTE-DELETE, TM-STUDIO-PREVIEW-FIRST                       |
 | AC-STUDIO-CREDENTIAL-LOG   | A credential or host reaches a result or artifact    | TB-STUDIO           | TM-STUDIO-CREDENTIAL-REDACTION, TM-REDACTION                              |
 | AC-DOC-PROMPT-INJECTION    | Retrieved documentation instructs the agent          | TB-DOCS-NETWORK     | TM-DOC-PROVENANCE, TM-DOC-UNTRUSTED, TM-BOUNDARY-REVIEW                   |
@@ -85,61 +86,67 @@ A **reviewed** boundary is not automatically an open one. TB-DOCS-NETWORK was re
 
 Automated controls name the scenarios that must exist as executable tests. Manual controls name an owner and a cadence.
 
-| ID                             | Control   | Status      | Evidence                                                                     |
-| ------------------------------ | --------- | ----------- | ---------------------------------------------------------------------------- |
-| TM-POLICY-ROOTS                | automated | implemented | INT-POLICY-ROOT-NOT-ALLOWED, E2E-POLICY-ROOT-UNAVAILABLE                     |
-| TM-POLICY-FAIL-CLOSED          | automated | implemented | INT-POLICY-ROOT-UNCONFIGURED, E2E-POLICY-CONFIG-FAILS-CLOSED                 |
-| TM-POLICY-TRAVERSAL            | automated | implemented | INT-POLICY-PATH-TRAVERSAL                                                    |
-| TM-POLICY-SYMLINK              | automated | implemented | INT-POLICY-SYMLINK-ESCAPE                                                    |
-| TM-POLICY-SINGLE-GATE          | automated | implemented | GATE-POLICY-IMPORT-BOUNDARY                                                  |
-| TM-POLICY-TIMEOUT              | automated | implemented | INT-POLICY-TIMEOUT                                                           |
-| TM-POLICY-OUTPUT-LIMIT         | automated | implemented | INT-POLICY-OUTPUT-LIMIT                                                      |
-| TM-POLICY-REMOTE-ALLOWLIST     | automated | implemented | INT-POLICY-REMOTE-NOT-ALLOWED                                                |
-| TM-POLICY-MUTATION-INTENT      | automated | implemented | INT-POLICY-MUTATION-NOT-REQUESTED                                            |
-| TM-NETWORK-OFF-DEFAULT         | automated | implemented | INT-POLICY-NETWORK-DISABLED                                                  |
-| TM-REDACTION                   | automated | implemented | UNIT-REDACTION-CREDENTIALS, UNIT-REDACTION-PATHS, UNIT-REDACTION-PLAYER-DATA |
-| TM-ERROR-COLLAPSE              | automated | implemented | UNIT-ERROR-UNEXPECTED-COLLAPSE                                               |
-| TM-LOG-REDACTION               | automated | implemented | GATE-LOG-REDACTION                                                           |
-| TM-SOURCE-SECRET-SCAN          | automated | implemented | GATE-SECRET-SCAN-SOURCE                                                      |
-| TM-ARTIFACT-SCAN               | automated | implemented | GATE-SECRET-SCAN-ARTIFACT, GATE-EVIDENCE-REDACTION                           |
-| TM-FIXTURE-ASSET-BAN           | automated | implemented | GATE-FIXTURE-SAFETY                                                          |
-| TM-EVIDENCE-COVERAGE           | automated | implemented | GATE-EVIDENCE-COVERAGE                                                       |
-| TM-EVIDENCE-INTEGRITY          | automated | implemented | GATE-EVIDENCE-TAMPER                                                         |
-| TM-PINNED-DEPENDENCIES         | automated | implemented | GATE-DEPENDENCY-PINNING                                                      |
-| TM-PINNED-CI-ACTIONS           | automated | implemented | GATE-CI-ACTION-PINNING                                                       |
-| TM-BOUNDARY-REVIEW             | manual    | implemented | Owner: Brandon Born, before any capability crosses an unreviewed boundary    |
-| TM-CLIENT-TRUST-DOC            | manual    | implemented | Owner: Brandon Born, every release                                           |
-| TM-CREDENTIAL-PROVIDER         | automated | planned     | Reserved for BGA-301                                                         |
-| TM-NO-BROWSER-SESSION          | manual    | planned     | Owner: Brandon Born, decision recorded in BGA-305                            |
-| TM-DOC-PROVENANCE              | automated | implemented | UNIT-DOC-PROVENANCE, UNIT-DOC-EVALUATION                                     |
-| TM-STUDIO-CREDENTIAL-PROVIDER  | automated | planned     | Reserved for BGA-301                                                         |
-| TM-STUDIO-HOST-PINNED          | automated | planned     | Reserved for BGA-302                                                         |
-| TM-STUDIO-TARGET-CONFIRMED     | automated | planned     | Reserved for BGA-304                                                         |
-| TM-STUDIO-UPLOAD-SCOPE         | automated | planned     | Reserved for BGA-303                                                         |
-| TM-STUDIO-PREVIEW-FIRST        | automated | planned     | Reserved for BGA-303                                                         |
-| TM-STUDIO-NO-REMOTE-DELETE     | automated | planned     | Reserved for BGA-304                                                         |
-| TM-STUDIO-CREDENTIAL-REDACTION | automated | planned     | Reserved for BGA-301                                                         |
-| TM-NO-STUDIO-LOGS              | manual    | implemented | Owner: Brandon Born, decision recorded in the Studio boundary review         |
-| TM-DOC-UNTRUSTED               | automated | implemented | UNIT-DOC-EXCERPT, UNIT-DOC-PROVENANCE, UNIT-DOC-SEARCH-PARSE                 |
-| TM-DOC-HOST-ALLOWLIST          | automated | implemented | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF         |
-| TM-DOC-NO-LOOPBACK             | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED                                                     |
-| TM-DOC-REQUEST-CONTENT         | automated | implemented | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                            |
-| TM-DOC-RESPONSE-BUDGET         | automated | implemented | UNIT-DOC-RESPONSE-BUDGET, UNIT-DOC-CACHE-BOUNDED                             |
-| TM-DOC-SNAPSHOT-INTEGRITY      | automated | implemented | UNIT-DOC-SNAPSHOT-DATE, UNIT-DOC-DRIFT                                       |
+| ID                                 | Control   | Status      | Evidence                                                                     |
+| ---------------------------------- | --------- | ----------- | ---------------------------------------------------------------------------- |
+| TM-POLICY-ROOTS                    | automated | implemented | INT-POLICY-ROOT-NOT-ALLOWED, E2E-POLICY-ROOT-UNAVAILABLE                     |
+| TM-POLICY-FAIL-CLOSED              | automated | implemented | INT-POLICY-ROOT-UNCONFIGURED, E2E-POLICY-CONFIG-FAILS-CLOSED                 |
+| TM-POLICY-TRAVERSAL                | automated | implemented | INT-POLICY-PATH-TRAVERSAL                                                    |
+| TM-POLICY-SYMLINK                  | automated | implemented | INT-POLICY-SYMLINK-ESCAPE                                                    |
+| TM-POLICY-SINGLE-GATE              | automated | implemented | GATE-POLICY-IMPORT-BOUNDARY                                                  |
+| TM-POLICY-TIMEOUT                  | automated | implemented | INT-POLICY-TIMEOUT                                                           |
+| TM-POLICY-OUTPUT-LIMIT             | automated | implemented | INT-POLICY-OUTPUT-LIMIT                                                      |
+| TM-POLICY-REMOTE-ALLOWLIST         | automated | implemented | INT-POLICY-REMOTE-NOT-ALLOWED                                                |
+| TM-POLICY-MUTATION-INTENT          | automated | implemented | INT-POLICY-MUTATION-NOT-REQUESTED                                            |
+| TM-NETWORK-OFF-DEFAULT             | automated | implemented | INT-POLICY-NETWORK-DISABLED                                                  |
+| TM-REDACTION                       | automated | implemented | UNIT-REDACTION-CREDENTIALS, UNIT-REDACTION-PATHS, UNIT-REDACTION-PLAYER-DATA |
+| TM-ERROR-COLLAPSE                  | automated | implemented | UNIT-ERROR-UNEXPECTED-COLLAPSE                                               |
+| TM-LOG-REDACTION                   | automated | implemented | GATE-LOG-REDACTION                                                           |
+| TM-SOURCE-SECRET-SCAN              | automated | implemented | GATE-SECRET-SCAN-SOURCE                                                      |
+| TM-ARTIFACT-SCAN                   | automated | implemented | GATE-SECRET-SCAN-ARTIFACT, GATE-EVIDENCE-REDACTION                           |
+| TM-FIXTURE-ASSET-BAN               | automated | implemented | GATE-FIXTURE-SAFETY                                                          |
+| TM-EVIDENCE-COVERAGE               | automated | implemented | GATE-EVIDENCE-COVERAGE                                                       |
+| TM-EVIDENCE-INTEGRITY              | automated | implemented | GATE-EVIDENCE-TAMPER                                                         |
+| TM-PINNED-DEPENDENCIES             | automated | implemented | GATE-DEPENDENCY-PINNING                                                      |
+| TM-PINNED-CI-ACTIONS               | automated | implemented | GATE-CI-ACTION-PINNING                                                       |
+| TM-BOUNDARY-REVIEW                 | manual    | implemented | Owner: Brandon Born, before any capability crosses an unreviewed boundary    |
+| TM-CLIENT-TRUST-DOC                | manual    | implemented | Owner: Brandon Born, every release                                           |
+| TM-CREDENTIAL-PROVIDER             | automated | planned     | Reserved for BGA-301                                                         |
+| TM-NO-BROWSER-SESSION              | manual    | planned     | Owner: Brandon Born, decision recorded in BGA-305                            |
+| TM-DOC-PROVENANCE                  | automated | implemented | UNIT-DOC-PROVENANCE, UNIT-DOC-EVALUATION                                     |
+| TM-STUDIO-CREDENTIAL-PROVIDER      | automated | planned     | Reserved for BGA-301                                                         |
+| TM-STUDIO-HOST-PINNED              | automated | planned     | Reserved for BGA-302                                                         |
+| TM-STUDIO-TARGET-CONFIRMED         | automated | planned     | Reserved for BGA-304                                                         |
+| TM-STUDIO-UPLOAD-SCOPE             | automated | planned     | Reserved for BGA-303                                                         |
+| TM-STUDIO-PREVIEW-FIRST            | automated | planned     | Reserved for BGA-303                                                         |
+| TM-STUDIO-NO-REMOTE-DELETE         | automated | planned     | Reserved for BGA-304                                                         |
+| TM-STUDIO-CREDENTIAL-REDACTION     | automated | planned     | Reserved for BGA-301                                                         |
+| TM-NO-STUDIO-LOGS                  | manual    | implemented | Owner: Brandon Born, decision recorded in the Studio boundary review         |
+| TM-STUDIO-SESSION-FROM-ENVIRONMENT | automated | implemented | INT-STUDIO-SESSION-NOT-AN-ARGUMENT                                           |
+| TM-STUDIO-READ-HOST-PINNED         | automated | implemented | INT-STUDIO-HOST-PINNED                                                       |
+| TM-STUDIO-OWN-DATA-ONLY            | automated | implemented | UNIT-STUDIO-LOG-PRIVACY, UNIT-STUDIO-LOG-PARSE                               |
+| TM-STUDIO-SESSION-REDACTION        | automated | implemented | UNIT-STUDIO-SESSION-REDACTION                                                |
+| TM-STUDIO-NO-PRODUCTION-LOGS       | automated | implemented | INT-STUDIO-NO-PRODUCTION-LOGS                                                |
+| TM-DOC-UNTRUSTED                   | automated | implemented | UNIT-DOC-EXCERPT, UNIT-DOC-PROVENANCE, UNIT-DOC-SEARCH-PARSE                 |
+| TM-DOC-HOST-ALLOWLIST              | automated | implemented | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF         |
+| TM-DOC-NO-LOOPBACK                 | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED                                                     |
+| TM-DOC-REQUEST-CONTENT             | automated | implemented | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                            |
+| TM-DOC-RESPONSE-BUDGET             | automated | implemented | UNIT-DOC-RESPONSE-BUDGET, UNIT-DOC-CACHE-BOUNDED                             |
+| TM-DOC-SNAPSHOT-INTEGRITY          | automated | implemented | UNIT-DOC-SNAPSHOT-DATE, UNIT-DOC-DRIFT                                       |
 
 ## Residual risk
 
-| ID                         | Residual risk                                                                                                                  | Accepted by  |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------ |
-| RR-POLICY-NO-TOOL-EVIDENCE | Policy is proven by unit, integration, and startup scenarios only. No public tool exists yet to prove it through a tool call.  | Brandon Born |
-| RR-STUDIO-UNREVIEWED       | Superseded by the 2026-08-07 review; Studio capabilities stay unreleased until their preconditions exist.                      | Brandon Born |
-| RR-STUDIO-NO-UNDO          | SFTP has no version history, so a previewed and confirmed sync can still overwrite something wanted. Nothing here can undo it. | Brandon Born |
-| RR-STUDIO-SHARED-ACCOUNT   | The documentation says nothing about credential confidentiality; a credential already shared is outside this server's control. | Brandon Born |
-| RR-DOC-CONTENT-UNREVIEWED  | Prompt injection through retrieved documentation has no runtime control; the network-off default is the only barrier.          | Brandon Born |
-| RR-CLIENT-BEHAVIOR         | The server cannot control what an agent does with a correct, redacted result.                                                  | Brandon Born |
-| RR-SECRET-SCAN-COVERAGE    | Secret scanning recognizes known formats only; a novel or encoded secret can pass.                                             | Brandon Born |
-| RR-DOC-INJECTION-RESIDUAL  | Labelling retrieved content as untrusted does not stop an agent acting on it. No server-side control can.                      | Brandon Born |
-| RR-DOC-ALLOWLIST-TRUST     | An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel.                   | Brandon Born |
+| ID                          | Residual risk                                                                                                                  | Accepted by  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------ |
+| RR-POLICY-NO-TOOL-EVIDENCE  | Policy is proven by unit, integration, and startup scenarios only. No public tool exists yet to prove it through a tool call.  | Brandon Born |
+| RR-STUDIO-UNREVIEWED        | Superseded by the 2026-08-07 review; Studio capabilities stay unreleased until their preconditions exist.                      | Brandon Born |
+| RR-STUDIO-NO-UNDO           | SFTP has no version history, so a previewed and confirmed sync can still overwrite something wanted. Nothing here can undo it. | Brandon Born |
+| RR-STUDIO-SHARED-ACCOUNT    | The documentation says nothing about credential confidentiality; a credential already shared is outside this server's control. | Brandon Born |
+| RR-STUDIO-UNDOCUMENTED-PAGE | The experimental log reader parses a page BGA does not version. It can break without warning; the privacy screen fails closed. | Brandon Born |
+| RR-DOC-CONTENT-UNREVIEWED   | Prompt injection through retrieved documentation has no runtime control; the network-off default is the only barrier.          | Brandon Born |
+| RR-CLIENT-BEHAVIOR          | The server cannot control what an agent does with a correct, redacted result.                                                  | Brandon Born |
+| RR-SECRET-SCAN-COVERAGE     | Secret scanning recognizes known formats only; a novel or encoded secret can pass.                                             | Brandon Born |
+| RR-DOC-INJECTION-RESIDUAL   | Labelling retrieved content as untrusted does not stop an agent acting on it. No server-side control can.                      | Brandon Born |
+| RR-DOC-ALLOWLIST-TRUST      | An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel.                   | Brandon Born |
 
 ## Operator responsibilities
 

@@ -31,6 +31,15 @@ export interface PolicyConfig {
   readonly maxOutputBytes: number;
   readonly networkEnabled: boolean;
   readonly mutationsEnabled: boolean;
+  /** Experimental Studio log reading. Off unless asked for. */
+  readonly experimentalStudioLogs: boolean;
+  /**
+   * Studio dev accounts the developer owns.
+   *
+   * The log reader returns lines about these accounts and nothing else, so an
+   * empty list means it returns nothing at all.
+   */
+  readonly studioDevAccounts: readonly string[];
 }
 
 /** Local, read-only, and network-off. Every relaxation must be configured explicitly. */
@@ -41,6 +50,8 @@ export const DEFAULT_POLICY_CONFIG: PolicyConfig = {
   maxOutputBytes: DEFAULT_MAX_OUTPUT_BYTES,
   networkEnabled: false,
   mutationsEnabled: false,
+  experimentalStudioLogs: false,
+  studioDevAccounts: [],
 };
 
 export const DEFAULT_MAX_LISTED_FILES = 5_000;
@@ -94,6 +105,25 @@ export interface DocumentationResponse {
   /** The source's own last-modified signal, when it publishes one. */
   readonly lastModified: string | null;
   readonly redirects: readonly string[];
+}
+
+/** The documented Studio host. Not configurable: it is the only one allowed. */
+export const STUDIO_HOST = 'studio.boardgamearena.com';
+
+/** Environment variable carrying the developer's own Studio session cookie. */
+export const STUDIO_SESSION_ENV = 'BGA_STUDIO_SESSION';
+
+export interface StudioPageRequest {
+  /** Path on the Studio host. Built by the caller from fixed strings. */
+  readonly path: string;
+  readonly params?: Readonly<Record<string, string>>;
+}
+
+export interface StudioPageResponse {
+  readonly url: string;
+  readonly status: number;
+  readonly body: string;
+  readonly retrievedAt: string;
 }
 
 export type MutationMode = 'preview' | 'execute';
@@ -197,8 +227,17 @@ export class PolicyBoundary {
   }
 
   /** Redaction options that keep in-root paths readable and hide everything else. */
-  get redactionOptions(): { readonly projectRoots: readonly string[] } {
-    return { projectRoots: this.#resolvedRoots };
+  get redactionOptions(): {
+    readonly projectRoots: readonly string[];
+    readonly secretValues: readonly string[];
+  } {
+    // The Studio session is the one credential this process holds, so it is
+    // removed from every published error and log line by value, not by shape.
+    const session = process.env[STUDIO_SESSION_ENV];
+    return {
+      projectRoots: this.#resolvedRoots,
+      secretValues: session === undefined || session.length === 0 ? [] : [session],
+    };
   }
 
   /** Accepts a client-supplied project root only when it is explicitly allowed. */
@@ -489,12 +528,12 @@ export class PolicyBoundary {
         );
       }
 
-      const result = await this.#sendDocumentationRequest(
-        current,
-        hopSource,
-        maxBytes,
-        options.signal,
-      );
+      const result = await this.#sendGuardedRequest(current, maxBytes, options.signal, {
+        // Identifies this project honestly, as the source catalog requires.
+        'user-agent': hopSource.retrieval.userAgent,
+        accept: 'text/html,text/plain',
+        'accept-encoding': 'identity',
+      });
       if (result.location === null) {
         return {
           sourceId: source.id,
@@ -568,11 +607,11 @@ export class PolicyBoundary {
   }
 
   /** One HTTPS request, pinned to a checked address and bounded in size. */
-  async #sendDocumentationRequest(
+  async #sendGuardedRequest(
     url: URL,
-    source: DocumentationSource,
     maxBytes: number,
-    signal?: AbortSignal,
+    signal: AbortSignal | undefined,
+    headers: Readonly<Record<string, string>>,
   ): Promise<{
     readonly status: number;
     readonly body: string;
@@ -607,12 +646,7 @@ export class PolicyBoundary {
         {
           method: 'GET',
           lookup: guardedLookup,
-          headers: {
-            // Identifies this project honestly, as the source catalog requires.
-            'user-agent': source.retrieval.userAgent,
-            accept: 'text/html,text/plain',
-            'accept-encoding': 'identity',
-          },
+          headers,
           ...(signal === undefined ? {} : { signal }),
         },
         (response) => {
@@ -685,6 +719,95 @@ export class PolicyBoundary {
       });
       outgoing.end();
     });
+  }
+
+  /**
+   * Retrieves one page from the developer's own Studio session.
+   *
+   * Experimental, and narrower than the documentation fetch in every way that
+   * matters. The host is fixed rather than configurable — there is exactly one
+   * Studio and a caller cannot name another. The session comes from the
+   * environment, never from a tool argument, so it stays out of the client's
+   * transcript. The same address guard and response budget apply, because a
+   * hostile DNS answer is a hostile DNS answer whoever asked.
+   *
+   * This is the capability built on an undocumented page, so it refuses unless
+   * it was asked for explicitly with `--experimental-studio-logs`.
+   */
+  async fetchStudioPage(
+    request: StudioPageRequest,
+    options: { readonly signal?: AbortSignal; readonly maxBytes?: number } = {},
+  ): Promise<StudioPageResponse> {
+    this.assertNetworkAllowed('studio');
+    if (!this.#config.experimentalStudioLogs) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioDisabled,
+        'Studio access is experimental and disabled. Start the server with --experimental-studio-logs to enable it.',
+      );
+    }
+
+    const session = process.env[STUDIO_SESSION_ENV];
+    if (session === undefined || session.trim().length === 0) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioNoSession,
+        `No Studio session. Set ${STUDIO_SESSION_ENV} to your own session cookie; it is never accepted as a tool argument.`,
+      );
+    }
+
+    if (
+      request.path.startsWith('/') ||
+      request.path.includes('//') ||
+      request.path.includes('..')
+    ) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioNotAllowed,
+        'The Studio page path must be relative and must not traverse.',
+        { details: { path: request.path } },
+      );
+    }
+
+    const url = new URL(request.path, `https://${STUDIO_HOST}/`);
+    for (const [name, value] of Object.entries(request.params ?? {})) {
+      const violation = requestContentViolation(value, this.#resolvedRoots);
+      if (violation !== null) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocRequestContent,
+          `The Studio request was refused because ${describeRequestContentViolation(violation)}.`,
+          { details: { violation } },
+        );
+      }
+      url.searchParams.set(name, value);
+    }
+    if (url.hostname !== STUDIO_HOST || url.protocol !== 'https:') {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioNotAllowed,
+        'The Studio request did not stay on the Studio host.',
+        { details: { url: url.href } },
+      );
+    }
+
+    const maxBytes = Math.min(options.maxBytes ?? MAX_DOCUMENTATION_BYTES, MAX_DOCUMENTATION_BYTES);
+    const result = await this.#sendGuardedRequest(url, maxBytes, options.signal, {
+      'user-agent': 'bga-mcp (+https://github.com/Brandon-Born/bga-mcp)',
+      accept: 'text/html',
+      'accept-encoding': 'identity',
+      cookie: session,
+    });
+    if (result.location !== null) {
+      // A redirect from Studio usually means the session expired and the page
+      // is bouncing to a login. Following it would post a stale cookie around.
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioNoSession,
+        'Studio redirected the request, which usually means the session has expired. Refresh it and try again.',
+        { details: { url: url.href } },
+      );
+    }
+    return {
+      url: url.href,
+      status: result.status,
+      body: result.body,
+      retrievedAt: new Date().toISOString(),
+    };
   }
 
   /** The reviewed sources, for callers that need a source's own rules. */

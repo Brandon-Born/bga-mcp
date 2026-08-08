@@ -122,7 +122,12 @@ describe('local capabilities are read-only and network-off', () => {
             // exactly the one this scenario must watch.
             {
               name,
-              arguments: name === 'search_bga_docs' ? { query: 'state classes' } : { projectRoot },
+              arguments:
+                name === 'search_bga_docs'
+                  ? { query: 'state classes' }
+                  : name === 'read_studio_logs'
+                    ? { gameId: '1234' }
+                    : { projectRoot },
             },
             { timeout: 20_000 },
           );
@@ -141,9 +146,10 @@ describe('local capabilities are read-only and network-off', () => {
     );
 
     // Every local tool ran to completion without the network.
-    expect(result.tools.length).toBeGreaterThanOrEqual(8);
+    expect(result.tools.length).toBeGreaterThanOrEqual(9);
     for (const [name, isError] of Object.entries(result.outcomes)) {
-      if (name === 'search_bga_docs') {
+      // The two capabilities that would leave the machine are asserted below.
+      if (name === 'search_bga_docs' || name === 'read_studio_logs') {
         continue;
       }
       expect(isError, `${name} failed with the network denied`).toBe(false);
@@ -154,6 +160,8 @@ describe('local capabilities are read-only and network-off', () => {
     // enough to be blocked, which the empty attempt log below confirms.
     expect(result.outcomes.search_bga_docs).toBe(true);
     expect(result.messages.search_bga_docs).toContain('policy.network.disabled');
+    expect(result.outcomes.read_studio_logs).toBe(true);
+    expect(result.messages.read_studio_logs).toContain('policy.network.disabled');
 
     // Nothing tried to leave the machine.
     expect(await readFile(networkLog, 'utf8')).toBe('');

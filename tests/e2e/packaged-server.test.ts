@@ -121,6 +121,7 @@ describe('packaged bga-mcp server', () => {
           expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
             'audit_database_usage',
             'inspect_project',
+            'read_studio_logs',
             'run_pre_release_audit',
             'search_bga_docs',
             'validate_action_contracts',
@@ -222,6 +223,7 @@ describe('packaged bga-mcp server', () => {
           [
             'audit_database_usage',
             'inspect_project',
+            'read_studio_logs',
             'run_pre_release_audit',
             'search_bga_docs',
             'validate_action_contracts',

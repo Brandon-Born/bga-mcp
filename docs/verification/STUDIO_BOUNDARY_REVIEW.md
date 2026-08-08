@@ -81,3 +81,36 @@ Both are reasons the Studio adapter stays opt-in, off by default, and previewed 
 ## What this review does not cover
 
 Everything outside TB-STUDIO. The documentation boundary was reviewed separately on the same day; see the [documentation boundary review](DOCS_BOUNDARY_REVIEW.md).
+
+## Addendum: the owner's decision, 2026-08-07
+
+The review recommended not building log access. The project owner overturned that
+the same day, on one condition: the capability must return no personal data
+belonging to anyone else.
+
+The recommendation was right about the fragility and wrong to let it decide the
+question alone. Reading your own logs is an ordinary thing a developer wants, and
+the review's own finding — that own-table identifiers are the developer's own dev
+accounts — was the argument against its own conclusion.
+
+What changed:
+
+- **The boundary split.** TB-STUDIO now covers synchronization, which writes.
+  TB-STUDIO-READ covers authenticated reads of the developer's own pages. They
+  are different crossings and the write-side preconditions — confirmed target,
+  upload scope, no remote delete — say nothing useful about a read.
+- **The condition became a control.** TM-STUDIO-OWN-DATA-ONLY is an allowlist
+  that fails closed. Every documented log line names its actor, so a line is
+  returned only when that actor exactly matches a dev account the developer
+  declared. A line about anyone else is withheld entirely rather than redacted,
+  because a partially scrubbed line about a stranger is still about a stranger.
+  A line whose owner cannot be read is withheld too. With no declared account,
+  nothing is returned at all.
+- **Production logs and Sentry are still never fetched.** The condition rules
+  them out on its own terms, and nothing about this decision reopens them.
+- **The fragility is stated, not hidden.** The capability is `experimental`, off
+  unless asked for, and its own description tells the developer it scrapes an
+  unversioned page and can break. `RR-STUDIO-UNDOCUMENTED-PAGE` records that.
+
+`TM-NO-STUDIO-LOGS` stays as written for test tables, saved states, and player
+perspectives, which nobody has asked for and which involve real tables.

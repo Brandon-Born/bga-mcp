@@ -19,6 +19,7 @@ describe('capability manifest gate', () => {
       tools: [
         'audit_database_usage',
         'inspect_project',
+        'read_studio_logs',
         'run_pre_release_audit',
         'search_bga_docs',
         'validate_action_contracts',
@@ -71,6 +72,7 @@ describe('capability manifest gate', () => {
         tools: [
           'audit_database_usage',
           'inspect_project',
+          'read_studio_logs',
           'run_pre_release_audit',
           'search_bga_docs',
           'validate_action_contracts',
@@ -94,6 +96,7 @@ describe('capability manifest gate', () => {
         tools: [
           'audit_database_usage',
           'inspect_project',
+          'read_studio_logs',
           'run_pre_release_audit',
           'search_bga_docs',
           'validate_action_contracts',

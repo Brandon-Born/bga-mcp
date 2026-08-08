@@ -13,6 +13,8 @@ describe('parseCliArguments', () => {
         maxOutputBytes: DEFAULT_SERVER_CONFIG.maxOutputBytes,
         networkEnabled: false,
         mutationsEnabled: false,
+        experimentalStudioLogs: false,
+        studioDevAccounts: [],
       },
     });
   });
@@ -34,6 +36,8 @@ describe('parseCliArguments', () => {
         maxOutputBytes: DEFAULT_SERVER_CONFIG.maxOutputBytes,
         networkEnabled: false,
         mutationsEnabled: false,
+        experimentalStudioLogs: false,
+        studioDevAccounts: [],
       },
     });
   });
@@ -51,6 +55,11 @@ describe('parseCliArguments', () => {
         '4096',
         '--allow-network',
         '--allow-mutations',
+        '--experimental-studio-logs',
+        '--studio-dev-account',
+        'mytest0',
+        '--studio-dev-account',
+        'mytest0',
       ]),
     ).toEqual({
       kind: 'serve',
@@ -61,6 +70,8 @@ describe('parseCliArguments', () => {
         maxOutputBytes: 4096,
         networkEnabled: true,
         mutationsEnabled: true,
+        experimentalStudioLogs: true,
+        studioDevAccounts: ['mytest0'],
       },
     });
   });

@@ -13,6 +13,13 @@ export interface RedactionOptions {
   readonly projectRoots?: readonly string[];
   /** Home directory used to detect paths outside the configured roots. */
   readonly homeDirectory?: string;
+  /**
+   * Exact secret values to remove wherever they appear.
+   *
+   * A pattern cannot recognise an opaque session cookie, so the one value that
+   * must never be echoed is passed in and matched literally.
+   */
+  readonly secretValues?: readonly string[];
 }
 
 interface Rule {
@@ -137,6 +144,12 @@ function redactPathsIn(value: string, options: RedactionOptions): string {
  */
 export function redactText(value: string, options: RedactionOptions = {}): string {
   let result = value;
+  // Literal secrets go first: an opaque value has no shape to match later.
+  for (const secret of options.secretValues ?? []) {
+    if (secret.length >= 8) {
+      result = result.split(secret).join('[redacted-secret]');
+    }
+  }
   for (const rule of RULES) {
     result = result.replace(rule.pattern, (...arguments_: unknown[]) => {
       const groups = arguments_.slice(1, -2) as (string | undefined)[];

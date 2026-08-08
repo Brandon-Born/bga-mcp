@@ -125,8 +125,8 @@
     },
     {
       "id": "TB-STUDIO",
-      "name": "BGA Studio adapter",
-      "description": "Authenticated SFTP, session, and mutation traffic with a Studio project. Reviewed 2026-08-07: file synchronization may cross once every precondition is implemented; log, table, saved-state, and browser-session access stays closed for want of a documented interface and because production logs carry player data.",
+      "name": "BGA Studio synchronization",
+      "description": "Authenticated SFTP and mutation traffic with a Studio project. Reviewed 2026-08-07: a capability may cross only when every precondition is implemented.",
       "status": "reviewed",
       "gates": ["network", "mutation"],
       "reviewedAt": "2026-08-07",
@@ -138,6 +138,21 @@
         "TM-STUDIO-PREVIEW-FIRST",
         "TM-STUDIO-NO-REMOTE-DELETE",
         "TM-STUDIO-CREDENTIAL-REDACTION"
+      ]
+    },
+    {
+      "id": "TB-STUDIO-READ",
+      "name": "BGA Studio own-account reads",
+      "description": "Authenticated reads of the developer's own Studio pages. Reviewed 2026-08-07 and reopened on the owner's decision: reading your own logs is reasonable, the page is undocumented, so a capability here is experimental and returns only the developer's own data.",
+      "status": "reviewed",
+      "gates": ["network"],
+      "reviewedAt": "2026-08-07",
+      "preconditions": [
+        "TM-STUDIO-SESSION-FROM-ENVIRONMENT",
+        "TM-STUDIO-READ-HOST-PINNED",
+        "TM-STUDIO-OWN-DATA-ONLY",
+        "TM-STUDIO-SESSION-REDACTION",
+        "TM-STUDIO-NO-PRODUCTION-LOGS"
       ]
     },
     {
@@ -232,7 +247,8 @@
         "TM-CREDENTIAL-PROVIDER",
         "TM-BOUNDARY-REVIEW",
         "TM-STUDIO-CREDENTIAL-PROVIDER",
-        "TM-STUDIO-CREDENTIAL-REDACTION"
+        "TM-STUDIO-CREDENTIAL-REDACTION",
+        "TM-STUDIO-SESSION-FROM-ENVIRONMENT"
       ]
     },
     {
@@ -258,7 +274,12 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA"],
       "boundary": "TB-STUDIO",
       "impact": "Session material is exposed and access controls or terms may be bypassed.",
-      "mitigations": ["TM-NO-BROWSER-SESSION", "TM-BOUNDARY-REVIEW", "TM-NO-STUDIO-LOGS"]
+      "mitigations": [
+        "TM-NO-BROWSER-SESSION",
+        "TM-BOUNDARY-REVIEW",
+        "TM-NO-STUDIO-LOGS",
+        "TM-STUDIO-READ-HOST-PINNED"
+      ]
     },
     {
       "id": "AC-DOC-PROMPT-INJECTION",
@@ -366,7 +387,11 @@
       "assets": ["ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-STUDIO",
       "impact": "Production error logs and Sentry issues name affected users, so reading them exports real players' data to wherever the agent's context goes. Logs from a developer's own Studio test tables are not this case: those identifiers are their own dev accounts.",
-      "mitigations": ["TM-NO-STUDIO-LOGS", "TM-BOUNDARY-REVIEW"]
+      "mitigations": [
+        "TM-STUDIO-OWN-DATA-ONLY",
+        "TM-STUDIO-NO-PRODUCTION-LOGS",
+        "TM-BOUNDARY-REVIEW"
+      ]
     },
     {
       "id": "AC-STUDIO-DESTRUCTIVE-SYNC",
@@ -384,7 +409,11 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-STUDIO",
       "impact": "A credential that appears in stderr or a retained CI artifact must be rotated, and the developer may not know it leaked.",
-      "mitigations": ["TM-STUDIO-CREDENTIAL-REDACTION", "TM-REDACTION"]
+      "mitigations": [
+        "TM-STUDIO-CREDENTIAL-REDACTION",
+        "TM-REDACTION",
+        "TM-STUDIO-SESSION-REDACTION"
+      ]
     }
   ],
   "mitigations": [
@@ -735,6 +764,51 @@
       "owner": "Brandon Born",
       "cadence": "Re-read if BGA publishes an API for logs or tables",
       "evidence": "docs/verification/STUDIO_BOUNDARY_REVIEW.md decision, recorded against BGA-305"
+    },
+    {
+      "id": "TM-STUDIO-SESSION-FROM-ENVIRONMENT",
+      "title": "The Studio session comes from the environment and is never accepted as a tool argument",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-STUDIO-SESSION-NOT-AN-ARGUMENT"],
+      "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-STUDIO-READ-HOST-PINNED",
+      "title": "Studio reads go to the one documented Studio host over HTTPS, with the address guard applied and redirects refused",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-STUDIO-HOST-PINNED"],
+      "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-STUDIO-OWN-DATA-ONLY",
+      "title": "Only log lines about the developer's declared own dev accounts are returned; anything else is withheld rather than redacted",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["UNIT-STUDIO-LOG-PRIVACY", "UNIT-STUDIO-LOG-PARSE"],
+      "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-STUDIO-SESSION-REDACTION",
+      "title": "The session value is removed from every published error, log line, and artifact",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["UNIT-STUDIO-SESSION-REDACTION"],
+      "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-STUDIO-NO-PRODUCTION-LOGS",
+      "title": "Production error logs and Sentry are never retrieved, because they are about real players",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["INT-STUDIO-NO-PRODUCTION-LOGS"],
+      "backlog": "BGA-312"
     }
   ],
   "residualRisks": [
@@ -794,6 +868,12 @@
       "id": "RR-STUDIO-SHARED-ACCOUNT",
       "description": "The documentation describes multiple developer accounts per person and says nothing about credential confidentiality. A credential the developer has already shared is outside this server's control.",
       "abuseCases": ["AC-CREDENTIAL-AS-ARGUMENT", "AC-STUDIO-CREDENTIAL-LOG"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
+      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason.",
+      "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
       "acceptedBy": "Brandon Born"
     }
   ]

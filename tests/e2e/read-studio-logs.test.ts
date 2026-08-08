@@ -1,0 +1,121 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+
+import type { Client } from '@modelcontextprotocol/client';
+import { inject } from 'vitest';
+
+import { connectStdio } from '../helpers/mcp.js';
+import { runCommand } from '../helpers/process.js';
+import { waitForProcessExit } from '../helpers/scenario.js';
+
+const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
+
+let temporaryRoot: string;
+let cli: string;
+
+async function withServer<T>(
+  arguments_: readonly string[],
+  environment: NodeJS.ProcessEnv,
+  use: (client: Client) => Promise<T>,
+): Promise<T> {
+  const connection = await connectStdio(process.execPath, [cli, ...arguments_], {
+    timeoutMs: 10_000,
+    env: { ...process.env, ...environment },
+  });
+  const processId = connection.transport.pid;
+  try {
+    return await use(connection.client);
+  } finally {
+    await connection.client.close();
+    if (processId !== null) {
+      await waitForProcessExit(processId);
+    }
+  }
+}
+
+async function read(client: Client, argument: unknown): Promise<string> {
+  const result = await client.callTool(
+    { name: 'read_studio_logs', arguments: argument as Record<string, unknown> },
+    { timeout: 15_000 },
+  );
+  return (result.content as { text?: string }[]).map((entry) => entry.text ?? '').join('\n');
+}
+
+beforeAll(async () => {
+  temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-studio-'));
+  const installRoot = resolve(temporaryRoot, 'install');
+  await mkdir(installRoot);
+  await writeFile(
+    resolve(installRoot, 'package.json'),
+    `${JSON.stringify({ name: 'bga-mcp-studio-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+  );
+  const install = await runCommand(
+    corepackCommand,
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
+    { timeoutMs: 120_000 },
+  );
+  expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);
+  cli = resolve(installRoot, 'node_modules/bga-mcp/dist/cli.js');
+}, 240_000);
+
+afterAll(async () => {
+  await rm(temporaryRoot, { recursive: true, force: true });
+});
+
+describe('packaged read_studio_logs', () => {
+  it('[E2E-STUDIO-LOGS-DISABLED] is advertised as experimental and refuses until asked for', async () => {
+    const { tool, response } = await withServer(['--allow-network'], {}, async (client) => {
+      const listed = await client.listTools();
+      return {
+        tool: listed.tools.find((entry) => entry.name === 'read_studio_logs'),
+        response: await read(client, { gameId: '1234' }),
+      };
+    });
+
+    // The trade is stated in the description rather than hidden.
+    expect(tool?.description).toContain('Experimental');
+    expect(tool?.description).toMatch(/BGA does\s+not document or version/u);
+    expect(tool?.description).toMatch(/withheld entirely rather than\s+redacted/u);
+
+    expect(response).toContain('policy.studio.disabled');
+    expect(response).toContain('--experimental-studio-logs');
+  });
+
+  it('[E2E-STUDIO-LOGS-NO-SESSION] refuses without a session, and never takes one as an argument', async () => {
+    const response = await withServer(
+      ['--allow-network', '--experimental-studio-logs', '--studio-dev-account', 'mytest0'],
+      { BGA_STUDIO_SESSION: '' },
+      async (client) => await read(client, { gameId: '1234' }),
+    );
+
+    expect(response).toContain('policy.studio.no-session');
+    expect(response).toContain('BGA_STUDIO_SESSION');
+    // The refusal explains where the session belongs without echoing one.
+    expect(response).toContain('never accepted as a tool argument');
+  });
+
+  it('[E2E-STUDIO-LOGS-INVALID-INPUT] rejects input that does not match the published schema', async () => {
+    await withServer(
+      ['--allow-network', '--experimental-studio-logs', '--studio-dev-account', 'mytest0'],
+      {},
+      async (client) => {
+        for (const argument of [
+          {},
+          { gameId: '' },
+          { gameId: 'not-a-number' },
+          { gameId: '1234', maxLines: 0 },
+          { gameId: '1234', maxLines: 5000 },
+          // A session is not part of the contract, so it cannot be smuggled in.
+          { gameId: '1234', session: 'PHPSESSID=abc' },
+        ]) {
+          const failure = await read(client, argument).catch((error: unknown) => error);
+          const text = failure instanceof Error ? failure.message : failure;
+          expect(String(text).toLowerCase()).toMatch(
+            /invalid|unrecognized|schema|required|expected|studio/u,
+          );
+        }
+      },
+    );
+  });
+});

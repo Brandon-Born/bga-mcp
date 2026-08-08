@@ -70,6 +70,27 @@
         "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
+        "name": "read_studio_logs",
+        "owner": "Brandon Born",
+        "stability": "experimental",
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-STUDIO-LOGS-DISABLED",
+          "E2E-STUDIO-LOGS-NO-SESSION",
+          "E2E-STUDIO-LOGS-INVALID-INPUT",
+          "UNIT-STUDIO-LOG-PRIVACY",
+          "UNIT-STUDIO-LOG-PARSE",
+          "UNIT-STUDIO-SESSION-REDACTION",
+          "INT-STUDIO-SESSION-NOT-AN-ARGUMENT",
+          "INT-STUDIO-HOST-PINNED",
+          "INT-STUDIO-NO-PRODUCTION-LOGS"
+        ],
+        "liveStudioRequired": true,
+        "boundary": "TB-STUDIO-READ"
+      },
+      {
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
         "stability": "verified",

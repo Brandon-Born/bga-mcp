@@ -9,6 +9,7 @@ import type { RuleCatalog } from './rules/pre-release.js';
 import { registerRunPreReleaseAudit } from './tools/run-pre-release-audit.js';
 import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
 import { registerInspectProject } from './tools/inspect-project.js';
+import { registerReadStudioLogs } from './tools/read-studio-logs.js';
 import { registerSearchBgaDocs } from './tools/search-bga-docs.js';
 import { registerValidateActionContracts } from './tools/validate-action-contracts.js';
 import { registerValidateNotifications } from './tools/validate-notifications.js';
@@ -37,6 +38,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   // Advertised whether or not the network is enabled: the tool exists, and
   // without --allow-network every call refuses with the same stable code.
   registerSearchBgaDocs(server, dependencies.policy);
+  registerReadStudioLogs(server, dependencies.policy);
   registerProjectResources(server, dependencies.policy);
   registerDocumentationResources(server, dependencies.policy);
   registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog);
