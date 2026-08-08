@@ -69,6 +69,10 @@ Underneath it: a strict TypeScript package that builds and packs, a versioned [d
 
 See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
+## Install it
+
+See the [installation guide](docs/INSTALL.md) for setup, configuration, updating, removal, and troubleshooting. The short version, once built: point your client at `dist/cli.js`, and if it advertises its open folders as roots, that is the whole configuration.
+
 ## Develop locally
 
 Requirements: Node.js 22.13 or newer on the Node 22 line, or Node.js 24 LTS or newer; Corepack; and Git.
@@ -116,23 +120,6 @@ Configuration is the policy boundary. Defaults are local, read-only, and network
 Every tool reads only from the roots given here. `projectRoot` may be omitted when exactly one root is configured, and then means that root; with none or several configured, the call is refused with a stable error code rather than guessing which project was meant.
 
 The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
-
-## Reading your own Studio logs (experimental)
-
-`read_studio_logs` returns your own Studio request and SQL log lines for one game. It is experimental and off by default, because it reads a page BGA does not document or version, so it can stop working without warning.
-
-Only lines about the accounts you declare are returned. A line about anyone else is withheld entirely rather than redacted, and so is a line whose owner cannot be determined. With no declared account, nothing comes back. Production error logs and Sentry are never read.
-
-Check the setup before wiring it into a client:
-
-```sh
-node dist/cli.js --allow-network --experimental-studio-logs \
-  --studio-dev-account mytest0 --studio-check 12345
-```
-
-It reports one problem at a time with the fix, and with a game id it tells you whether the page really contains log lines and whether any match your account — which is the failure that would otherwise look like an empty result.
-
-The session is your own browser cookie: sign in to `studio.boardgamearena.com`, open developer tools, and copy the entire `Cookie` request header from any request to that host. Put it in `BGA_STUDIO_SESSION`, or in a file referenced by `--studio-session-file` so it stays out of your client's configuration. It is never accepted as a tool argument, so it does not enter the client's transcript.
 
 ## Verification commands
 

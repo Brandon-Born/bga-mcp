@@ -783,11 +783,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-400 — Publish installation and removal guides
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-003, BGA-009
 - **Deliverable:** Verified setup, configuration, troubleshooting, update, and removal instructions for each supported MCP client and platform, including a first-run walkthrough that states the supported layouts and what a modern-layout project will and will not get today.
 - **Acceptance:** Commands use released artifacts, explain permissions and data flow, and never require copying secrets into agent prompts.
+- **Evidence:** [INSTALL.md](INSTALL.md) covers installing, pointing a client at the server, checking it worked, updating, removing, and the failures a developer actually hits, each with its stable error code. Every option is listed with what it enables **and what it costs** — which data leaves the machine, and what the experimental one risks — rather than as a flag list. Removal is three steps and says plainly that nothing was written outside the server's own directory, which is true and separately proven by the read-only scenario. The Studio session is put in a mode-600 file rather than a client configuration, with the reason given, and is never pasted into a prompt. The first-run path leads with the case where a client advertises its roots and no configuration is needed at all.
+- **Note:** `implemented`, not `verified`. Installation is from a git clone because no package is published yet: BGA-403 changes that, and the commands here change with it. Per-client instructions wait on BGA-401's smoke matrix, since this project should not claim a client works before testing it — the guide describes what any stdio client needs and does not name clients it has not run against.
 - **Verification:** Fresh-environment E2E follows each guide verbatim from install through capability call and clean removal.
 
 ### BGA-401 — Maintain the supported-client smoke matrix
