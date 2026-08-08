@@ -57,13 +57,17 @@ The capability gate already enforces this shape: a reviewed boundary with planne
 
 **Studio logs, test tables, saved states, and player perspectives stay closed.** The reason is narrower than it first looks, and worth stating precisely, because the wrong reason would rule out something reasonable.
 
-**The blocker is that there is no documented interface.** Every one of these is a web page. The logs are a panel at the bottom of the Studio game page; production errors are behind a button on it; Sentry has its own interface. Automating any of them means driving an authenticated session and parsing HTML that BGA never promised to keep stable. "Depending on undocumented Studio endpoints for core functionality" is an explicit non-goal of this project, recorded before this review and unchanged by it, and a browser session is itself a credential — which is what AC-STUDIO-SESSION-REUSE describes.
+**The blocker is that there is no documented interface, and the rule against building on one is ours.** This needs saying plainly, because "not permitted" would imply an authority that has not spoken.
 
-That reason applies to all of it equally, including the logs from your own test tables. It is not about sensitivity; it is about building a core capability on something undocumented that belongs to someone else.
+BGA has not prohibited any of this. `studio.boardgamearena.com/robots.txt` says `Allow: /`, with `Disallow` on `/table`, `/player`, `/play`, and `/report` — and `/studiogame`, the page carrying the logs, is not among them. Those directives address crawlers in any case, not a developer's own authenticated session. No Studio terms-of-use page was found, and nothing in the documentation read for this review says anything about automation, scripting, or scraping. As far as this review can establish, BGA has no stated position.
+
+What does exist is this project's own non-goal, recorded before this review: "depending on undocumented Studio endpoints for core functionality". That is an engineering judgement, not a permission question. Every one of these features is a web page — logs are a panel at the bottom of the Studio game page, production errors are behind a button, Sentry has its own interface — so automating them means parsing HTML that nobody promised to keep stable, on someone else's platform, with a session that is itself a credential (AC-STUDIO-SESSION-REUSE). A capability built that way breaks silently when the page changes, and a developer finds out when their tooling quietly stops telling them the truth.
+
+That reasoning applies to all of it equally, including the logs from your own test tables. It is not about sensitivity, and it is not about permission. It is about what this project is willing to promise it can keep working.
 
 **Player data is a separate, narrower constraint.** It does not apply to a developer reading their own Studio test tables — those identifiers are their own dev accounts. It applies to production errors and Sentry, where the identifiers belong to real players. If a documented interface ever arrives, that distinction is the one to build to: own-table logs are ordinary developer data, production logs are not, and the second needs a decision about redaction that the first does not.
 
-So BGA-305 has its answer: **no, on the current evidence**. Not because a developer should not read their own logs — they obviously should — but because there is no permitted way for this server to do it for them. BGA-306 is blocked on that, and BGA-308 through BGA-311 carry the same finding.
+So BGA-305 has its answer: **no, on the current evidence**. Not because a developer should not read their own logs — they obviously should — and not because BGA has forbidden anything, but because this project will not put a core capability on an undocumented page it does not control. BGA-306 is blocked on that, and BGA-308 through BGA-311 carry the same finding.
 
 This is not permanent. If BGA publishes an API for logs or tables, it is worth re-reading, and own-table logs would be the first thing to reconsider.
 
