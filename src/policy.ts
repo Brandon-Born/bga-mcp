@@ -720,9 +720,26 @@ export class PolicyBoundary {
           { details: { host: hostname, reason } },
         ),
     );
-    const guardedLookup: LookupFunction = (hostname, _options, callback) => {
+    const guardedLookup: LookupFunction = (hostname, options, callback) => {
       guarded(hostname, (error, address, family) => {
-        callback(error, address, family);
+        if (error !== null) {
+          (callback as (error: Error) => void)(error);
+          return;
+        }
+        // Node asks for either one address or all of them, and answering in
+        // the wrong shape fails the connection with "Invalid IP address".
+        // Only a real connection exercises this, which is why it survived
+        // every offline test until the first live run.
+        if (typeof options === 'object' && options.all === true) {
+          (
+            callback as unknown as (
+              error: null,
+              addresses: { address: string; family: number }[],
+            ) => void
+          )(null, [{ address, family }]);
+          return;
+        }
+        callback(null, address, family);
       });
     };
 

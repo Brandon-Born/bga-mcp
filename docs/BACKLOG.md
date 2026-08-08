@@ -569,7 +569,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-313 — Confirm documentation retrieval quality against the live wiki
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-202, BGA-205
 - **Deliverable:** A recorded `pnpm test:docs-eval` run against the live wiki, and whatever the result forces: a fallback when search returns nothing, a revised question set, or a recorded limitation.
@@ -577,6 +577,18 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** The evaluation run is the verification. Its output is kept with the date and the wiki state it ran against, because the wiki changes and a passing run is only evidence about the day it happened.
 - **Note:** Opened after two defects in `search_bga_docs` were found by hand on 2026-08-08, both of which had shipped and neither of which any offline test could have caught. First, the search omitted `srwhat=text`, so the wiki matched titles only: `notifyAllPlayers`, `getArgs`, `dbmodel`, and `notification` each returned zero results while the pages documenting them sat in the index. Second, the wiki emits raw control characters inside snippets, which `JSON.parse` rejects, and the parser treated a thrown error as an empty result — so a malformed response and a genuinely empty one were indistinguishable. Both are fixed and unit-tested. The lesson is the item: every offline scenario passed throughout, because they all asserted against responses this project wrote itself. Only a live run measures whether the thing works.
 - **Sources:** MediaWiki search API behaviour measured directly against <https://en.doc.boardgamearena.com/api.php> on 2026-08-08.
+- **Result, 2026-08-08:** 4 of 9 answered against a threshold of 0.8, 6 of 9 attributed against a threshold of 1. **The set does not pass, and the thresholds have deliberately not been lowered to make it.** What the run bought was five defects that every offline test had passed over, four of them fatal to the capability:
+
+  1. **The guarded DNS lookup answered in the wrong shape.** Node asks for either one address or all of them, and the wrapper always returned one, so every documentation request failed with `Invalid IP address: undefined`. The capability had never worked. Only a real connection exercises this.
+  2. **A source scoped to a single page aborted the whole search.** The community catalog entry points at one Cookbook page, so building the search endpoint against it failed the containment check and threw, emptying every result — including results from the source that was fine.
+  3. **Authority was resolved per source rather than per page**, so a community page reached through the site-wide source was reported as official. Provenance is now the most specific catalog entry that matches a URL.
+  4. **One unreachable page emptied the result.** A single failure now degrades instead of aborting.
+  5. **Relevance was unusable**, addressed by ranking the curated topic first and dropping results that never mention what was asked.
+
+  A sixth was introduced while fixing the fourth and caught by the existing suite: tolerating a failed page swallowed policy refusals too, so a network-disabled call came back as an empty result rather than a refusal. Only a page-level failure is tolerated now; anything else propagates.
+
+- **Remaining failures, per question:** `client-entry-point` and `file-reference` reach the right page but excerpt the wrong passage; `migration-states` and `community-recipes` do not return the expected page at all; `adversarial-instruction` returns something where nothing is correct. Two attempted excerpt heuristics — preferring the earliest near-best line, and restricting the topic keywords to distinctive ones — were each measured and each made the score worse, so both were reverted and the measurements recorded in the code where someone would otherwise try them again.
+- **Next:** the remaining gap is excerpt selection and query understanding, which is a different problem from the plumbing this run fixed. It wants its own item and a way to iterate that does not mean firing requests at a third party's wiki to A/B a heuristic — captured page fixtures, scored offline, with the live run as the periodic check rather than the development loop.
 
 ### BGA-206 — Monitor BGA documentation and framework changes
 

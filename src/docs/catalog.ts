@@ -61,15 +61,24 @@ export function parseDocumentationCatalog(text: string): DocumentationCatalog {
   return parsed as DocumentationCatalog;
 }
 
-/** Finds the source that permits a URL, or `null` when none does. */
+/**
+ * Finds the source that permits a URL, or `null` when none does.
+ *
+ * The most specific match wins. Authority is a property of a page, not of a
+ * host: the BGA Studio Cookbook sits on the official wiki and anyone may edit
+ * it, so a catalog entry scoped to that page must outrank the entry covering
+ * the whole site, or a community page would be reported as official.
+ */
 export function sourceForUrl(catalog: DocumentationCatalog, url: URL): DocumentationSource | null {
+  const matches = catalog.sources.filter(
+    (source) =>
+      url.protocol === 'https:' &&
+      url.hostname === source.host &&
+      url.href.startsWith(source.canonicalUrl),
+  );
   return (
-    catalog.sources.find(
-      (source) =>
-        url.protocol === 'https:' &&
-        url.hostname === source.host &&
-        url.href.startsWith(source.canonicalUrl),
-    ) ?? null
+    [...matches].sort((left, right) => right.canonicalUrl.length - left.canonicalUrl.length)[0] ??
+    null
   );
 }
 

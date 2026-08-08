@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, provenanceOf, retrieveDocumentation } from '../docs/retrieve.js';
 import { parseSearchResponse, searchParams } from '../docs/search.js';
+import { topicForQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure } from './project-context.js';
@@ -63,6 +64,50 @@ export const SearchBgaDocsOutputSchema = z.strictObject({
 });
 
 export type SearchBgaDocsResult = z.infer<typeof SearchBgaDocsOutputSchema>;
+
+/**
+ * Whether a failure is about one page rather than about the request itself.
+ *
+ * Tolerating a page that cannot be read keeps one bad hit from emptying a
+ * result. Tolerating a refusal would hide it: a network-disabled or
+ * content-refused call must reach the caller, not come back as no results.
+ */
+function isPageLevelFailure(error: unknown): boolean {
+  const code = (error as { code?: unknown }).code;
+  return code === ERROR_CODES.policyDocFetchFailed || code === ERROR_CODES.policyOutputTooLarge;
+}
+
+/** Words that carry no subject, so matching them would match everything. */
+const STOP_WORDS = new Set([
+  'about',
+  'does',
+  'from',
+  'have',
+  'here',
+  'must',
+  'that',
+  'their',
+  'them',
+  'then',
+  'there',
+  'this',
+  'what',
+  'when',
+  'where',
+  'which',
+  'with',
+  'your',
+]);
+
+/** True when a result actually mentions something the question asked about. */
+function mentionsQuery(title: string, excerpt: string, query: string): boolean {
+  const haystack = `${title}\n${excerpt}`.toLowerCase();
+  const terms = query
+    .toLowerCase()
+    .split(/[^a-z0-9.]+/u)
+    .filter((term) => term.length > 3 && !STOP_WORDS.has(term));
+  return terms.length === 0 || terms.some((term) => haystack.includes(term));
+}
 
 const DESCRIPTION = `Search the allowlisted BGA Studio documentation and return attributed excerpts.
 
@@ -139,49 +184,128 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           }
 
           const results: z.infer<typeof ResultSchema>[] = [];
+          const seen = new Set<string>();
+
+          // A matched topic knows the words that matter for its subject, which
+          // the developer's question usually does not contain: "where does the
+          // client logic live" never says "modules/js".
+          const topicMatch = sourceId === undefined ? topicForQuery(query) : null;
+          // Filtering these to the distinctive keywords was tried on
+          // 2026-08-08 and measured worse, so all of them are used.
+          const excerptQuery = [query, ...(topicMatch?.keywords ?? [])].join(' ');
+
+          const addPage = async (
+            source: (typeof sources)[number],
+            path: string,
+            fallbackTitle: string,
+            lastEdited: string | null,
+          ): Promise<void> => {
+            const page = await policy.fetchDocumentation({ sourceId: source.id, path });
+            if (seen.has(page.url)) {
+              return;
+            }
+            seen.add(page.url);
+            // The catalog decides authority by page, so a community page keeps
+            // its own provenance even when the search reached it through the
+            // site-wide source.
+            const owning =
+              (await policy.documentationSources()).find(
+                (candidate) =>
+                  candidate.canonicalUrl.length > source.canonicalUrl.length &&
+                  page.url.startsWith(candidate.canonicalUrl),
+              ) ?? source;
+            const retrieved = await retrieveDocumentation(
+              owning,
+              cache,
+              { url: page.url, query: excerptQuery, maxExcerptChars: MAX_EXCERPT_CHARS },
+              () =>
+                Promise.resolve({
+                  url: page.url,
+                  body: page.body,
+                  retrievedAt: page.retrievedAt,
+                  lastModified: page.lastModified,
+                }),
+            );
+            if (!mentionsQuery(retrieved.title, retrieved.excerpt, query)) {
+              // A page that never mentions what was asked is noise, and
+              // returning noise makes "the documentation cannot answer this"
+              // impossible to say.
+              return;
+            }
+            results.push({
+              title: retrieved.title === owning.title ? fallbackTitle : retrieved.title,
+              url: retrieved.url,
+              sourceId: retrieved.sourceId,
+              sourceTitle: retrieved.sourceTitle,
+              authority: retrieved.authority,
+              provenance: provenanceOf(retrieved.authority),
+              retrievedAt: retrieved.retrievedAt,
+              lastModified: retrieved.lastModified,
+              lastEdited,
+              ageDays: retrieved.ageDays,
+              stale: retrieved.stale,
+              cached: retrieved.cached,
+              excerpt: retrieved.excerpt,
+              trust: 'untrusted-content',
+            });
+          };
+
+          // The curated topic first, when the question clearly has one. The
+          // wiki ranks by how often a page mentions the words, which answers
+          // "where do state classes live" with whichever page says "state"
+          // most rather than the page about state classes.
+          const topic = sourceId === undefined ? topicForQuery(query) : null;
+          if (topic !== null) {
+            const topicSource = sources.find((candidate) => candidate.id === topic.sourceId);
+            if (topicSource !== undefined) {
+              // A stale topic path must not empty the result: the search below
+              // still runs.
+              await addPage(topicSource, topic.path, topic.title, null).catch((error: unknown) => {
+                if (!isPageLevelFailure(error)) {
+                  throw error;
+                }
+              });
+            }
+          }
+
           for (const source of sources) {
             if (results.length >= limit) {
               break;
             }
-            const response = await policy.fetchDocumentation({
-              sourceId: source.id,
-              path: 'api.php',
-              query,
-              params: searchParams(query, limit),
-            });
+            // A source scoped to a single page has no search endpoint of its
+            // own — the community pages are reached through the topic table,
+            // which is what knows they are community in the first place.
+            if (!source.canonicalUrl.endsWith('/')) {
+              continue;
+            }
 
-            for (const hit of parseSearchResponse(response.body, limit - results.length)) {
-              const page = await policy.fetchDocumentation({ sourceId: source.id, path: hit.path });
-              const retrieved = await retrieveDocumentation(
-                source,
-                cache,
-                { url: page.url, query, maxExcerptChars: MAX_EXCERPT_CHARS },
-                // The page is already retrieved through the policy boundary,
-                // so the cache is handed what came back rather than a fetcher.
-                () =>
-                  Promise.resolve({
-                    url: page.url,
-                    body: page.body,
-                    retrievedAt: page.retrievedAt,
-                    lastModified: page.lastModified,
-                  }),
-              );
-              results.push({
-                title: retrieved.title === source.title ? hit.title : retrieved.title,
-                url: retrieved.url,
-                sourceId: retrieved.sourceId,
-                sourceTitle: retrieved.sourceTitle,
-                authority: retrieved.authority,
-                provenance: provenanceOf(retrieved.authority),
-                retrievedAt: retrieved.retrievedAt,
-                lastModified: retrieved.lastModified,
-                lastEdited: hit.lastEdited,
-                ageDays: retrieved.ageDays,
-                stale: retrieved.stale,
-                cached: retrieved.cached,
-                excerpt: retrieved.excerpt,
-                trust: 'untrusted-content',
+            try {
+              const response = await policy.fetchDocumentation({
+                sourceId: source.id,
+                path: 'api.php',
+                query,
+                params: searchParams(query, limit),
               });
+
+              for (const hit of parseSearchResponse(response.body, limit - results.length)) {
+                if (results.length >= limit) {
+                  break;
+                }
+                // One unreachable page does not empty the whole result.
+                await addPage(source, hit.path, hit.title, hit.lastEdited).catch(
+                  (error: unknown) => {
+                    if (!isPageLevelFailure(error)) {
+                      throw error;
+                    }
+                  },
+                );
+              }
+            } catch (error) {
+              // A source that cannot be searched is skipped rather than
+              // failing the sources that can — but a refusal is not a skip.
+              if (!isPageLevelFailure(error)) {
+                throw error;
+              }
             }
           }
 

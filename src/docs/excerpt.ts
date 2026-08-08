@@ -71,11 +71,22 @@ export function excerptFor(text: string, query: string, maxChars: number): strin
   if (terms.length > 0) {
     const scored = lines.map((line, index) => {
       const lowered = line.toLowerCase();
-      return { index, score: terms.filter((term) => lowered.includes(term)).length };
+      // Weighted by term length, so a distinctive term like `dbmodel.sql` or
+      // `modules/js` outranks a common one like `files`. Counting matches
+      // equally picks the introduction, which mentions the common words and
+      // states no facts.
+      const score = terms
+        .filter((term) => lowered.includes(term))
+        .reduce((total, term) => total + term.length, 0);
+      return { index, score };
     });
     const best = scored.reduce((left, right) => (right.score > left.score ? right : left));
     if (best.score > 0) {
       // Start a line early so the match has the context that introduces it.
+      //
+      // Taking the earliest near-best line was tried on 2026-08-08 and made
+      // retrieval measurably worse (4 of 9 evaluation questions answered, down
+      // to 2), so the highest-scoring line stands.
       start = Math.max(0, best.index - 1);
     }
   }
