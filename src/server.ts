@@ -10,6 +10,7 @@ import { registerProjectResources } from './resources/project-resources.js';
 import type { RuleCatalog } from './rules/pre-release.js';
 import { registerRunPreReleaseAudit } from './tools/run-pre-release-audit.js';
 import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
+import { registerCheckSetup } from './tools/check-setup.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerReadStudioLogs } from './tools/read-studio-logs.js';
 import { registerSearchBgaDocs } from './tools/search-bga-docs.js';
@@ -31,6 +32,8 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
     { name: SERVER_NAME, version: SERVER_VERSION },
     { capabilities: { tools: {}, resources: {} } },
   );
+  // First, because it is what a caller reaches for when something refuses.
+  registerCheckSetup(server, dependencies.policy);
   registerInspectProject(server, dependencies.policy);
   registerValidateStateMachine(server, dependencies.policy);
   registerValidateActionContracts(server, dependencies.policy);

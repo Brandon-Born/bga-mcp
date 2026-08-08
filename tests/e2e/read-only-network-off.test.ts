@@ -127,7 +127,9 @@ describe('local capabilities are read-only and network-off', () => {
                   ? { query: 'state classes' }
                   : name === 'read_studio_logs'
                     ? { gameId: '1234' }
-                    : { projectRoot },
+                    : name === 'check_setup'
+                      ? {}
+                      : { projectRoot },
             },
             { timeout: 20_000 },
           );
@@ -146,7 +148,7 @@ describe('local capabilities are read-only and network-off', () => {
     );
 
     // Every local tool ran to completion without the network.
-    expect(result.tools.length).toBeGreaterThanOrEqual(9);
+    expect(result.tools.length).toBeGreaterThanOrEqual(10);
     for (const [name, isError] of Object.entries(result.outcomes)) {
       // The two capabilities that would leave the machine are asserted below.
       if (name === 'search_bga_docs' || name === 'read_studio_logs') {

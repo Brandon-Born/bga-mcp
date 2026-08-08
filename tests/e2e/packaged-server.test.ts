@@ -120,6 +120,7 @@ describe('packaged bga-mcp server', () => {
           const tools = await connection.client.listTools();
           expect(tools.tools.map((tool) => tool.name).sort()).toEqual([
             'audit_database_usage',
+            'check_setup',
             'inspect_project',
             'read_studio_logs',
             'run_pre_release_audit',
@@ -222,6 +223,7 @@ describe('packaged bga-mcp server', () => {
         expect((await configured.client.listTools()).tools.map((tool) => tool.name).sort()).toEqual(
           [
             'audit_database_usage',
+            'check_setup',
             'inspect_project',
             'read_studio_logs',
             'run_pre_release_audit',

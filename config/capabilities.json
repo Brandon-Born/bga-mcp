@@ -43,6 +43,22 @@
         "boundary": "TB-LOCAL-FILESYSTEM"
       },
       {
+        "name": "check_setup",
+        "owner": "Brandon Born",
+        "stability": "implemented",
+        "supportedLayouts": ["modern-modules", "legacy-flat", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25", "2026-07-28"],
+        "requiredScenarios": [
+          "E2E-SETUP-NOTHING-CONFIGURED",
+          "E2E-SETUP-READY",
+          "INT-SETUP-STATUS",
+          "INT-SETUP-NO-CREDENTIALS"
+        ],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      },
+      {
         "name": "inspect_project",
         "owner": "Brandon Born",
         "stability": "verified",

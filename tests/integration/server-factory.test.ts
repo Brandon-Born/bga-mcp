@@ -39,6 +39,7 @@ describe('production server factory', () => {
       ]);
       expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
         'audit_database_usage',
+        'check_setup',
         'inspect_project',
         'read_studio_logs',
         'run_pre_release_audit',

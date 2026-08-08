@@ -612,13 +612,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-316 — Make the setup state legible to the agent
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-312
 - **Deliverable:** The `--studio-check` report, and the equivalent for local and documentation capabilities, exposed as a capability an agent can call — machine-readable, with the same one-problem-at-a-time ordering and an explicit next action per finding.
 - **Acceptance:** An agent can determine what is configured, what is missing, and what to do about it without a human reading terminal output. Each finding carries a stable code, a human sentence, and a next action. It reports on capabilities that are off, saying how to turn them on, rather than pretending they do not exist. It never reports a credential, only whether one was found and from where.
 - **Verification:** Packaged scenarios cover a server with nothing configured, one fully configured, and one part-way; the result is asserted against its schema rather than its prose.
-- **Note:** `--studio-check` was built for a terminal, which is the wrong audience: the developer is talking to an agent, and the agent cannot read a terminal it did not run. Same checks, addressed to the reader who is actually there.
+- **Evidence:** `check_setup` returns every finding with a stable code, a sentence, and a next action, and it never refuses — a capability that explains why things are refusing is useless if it refuses too. It reports capabilities that are switched off as off, with the flag that enables them, because a reader cannot ask about something they were never told exists. `ready` means the local capabilities can work: optional things being off is not a problem to solve. A Studio session is reported as present or missing and never by value, which `INT-SETUP-NO-CREDENTIALS` proves by asserting the serialized report contains neither the session nor its cookie name. `E2E-SETUP-NOTHING-CONFIGURED` and `E2E-SETUP-READY` run it through the packaged artifact, and the first asserts that every actionable finding carries an action rather than only a symptom.
+- **Note:** `--studio-check` remains for the terminal, and `check_setup` is the same information for the reader who is actually there. Client-offered roots count as roots here, so a developer whose client advertises its folders sees `ready` without configuring anything.
 
 ### BGA-317 — Remember the setup between runs
 

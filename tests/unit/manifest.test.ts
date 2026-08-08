@@ -18,6 +18,7 @@ describe('capability manifest gate', () => {
       server: { name: 'bga-mcp', version: '0.0.0-development' },
       tools: [
         'audit_database_usage',
+        'check_setup',
         'inspect_project',
         'read_studio_logs',
         'run_pre_release_audit',
@@ -71,6 +72,7 @@ describe('capability manifest gate', () => {
         server: manifest.server,
         tools: [
           'audit_database_usage',
+          'check_setup',
           'inspect_project',
           'read_studio_logs',
           'run_pre_release_audit',
@@ -95,6 +97,7 @@ describe('capability manifest gate', () => {
         server: manifest.server,
         tools: [
           'audit_database_usage',
+          'check_setup',
           'inspect_project',
           'read_studio_logs',
           'run_pre_release_audit',
