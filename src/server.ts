@@ -10,6 +10,7 @@ import { registerProjectResources } from './resources/project-resources.js';
 import type { RuleCatalog } from './rules/pre-release.js';
 import { registerRunPreReleaseAudit } from './tools/run-pre-release-audit.js';
 import { registerAuditDatabaseUsage } from './tools/audit-database-usage.js';
+import { SetupAsker } from './setup/ask.js';
 import { registerCheckSetup } from './tools/check-setup.js';
 import { registerInspectProject } from './tools/inspect-project.js';
 import { registerReadStudioLogs } from './tools/read-studio-logs.js';
@@ -26,8 +27,15 @@ export interface ServerDependencies {
   readonly ruleCatalog: RuleCatalog;
 }
 
-export function createServer(config: ServerConfig, dependencies: ServerDependencies): McpServer {
+export function createServer(
+  config: ServerConfig,
+  dependencies: ServerDependencies,
+  era: 'legacy' | 'modern' = 'legacy',
+): McpServer {
   void config;
+  // One asker per connection, so a developer who declines is not asked again
+  // until they start a new session.
+  const asker = new SetupAsker(era);
   const server = new McpServer(
     { name: SERVER_NAME, version: SERVER_VERSION },
     { capabilities: { tools: {}, resources: {} } },
@@ -43,7 +51,7 @@ export function createServer(config: ServerConfig, dependencies: ServerDependenc
   // Advertised whether or not the network is enabled: the tool exists, and
   // without --allow-network every call refuses with the same stable code.
   registerSearchBgaDocs(server, dependencies.policy);
-  registerReadStudioLogs(server, dependencies.policy);
+  registerReadStudioLogs(server, dependencies.policy, asker);
   registerProjectResources(server, dependencies.policy);
   registerDocumentationResources(server, dependencies.policy);
   registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog);
@@ -71,8 +79,9 @@ export async function createServerWithPolicy(config: ServerConfig): Promise<{
   return {
     policy,
     create: (context) => {
-      const server = createServer(config, { policy, ruleCatalog });
-      wireClientRoots(server, policy, context?.era ?? 'legacy');
+      const era = context?.era ?? 'legacy';
+      const server = createServer(config, { policy, ruleCatalog }, era);
+      wireClientRoots(server, policy, era);
       return server;
     },
   };

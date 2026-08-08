@@ -614,12 +614,14 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-315 — Ask for what is missing instead of failing
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-314
 - **Deliverable:** Setup values requested through MCP elicitation at the moment they are needed, rather than required up front — starting with the Studio dev account names, which are not secret.
 - **Acceptance:** A capability that lacks a non-secret setting asks for it through the client and proceeds when it is supplied, rather than refusing with instructions the developer has to go and act on elsewhere. Declining is a first-class answer: the capability refuses cleanly and does not ask again in the same session. A client that does not support elicitation gets the current behaviour, refusal with instructions, so this is an improvement and never a new dependency.
 - **Verification:** Scenarios cover supply, decline, an unsupported client, and a second call after a decline.
+- **Evidence:** `SetupAsker` asks the client for the Studio dev accounts the first time `read_studio_logs` needs them and none are configured, and the answer is held for the session — in memory, never written, so a restart asks again and configuration is untouched. Declining is an answer: the call refuses and nothing asks again for the rest of the session, which `INT-SETUP-ASK-DECLINED` proves by counting the requests. `INT-SETUP-ASK-UNSUPPORTED` covers a client that does not advertise elicitation, one that advertises it and then fails, and the 2026 era — all three get the refusal they would have got anyway, so this is never a new dependency. An empty or unusable answer counts as a decline rather than as an empty allowlist, which matters because an empty allowlist would silently return nothing. The policy gates run before the question, since asking a developer for accounts when the capability is switched off is a question with no useful answer.
+- **Note:** Legacy era only, for the same protocol reason as BGA-314: on 2026-07-28 elicitation is an input-required result a capability returns rather than a request the server may push, and the SDK throws if asked to push. Extending it there is the same piece of work as the modern roots path, and both are still outstanding.
 - **Open question — must be answered before any credential is elicited:** whether the Studio session may be requested this way at all. It is not a tool argument, which is the property BGA-312 protects, but an elicited value still crosses the client, and whether it lands in a transcript is a property of the client rather than of this server. Until that is reviewed, elicitation covers non-secret settings only, and the session continues to come from the environment or a file. Do not widen this without a boundary review.
 
 ### BGA-316 — Make the setup state legible to the agent

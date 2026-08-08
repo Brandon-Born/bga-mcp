@@ -118,13 +118,13 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
       );
     }
 
-    if (config.studioDevAccounts.length === 0) {
+    if (policy.studioDevAccounts.length === 0) {
       findings.push(
         finding(
           'studio.accounts.none',
           'action-needed',
-          'No Studio dev accounts are declared, so no log line could ever be returned.',
-          'Add --studio-dev-account <name> for each account you own, spelled exactly as Studio spells it, for example mytest0.',
+          'No Studio dev accounts are known, so no log line could be returned yet.',
+          'Add --studio-dev-account <name> for each account you own, spelled exactly as Studio spells it, for example mytest0 — or just use read_studio_logs and answer when your client asks.',
         ),
       );
     } else {
@@ -132,7 +132,7 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
         finding(
           'studio.accounts.declared',
           'ok',
-          `Returning log lines for: ${config.studioDevAccounts.join(', ')}. Everything else is withheld.`,
+          `Returning log lines for: ${policy.studioDevAccounts.join(', ')}. Everything else is withheld.`,
         ),
       );
     }

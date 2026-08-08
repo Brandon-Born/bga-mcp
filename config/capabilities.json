@@ -105,7 +105,10 @@
           "INT-STUDIO-NO-PRODUCTION-LOGS",
           "INT-STUDIO-CHECK-GUIDANCE",
           "INT-STUDIO-CHECK-PAGE",
-          "INT-STUDIO-SUMMARY"
+          "INT-STUDIO-SUMMARY",
+          "INT-SETUP-ASK-ANSWERED",
+          "INT-SETUP-ASK-DECLINED",
+          "INT-SETUP-ASK-UNSUPPORTED"
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ"

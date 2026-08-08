@@ -2,9 +2,11 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import { htmlToText } from '../docs/excerpt.js';
+import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { parseStudioLog } from '../studio/logline.js';
 import { screenStudioLog, withheldAny } from '../studio/privacy.js';
+import { SetupAsker } from '../setup/ask.js';
 import { publishFailure } from './project-context.js';
 
 export const READ_STUDIO_LOGS_TOOL = 'read_studio_logs';
@@ -71,9 +73,11 @@ returned. A line about anyone else is withheld entirely rather than redacted,
 and so is a line whose owner cannot be determined. Production error logs and
 Sentry are never read: those are about real players.
 
-Requires --allow-network, --experimental-studio-logs, at least one
---studio-dev-account, and a BGA_STUDIO_SESSION environment variable holding your
-own session cookie. The session is never accepted as a tool argument.`;
+Requires --allow-network, --experimental-studio-logs, and a BGA_STUDIO_SESSION
+environment variable holding your own session cookie. The session is never
+accepted as a tool argument. If no dev accounts were configured, the server asks
+your client for them the first time you use this; declining refuses the call and
+is not asked again.`;
 
 /** Renders the result as the short text an agent or a human reads first. */
 export function summarizeStudioLogs(result: ReadStudioLogsResult): string {
@@ -100,7 +104,11 @@ export function summarizeStudioLogs(result: ReadStudioLogsResult): string {
  * want. The trade is stated rather than hidden: it is experimental, it is off
  * unless asked for, and its privacy rule is an allowlist that fails closed.
  */
-export function registerReadStudioLogs(server: McpServer, policy: PolicyBoundary): void {
+export function registerReadStudioLogs(
+  server: McpServer,
+  policy: PolicyBoundary,
+  asker: SetupAsker = new SetupAsker(),
+): void {
   server.registerTool(
     READ_STUDIO_LOGS_TOOL,
     {
@@ -118,7 +126,31 @@ export function registerReadStudioLogs(server: McpServer, policy: PolicyBoundary
     async ({ gameId, maxLines, tableId }) => {
       try {
         const structuredContent = await policy.runWithTimeout(READ_STUDIO_LOGS_TOOL, async () => {
-          const ownAccounts = policy.config.studioDevAccounts;
+          // The gates first: being asked for dev accounts by a capability that
+          // is switched off would be a question with no useful answer.
+          await policy.assertStudioAvailable();
+
+          let ownAccounts = policy.studioDevAccounts;
+          if (ownAccounts.length === 0) {
+            // Nothing could ever be returned without this, so it is worth
+            // asking rather than refusing and hoping the developer reads why.
+            const asked = await asker.askForList(
+              server,
+              'studio-dev-accounts',
+              'Which BGA Studio dev accounts do you own? Only log lines about these accounts will be returned; everything else is withheld.',
+              'accounts',
+            );
+            if (asked.kind === 'answered') {
+              policy.rememberStudioAccounts(asked.values);
+              ownAccounts = policy.studioDevAccounts;
+            }
+          }
+          if (ownAccounts.length === 0) {
+            throw new BgaMcpError(
+              ERROR_CODES.policyStudioNotAllowed,
+              'No Studio dev accounts are known, so no log line could be returned. Start the server with --studio-dev-account <name>, or answer the question when your client asks.',
+            );
+          }
           const page = await policy.fetchStudioPage({
             path: 'studiogame',
             params: { game: gameId },

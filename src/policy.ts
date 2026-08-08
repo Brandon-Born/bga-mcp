@@ -185,6 +185,8 @@ export class PolicyBoundary {
   readonly #resolvedRoots: readonly string[];
   /** Roots the client offered, resolved and checked exactly like configured ones. */
   #clientRoots: readonly string[] = [];
+  /** Dev accounts supplied during the session, alongside configured ones. */
+  #askedStudioAccounts: readonly string[] = [];
   #requestClientRoots: (() => Promise<readonly string[]>) | undefined;
   #clientRootsFetched = false;
   /** The reviewed documentation catalog, read once and kept for the process. */
@@ -253,6 +255,31 @@ export class PolicyBoundary {
   setClientRootsProvider(provider: () => Promise<readonly string[]>): void {
     this.#requestClientRoots = provider;
     this.#clientRootsFetched = false;
+  }
+
+  /**
+   * Records dev accounts the developer supplied when asked.
+   *
+   * They are session state, not configuration: nothing is written anywhere,
+   * and a restart asks again. The privacy rule reads this list exactly as it
+   * reads the configured one, so an account supplied here is not trusted more
+   * than one passed on the command line.
+   */
+  rememberStudioAccounts(accounts: readonly string[]): void {
+    this.#askedStudioAccounts = [
+      ...this.#askedStudioAccounts,
+      ...accounts.filter((account) => !this.#askedStudioAccounts.includes(account)),
+    ];
+  }
+
+  /** Configured accounts plus any supplied during this session. */
+  get studioDevAccounts(): readonly string[] {
+    return [
+      ...this.#config.studioDevAccounts,
+      ...this.#askedStudioAccounts.filter(
+        (account) => !this.#config.studioDevAccounts.includes(account),
+      ),
+    ];
   }
 
   /** Forgets adopted roots, so the next use asks the client again. */
@@ -841,18 +868,7 @@ export class PolicyBoundary {
     request: StudioPageRequest,
     options: { readonly signal?: AbortSignal; readonly maxBytes?: number } = {},
   ): Promise<StudioPageResponse> {
-    this.assertNetworkAllowed('studio');
-    if (!this.#config.experimentalStudioLogs) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyStudioDisabled,
-        'Studio access is experimental and disabled. Start the server with --experimental-studio-logs to enable it.',
-      );
-    }
-
-    const session = await this.studioSession();
-    if (session === null) {
-      throw new PolicyViolationError(ERROR_CODES.policyStudioNoSession, missingSessionMessage());
-    }
+    const session = await this.assertStudioAvailable();
 
     if (
       request.path.startsWith('/') ||
@@ -908,6 +924,28 @@ export class PolicyBoundary {
       body: result.body,
       retrievedAt: new Date().toISOString(),
     };
+  }
+
+  /**
+   * Checks the gates that must hold before Studio is touched at all.
+   *
+   * Separate from the fetch so a caller can refuse for the right reason before
+   * doing anything else — asking a developer for their dev accounts when the
+   * capability is switched off would be asking for something useless.
+   */
+  async assertStudioAvailable(): Promise<string> {
+    this.assertNetworkAllowed('studio');
+    if (!this.#config.experimentalStudioLogs) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyStudioDisabled,
+        'Studio access is experimental and disabled. Start the server with --experimental-studio-logs to enable it.',
+      );
+    }
+    const session = await this.studioSession();
+    if (session === null) {
+      throw new PolicyViolationError(ERROR_CODES.policyStudioNoSession, missingSessionMessage());
+    }
+    return session;
   }
 
   /**
