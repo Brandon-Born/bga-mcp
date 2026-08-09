@@ -5,3 +5,7 @@ coverage/
 conformance-results/
 pnpm-lock.yaml
 LICENSE
+
+# Captured third-party pages. Reformatting a capture would make it no longer
+# what the source served, which is the only thing it is for.
+tests/fixtures/docs/*.html

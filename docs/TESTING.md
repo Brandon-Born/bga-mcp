@@ -40,6 +40,19 @@ The official MCP Inspector CLI may provide an additional independent client chec
 
 The small executable-only `src/cli.ts` boundary is excluded from in-process V8 line coverage because importing it starts stdio service. Its help, version, invalid-argument, startup, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.
 
+#### Scripted third-party sources
+
+A packaged suite may answer the server's outbound requests from a source the test scripts, and only for a source the project does not own. Nobody can ask a third party's wiki to lose DNS, stall, answer one page and not another, or serve the revision it published four months ago — and those are the conditions under which a documentation capability has most to get wrong. `tests/e2e/doc-network-stub.ts` replaces the connection factory for exactly that reason.
+
+Such a suite is still end-to-end in every part this policy names: it installs the packed artifact, launches it as a subprocess, speaks the protocol through a real client, discovers the capability, calls it through its public schema, and asserts the complete response. What is scripted is the other party, not the boundary under test.
+
+Two rules keep it from becoming a mock of the thing being measured:
+
+- **It is never evidence about the transport it replaced.** TLS, the address guard, and name resolution are gone along with the socket, so no scenario in such a suite may stand behind a claim about them. Those claims are proven where they are enforced, and their scenarios live elsewhere.
+- **What it serves is captured, not invented, wherever the content is the point.** A page under `tests/fixtures/docs/` is a recorded fragment of the real page with its provenance written down; synthetic content is used only where the shape rather than the text is what a case turns on, and the assertion says so.
+
+A live run against the real source stays the periodic truth check — `pnpm test:docs-eval` and `pnpm test:framework-version` — because a scripted source can only prove that a known answer is read correctly.
+
 ### Live Studio end-to-end tests
 
 Capabilities that connect to BGA Studio must run against a dedicated, non-production Studio test project with isolated credentials and data. Mock SFTP servers, recorded responses, and local browser fixtures are integration tests, not proof of live compatibility.

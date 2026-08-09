@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, provenanceOf, retrieveDocumentation } from '../docs/retrieve.js';
-import { parseSearchResponse, searchParams } from '../docs/search.js';
+import { readSearchResponse, searchParams } from '../docs/search.js';
 import { topicForQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
@@ -54,12 +54,31 @@ const ResultSchema = z.strictObject({
   trust: z.literal('untrusted-content'),
 });
 
+const FailureSchema = z.strictObject({
+  sourceId: z.string(),
+  /** Whether the source could not be searched at all, or one page of it failed. */
+  scope: z.enum(['source', 'page']),
+  code: z.string(),
+});
+
 export const SearchBgaDocsOutputSchema = z.strictObject({
   schemaVersion: z.literal(1),
   query: z.string(),
   results: z.array(ResultSchema),
-  /** Sources searched, so an empty result is distinguishable from none tried. */
+  /**
+   * Sources whose search endpoint or page content was actually read.
+   *
+   * Not the sources that were eligible. An empty result is only "nothing
+   * matched" for the sources named here; for the rest it is "nothing was
+   * asked", which is a different answer to give a developer.
+   */
   sourcesSearched: z.array(z.string()),
+  /** Sources a request was made to, whether or not it answered. */
+  sourcesAttempted: z.array(z.string()),
+  /** What failed, per source, when anything did. */
+  failures: z.array(FailureSchema),
+  /** True when part of the search could not be completed. */
+  degraded: z.boolean(),
   notice: z.string(),
 });
 
@@ -125,10 +144,28 @@ Requires --allow-network. A query containing a filesystem path or pasted source
 is refused rather than sent, so local work does not leave the machine inside a
 search term.`;
 
+/** Says what could not be read, when something could not be. */
+function degradationNote(result: SearchBgaDocsResult): string | null {
+  if (!result.degraded) {
+    return null;
+  }
+  const sources = result.failures.filter((failure) => failure.scope === 'source').length;
+  const pages = result.failures.filter((failure) => failure.scope === 'page').length;
+  const parts = [
+    sources === 0 ? null : `${String(sources)} source(s) could not be searched`,
+    pages === 0 ? null : `${String(pages)} page(s) could not be read`,
+  ].filter((part) => part !== null);
+  return `Partial result: ${parts.join(' and ')}, so this is less than the documentation holds.`;
+}
+
 /** Renders the results as the short text an agent or a human reads first. */
 export function summarizeSearch(result: SearchBgaDocsResult): string {
+  const note = degradationNote(result);
   if (result.results.length === 0) {
-    return `No documentation matched "${result.query}" in ${result.sourcesSearched.join(', ')}.`;
+    // Naming the sources that were searched keeps "nothing matched" from being
+    // read as "nothing exists": it is a statement about what was asked.
+    const empty = `No documentation matched "${result.query}" in ${result.sourcesSearched.join(', ')}.`;
+    return note === null ? empty : `${empty}\n${note}`;
   }
   const lines = result.results.map((entry) => {
     const age = entry.stale
@@ -139,6 +176,7 @@ export function summarizeSearch(result: SearchBgaDocsResult): string {
   return [
     `${String(result.results.length)} documentation result(s) for "${result.query}":`,
     ...lines,
+    ...(note === null ? [] : [note]),
     UNTRUSTED_NOTICE,
   ].join('\n');
 }
@@ -183,8 +221,32 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             );
           }
 
+          // A source with no search endpoint of its own is reached through the
+          // topic table, not by asking it a question. Saying so is better than
+          // answering "nothing matched" for a source nothing was asked of.
+          if (sourceId !== undefined && !(sources[0]?.canonicalUrl.endsWith('/') ?? false)) {
+            throw new BgaMcpError(
+              ERROR_CODES.policyDocSourceNotAllowed,
+              'That documentation source has no search endpoint. Its pages are reachable through the bga://docs/{topic} resources.',
+              { details: { sourceId } },
+            );
+          }
+
           const results: z.infer<typeof ResultSchema>[] = [];
           const seen = new Set<string>();
+          // What was asked of whom, and what came back. Every exit from here
+          // reports these rather than the list of sources that existed.
+          const attempted = new Set<string>();
+          const searched = new Set<string>();
+          const failures: z.infer<typeof FailureSchema>[] = [];
+          const record = (source: string, scope: 'source' | 'page', error: unknown): void => {
+            const code = (error as { code?: unknown }).code;
+            failures.push({
+              sourceId: source,
+              scope,
+              code: typeof code === 'string' ? code : ERROR_CODES.internalUnexpected,
+            });
+          };
 
           // A matched topic knows the words that matter for its subject, which
           // the developer's question usually does not contain: "where does the
@@ -200,7 +262,11 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             fallbackTitle: string,
             lastEdited: string | null,
           ): Promise<void> => {
+            attempted.add(source.id);
             const page = await policy.fetchDocumentation({ sourceId: source.id, path });
+            // The page was read. Whether it turns out to match is a separate
+            // question from whether this source was successfully searched.
+            searched.add(source.id);
             if (seen.has(page.url)) {
               return;
             }
@@ -264,6 +330,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
                 if (!isPageLevelFailure(error)) {
                   throw error;
                 }
+                record(topicSource.id, 'page', error);
               });
             }
           }
@@ -280,14 +347,27 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             }
 
             try {
+              attempted.add(source.id);
               const response = await policy.fetchDocumentation({
                 sourceId: source.id,
                 path: 'api.php',
                 query,
                 params: searchParams(query, limit),
               });
+              const answer = readSearchResponse(response.body, limit - results.length);
+              if (answer.unreadable !== null) {
+                // A response nobody can read is a failed search, not a search
+                // that found nothing. Treating the two alike is what made an
+                // outage look like an answer.
+                throw new BgaMcpError(
+                  ERROR_CODES.policyDocFetchFailed,
+                  `The documentation search could not be read: ${answer.unreadable}.`,
+                  { details: { sourceId: source.id } },
+                );
+              }
+              searched.add(source.id);
 
-              for (const hit of parseSearchResponse(response.body, limit - results.length)) {
+              for (const hit of answer.hits) {
                 if (results.length >= limit) {
                   break;
                 }
@@ -297,6 +377,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
                     if (!isPageLevelFailure(error)) {
                       throw error;
                     }
+                    record(source.id, 'page', error);
                   },
                 );
               }
@@ -306,14 +387,31 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               if (!isPageLevelFailure(error)) {
                 throw error;
               }
+              record(source.id, 'source', error);
             }
+          }
+
+          if (searched.size === 0 && attempted.size > 0) {
+            // Nothing answered. Reporting this as an empty result would say
+            // the documentation does not cover the question, which is a claim
+            // this call has no basis for.
+            throw new BgaMcpError(
+              ERROR_CODES.policyDocFetchFailed,
+              `No documentation source could be reached, so this is a failed lookup rather than an empty one: ${failures
+                .map((failure) => `${failure.sourceId} (${failure.code})`)
+                .join(', ')}.`,
+              { details: { sourcesAttempted: [...attempted], failures } },
+            );
           }
 
           return {
             schemaVersion: 1 as const,
             query,
             results,
-            sourcesSearched: sources.map((source) => source.id),
+            sourcesSearched: [...searched],
+            sourcesAttempted: [...attempted],
+            failures,
+            degraded: failures.length > 0,
             notice: UNTRUSTED_NOTICE,
           };
         });

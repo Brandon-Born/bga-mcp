@@ -3,8 +3,7 @@ import { ResourceTemplate, type McpServer } from '@modelcontextprotocol/server';
 import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, retrieveDocumentation } from '../docs/retrieve.js';
 import { DOCUMENTATION_TOPICS, topicFor, topicNames } from '../docs/topics.js';
-import { parseFrameworkVersions } from '../docs/versions.js';
-import { htmlToText } from '../docs/excerpt.js';
+import { readFrameworkVersions } from '../docs/versions.js';
 import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 
@@ -136,17 +135,23 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
         }
 
         const page = await policy.fetchDocumentation({ sourceId: source.id, path: 'Studio' });
-        const versions = parseFrameworkVersions(htmlToText(page.body));
+        // Read from the markup, not the flattened text: the heading is what
+        // bounds the section, and the same words appear in the page's own
+        // table of contents.
+        const reading = readFrameworkVersions(page.body);
         return {
           schemaVersion: 1,
           // Unknown is a result, not a failure: a wrong version is worse than
           // no version to a developer choosing which syntax to write.
-          status: versions.length === 0 ? 'unknown' : 'read',
-          reason:
-            versions.length === 0
-              ? 'The Studio page did not contain a readable software versions section.'
-              : null,
-          versions,
+          status: reading.status,
+          reason: reading.reason,
+          /** The heading the reading is anchored to, so the anchor is checkable. */
+          heading: reading.heading,
+          versions: reading.versions,
+          // Stated rather than resolved: the page lists two Font Awesome
+          // versions and two SQL environments, and picking one would be this
+          // server inventing a fact the source does not state.
+          conflicts: reading.conflicts,
           url: page.url,
           sourceId: source.id,
           authority: source.authority,

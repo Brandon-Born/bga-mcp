@@ -71,7 +71,7 @@ Adapters for external systems require an additional live harness. A Studio-backe
 - `bga://project/states` (implemented; verification reopened)
 - `bga://project/diagnostics` (implemented; verification reopened)
 - `bga://docs/{topic}` (implemented; live relevance failing)
-- `bga://framework/version` (implemented; live extraction bug)
+- `bga://framework/version` (implemented; reads the rendered section, awaiting CI evidence)
 
 ### Read-only tools
 

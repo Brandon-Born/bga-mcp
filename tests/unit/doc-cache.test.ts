@@ -1,8 +1,7 @@
 import { DocumentationCache, ageInDays, type DocumentationEntry } from '../../src/docs/cache.js';
 import { excerptFor, htmlToText, titleOf } from '../../src/docs/excerpt.js';
 import { provenanceOf, retrieveDocumentation } from '../../src/docs/retrieve.js';
-import { parseSearchResponse, pathForTitle, searchParams } from '../../src/docs/search.js';
-import { parseFrameworkVersions } from '../../src/docs/versions.js';
+import { readSearchResponse, pathForTitle, searchParams } from '../../src/docs/search.js';
 
 const NOW = new Date('2026-08-07T12:00:00.000Z');
 
@@ -272,7 +271,7 @@ describe('documentation search results', () => {
       },
     });
 
-    const hits = parseSearchResponse(body, 5);
+    const { hits } = readSearchResponse(body, 5);
     expect(hits).toHaveLength(2);
     expect(hits[0]).toMatchObject({
       title: 'State classes: State directory',
@@ -291,27 +290,39 @@ describe('documentation search results', () => {
     // rejects. Unhandled, the whole response fails and the search returns
     // nothing — a wrong answer wearing the costume of no answer.
     const body = '{"query":{"search":[{"title":"State classes","snippet":"one\ntwo\ttab"}]}}';
-    const hits = parseSearchResponse(body, 5);
+    const { hits } = readSearchResponse(body, 5);
     expect(hits).toHaveLength(1);
     expect(hits[0]?.snippet).toContain('one');
     expect(hits[0]?.snippet).toContain('two');
   });
 
-  it('[UNIT-DOC-SEARCH-PARSE] survives a response that is empty, malformed, or incomplete', () => {
-    expect(parseSearchResponse('not json', 5)).toEqual([]);
-    expect(parseSearchResponse('{}', 5)).toEqual([]);
-    expect(parseSearchResponse(JSON.stringify({ query: { search: 'nope' } }), 5)).toEqual([]);
+  it('[UNIT-DOC-SEARCH-PARSE] separates a response it cannot read from one with no hits', () => {
+    // Both return no hits, and they mean opposite things: one is the wiki
+    // saying nothing matched, the other is the wiki not answering. Reported
+    // alike, an outage comes back as "no documentation matched".
+    expect(readSearchResponse('not json', 5).unreadable).toBe(
+      'the source did not answer with JSON',
+    );
+    expect(readSearchResponse('{}', 5).unreadable).toBe('the answer carried no search results');
+    expect(
+      readSearchResponse(JSON.stringify({ query: { search: 'nope' } }), 5).unreadable,
+    ).not.toBeNull();
+
+    const none = readSearchResponse(JSON.stringify({ query: { search: [] } }), 5);
+    expect(none.hits).toEqual([]);
+    expect(none.unreadable).toBeNull();
+
     // A hit with no title cannot be cited or fetched, so it is dropped rather
     // than shown with a gap where the source should be.
     const partial = JSON.stringify({ query: { search: [{ snippet: 'orphan' }, { title: 'Ok' }] } });
-    expect(parseSearchResponse(partial, 5).map((hit) => hit.title)).toEqual(['Ok']);
+    expect(readSearchResponse(partial, 5).hits.map((hit) => hit.title)).toEqual(['Ok']);
   });
 
   it('[UNIT-DOC-SEARCH-PARSE] honours the result limit and keeps only fixed parameters', () => {
     const body = JSON.stringify({
       query: { search: [{ title: 'A' }, { title: 'B' }, { title: 'C' }] },
     });
-    expect(parseSearchResponse(body, 2)).toHaveLength(2);
+    expect(readSearchResponse(body, 2).hits).toHaveLength(2);
 
     const params = searchParams('state classes', 3);
     // Only the query varies; everything else is a constant this code chose.
@@ -322,38 +333,5 @@ describe('documentation search results', () => {
     expect(params.srwhat).toBe('text');
     expect(params.srsearch).toBe('state classes');
     expect(pathForTitle('Game interface logic: Game.js')).toBe('Game_interface_logic:_Game.js');
-  });
-});
-
-describe('framework versions', () => {
-  it('[UNIT-DOC-FRAMEWORK-VERSION] reads the published versions and nothing else', () => {
-    const text = [
-      'BGA Studio',
-      'Software Versions',
-      'Dojo Toolkit: 1.15 - deprecated, avoid at all cost',
-      'PHP: 8.4',
-      'SQL: MySQL 5.7 (prod) - on studio 8.0',
-      'Font Awesome: 4.7 and 6.4.0',
-      'Getting started',
-      'Some prose that follows the section.',
-    ].join('\n');
-
-    const versions = parseFrameworkVersions(text);
-    expect(versions.map((entry) => [entry.software, entry.version])).toEqual([
-      ['Dojo Toolkit', '1.15 - deprecated, avoid at all cost'],
-      ['PHP', '8.4'],
-      ['SQL', 'MySQL 5.7 (prod) - on studio 8.0'],
-      ['Font Awesome', '4.7 and 6.4.0'],
-    ]);
-    // The line is kept so a developer can check the reading rather than trust it.
-    expect(versions[1]?.statedAs).toBe('PHP: 8.4');
-  });
-
-  it('[UNIT-DOC-FRAMEWORK-VERSION] reports nothing rather than guessing when the section is absent', () => {
-    // A wrong version is worse than no version to a developer choosing syntax.
-    expect(parseFrameworkVersions('BGA Studio\nGetting started\nNo versions here.')).toEqual([]);
-    expect(parseFrameworkVersions('')).toEqual([]);
-    // A section with prose but no versions yields no facts.
-    expect(parseFrameworkVersions('Software Versions\nWe run current software.')).toEqual([]);
   });
 });

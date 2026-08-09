@@ -185,7 +185,15 @@
           "E2E-DOCS-ADVERTISED",
           "INT-DOCS-NETWORK-OFF",
           "INT-DOCS-REFUSALS",
-          "INT-DOCS-SUMMARY"
+          "INT-DOCS-SUMMARY",
+          "E2E-DOCS-ALL-SOURCES-UNREACHABLE",
+          "E2E-DOCS-ALL-SOURCES-TIMEOUT",
+          "E2E-DOCS-SOURCE-DEGRADED",
+          "E2E-DOCS-PAGE-DEGRADED",
+          "E2E-DOCS-SEARCH-UNREADABLE",
+          "E2E-DOCS-NO-MATCH",
+          "E2E-DOCS-SOURCE-WITHOUT-SEARCH",
+          "UNIT-DOC-SEARCH-PARSE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
@@ -327,7 +335,12 @@
           "E2E-FRAMEWORK-VERSION-LISTED",
           "E2E-FRAMEWORK-VERSION-NETWORK-OFF",
           "UNIT-DOC-FRAMEWORK-VERSION",
-          "INT-DOCS-NETWORK-OFF"
+          "INT-DOCS-NETWORK-OFF",
+          "UNIT-DOC-FRAMEWORK-VERSION-ANCHOR",
+          "E2E-FRAMEWORK-VERSION-CURRENT",
+          "E2E-FRAMEWORK-VERSION-STALE",
+          "E2E-FRAMEWORK-VERSION-MISSING",
+          "E2E-FRAMEWORK-VERSION-CONFLICTING"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",

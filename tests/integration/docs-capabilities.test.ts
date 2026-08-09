@@ -116,12 +116,33 @@ describe('documentation capabilities', () => {
       query: 'nothing',
       results: [],
       sourcesSearched: ['bga-studio-framework-reference'],
+      sourcesAttempted: ['bga-studio-framework-reference'],
+      failures: [],
+      degraded: false,
       notice: 'notice',
     });
     // An empty result says where it looked, so no result is distinguishable
     // from nothing having been tried.
     expect(empty).toContain('No documentation matched');
     expect(empty).toContain('bga-studio-framework-reference');
+    expect(empty).not.toContain('Partial result');
+
+    // A result short of what the documentation holds says so, in the text a
+    // client shows as well as in the fields it may never read.
+    const partial = summarizeSearch({
+      schemaVersion: 1,
+      query: 'nothing',
+      results: [],
+      sourcesSearched: ['bga-studio-framework-reference'],
+      sourcesAttempted: ['bga-studio-framework-reference', 'bga-studio-community-pages'],
+      failures: [
+        { sourceId: 'bga-studio-community-pages', scope: 'page', code: 'policy.doc-fetch.failed' },
+      ],
+      degraded: true,
+      notice: 'notice',
+    });
+    expect(partial).toContain('Partial result');
+    expect(partial).toContain('1 page(s) could not be read');
 
     const summary = summarizeSearch({
       schemaVersion: 1,
@@ -145,6 +166,9 @@ describe('documentation capabilities', () => {
         },
       ],
       sourcesSearched: ['bga-studio-framework-reference'],
+      sourcesAttempted: ['bga-studio-framework-reference'],
+      failures: [],
+      degraded: false,
       notice: 'notice',
     });
     expect(summary).toContain('(official, 40 days old, stale)');

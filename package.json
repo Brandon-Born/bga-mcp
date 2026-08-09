@@ -55,6 +55,7 @@
     "test:coverage": "vitest run --coverage --reporter=default --reporter=json --outputFile.json=.artifacts/test-results.json",
     "test:conformance": "tsx scripts/run-conformance.ts",
     "test:docs-eval": "tsx scripts/run-doc-evaluation.ts",
+    "test:framework-version": "tsx scripts/check-framework-version.ts",
     "docs:drift": "tsx scripts/check-doc-drift.ts",
     "test:fixtures": "vitest run tests/fixture-integrity.test.ts",
     "verify:quality-gates": "tsx scripts/verify-quality-gates.ts",

@@ -39,7 +39,7 @@ It also serves three read-only resources describing the single configured projec
 
 Available behind explicit network permission, implemented but not verified:
 
-- `search_bga_docs`, seven fixed documentation-topic resources, and `bga://framework/version`. The maintained live evaluation currently fails, and the version resource has a confirmed extraction bug; see BGA-209 through BGA-211.
+- `search_bga_docs`, seven fixed documentation-topic resources, and `bga://framework/version`. A search that could not reach a source now fails as a failed lookup instead of reporting that nothing matched, and it reports what it searched, what it attempted, and what failed. The version resource reads the Studio page's `Software Versions` section, returns every value with the line it came from, and states a disagreement rather than picking one. The maintained live retrieval evaluation still fails on excerpt selection; see BGA-211.
 
 Also available:
 

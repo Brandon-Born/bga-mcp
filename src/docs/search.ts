@@ -34,22 +34,37 @@ export function pathForTitle(title: string): string {
     .replaceAll('%2F', '/');
 }
 
+export interface SearchResponse {
+  readonly hits: readonly SearchHit[];
+  /**
+   * Why the response could not be read, when it could not be.
+   *
+   * Separate from an empty `hits` on purpose. A search that answered "nothing
+   * matched" and a search that did not answer at all are different facts, and
+   * reporting the second as the first is how an outage came back as "no
+   * documentation matched".
+   */
+  readonly unreadable: string | null;
+}
+
 /**
- * Parses the API response, keeping only hits that are complete.
+ * Reads the API response, keeping only hits that are complete.
  *
  * A hit missing its title cannot be cited or fetched, so it is dropped rather
  * than shown with a gap where the source should be.
  */
-export function parseSearchResponse(body: string, limit: number): readonly SearchHit[] {
+export function readSearchResponse(body: string, limit: number): SearchResponse {
   let parsed: unknown;
   try {
     parsed = JSON.parse(sanitizeJson(body));
   } catch {
-    return [];
+    return { hits: [], unreadable: 'the source did not answer with JSON' };
   }
   const search = (parsed as { query?: { search?: unknown } }).query?.search;
   if (!Array.isArray(search)) {
-    return [];
+    // A search that ran carries a result list, even an empty one. Anything
+    // else is the API refusing, erroring, or having been replaced.
+    return { hits: [], unreadable: 'the answer carried no search results' };
   }
 
   const hits: SearchHit[] = [];
@@ -69,7 +84,7 @@ export function parseSearchResponse(body: string, limit: number): readonly Searc
       break;
     }
   }
-  return hits;
+  return { hits, unreadable: null };
 }
 
 /**

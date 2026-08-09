@@ -483,6 +483,101 @@
       "case": "A state declared in both sources is taken from the class",
       "boundary": "packaged",
       "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-204",
+      "case": "Unknown or stale version data is labeled",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-MISSING", "E2E-FRAMEWORK-VERSION-STALE"]
+    },
+    {
+      "item": "BGA-204",
+      "case": "No value is guessed from examples or historical fixtures",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-STALE", "E2E-FRAMEWORK-VERSION-CURRENT"]
+    },
+    {
+      "item": "BGA-204",
+      "case": "Resource evidence covers current, stale, missing, and conflicting source snapshots",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-FRAMEWORK-VERSION-CURRENT",
+        "E2E-FRAMEWORK-VERSION-STALE",
+        "E2E-FRAMEWORK-VERSION-MISSING",
+        "E2E-FRAMEWORK-VERSION-CONFLICTING"
+      ]
+    },
+    {
+      "item": "BGA-209",
+      "case": "One failed page or source may degrade a search only when at least one other page or source was successfully searched",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-DOCS-SOURCE-DEGRADED",
+        "E2E-DOCS-PAGE-DEGRADED",
+        "E2E-DOCS-ALL-SOURCES-UNREACHABLE"
+      ]
+    },
+    {
+      "item": "BGA-209",
+      "case": "With zero successful fetches the tool returns an actionable failure, not a successful empty result",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-DOCS-ALL-SOURCES-UNREACHABLE",
+        "E2E-DOCS-ALL-SOURCES-TIMEOUT",
+        "E2E-DOCS-SEARCH-UNREADABLE"
+      ]
+    },
+    {
+      "item": "BGA-209",
+      "case": "sourcesSearched contains only sources whose search endpoint or page content was actually processed",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-DOCS-SOURCE-DEGRADED",
+        "E2E-DOCS-NO-MATCH",
+        "E2E-DOCS-SOURCE-WITHOUT-SEARCH"
+      ]
+    },
+    {
+      "item": "BGA-209",
+      "case": "A genuine successful search with no hits remains a normal empty result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-NO-MATCH"]
+    },
+    {
+      "item": "BGA-209",
+      "case": "A failure reports its stable code and safe context without project data",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-ALL-SOURCES-UNREACHABLE", "E2E-DOCS-SEARCH-UNREADABLE"]
+    },
+    {
+      "item": "BGA-210",
+      "case": "Table-of-contents links, navigation, forum URLs, dates, and unrelated prose can never become software versions",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-CURRENT"]
+    },
+    {
+      "item": "BGA-210",
+      "case": "The parser recognizes the maintained list's punctuation and multiple environment values",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-CURRENT"]
+    },
+    {
+      "item": "BGA-210",
+      "case": "Conflicting values are reported rather than resolved into one",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-CONFLICTING"]
+    },
+    {
+      "item": "BGA-210",
+      "case": "The reading is unknown when the heading or the parseable list is absent",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-MISSING"]
+    },
+    {
+      "item": "BGA-210",
+      "case": "Every returned value has a source line and a snapshot date",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-VERSION-CURRENT"]
     }
   ]
 }
