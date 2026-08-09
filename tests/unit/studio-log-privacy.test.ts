@@ -1,5 +1,10 @@
 import { parseStudioLog, parseStudioLogLine } from '../../src/studio/logline.js';
-import { screenLine, screenStudioLog, withheldAny } from '../../src/studio/privacy.js';
+import {
+  publishStudioText,
+  screenLine,
+  screenStudioLog,
+  withheldAny,
+} from '../../src/studio/privacy.js';
 
 const OWN = ['mytest0', 'mytest1'];
 
@@ -70,6 +75,45 @@ describe('studio log privacy screen', () => {
 
     const session = parseStudioLogLine('20/06 21:50:56 [info] [T403] [4/mytest0] PHPSESSID abc123');
     expect(screenLine(session, OWN)).toBe('sensitive');
+  });
+
+  it('[UNIT-STUDIO-PUBLISH-SCREEN] keeps every withheld value, so publication can prove it left', () => {
+    const result = screenStudioLog(parseStudioLog(LOG), OWN);
+
+    // The screen decides; this is what lets the publication boundary check that
+    // the decision survived being formatted into a sentence.
+    expect(result.withheldValues).toContain('RealPlayer');
+    expect(result.withheldValues.some((value) => value.includes('playCard.html'))).toBe(true);
+    expect(result.withheldValues.some((value) => value.includes('mytest0'))).toBe(false);
+  });
+
+  it('[UNIT-STUDIO-PUBLISH-SCREEN] removes a withheld value from any text about to be published', () => {
+    const result = screenStudioLog(parseStudioLog(LOG), OWN);
+    const leaky = 'The page shows lines for: RealPlayer. Check --studio-dev-account.';
+
+    const published = publishStudioText(leaky, result.withheldValues);
+    expect(published).not.toContain('RealPlayer');
+    expect(published).toContain('[withheld]');
+    // The rest of the sentence still says what to do about it.
+    expect(published).toContain('--studio-dev-account');
+  });
+
+  it('[UNIT-STUDIO-PUBLISH-SCREEN] removes a whole withheld line rather than its name alone', () => {
+    const foreign = '20/06 21:51:02 [info] [T998] [77/RealPlayer] /cinco/cinco/playCard.html?id=77';
+    const result = screenStudioLog(parseStudioLog(foreign), OWN);
+
+    // Replacing the shortest match first would leave the surrounding line
+    // behind, which is the leak with the name filed off.
+    const published = publishStudioText(`saw: ${foreign}`, result.withheldValues);
+    expect(published).toBe('saw: [withheld]');
+  });
+
+  it('[UNIT-STUDIO-PUBLISH-SCREEN] leaves text alone when nothing was withheld', () => {
+    const own = '20/06 21:50:56 [info] [T403] [4/mytest0] OK-0 169';
+    const result = screenStudioLog(parseStudioLog(own), OWN);
+
+    expect(result.withheldValues).toEqual([]);
+    expect(publishStudioText(own, result.withheldValues)).toBe(own);
   });
 
   it('[UNIT-STUDIO-LOG-PRIVACY] matches an account name exactly, not by prefix', () => {

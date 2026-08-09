@@ -125,7 +125,7 @@ describe('studio setup check against a page', () => {
     expect(report.lines.at(-1)?.fix).toContain('loaded separately');
   });
 
-  it('[INT-STUDIO-CHECK-PAGE] names the accounts it can see when none of them are yours', async () => {
+  it('[INT-STUDIO-CHECK-OWN-DATA] says none matched without naming whose lines they are', async () => {
     const report = await checkStudioSetup(await ready(), '1234', () =>
       Promise.resolve({
         url: 'https://studio.boardgamearena.com/studiogame',
@@ -134,9 +134,34 @@ describe('studio setup check against a page', () => {
     );
 
     expect(report.ok).toBe(false);
-    // The failure that used to be an empty result now says what to compare against.
-    expect(report.lines.at(-1)?.fix).toContain('someoneelse');
+    // This check used to print the names it found, which is the fastest way to
+    // fix a typo and also a way to publish another developer's — or a real
+    // player's — name to a terminal and every log that records it.
+    const published = `${JSON.stringify(report)}\n${formatStudioCheck(report)}`;
+    expect(published).not.toContain('someoneelse');
+    expect(published).not.toContain('playCard');
+    // Still actionable: a count separates a typo from a page with no lines,
+    // and it says where the right name comes from.
+    expect(report.lines.at(-1)?.text).toContain('none belong to a declared account');
+    expect(report.lines.at(-1)?.fix).toContain('1 attributed line(s) were found');
     expect(report.lines.at(-1)?.fix).toContain('--studio-dev-account');
+  });
+
+  it('[INT-STUDIO-CHECK-OWN-DATA] counts your own lines and withholds the rest', async () => {
+    const report = await checkStudioSetup(await ready(), '1234', () =>
+      Promise.resolve({
+        url: 'https://studio.boardgamearena.com/studiogame',
+        body: `<pre>${OWN_LINE}\n${OTHER_LINE}\nPHP Fatal error: something exploded</pre>`,
+      }),
+    );
+
+    expect(report.ok).toBe(true);
+    const published = `${JSON.stringify(report)}\n${formatStudioCheck(report)}`;
+    expect(published).not.toContain('someoneelse');
+    expect(published).not.toContain('something exploded');
+    // Nor is the developer's own line published by a check that was only asked
+    // whether the setup works.
+    expect(published).not.toContain('SELECT player_id');
   });
 
   it('[INT-STUDIO-CHECK-PAGE] reports what would be returned and what would be withheld', async () => {

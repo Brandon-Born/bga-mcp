@@ -59,7 +59,7 @@
       {
         "name": "audit_database_usage",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -103,7 +103,7 @@
       {
         "name": "inspect_project",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -157,7 +157,10 @@
           "INT-STUDIO-SUMMARY",
           "INT-SETUP-ASK-ANSWERED",
           "INT-SETUP-ASK-DECLINED",
-          "INT-SETUP-ASK-UNSUPPORTED"
+          "INT-SETUP-ASK-UNSUPPORTED",
+          "INT-STUDIO-CHECK-OWN-DATA",
+          "UNIT-STUDIO-PUBLISH-SCREEN",
+          "E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ",
@@ -166,7 +169,7 @@
       {
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -218,7 +221,7 @@
       {
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -245,7 +248,7 @@
       {
         "name": "validate_notifications",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -272,7 +275,7 @@
       {
         "name": "validate_project",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -295,7 +298,7 @@
       {
         "name": "validate_state_machine",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -365,7 +368,7 @@
       {
         "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -384,7 +387,7 @@
       {
         "name": "bga://project/states",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -404,7 +407,7 @@
       {
         "name": "bga://project/summary",
         "owner": "Brandon Born",
-        "stability": "verified",
+        "stability": "implemented",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],

@@ -1,7 +1,7 @@
 {
   "$schema": "./threat-model.schema.json",
   "schemaVersion": 1,
-  "reviewedAt": "2026-08-08",
+  "reviewedAt": "2026-08-09",
   "assets": [
     {
       "id": "ASSET-LOCAL-SOURCE",
@@ -89,28 +89,36 @@
       "name": "MCP client to server",
       "description": "Tool arguments and resource URIs crossing into the server process.",
       "status": "reviewed",
-      "gates": ["local-read"]
+      "gates": ["local-read"],
+      "crossedBy": "named",
+      "reviewedAt": "2026-08-06"
     },
     {
       "id": "TB-LOCAL-FILESYSTEM",
       "name": "Server to local filesystem",
       "description": "Every path the server resolves, opens, or lists on the developer machine.",
       "status": "reviewed",
-      "gates": ["local-read"]
+      "gates": ["local-read"],
+      "crossedBy": "named",
+      "reviewedAt": "2026-08-06"
     },
     {
       "id": "TB-PROCESS",
       "name": "Server process perimeter",
       "description": "Subprocess execution, environment access, and long-running work inside the server.",
       "status": "reviewed",
-      "gates": ["subprocess"]
+      "gates": ["subprocess"],
+      "crossedBy": "named",
+      "reviewedAt": "2026-08-06"
     },
     {
       "id": "TB-OUTPUT",
       "name": "Server to client and artifacts",
-      "description": "Tool results, errors, stderr logs, and retained CI evidence leaving the process.",
+      "description": "Tool results, errors, stderr logs, and retained CI evidence leaving the process. Every capability crosses it, whether or not it names it, so its open output surfaces apply to all of them.",
       "status": "reviewed",
-      "gates": ["local-read"]
+      "gates": ["local-read"],
+      "crossedBy": "every-capability",
+      "reviewedAt": "2026-08-06"
     },
     {
       "id": "TB-DOCS-NETWORK",
@@ -118,6 +126,7 @@
       "description": "Outbound requests for documentation and the untrusted content they return. Reviewed 2026-08-07: a capability may cross only when every mitigation listed in preconditions is implemented.",
       "status": "reviewed",
       "gates": ["network"],
+      "crossedBy": "named",
       "reviewedAt": "2026-08-07",
       "preconditions": [
         "TM-DOC-HOST-ALLOWLIST",
@@ -135,6 +144,7 @@
       "description": "Authenticated SFTP and mutation traffic with a Studio project. Reviewed 2026-08-07: a capability may cross only when every precondition is implemented.",
       "status": "reviewed",
       "gates": ["network", "mutation"],
+      "crossedBy": "named",
       "reviewedAt": "2026-08-07",
       "preconditions": [
         "TM-STUDIO-CREDENTIAL-PROVIDER",
@@ -153,6 +163,7 @@
       "description": "Authenticated reads of the developer's own Studio pages. Reviewed 2026-08-07 and reopened on the owner's decision: reading your own logs is reasonable, but the page is undocumented and the 2026-08-08 audit recorded additional planned controls in the boundary's abuse cases before release verification.",
       "status": "reviewed",
       "gates": ["network"],
+      "crossedBy": "named",
       "reviewedAt": "2026-08-07",
       "preconditions": [
         "TM-STUDIO-SESSION-FROM-ENVIRONMENT",
@@ -167,7 +178,36 @@
       "name": "Build and release supply chain",
       "description": "Dependencies, CI actions, and published artifacts.",
       "status": "reviewed",
-      "gates": ["supply-chain"]
+      "gates": ["supply-chain"],
+      "crossedBy": "named",
+      "reviewedAt": "2026-08-06"
+    }
+  ],
+  "outputSurfaces": [
+    {
+      "id": "SURFACE-TOOL-RESULT",
+      "name": "Successful MCP result",
+      "description": "Text content and structured content of a tool or resource result that succeeded."
+    },
+    {
+      "id": "SURFACE-TOOL-FAILURE",
+      "name": "Published failure result",
+      "description": "The message, code, and details of a refusal, a validation failure, or an unexpected error returned to the client."
+    },
+    {
+      "id": "SURFACE-CLI-STDOUT",
+      "name": "Terminal diagnostics",
+      "description": "What the command-line entry point prints for an operator, including the Studio preflight report."
+    },
+    {
+      "id": "SURFACE-PROCESS-STDERR",
+      "name": "Server log and launcher stderr",
+      "description": "Every line the process writes to stderr, which an MCP launcher captures into its own log file."
+    },
+    {
+      "id": "SURFACE-CI-ARTIFACT",
+      "name": "Retained artifact",
+      "description": "Verification evidence, packaged-run records, and anything else a CI job uploads or keeps."
     }
   ],
   "abuseCases": [
@@ -233,7 +273,8 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-OUTPUT",
       "impact": "Credentials or personal data are copied into an agent transcript that may be stored remotely.",
-      "mitigations": ["TM-REDACTION", "TM-SUCCESS-OUTPUT-REDACTION", "TM-ERROR-COLLAPSE"]
+      "mitigations": ["TM-REDACTION", "TM-SUCCESS-OUTPUT-REDACTION", "TM-ERROR-COLLAPSE"],
+      "surfaces": ["SURFACE-TOOL-RESULT", "SURFACE-TOOL-FAILURE"]
     },
     {
       "id": "AC-SECRET-IN-ARTIFACT",
@@ -242,7 +283,8 @@
       "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-STUDIO-CREDENTIALS"],
       "boundary": "TB-OUTPUT",
       "impact": "A public workflow artifact publishes a secret that must then be rotated.",
-      "mitigations": ["TM-SOURCE-SECRET-SCAN", "TM-ARTIFACT-SCAN", "TM-LOG-REDACTION"]
+      "mitigations": ["TM-SOURCE-SECRET-SCAN", "TM-ARTIFACT-SCAN", "TM-LOG-REDACTION"],
+      "surfaces": ["SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"]
     },
     {
       "id": "AC-ARTWORK-REDISTRIBUTION",
@@ -393,7 +435,7 @@
       "assets": ["ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "A capability is released as verified while a scenario proving it never ran, or the artifact saying so was edited afterwards.",
-      "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY"]
+      "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY", "TM-MODEL-AGREEMENT"]
     },
     {
       "id": "AC-STUDIO-UPLOAD-SCOPE",
@@ -418,6 +460,13 @@
         "TM-STUDIO-NO-PRODUCTION-LOGS",
         "TM-NO-STUDIO-LOGS",
         "TM-BOUNDARY-REVIEW"
+      ],
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-CLI-STDOUT",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
       ]
     },
     {
@@ -450,6 +499,13 @@
         "TM-STUDIO-FILE-SESSION-REDACTION",
         "TM-STUDIO-FILE-SESSION-BLOCKED",
         "TM-REDACTION"
+      ],
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-CLI-STDOUT",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
       ]
     },
     {
@@ -459,7 +515,13 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-STUDIO",
       "impact": "A credential that appears in stderr or a retained CI artifact must be rotated, and the developer may not know it leaked.",
-      "mitigations": ["TM-STUDIO-CREDENTIAL-REDACTION", "TM-REDACTION"]
+      "mitigations": ["TM-STUDIO-CREDENTIAL-REDACTION", "TM-REDACTION"],
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
+      ]
     },
     {
       "id": "AC-STUDIO-READ-SSRF",
@@ -611,6 +673,7 @@
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-TOOL-FAILURE"],
       "scenarios": [
         "UNIT-REDACTION-CREDENTIALS",
         "UNIT-REDACTION-PATHS",
@@ -623,6 +686,7 @@
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "planned",
+      "surfaces": ["SURFACE-TOOL-RESULT"],
       "backlog": "BGA-327",
       "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
     },
@@ -632,6 +696,7 @@
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-TOOL-FAILURE"],
       "scenarios": ["UNIT-ERROR-UNEXPECTED-COLLAPSE"]
     },
     {
@@ -640,6 +705,7 @@
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-PROCESS-STDERR"],
       "scenarios": ["GATE-LOG-REDACTION"]
     },
     {
@@ -648,6 +714,7 @@
       "boundary": "TB-SUPPLY-CHAIN",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-CI-ARTIFACT"],
       "scenarios": ["GATE-SECRET-SCAN-SOURCE"]
     },
     {
@@ -656,6 +723,7 @@
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-CI-ARTIFACT"],
       "scenarios": ["GATE-SECRET-SCAN-ARTIFACT", "GATE-EVIDENCE-REDACTION"]
     },
     {
@@ -829,6 +897,15 @@
       "scenarios": ["GATE-EVIDENCE-TAMPER"]
     },
     {
+      "id": "TM-MODEL-AGREEMENT",
+      "title": "The human threat model and the machine record agree field for field, and nothing is advertised as verified across an output surface only planned work covers",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "scenarios": ["GATE-THREAT-MODEL-AGREEMENT"],
+      "backlog": "BGA-018"
+    },
+    {
       "id": "TM-STUDIO-CREDENTIAL-PROVIDER",
       "title": "Studio credentials come from the environment or an agent, never from a tool argument",
       "boundary": "TB-STUDIO",
@@ -888,6 +965,12 @@
       "boundary": "TB-STUDIO",
       "control": "automated",
       "status": "planned",
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
+      ],
       "backlog": "BGA-301",
       "scenarios": ["E2E-STUDIO-CREDENTIAL-REDACTION"]
     },
@@ -936,6 +1019,7 @@
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-TOOL-RESULT"],
       "scenarios": ["UNIT-STUDIO-LOG-PRIVACY", "UNIT-STUDIO-LOG-PARSE"],
       "backlog": "BGA-312"
     },
@@ -944,9 +1028,20 @@
       "title": "Foreign and unattributable Studio values are absent from MCP content, setup output, CLI stdout and stderr, errors, and artifacts",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-CLI-STDOUT",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
+      ],
       "backlog": "BGA-319",
-      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+      "scenarios": [
+        "INT-STUDIO-CHECK-OWN-DATA",
+        "UNIT-STUDIO-PUBLISH-SCREEN",
+        "E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"
+      ]
     },
     {
       "id": "TM-STUDIO-READ-ADDRESS-NORMALIZATION",
@@ -972,6 +1067,7 @@
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "planned",
+      "surfaces": ["SURFACE-TOOL-RESULT"],
       "backlog": "BGA-327",
       "scenarios": ["E2E-STUDIO-SUCCESS-REDACTION"]
     },
@@ -981,6 +1077,7 @@
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
+      "surfaces": ["SURFACE-TOOL-FAILURE", "SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"],
       "scenarios": ["UNIT-STUDIO-SESSION-REDACTION"],
       "backlog": "BGA-312"
     },
@@ -990,6 +1087,7 @@
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "planned",
+      "surfaces": ["SURFACE-CLI-STDOUT"],
       "backlog": "BGA-328",
       "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
     },
@@ -999,6 +1097,12 @@
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "planned",
+      "surfaces": [
+        "SURFACE-TOOL-RESULT",
+        "SURFACE-TOOL-FAILURE",
+        "SURFACE-PROCESS-STDERR",
+        "SURFACE-CI-ARTIFACT"
+      ],
       "backlog": "BGA-321",
       "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
     },
@@ -1073,7 +1177,7 @@
     },
     {
       "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
-      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason.",
+      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason.",
       "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
       "acceptedBy": "Brandon Born"
     }

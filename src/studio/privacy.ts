@@ -29,6 +29,11 @@ export interface ScreeningResult {
   readonly kept: readonly StudioLogLine[];
   /** Counts by reason, so a caller can say what it withheld without showing it. */
   readonly withheld: Readonly<Record<Exclude<LineDisposition, 'own'>, number>>;
+  /**
+   * The exact strings that were withheld, kept only so publication can prove
+   * none of them survived. Never returned, formatted, or counted as content.
+   */
+  readonly withheldValues: readonly string[];
 }
 
 /**
@@ -76,6 +81,7 @@ export function screenStudioLog(
 ): ScreeningResult {
   const kept: StudioLogLine[] = [];
   const withheld = { foreign: 0, unattributable: 0, sensitive: 0 };
+  const withheldValues = new Set<string>();
 
   for (const line of lines) {
     const disposition = screenLine(line, ownAccounts);
@@ -84,12 +90,48 @@ export function screenStudioLog(
       continue;
     }
     withheld[disposition] += 1;
+    withheldValues.add(line.raw);
+    if (line.actorName !== null) {
+      withheldValues.add(line.actorName);
+    }
+    if (line.message.length > 0) {
+      withheldValues.add(line.message);
+    }
   }
 
-  return { kept, withheld };
+  return { kept, withheld, withheldValues: [...withheldValues] };
 }
 
 /** True when anything was withheld, so a caller can say so plainly. */
 export function withheldAny(result: ScreeningResult): boolean {
   return Object.values(result.withheld).some((count) => count > 0);
+}
+
+/** Stands in for anything withheld, so a removal is visible rather than silent. */
+export const WITHHELD_MARK = '[withheld]';
+
+/**
+ * The last thing that happens to any Studio text before it is published.
+ *
+ * The screening rule above decides what may be returned; this decides that the
+ * decision survived. Every surface goes through it — the MCP result, the setup
+ * report, the terminal check, a thrown error, and anything a launcher or CI job
+ * captures from those — because the 2026-08-08 review found the leak in the one
+ * surface nobody had routed through the screen: a preflight hint that named the
+ * other developers whose lines the same screen had just withheld.
+ *
+ * It replaces rather than throws. A diagnostic that crashes tells the developer
+ * nothing, and a visible `[withheld]` is a better failure than a name.
+ */
+export function publishStudioText(text: string, withheldValues: readonly string[]): string {
+  let published = text;
+  // Longest first: a raw line contains its own actor name, and replacing the
+  // name first would leave the rest of the line behind.
+  for (const value of [...withheldValues].sort((left, right) => right.length - left.length)) {
+    if (value.length === 0) {
+      continue;
+    }
+    published = published.split(value).join(WITHHELD_MARK);
+  }
+  return published;
 }

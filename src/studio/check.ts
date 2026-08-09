@@ -1,7 +1,7 @@
 import { STUDIO_HOST, STUDIO_SESSION_ENV, type PolicyBoundary } from '../policy.js';
 import { htmlToText } from '../docs/excerpt.js';
 import { parseStudioLog } from './logline.js';
-import { screenStudioLog } from './privacy.js';
+import { publishStudioText, screenStudioLog } from './privacy.js';
 
 /**
  * Checks a Studio setup and says what to do about whatever is wrong.
@@ -123,6 +123,13 @@ export async function checkStudioSetup(
   }
 
   const parsed = parseStudioLog(htmlToText(body));
+  // Screened before anything is said about the page, so every sentence below is
+  // built from the screened view. `publish` is the same guarantee applied a
+  // second time at the boundary, because this report reaches a terminal, a
+  // launcher log, and whatever CI keeps of them — surfaces the MCP result's own
+  // screening never covered.
+  const screened = screenStudioLog(parsed, config.studioDevAccounts);
+  const publish = (text: string): string => publishStudioText(text, screened.withheldValues);
   const withActors = parsed.filter((entry) => entry.actorName !== null);
   if (withActors.length === 0) {
     lines.push(
@@ -134,17 +141,22 @@ export async function checkStudioSetup(
     );
     return { lines, ok: false };
   }
-  lines.push(line(true, `Found ${String(withActors.length)} log line(s) in the page.`));
+  lines.push(line(true, publish(`Found ${String(withActors.length)} log line(s) in the page.`)));
 
-  const screened = screenStudioLog(parsed, config.studioDevAccounts);
   if (screened.kept.length === 0) {
-    const seen = [...new Set(withActors.map((entry) => entry.actorName))].slice(0, 5);
     lines.push(
       line(
         false,
-        'Log lines were found, but none belong to a declared account.',
-        // The likeliest cause by far, and the one that used to fail silently.
-        `The page shows lines for: ${seen.join(', ')}. Check --studio-dev-account matches one of those exactly.`,
+        publish('Log lines were found, but none belong to a declared account.'),
+        // This used to name the accounts the page showed, which is the fastest
+        // way to fix a typo and also a way to publish another developer's — or
+        // a real player's — name to a terminal and everything that records it.
+        // The count is enough to tell a typo from an empty page; the name has
+        // to come from the developer's own Studio page.
+        publish(
+          `${String(withActors.length)} attributed line(s) were found and none matched, so no name from the page is shown here. ` +
+            'Open the game in Studio, read your own dev account name there, and pass it exactly with --studio-dev-account.',
+        ),
       ),
     );
     return { lines, ok: false };
@@ -153,8 +165,10 @@ export async function checkStudioSetup(
   lines.push(
     line(
       true,
-      `${String(screened.kept.length)} line(s) are yours and would be returned; ` +
-        `${String(screened.withheld.foreign)} belong to others and ${String(screened.withheld.sensitive)} carry credentials, and are withheld.`,
+      publish(
+        `${String(screened.kept.length)} line(s) are yours and would be returned; ` +
+          `${String(screened.withheld.foreign)} belong to others and ${String(screened.withheld.sensitive)} carry credentials, and are withheld.`,
+      ),
     ),
   );
   return { lines, ok: true };

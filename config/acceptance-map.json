@@ -602,6 +602,60 @@
       "case": "The resolver makes zero connection attempts for a non-public result and cannot substitute a second answer",
       "boundary": "packaged",
       "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION", "E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "item": "BGA-018",
+      "case": "Machine and human records cannot disagree on boundary status, review date, gates, or preconditions",
+      "boundary": "repository",
+      "scenarios": ["GATE-THREAT-MODEL-AGREEMENT"]
+    },
+    {
+      "item": "BGA-018",
+      "case": "Machine and human records cannot disagree on a mitigation status, control, or owner",
+      "boundary": "repository",
+      "scenarios": ["GATE-THREAT-MODEL-AGREEMENT"]
+    },
+    {
+      "item": "BGA-018",
+      "case": "Machine and human records cannot disagree on a residual-risk disposition",
+      "boundary": "repository",
+      "scenarios": ["GATE-THREAT-MODEL-AGREEMENT"]
+    },
+    {
+      "item": "BGA-018",
+      "case": "A privacy control covers every output surface that can publish the protected data",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "item": "BGA-018",
+      "case": "A seeded foreign actor name is absent from a tool result, a CLI diagnostic, a stderr line, and a retained artifact",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "item": "BGA-319",
+      "case": "Diagnostics report that nothing matched without naming foreign line content",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "item": "BGA-319",
+      "case": "The account configuration hint stays actionable without naming a foreign account",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "item": "BGA-319",
+      "case": "The same screening function protects every output surface before formatting",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "item": "BGA-319",
+      "case": "Own-account content is returned only by read_studio_logs when explicitly enabled and configured",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA", "E2E-STUDIO-LOGS-DISABLED"]
     }
   ]
 }

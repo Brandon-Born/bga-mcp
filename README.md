@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in early implementation. The installable stdio server currently advertises 10 tools and 11 concrete resources. A [2026-08-08 installed-package adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) reopened every formerly verified capability; the readers it faulted were corrected against the official documentation, every acceptance case was proven through the installed server, and the seven local project tools, the three project resources and the stdio transport are verified again on protocol `2025-11-25`. The documentation capabilities and the Studio log reader are not: they remain implemented and experimental respectively.
+> This project is in early implementation. The installable stdio server currently advertises 10 tools and 11 concrete resources. **No capability is verified.** A [2026-08-08 installed-package adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) reopened every formerly verified capability; the readers it faulted were corrected against the official documentation and every acceptance case is proven through the installed server, but successful results are still not passed through redaction (BGA-327), and every result crosses the boundary that control belongs to. Each capability is `implemented`, the Studio log reader is `experimental`, and the stdio transport is verified on protocol `2025-11-25`.
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -22,7 +22,7 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 
 ## Capabilities
 
-Available now, local and read-only, verified on protocol `2025-11-25`:
+Available now, local and read-only, implemented on protocol `2025-11-25`:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
   Layout detection recognizes legacy, modern, and part-migrated projects. The validators have readers for both generations, but the current review found false or unsupported results for documented modern state, action, notification, and query forms. Every reader was corrected against the official documentation under BGA-124 through BGA-127, and BGA-128 proved each affected acceptance case through the installed server, so the modern and part-migrated layouts are inside the compatibility contract again. Every claim here is backed by a CI run of a commit in this history, which the evidence gate checks rather than assumes.
@@ -44,7 +44,7 @@ Available behind explicit network permission, implemented but not verified:
 Also available:
 
 - `check_setup` — reports local, documentation, and experimental Studio setup state. The 2026 protocol-era roots/input flow remains BGA-318.
-- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project now exists, but BGA-319 through BGA-322 and BGA-326 through BGA-328 block a safe successful read: output privacy, project identifiers, file sessions, default source ACLs, cancellation, successful-result redaction, and session-file handling remain open. Address normalization (BGA-323) is corrected.
+- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project now exists, but BGA-320 through BGA-322 and BGA-326 through BGA-328 block a safe successful read: project identifiers, file sessions, default source ACLs, cancellation, successful-result redaction, and session-file handling remain open. Output privacy (BGA-319) and address normalization (BGA-323) are corrected: nothing belonging to another developer or a player reaches any output surface, proven through the installed package.
 
 Later releases may add authenticated Studio operations:
 
@@ -67,7 +67,7 @@ Current discovery names are not yet a stable release API. Future capability name
 
 ## Project status
 
-Ten tools and eleven concrete resources are discoverable. The seven local project tools, the three project resources and the stdio transport are verified on protocol `2025-11-25`: every acceptance case they claim is mapped to an assertion against the installed package, and [CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/31334309936) passes the six-job matrix. The documentation capabilities stay implemented and the Studio log reader stays experimental and not live-verified. The corrections to search accounting (BGA-209), framework-version reading (BGA-210), and address normalization (BGA-323) are verified, but the capabilities that use them are not: their maintained retrieval evaluation still fails on excerpt selection, and BGA-324 through BGA-328 hold recorded defects open against the boundaries they run on. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
+Ten tools and eleven concrete resources are discoverable, and none of them is verified. Every acceptance case each one claims is mapped to an assertion against the installed package, and the stdio transport is verified on protocol `2025-11-25`. What holds the capabilities back is one open control: successful results are not yet minimized and passed through redaction (BGA-327), and the [threat model](docs/THREAT_MODEL.md) records that every result crosses the boundary that control belongs to, so the gate refuses `verified` on all of them rather than on none. The Studio log reader stays experimental and not live-verified; BGA-320 through BGA-322, BGA-326, and BGA-328 remain open against it, and BGA-319 closed its output-privacy defect. The corrections to search accounting (BGA-209), framework-version reading (BGA-210), and address normalization (BGA-323) are verified as corrections, but the documentation capabilities that use them are not: their maintained retrieval evaluation still fails on excerpt selection, and BGA-324 through BGA-328 hold recorded defects open against the boundaries they run on. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 
@@ -109,21 +109,21 @@ An MCP client can launch a development checkout after it has been built:
 
 Configuration is the policy boundary. Defaults are local, read-only, and network-off, and every relaxation is an explicit flag:
 
-| Option                         | Effect                                                                                                                                  |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `--project-root <path>`        | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup.                                         |
-| `--allow-remote-project <id>`  | Allowlist a BGA Studio project for a future mutation. Repeatable.                                                                       |
-| `--operation-timeout-ms <n>`   | Deadline for the public response; underlying work may continue until BGA-326 passes.                                                    |
-| `--max-output-bytes <n>`       | Successful-result payload budget; failure results bypass it until BGA-325 passes.                                                       |
-| `--allow-network`              | Permit network access. Off by default.                                                                                                  |
-| `--experimental-studio-logs`   | Enable the experimental Studio log reader. Off by default.                                                                              |
-| `--studio-dev-account <name>`  | A Studio dev account you own. Repeatable. The MCP result filter keeps only matching parsed lines; BGA-319 covers other output surfaces. |
-| `--studio-session-file <path>` | Read the Studio session from a file instead of `BGA_STUDIO_SESSION`; do not use with a real credential until BGA-321 and BGA-328 pass.  |
-| `--allow-mutations`            | Permit explicitly confirmed mutating operations. Off by default.                                                                        |
+| Option                         | Effect                                                                                                                                 |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `--project-root <path>`        | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup.                                        |
+| `--allow-remote-project <id>`  | Allowlist a BGA Studio project for a future mutation. Repeatable.                                                                      |
+| `--operation-timeout-ms <n>`   | Deadline for the public response; underlying work may continue until BGA-326 passes.                                                   |
+| `--max-output-bytes <n>`       | Successful-result payload budget; failure results bypass it until BGA-325 passes.                                                      |
+| `--allow-network`              | Permit network access. Off by default.                                                                                                 |
+| `--experimental-studio-logs`   | Enable the experimental Studio log reader. Off by default.                                                                             |
+| `--studio-dev-account <name>`  | A Studio dev account you own. Repeatable. Only lines about these accounts are returned, on every output surface.                       |
+| `--studio-session-file <path>` | Read the Studio session from a file instead of `BGA_STUDIO_SESSION`; do not use with a real credential until BGA-321 and BGA-328 pass. |
+| `--allow-mutations`            | Permit explicitly confirmed mutating operations. Off by default.                                                                       |
 
 Every tool reads only from the roots given here. `projectRoot` may be omitted when exactly one root is configured, and then means that root; with none or several configured, the call is refused with a stable error code rather than guessing which project was meant.
 
-The server reserves stdout for MCP frames. Shared protocol/shutdown logging uses redaction, but CLI/setup and successful-result output coverage remains incomplete under BGA-319, BGA-327, and BGA-328.
+The server reserves stdout for MCP frames. Shared protocol/shutdown logging uses redaction, and Studio output is screened on every surface, but successful-result redaction and session-file handling remain incomplete under BGA-327 and BGA-328.
 
 ## Verification commands
 

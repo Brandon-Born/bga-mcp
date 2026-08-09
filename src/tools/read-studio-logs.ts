@@ -5,7 +5,7 @@ import { htmlToText } from '../docs/excerpt.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { parseStudioLog } from '../studio/logline.js';
-import { screenStudioLog, withheldAny } from '../studio/privacy.js';
+import { publishStudioText, screenStudioLog, withheldAny } from '../studio/privacy.js';
 import { SetupAsker } from '../setup/ask.js';
 import { publishFailure } from './project-context.js';
 
@@ -124,6 +124,9 @@ export function registerReadStudioLogs(
       },
     },
     async ({ gameId, maxLines, tableId }) => {
+      // Held outside the timed body so the text published afterwards passes
+      // through the same screen the structured result did.
+      let withheldValues: readonly string[] = [];
       try {
         const structuredContent = await policy.runWithTimeout(READ_STUDIO_LOGS_TOOL, async () => {
           // The gates first: being asked for dev accounts by a capability that
@@ -160,6 +163,8 @@ export function registerReadStudioLogs(
           const forTable =
             tableId === undefined ? parsed : parsed.filter((line) => line.tableId === tableId);
           const screened = screenStudioLog(forTable, ownAccounts);
+          withheldValues = screened.withheldValues;
+          const publish = (text: string): string => publishStudioText(text, withheldValues);
 
           return {
             schemaVersion: 1 as const,
@@ -171,7 +176,7 @@ export function registerReadStudioLogs(
               level: line.level,
               tableId: line.tableId,
               actor: line.actorName,
-              message: line.message,
+              message: publish(line.message),
             })),
             withheld: screened.withheld,
             ownAccounts: [...ownAccounts],
@@ -183,7 +188,7 @@ export function registerReadStudioLogs(
         });
 
         const parsed = ReadStudioLogsOutputSchema.parse(structuredContent);
-        const text = summarizeStudioLogs(parsed);
+        const text = publishStudioText(summarizeStudioLogs(parsed), withheldValues);
         policy.assertOutputWithinLimit(READ_STUDIO_LOGS_TOOL, `${JSON.stringify(parsed)}${text}`);
         return { content: [{ type: 'text', text }], structuredContent: parsed };
       } catch (error) {
