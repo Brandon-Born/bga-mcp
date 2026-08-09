@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "unknown",
-      "notes": "Support claim reopened by the 2026-08-08 installed-package audit. Layout detection works; BGA-124 restored the state half and BGA-125 the action half: documented state-class initial states, StateConstants identifiers, PRIVATE states, descriptions, zombie handling, class/id/transition redirects, #[PossibleAction] entry points, framework-injected parameters, the game-class fallback and the parameter attributes are all read, and an unreadable construct is reported rather than turned into a certain finding. State notification shortcuts (BGA-126), unrelated SQL-like strings (BGA-127) and the complete packaged matrix (BGA-128) still own the rest of this claim.",
+      "notes": "Support claim reopened by the 2026-08-08 installed-package audit. Layout detection works; BGA-124 restored the state half and BGA-125 the action half: documented state-class initial states, StateConstants identifiers, PRIVATE states, descriptions, zombie handling, class/id/transition redirects, #[PossibleAction] entry points, framework-injected parameters, the game-class fallback and the parameter attributes are all read, and an unreadable construct is reported rather than turned into a certain finding. BGA-126 added the notification half: the state-class shortcut is read, a notif_ method counts only where setupPromiseNotifications registers it, and the framework's predefined types need no handler. Unrelated SQL-like strings (BGA-127) and the complete packaged matrix (BGA-128) still own the rest of this claim.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
@@ -34,7 +34,7 @@
       "dimension": "layout",
       "value": "part-migrated",
       "support": "unknown",
-      "notes": "Layout detection and aggregate validation have hybrid scenarios, but the original acceptance requires every capability and split-source precedence through the public boundary. BGA-124 corrected the class half and the GameStateBuilder half the hybrid fixture now uses, and BGA-125 the action half; BGA-126 through BGA-128 own the rest of this claim.",
+      "notes": "Layout detection and aggregate validation have hybrid scenarios, but the original acceptance requires every capability and split-source precedence through the public boundary. BGA-124 corrected the class half and the GameStateBuilder half the hybrid fixture now uses, and BGA-125 the action half; BGA-126 the notification half; BGA-127 and BGA-128 own the rest of this claim.",
       "fixtures": ["tests/fixtures/projects/hybrid"]
     },
     {

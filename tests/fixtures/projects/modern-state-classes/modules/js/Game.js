@@ -1,6 +1,14 @@
 export class Game {
   setup() {}
 
+  setupNotifications() {
+    this.bga.notifications.setupPromiseNotifications();
+  }
+
+  async notif_tokenChosen(args) {
+    this.showMessage(args.tokenId, 'info');
+  }
+
   onTokenClicked(tokenId) {
     this.bga.actions.performAction('actChooseToken', { tokenId });
   }

@@ -29,11 +29,14 @@ interface NotificationResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
+let server: PackagedServer<
+  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame'
+>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let modernCleanRoot: string;
+let stateClassRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
@@ -59,11 +62,13 @@ beforeAll(async () => {
     brokengame: 'legacy-broken',
     moderngame: 'modern-broken',
     moderncleangame: 'modern',
+    stateclassgame: 'modern-state-classes',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
   modernCleanRoot = server.projects.moderncleangame;
+  stateClassRoot = server.projects.stateclassgame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['modules/js']);
   expectedBroken = (
     await readFixtureExpectations<{
@@ -236,5 +241,29 @@ describe('packaged validate_notifications', () => {
     expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
       expectedModern.codes,
     );
+  });
+  it('[E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES] reads the state-class shortcut, the registration, and the types the framework predefines', async () => {
+    const response = await withServer(
+      ['--project-root', stateClassRoot],
+      async (client) => await callValidate(client, { projectRoot: stateClassRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+
+    // Regression, observed through the installed package: `$this->notif->all`
+    // in a state class was ignored, so its handler looked unsent.
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.trace.sent.map((entry) => entry.name).sort()).toEqual([
+      'message',
+      'tokenChosen',
+    ]);
+    // `message` is a predefined type that "shows on players log and have no
+    // other effect", so sending it without a handler is not a defect.
+    expect(structured?.trace.handlers.map((entry) => entry.name)).toEqual(['tokenChosen']);
   });
 });

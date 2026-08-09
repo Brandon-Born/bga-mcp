@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.3.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124, BGA-125.
+Catalog version 1.4.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124, BGA-125, BGA-126.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -62,13 +62,19 @@ The client sends what the parameter names, not what the variable is called: `#[I
 
 Run by `validate_notifications`. Implemented in [`src/rules/notifications.ts`](../src/rules/notifications.ts).
 
-| Check                                 | Severity    | Certainty | Source kind        | Failing fixture |
-| ------------------------------------- | ----------- | --------- | ------------------ | --------------- |
-| `notification.handled.not-sent`       | information | possible  | project-inference  | yes             |
-| `notification.payload.mismatch`       | warning     | likely    | framework-behavior | yes             |
-| `notification.sent.not-handled`       | warning     | likely    | framework-behavior | yes             |
-| `notification.subscription.duplicate` | warning     | certain   | framework-behavior | yes             |
-| `notification.trace.unavailable`      | information | certain   | framework-behavior | no              |
+| Check                                 | Severity    | Certainty | Source kind            | Failing fixture |
+| ------------------------------------- | ----------- | --------- | ---------------------- | --------------- |
+| `notification.handled.not-sent`       | information | possible  | project-inference      | yes             |
+| `notification.payload.mismatch`       | warning     | likely    | official-documentation | yes             |
+| `notification.sent.not-handled`       | warning     | likely    | official-documentation | yes             |
+| `notification.subscription.duplicate` | warning     | certain   | framework-behavior     | yes             |
+| `notification.trace.unavailable`      | information | certain   | framework-behavior     | no              |
+
+A send is read in any of its documented spellings: legacy `notifyAllPlayers`/`notifyPlayer`, `$this->bga->notify->all`/`->player` on the game class, and the state-class shortcut `$this->notif->all`, which the migration guide describes as reaching the same sub-object "without needing to pass through the game variable".
+
+A `notif_…` method is a handler only once something registers it. `setupPromiseNotifications` "auto-detect[s] all notifications declared on the game object (functions starting with `notif_`)", so its `prefix` decides what counts and its `ignoreNotifications` list removes names entirely — for those, "you'll need to subscribe to it manually", and a manual `dojo.subscribe` binds them again. A method nothing registers is reported as what it is: the send that reaches it lands nowhere.
+
+The types the framework predefines — `message`, `tableWindow`, `simplePause` — need no handler, and sending one is never reported as unhandled.
 
 ## Database usage
 

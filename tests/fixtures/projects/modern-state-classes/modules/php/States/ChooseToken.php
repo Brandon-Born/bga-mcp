@@ -33,6 +33,16 @@ final class ChooseToken extends GameState
     #[PossibleAction]
     public function actChooseToken(int $tokenId, int $currentPlayerId): void
     {
+        // The state class reaches the game's sub-objects directly, so the send
+        // is written without passing through the game variable.
+        $this->notif->all('tokenChosen', clienttranslate('${player_name} chose a token'), [
+            'player_id' => $currentPlayerId,
+            'tokenId' => $tokenId,
+        ]);
+
+        // A predefined type: it shows in the log and needs nothing on the client.
+        $this->notif->player($currentPlayerId, 'message', clienttranslate('You kept a token'), []);
+
         $this->gamestate->setPlayerNonMultiactive($currentPlayerId, 'startPlay');
     }
 

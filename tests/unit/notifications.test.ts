@@ -75,17 +75,58 @@ describe('notification handler reading', () => {
     expect(outcome.unsupported).toEqual([]);
     expect(outcome.duplicates).toEqual([]);
     expect(outcome.value).toEqual([
-      { name: 'playerPassed', binding: 'subscribe', payloadKeys: ['comment'] },
-      { name: 'privateHand', binding: 'subscribe', payloadKeys: ['cards'] },
+      { name: 'playerPassed', binding: 'subscribe', bound: true, payloadKeys: ['comment'] },
+      { name: 'privateHand', binding: 'subscribe', bound: true, payloadKeys: ['cards'] },
     ]);
   });
 
-  it('treats a notif_ method as a binding even without an explicit subscription', () => {
-    const outcome = parseNotificationHandlers(
-      `notif_cardPlayed: function (notif) { this.move(notif.args['cardId']); },`,
+  it('binds a notif_ method only where setupPromiseNotifications registers it', () => {
+    const method = `notif_cardPlayed: function (notif) { this.move(notif.args['cardId']); },`;
+
+    // Regression: the method alone was treated as bound. Without the
+    // registration it is a method, and the framework never calls it.
+    expect(parseNotificationHandlers(method).value).toEqual([
+      { name: 'cardPlayed', binding: 'method', bound: false, payloadKeys: ['cardId'] },
+    ]);
+
+    const registered = parseNotificationHandlers(
+      `setupNotifications: function () { this.bga.notifications.setupPromiseNotifications(); },\n${method}`,
     );
-    expect(outcome.value).toEqual([
-      { name: 'cardPlayed', binding: 'method', payloadKeys: ['cardId'] },
+    expect(registered.value).toEqual([
+      { name: 'cardPlayed', binding: 'method', bound: true, payloadKeys: ['cardId'] },
+    ]);
+    expect(registered.registration).toEqual({ prefix: 'notif_', ignored: [] });
+  });
+
+  it('honours the prefix and ignore list the registration declares', () => {
+    const outcome = parseNotificationHandlers(`
+      setupNotifications: function () {
+        this.bga.notifications.setupPromiseNotifications({
+          prefix: 'on_',
+          ignoreNotifications: ['updateAutoPlay'],
+        });
+      },
+      on_cardPlayed: function (notif) {},
+      on_updateAutoPlay: function (notif) {},
+      notif_ignoredByPrefix: function (notif) {},`);
+
+    expect(outcome.registration).toEqual({ prefix: 'on_', ignored: ['updateAutoPlay'] });
+    expect(outcome.value.map((handler) => [handler.name, handler.bound])).toEqual([
+      ['cardPlayed', true],
+      // "You'll need to subscribe to it manually".
+      ['updateAutoPlay', false],
+    ]);
+  });
+
+  it('binds an ignored notification the client subscribes to by hand', () => {
+    const outcome = parseNotificationHandlers(`
+      setupNotifications: function () {
+        this.bga.notifications.setupPromiseNotifications({ ignoreNotifications: ['updateAutoPlay'] });
+        dojo.subscribe('updateAutoPlay', this, 'notif_updateAutoPlay');
+      },
+      notif_updateAutoPlay: function (notif) {},`);
+    expect(outcome.value.map((handler) => [handler.name, handler.bound])).toEqual([
+      ['updateAutoPlay', true],
     ]);
   });
 

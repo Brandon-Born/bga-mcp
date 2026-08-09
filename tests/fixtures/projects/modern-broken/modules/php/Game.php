@@ -24,6 +24,10 @@ final class Game extends \Bga\GameFramework\Table
         // Nothing on the client handles this one.
         $this->bga->notify->all('ghostEvent', clienttranslate('unseen'), []);
 
+        // The client declares notif_ignoredEvent, but its registration ignores
+        // the name, so the method is a method and this send lands nowhere.
+        $this->bga->notify->all('ignoredEvent', clienttranslate('also unseen'), []);
+
         return 'pass';
     }
 

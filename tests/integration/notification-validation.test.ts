@@ -51,6 +51,7 @@ describe('notification validation against the fixture corpus', () => {
       {
         name: 'playerPassed',
         binding: 'subscribe',
+        bound: true,
         payloadKeys: ['comment'],
         source: 'bgamcplegacy.js',
       },

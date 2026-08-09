@@ -20,22 +20,50 @@ export interface NotificationHandler {
   readonly name: string;
   /** How the client attached the handler. */
   readonly binding: 'subscribe' | 'method';
+  /**
+   * Whether the framework will actually call it.
+   *
+   * A `notif_…` method is only registered when `setupPromiseNotifications`
+   * runs: it "auto-detect[s] all notifications declared on the game object
+   * (functions starting with `notif_`) and register[s] them with
+   * dojo.subscribe". Without that call, or with the name in its
+   * `ignoreNotifications` list, the method is a method and nothing more.
+   */
+  readonly bound: boolean;
   /** Payload keys the handler reads. */
   readonly payloadKeys: readonly string[];
 }
 
+/**
+ * Notification types the framework defines, which a game may send without
+ * writing a handler.
+ *
+ * "Pre-defined notification types": `message` "shows on players log and have
+ * no other effect", `tableWindow` opens a scoring dialog, and `simplePause`
+ * "will just delay other notifications".
+ */
+export const PREDEFINED_NOTIFICATIONS = ['message', 'tableWindow', 'simplePause'] as const;
+
 /** Keys the framework adds to every notification payload. */
 const FRAMEWORK_PAYLOAD_KEYS = new Set(['i18n', 'player_name', 'player_id']);
 
-// Legacy: notifyAllPlayers / notifyPlayer. Modern: $this->bga->notify->all /
-// ->player, documented in the BGA Studio migration guide. Both are read,
-// because the documentation marks the legacy form superseded, not removed.
+// Three documented spellings of the same send, and a real project mixes them:
+// legacy `notifyAllPlayers`/`notifyPlayer`; `$this->bga->notify->all`/`->player`
+// on the game class; and the state-class shortcut, where "the Game sub-objects
+// are available on the State class too, so you can write `$this->notif->all`
+// without needing to pass through the game variable".
 const NOTIFY =
-  /(?:\$this->|self::|static::)?notify(All)?Player(?:s)?\s*\(|->bga->notify->(all|player)\s*\(/gu;
+  /(?:\$this->|self::|static::)?notify(All)?Player(?:s)?\s*\(|->(?:bga->)?notif(?:y)?->(all|player)\s*\(/gu;
 // Legacy object literals use `notif_x: function`, modern classes use
-// `async notif_x(notif)`. Both bind the same way as far as the framework is
-// concerned. https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide
-const HANDLER_METHOD = /(?:async\s+)?notif_([A-Za-z_]\w*)\s*(?:[:=]\s*(?:function|\()|\()/gu;
+// `async notif_x(notif)`. Both are the same declaration as far as the
+// framework is concerned, and the prefix is whatever the registration says.
+// https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide
+function handlerMethodPattern(prefix: string): RegExp {
+  return new RegExp(
+    `(?:async\\s+)?${prefix.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}([A-Za-z_]\\w*)\\s*(?:[:=]\\s*(?:function|\\()|\\()`,
+    'gu',
+  );
+}
 const SUBSCRIBE =
   /(?:dojo\.subscribe|this\.subscribeNotif)\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))/gu;
 
@@ -153,21 +181,63 @@ export function parseSentNotifications(source: string): ParseOutcome<readonly Se
 export interface HandlerOutcome extends ParseOutcome<readonly NotificationHandler[]> {
   /** Names subscribed more than once. A fact, not an unreadable construct. */
   readonly duplicates: readonly string[];
+  /** What `setupPromiseNotifications` registers, where the client calls it. */
+  readonly registration: PromiseRegistration | null;
+}
+
+export interface PromiseRegistration {
+  /** The prefix it auto-detects, `notif_` unless the call changes it. */
+  readonly prefix: string;
+  /** Names it is told to skip: "You'll need to subscribe to it manually". */
+  readonly ignored: readonly string[];
+}
+
+const PROMISE_SETUP = /\b(?:bgaS|s)etupPromiseNotifications\s*\(/u;
+
+/**
+ * Reads what `setupPromiseNotifications` was told to register.
+ *
+ * Its options decide which methods become handlers at all: `prefix` changes
+ * what counts as one, and `ignoreNotifications` removes names from the
+ * registration entirely.
+ */
+export function parsePromiseRegistration(source: string): PromiseRegistration | null {
+  const call = PROMISE_SETUP.exec(source);
+  if (call === null) {
+    return null;
+  }
+  const options = source.slice(call.index, call.index + 600);
+  const prefix = /prefix\s*:\s*'([^']*)'|prefix\s*:\s*"([^"]*)"/u.exec(options);
+  const ignored = /ignoreNotifications\s*:\s*\[([^\]]*)\]/u.exec(options)?.[1] ?? '';
+
+  return {
+    prefix: prefix?.[1] ?? prefix?.[2] ?? 'notif_',
+    ignored: [...ignored.matchAll(/'([^']*)'|"([^"]*)"/gu)].map(
+      (entry) => entry[1] ?? entry[2] ?? '',
+    ),
+  };
 }
 
 /**
  * Reads the notification handlers a client declares.
  *
  * Recognizes explicit `dojo.subscribe` calls and the `notif_<name>` method
- * convention the modern framework binds automatically. Payload keys are the
- * `notif.args.<key>` reads inside the handler.
+ * convention. A method is only a handler once something registers it, so the
+ * registration is read too: `setupPromiseNotifications` may run anywhere in
+ * the client, and a caller passes what it found there as `registration`.
+ * Payload keys are the `notif.args.<key>` reads inside the handler.
  */
-export function parseNotificationHandlers(source: string): HandlerOutcome {
+export function parseNotificationHandlers(
+  source: string,
+  registration: PromiseRegistration | null = parsePromiseRegistration(source),
+): HandlerOutcome {
   const handlers = new Map<string, NotificationHandler>();
   const unsupported: string[] = [];
   const duplicates: string[] = [];
 
-  const methodMatches = [...source.matchAll(HANDLER_METHOD)];
+  const methodMatches = [
+    ...source.matchAll(handlerMethodPattern(registration?.prefix ?? 'notif_')),
+  ];
   for (const [index, match] of methodMatches.entries()) {
     const name = match[1];
     if (name === undefined) {
@@ -188,6 +258,7 @@ export function parseNotificationHandlers(source: string): HandlerOutcome {
     handlers.set(name, {
       name,
       binding: 'method',
+      bound: registration !== null && !registration.ignored.includes(name),
       payloadKeys: [...payloadKeys].sort(),
     });
   }
@@ -206,9 +277,12 @@ export function parseNotificationHandlers(source: string): HandlerOutcome {
     }
     subscribed.add(name);
     const existing = handlers.get(name);
+    // A manual subscription binds the handler whatever the registration says;
+    // it is the documented way to attach an ignored notification.
     handlers.set(name, {
       name,
       binding: 'subscribe',
+      bound: true,
       payloadKeys: existing?.payloadKeys ?? [],
     });
   }
@@ -217,5 +291,6 @@ export function parseNotificationHandlers(source: string): HandlerOutcome {
     value: [...handlers.values()].sort((left, right) => left.name.localeCompare(right.name)),
     unsupported,
     duplicates: [...new Set(duplicates)].sort(),
+    registration,
   };
 }

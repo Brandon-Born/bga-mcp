@@ -1,7 +1,7 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.3.0",
+  "catalogVersion": "1.4.0",
   "updatedAt": "2026-08-08",
   "checks": [
     {
@@ -420,18 +420,19 @@
       "sources": [
         {
           "kind": "project-inference",
-          "reference": "Inferred from comparing handlers with readable sends; not a documented requirement."
+          "reference": "Compares the registered handlers with the sends found in readable server sources. A handler nothing registers is not counted, and a send may still be built in a form this reader cannot see, so the finding stays informational."
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
-        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
       ],
       "owner": "Brandon Born"
     },
@@ -446,19 +447,21 @@
       "implementation": "src/rules/notifications.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+          "kind": "official-documentation",
+          "reference": "Main game logic: Game.php documents bga->notify->all and bga->notify->player and says the notification args \"will be transmitted to the game interface logic, in order the game interface can be updated\". State classes write the same send as $this->notif->all.",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
-        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
       ],
       "owner": "Brandon Born"
     },
@@ -473,19 +476,21 @@
       "implementation": "src/rules/notifications.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The server pushes named notifications with a payload; the client binds handlers by that name and reads the payload."
+          "kind": "official-documentation",
+          "reference": "Game interface logic: Game.js says setupPromiseNotifications \"auto-detect[s] all notifications declared on the game object (functions starting with notif_) and register[s] them with dojo.subscribe\", and lists the predefined types a game may send with nothing on the client side: message, tableWindow and simplePause.",
+          "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
-        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
       ],
       "owner": "Brandon Born"
     },
@@ -507,11 +512,12 @@
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
-        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
       ],
       "owner": "Brandon Born"
     },
@@ -532,11 +538,12 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
-        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"
+        "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
       ],
       "owner": "Brandon Born"
     },

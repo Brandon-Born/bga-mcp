@@ -1,6 +1,8 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
 import {
+  PREDEFINED_NOTIFICATIONS,
   parseNotificationHandlers,
+  parsePromiseRegistration,
   parseSentNotifications,
   type NotificationHandler,
   type SentNotification,
@@ -146,9 +148,17 @@ export function validateNotifications(
     }
   }
 
+  // The registration may live in one file while the handlers live in others:
+  // "handlers: [this, ...this.bga.states.getStateClasses()]". So it is looked
+  // for across the whole client before any file is read for handlers.
+  const registration =
+    clientSources
+      .map((source) => parsePromiseRegistration(source.text))
+      .find((entry) => entry !== null) ?? null;
+
   const handlers: (NotificationHandler & { source: string })[] = [];
   for (const source of clientSources) {
-    const outcome = parseNotificationHandlers(source.text);
+    const outcome = parseNotificationHandlers(source.text, registration);
     for (const handler of outcome.value) {
       handlers.push({ ...handler, source: source.path });
     }
@@ -197,18 +207,30 @@ export function validateNotifications(
     );
   }
 
-  const handlerByName = new Map(handlers.map((handler) => [handler.name, handler]));
+  // A method nothing registers is not a handler, so it neither receives a
+  // notification nor counts as one the server forgot to send.
+  const boundHandlers = handlers.filter((handler) => handler.bound);
+  const handlerByName = new Map(boundHandlers.map((handler) => [handler.name, handler]));
   const sentByName = new Map(sent.map((notification) => [notification.name, notification]));
   const bothSidesReadable = serverSources.length > 0 && clientSources.length > 0;
+  const predefined = new Set<string>(PREDEFINED_NOTIFICATIONS);
 
   if (bothSidesReadable) {
     for (const notification of sent) {
-      if (!handlerByName.has(notification.name)) {
+      // A predefined type is handled by the framework itself: `message` "shows
+      // on players log and have no other effect", and the documentation shows
+      // it sent with nothing on the client side.
+      if (!handlerByName.has(notification.name) && !predefined.has(notification.name)) {
+        const declared = handlers.find(
+          (handler) => handler.name === notification.name && !handler.bound,
+        );
         findings.push(
           heuristic(
             'notification.sent.not-handled',
             `The server sends '${notification.name}', which no readable client handler receives.`,
-            `No subscription or notif_${notification.name} method was found in ${String(clientSources.length)} readable client source file(s).`,
+            declared === undefined
+              ? `No subscription or notif_${notification.name} method was found in ${String(clientSources.length)} readable client source file(s).`
+              : `${declared.source} declares a notif_${notification.name} method, but nothing registers it: setupPromiseNotifications is ${registration === null ? 'never called' : 'told to ignore it'}.`,
             notification.source,
             `Add a handler for '${notification.name}' in the client, or stop sending it.`,
           ),
@@ -216,7 +238,7 @@ export function validateNotifications(
       }
     }
 
-    for (const handler of handlers) {
+    for (const handler of boundHandlers) {
       if (!sentByName.has(handler.name)) {
         findings.push(
           heuristic(

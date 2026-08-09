@@ -16,8 +16,14 @@ export class Game {
   }
 
   setupNotifications() {
-    this.bga.notifications.setupPromiseNotifications();
+    this.bga.notifications.setupPromiseNotifications({
+      // Deliberately defective: the registration is told to skip this one and
+      // nothing subscribes to it manually, so the method below never runs.
+      ignoreNotifications: ['ignoredEvent'],
+    });
   }
+
+  async notif_ignoredEvent(notif) {}
 
   async notif_playerPassed(notif) {
     // Reads a key the server does not send.
