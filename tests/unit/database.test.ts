@@ -1,4 +1,4 @@
-import { parseQueries, parseSchema } from '../../src/project/database.js';
+import { DATABASE_HELPERS, parseQueries, parseSchema } from '../../src/project/database.js';
 import { DATABASE_RULES, FRAMEWORK_TABLES, auditDatabaseUsage } from '../../src/rules/database.js';
 
 const SCHEMA = `-- fixture schema
@@ -86,7 +86,43 @@ describe('query reading', () => {
 
   it('reports a query assembled from several expressions', () => {
     const outcome = parseQueries(`<?php self::DbQuery("SELECT * FROM card WHERE " . $filter);`);
-    expect(outcome.unsupported[0]).toContain('concatenated');
+    expect(outcome.value).toEqual([]);
+    expect(outcome.unsupported[0]).toContain('cannot follow');
+  });
+
+  it('reads a string only where data flow puts it in a database method', () => {
+    // Regression: adding this one line to a clean project made the installed
+    // tool count a third query and report a certain undeclared table.
+    const outcome = parseQueries(`<?php
+class Game extends Table {
+  // An example in a comment: SELECT imaginary_id FROM ghost
+  public function explain(): void {
+    $example = 'SELECT imaginary_id FROM ghost';
+    throw new BgaUserException("SELECT is not allowed here: $example");
+  }
+}`);
+    expect(outcome.value).toEqual([]);
+    expect(outcome.unsupported).toEqual([]);
+  });
+
+  it('follows a query assigned before the call that runs it', () => {
+    const outcome = parseQueries(`<?php
+$sql = "SELECT player_id FROM player";
+self::getCollectionFromDB($sql);`);
+    expect(outcome.value.map((query) => query.tables)).toEqual([['player']]);
+    expect(outcome.unsupported).toEqual([]);
+  });
+
+  it('reads every documented helper, and nothing else', () => {
+    for (const helper of DATABASE_HELPERS) {
+      const outcome = parseQueries(`<?php $this->${helper}('SELECT card_id FROM card');`);
+      expect(
+        outcome.value.map((query) => query.tables),
+        helper,
+      ).toEqual([['card']]);
+    }
+    // A method of the project's own is not a database call.
+    expect(parseQueries(`<?php $this->runMyQuery('SELECT card_id FROM card');`).value).toEqual([]);
   });
 });
 

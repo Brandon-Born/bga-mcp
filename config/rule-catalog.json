@@ -1,7 +1,7 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.4.0",
+  "catalogVersion": "1.5.0",
   "updatedAt": "2026-08-08",
   "checks": [
     {
@@ -266,9 +266,13 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -288,9 +292,13 @@
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -304,16 +312,21 @@
       "implementation": "src/rules/database.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+          "kind": "official-documentation",
+          "reference": "Game database model: dbmodel.sql declares the columns a game owns, and the query helpers on Main game logic: Game.php are what read them.",
+          "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -334,9 +347,13 @@
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -357,9 +374,13 @@
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern-state-classes"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -395,17 +416,22 @@
       "implementation": "src/rules/database.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "dbmodel.sql declares the tables a game owns; the framework owns player, global, stats, gamelog, and gamestatus."
+          "kind": "official-documentation",
+          "reference": "Main game logic: Game.php says \"All methods below are part of game class (and view class) and can be accessed using $this->\" and defines DbQuery as \"the generic method to access the database\" beside the specialized SELECT helpers. Game database model: dbmodel.sql declares the tables a game owns. A string reaching none of those methods runs nothing.",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ],
       "owner": "Brandon Born"
     },
     {

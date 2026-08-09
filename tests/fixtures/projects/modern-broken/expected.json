@@ -62,8 +62,8 @@
       "errors": 1,
       "warnings": 0,
       "information": 0,
-      "unsupported": 0
+      "unsupported": 1
     },
-    "codes": ["database.table.undeclared"]
+    "codes": ["database.table.undeclared", "database.unsupported-syntax"]
   }
 }

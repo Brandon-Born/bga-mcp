@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.4.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124, BGA-125, BGA-126.
+Catalog version 1.5.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124 through BGA-127.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -80,15 +80,19 @@ The types the framework predefines — `message`, `tableWindow`, `simplePause` �
 
 Run by `audit_database_usage`. Implemented in [`src/rules/database.ts`](../src/rules/database.ts).
 
-| Check                         | Severity    | Certainty | Source kind          | Failing fixture |
-| ----------------------------- | ----------- | --------- | -------------------- | --------------- |
-| `database.audit.unavailable`  | information | certain   | framework-behavior   | no              |
-| `database.column.duplicate`   | error       | certain   | framework-behavior   | no              |
-| `database.column.undeclared`  | warning     | likely    | framework-behavior   | yes             |
-| `database.column.unused`      | information | possible  | project-inference    | yes             |
-| `database.query.interpolated` | warning     | likely    | community-convention | yes             |
-| `database.table.duplicate`    | error       | certain   | framework-behavior   | no              |
-| `database.table.undeclared`   | error       | certain   | framework-behavior   | yes             |
+| Check                         | Severity    | Certainty | Source kind            | Failing fixture |
+| ----------------------------- | ----------- | --------- | ---------------------- | --------------- |
+| `database.audit.unavailable`  | information | certain   | framework-behavior     | no              |
+| `database.column.duplicate`   | error       | certain   | framework-behavior     | no              |
+| `database.column.undeclared`  | warning     | likely    | official-documentation | yes             |
+| `database.column.unused`      | information | possible  | project-inference      | yes             |
+| `database.query.interpolated` | warning     | likely    | community-convention   | yes             |
+| `database.table.duplicate`    | error       | certain   | framework-behavior     | no              |
+| `database.table.undeclared`   | error       | certain   | official-documentation | yes             |
+
+A quoted string becomes a query only where data flow puts it in one of the framework's documented database methods: `DbQuery`, which "is the generic method to access the database", or one of the specialized SELECT helpers — `getUniqueValueFromDB`, `getCollectionFromDB`, `getNonEmptyCollectionFromDB`, `getObjectFromDB`, `getNonEmptyObjectFromDB`, `getObjectListFromDB`, `getDoubleKeyCollectionFromDB`. A literal argument is read, and a variable is followed to the last literal assigned to it before the call.
+
+Anything else — an example in a comment, a message in an exception, a string assigned and never run, a query concatenated from a value only the running game has — is not a query. Where such an argument reaches a helper, it is reported as one located unsupported construct, and no table or column is reconstructed from it.
 
 ## Manual-only checks
 

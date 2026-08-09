@@ -56,7 +56,8 @@
           "E2E-AUDIT-DATABASE-INVALID-INPUT",
           "E2E-AUDIT-DATABASE-UNLISTED-ROOT",
           "E2E-AUDIT-DATABASE-MODERN-CLEAN",
-          "E2E-AUDIT-DATABASE-MODERN-DEFECTS"
+          "E2E-AUDIT-DATABASE-MODERN-DEFECTS",
+          "E2E-AUDIT-DATABASE-STRINGS-ONLY"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

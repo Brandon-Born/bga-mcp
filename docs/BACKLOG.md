@@ -551,7 +551,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-127 — Restrict database findings to executed framework database calls
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-109, BGA-121
 - **Deliverable:** A database-use reader that distinguishes a SQL-looking string from a query passed to a documented BGA database helper.
@@ -559,6 +559,8 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 - **Verification:** Packaged scenarios cover inline queries, assigned-then-called queries, each supported helper, unrelated SQL-like strings in every excluded context, dynamic concatenation, malformed SQL, multiple statements, framework tables, and zero database/network execution.
 - **Finding:** Adding only `$example = 'SELECT imaginary_id FROM ghost';` to an otherwise clean project made the installed tool count a third query and report the certain error `database.table.undeclared`; pre-release turned it into a failed check.
 - **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) defines `DbQuery(string $sql)` as the generic database-access method and documents the specialized query helpers. [Game database model: dbmodel.sql](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql) documents the project schema boundary.
+- **Evidence:** [Database query source verification](verification/DATABASE_QUERY_SOURCES.md) records the correction. `parseQueries` in [`src/project/database.ts`](../src/project/database.ts) starts from a call to `DbQuery` or one of the seven documented helpers, reads a literal argument, follows a variable to the last literal assigned to it before the call, and reports anything else as one located unsupported construct without reconstructing a table or column from it. A helper argument that is not a recognized statement is reported rather than parsed. `tests/fixtures/projects/modern-state-classes` carries the review's own `$example = 'SELECT imaginary_id FROM ghost';` line, a SQL example in a comment, and one in an exception message, and declares its database audit as passing; `modern-broken` declares the assembled query as unsupported beside its real undeclared-table error. Proven through the installed package by `E2E-AUDIT-DATABASE-STRINGS-ONLY` and `E2E-AUDIT-DATABASE-MODERN-DEFECTS`.
+- **Open questions:** A query built across several statements, or assigned inside a helper method, is unreadable here; following it further would mean interpreting PHP rather than reading it.
 
 ### BGA-128 — Complete the packaged public-boundary matrix for local capabilities
 

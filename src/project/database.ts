@@ -1,4 +1,5 @@
 import type { ParseOutcome } from './parse.js';
+import { matchBracket, maskLiterals, splitTopLevel as splitArguments } from './php.js';
 
 /**
  * Readers for a BGA project's database schema and the queries that use it.
@@ -98,7 +99,8 @@ const SQL_KEYWORDS = new Set([
   'duplicate',
 ]);
 
-function splitTopLevel(body: string): string[] {
+/** Splits a CREATE TABLE body on its top-level commas. */
+function splitColumns(body: string): string[] {
   const parts: string[] = [];
   let depth = 0;
   let current = '';
@@ -153,7 +155,7 @@ export function parseSchema(sql: string): ParseOutcome<readonly TableDefinition[
     }
     const body = tableBody(withoutComments, match.index + match[0].length - 1);
     const columns: string[] = [];
-    for (const entry of splitTopLevel(body)) {
+    for (const entry of splitColumns(body)) {
       const trimmed = entry.trim();
       if (trimmed === '') {
         continue;
@@ -176,7 +178,29 @@ export function parseSchema(sql: string): ParseOutcome<readonly TableDefinition[
   return { value: tables, unsupported };
 }
 
-const QUERY_STRING = /(["'])((?:SELECT|INSERT|UPDATE|DELETE|REPLACE)\b[\s\S]*?)\1/giu;
+/**
+ * The methods that actually reach the database.
+ *
+ * "All methods below are part of game class (and view class) and can be
+ * accessed using $this->". `DbQuery` "is the generic method to access the
+ * database"; the rest are the specialized SELECT helpers the same page
+ * documents. A string that never reaches one of these runs nothing.
+ */
+export const DATABASE_HELPERS = [
+  'DbQuery',
+  'getUniqueValueFromDB',
+  'getCollectionFromDB',
+  'getNonEmptyCollectionFromDB',
+  'getObjectFromDB',
+  'getNonEmptyObjectFromDB',
+  'getObjectListFromDB',
+  'getDoubleKeyCollectionFromDB',
+] as const;
+
+const HELPER_CALL = new RegExp(`(?:->|::)\\s*(${DATABASE_HELPERS.join('|')})\\s*\\(`, 'gu');
+/** `$sql = …;`, so a query assigned before its call can be followed. */
+const ASSIGNMENT = /\$([A-Za-z_]\w*)\s*(\.?=)\s*/gu;
+const SQL_START = /^\s*(?:SELECT|INSERT|UPDATE|DELETE|REPLACE)\b/iu;
 const TABLE_CLAUSE =
   /\b(?:FROM|JOIN|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+[`"]?([A-Za-z_][\w]*)[`"]?/giu;
 const QUALIFIED_COLUMN = /\b([A-Za-z_][\w]*)\s*\.\s*([A-Za-z_][\w]*)\b/gu;
@@ -196,20 +220,113 @@ function scrub(text: string): string {
     .replace(/\$[A-Za-z_][\w]*(?:\s*->\s*[A-Za-z_][\w]*)*/gu, ' ');
 }
 
+/** The literal value assigned to each variable, by offset of the assignment. */
+function assignments(php: string, masked: string): { name: string; end: number; value: string }[] {
+  const found: { name: string; end: number; value: string }[] = [];
+  for (const match of masked.matchAll(ASSIGNMENT)) {
+    const start = match.index + match[0].length;
+    let depth = 0;
+    let end = start;
+    while (end < masked.length) {
+      const character = masked[end] ?? '';
+      if (character === '(' || character === '[') {
+        depth += 1;
+      } else if (character === ')' || character === ']') {
+        depth -= 1;
+      } else if (character === ';' && depth === 0) {
+        break;
+      }
+      end += 1;
+    }
+    found.push({
+      name: match[1] ?? '',
+      end,
+      // An appending assignment is never a whole query on its own.
+      value: match[2] === '=' ? php.slice(start, end).trim() : '',
+    });
+  }
+  return found;
+}
+
+/**
+ * Resolves the SQL an argument carries, or says why it could not.
+ *
+ * A string is only a query when data flow puts it in a helper call, so the
+ * argument is followed one step: a literal is read, a variable is resolved to
+ * the last literal assigned to it before the call, and anything else — a
+ * concatenation, a method call, a value from elsewhere — is left unresolved
+ * rather than reconstructed.
+ */
+function resolveQueryText(
+  argument: string,
+  callIndex: number,
+  php: string,
+  masked: string,
+): { text: string } | { unreadable: string } {
+  const literal = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(argument);
+  if (literal !== null) {
+    return { text: literal[2] ?? '' };
+  }
+
+  const variable = /^\s*\$([A-Za-z_]\w*)\s*$/u.exec(argument);
+  if (variable === null) {
+    return {
+      unreadable: `a query argument this reader cannot follow: ${argument.trim().slice(0, 60)}`,
+    };
+  }
+
+  const name = variable[1] ?? '';
+  const assigned = assignments(php, masked)
+    .filter((entry) => entry.name === name && entry.end < callIndex)
+    .at(-1);
+  if (assigned === undefined) {
+    return { unreadable: `a query in $${name}, which is assigned outside this file` };
+  }
+  const assignedLiteral = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(assigned.value);
+  if (assignedLiteral === null) {
+    return {
+      unreadable: `a query assembled into $${name}: ${assigned.value.replace(/\s+/gu, ' ').trim().slice(0, 60)}`,
+    };
+  }
+  return { text: assignedLiteral[2] ?? '' };
+}
+
 /**
  * Reads the SQL a PHP source runs.
  *
- * Recognizes query strings passed to the framework's database helpers. A
- * query whose text is concatenated from variables cannot be read as a whole
- * and is reported through its interpolation flag.
+ * A quoted string is a query only when it reaches one of the framework's
+ * documented database methods. An example in a comment, a message in an
+ * exception, a template, or a variable nothing ever executes is not a query,
+ * however much it looks like one — and treating it as one is how an
+ * imaginary table becomes a certain finding about a real project.
  */
 export function parseQueries(php: string): ParseOutcome<readonly QueryReference[]> {
   const queries: QueryReference[] = [];
   const unsupported: string[] = [];
+  const masked = maskLiterals(php);
 
-  for (const match of php.matchAll(QUERY_STRING)) {
-    const text = match[2];
-    if (text === undefined) {
+  for (const call of masked.matchAll(HELPER_CALL)) {
+    const helper = call[1] ?? '';
+    const span = matchBracket(masked, call.index + call[0].length - 1);
+    if (span === null) {
+      continue;
+    }
+    const first = splitArguments(masked, span.start + 1, span.end)[0];
+    if (first === undefined) {
+      unsupported.push(`${helper} called with no query`);
+      continue;
+    }
+
+    const resolved = resolveQueryText(php.slice(first.start, first.end), call.index, php, masked);
+    if ('unreadable' in resolved) {
+      unsupported.push(`${helper} runs ${resolved.unreadable}`);
+      continue;
+    }
+    const text = resolved.text;
+    if (!SQL_START.test(text)) {
+      unsupported.push(
+        `${helper} runs a statement this reader does not recognize: ${text.replace(/\s+/gu, ' ').trim().slice(0, 60)}`,
+      );
       continue;
     }
 
@@ -260,15 +377,6 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       interpolated: INTERPOLATION.test(text),
       text: text.replace(/\s+/gu, ' ').trim(),
     });
-  }
-
-  // A query assembled outside a single string cannot be read at all.
-  for (const concatenated of php.matchAll(
-    /(["'])(?:SELECT|INSERT|UPDATE|DELETE)\b[^"']*\1\s*\./giu,
-  )) {
-    unsupported.push(
-      `a query concatenated from more than one expression: ${concatenated[0].slice(0, 40)}`,
-    );
   }
 
   return { value: queries, unsupported };

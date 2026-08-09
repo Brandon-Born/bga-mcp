@@ -44,5 +44,15 @@
       "unsupported": 0
     },
     "codes": []
+  },
+  "database": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
   }
 }

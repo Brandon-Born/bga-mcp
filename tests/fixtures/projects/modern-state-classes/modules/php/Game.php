@@ -22,6 +22,21 @@ final class Game extends \Bga\GameFramework\Table
         return $this->getObjectListFromDB('SELECT token_id, token_owner FROM token');
     }
 
+    // None of the three strings below runs anything: one is a comment, one is
+    // a message, and one is assigned and never executed. A reader that counts
+    // them reports imaginary tables in a project that has none.
+    //
+    //   SELECT imaginary_id FROM ghost
+    public function explainQueries(): string
+    {
+        $example = 'SELECT imaginary_id FROM ghost';
+        if ($example === '') {
+            throw new \BgaUserException('SELECT is not something you can type here');
+        }
+
+        return $example;
+    }
+
     // A framework-wide action: no state lists it, and the framework checks
     // Game.php for actions that can be triggered at any state.
     #[CheckAction(false)]

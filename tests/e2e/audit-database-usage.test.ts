@@ -33,11 +33,14 @@ interface DatabaseAuditResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
+let server: PackagedServer<
+  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame'
+>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let modernCleanRoot: string;
+let stateClassRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
@@ -63,11 +66,13 @@ beforeAll(async () => {
     brokengame: 'legacy-broken',
     moderngame: 'modern-broken',
     moderncleangame: 'modern',
+    stateclassgame: 'modern-state-classes',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
   modernCleanRoot = server.projects.moderncleangame;
+  stateClassRoot = server.projects.stateclassgame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['dbmodel.sql']);
   expectedBroken = (
     await readFixtureExpectations<{
@@ -230,5 +235,27 @@ describe('packaged audit_database_usage', () => {
     expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
       expectedModern.codes,
     );
+  });
+  it('[E2E-AUDIT-DATABASE-STRINGS-ONLY] counts a string as a query only where something runs it', async () => {
+    const response = await withServer(
+      ['--project-root', stateClassRoot],
+      async (client) => await callValidate(client, { projectRoot: stateClassRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+
+    // Regression, observed through the installed package: adding
+    // `$example = 'SELECT imaginary_id FROM ghost';` to an otherwise clean
+    // project made it count a third query and report a certain undeclared
+    // table. The fixture holds that line, a comment, and an exception message.
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.queries.map((query) => query.text)).toEqual([
+      'SELECT token_id, token_owner FROM token',
+    ]);
   });
 });

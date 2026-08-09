@@ -47,4 +47,13 @@ final class Game extends \Bga\GameFramework\Table
             'SELECT card_id, card_location, card_owner FROM card'
         );
     }
+
+    public function search(string $filter): array
+    {
+        // Deliberately unreadable: assembled from a value only the running
+        // game has, so the tables it names are unknown rather than absent.
+        $sql = 'SELECT card_id FROM card WHERE ' . $filter;
+
+        return $this->getObjectListFromDB($sql);
+    }
 }
