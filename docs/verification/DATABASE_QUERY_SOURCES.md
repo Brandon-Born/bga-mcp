@@ -7,8 +7,8 @@ Recorded: 2026-08-09. Covers BGA-127, the correctness owner for the database fin
   "kind": "run",
   "capabilities": 16,
   "scenarios": 149,
-  "claims": 78,
-  "tests": 462
+  "claims": 80,
+  "tests": 468
 }
 ```
 

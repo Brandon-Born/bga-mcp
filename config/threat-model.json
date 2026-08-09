@@ -756,16 +756,16 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-207",
-      "scenarios": ["UNIT-DOC-ADDRESS-BLOCKED"]
+      "scenarios": ["UNIT-DOC-ADDRESS-BLOCKED", "UNIT-DOC-ADDRESS-NORMALIZATION"]
     },
     {
       "id": "TM-DOC-ADDRESS-NORMALIZATION",
       "title": "Every resolved address is normalized semantically before non-public address classification and socket use",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-323",
-      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION"]
+      "scenarios": ["UNIT-DOC-ADDRESS-NORMALIZATION", "E2E-DOCS-ADDRESS-NORMALIZATION"]
     },
     {
       "id": "TM-DOC-REQUEST-CONTENT",
@@ -953,7 +953,7 @@
       "title": "Studio reads normalize every resolved address before non-public classification and socket use",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-323",
       "scenarios": ["E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
     },

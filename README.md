@@ -44,7 +44,7 @@ Available behind explicit network permission, implemented but not verified:
 Also available:
 
 - `check_setup` — reports local, documentation, and experimental Studio setup state. The 2026 protocol-era roots/input flow remains BGA-318.
-- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project now exists, but BGA-319 through BGA-323 and BGA-326 through BGA-328 block a safe successful read: output privacy, project identifiers, file sessions, default source ACLs, address normalization, cancellation, successful-result redaction, and session-file handling remain open.
+- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project now exists, but BGA-319 through BGA-322 and BGA-326 through BGA-328 block a safe successful read: output privacy, project identifiers, file sessions, default source ACLs, cancellation, successful-result redaction, and session-file handling remain open. Address normalization (BGA-323) is corrected.
 
 Later releases may add authenticated Studio operations:
 
@@ -67,7 +67,7 @@ Current discovery names are not yet a stable release API. Future capability name
 
 ## Project status
 
-Ten tools and eleven concrete resources are discoverable. The seven local project tools, the three project resources and the stdio transport are verified on protocol `2025-11-25`: every acceptance case they claim is mapped to an assertion against the installed package, and [CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/31330457842) passes the six-job matrix. The documentation capabilities stay implemented — their maintained retrieval evaluation fails and the framework-version resource has a confirmed extraction bug — and the Studio log reader stays experimental and not live-verified. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
+Ten tools and eleven concrete resources are discoverable. The seven local project tools, the three project resources and the stdio transport are verified on protocol `2025-11-25`: every acceptance case they claim is mapped to an assertion against the installed package, and [CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/31330457842) passes the six-job matrix. The documentation capabilities stay implemented — their maintained retrieval evaluation still fails on excerpt selection, and the corrections to search accounting, framework-version reading, and address normalization are waiting on CI evidence of the commit that made them — and the Studio log reader stays experimental and not live-verified. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 

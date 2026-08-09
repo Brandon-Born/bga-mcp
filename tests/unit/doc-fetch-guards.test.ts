@@ -74,6 +74,76 @@ describe('documentation address guard', () => {
     expect(blockedAddressReason('')).toBe('unparseable');
   });
 
+  it('[UNIT-DOC-ADDRESS-NORMALIZATION] judges an address by what it is, not how it is spelled', () => {
+    // The 2026-08-08 review reached 127.0.0.1, 10.0.0.1, and 192.168.1.1
+    // through this spelling, which the reader let past because it matched
+    // text: the hexadecimal mapped form has no dots to match.
+    expect(blockedAddressReason('::ffff:7f00:1')).toBe('loopback');
+    expect(blockedAddressReason('::ffff:a00:1')).toBe('private');
+    expect(blockedAddressReason('::ffff:c0a8:101')).toBe('private');
+
+    // The same address, written every way the standards allow.
+    for (const spelling of [
+      '::ffff:127.0.0.1',
+      '::FFFF:7F00:0001',
+      '0:0:0:0:0:ffff:7f00:0001',
+      '0000:0000:0000:0000:0000:ffff:127.0.0.1',
+      '::ffff:7f00:1%eth0',
+      // Compatible and 6to4 carry an IPv4 address too.
+      '::7f00:1',
+      '2002:7f00:1::',
+      // As does the well-known NAT64 prefix an IPv6-only network answers with.
+      '64:ff9b::7f00:1',
+    ]) {
+      expect(blockedAddressReason(spelling), spelling).toBe('loopback');
+    }
+
+    // A mapped or translated public address is how a dual-stack or IPv6-only
+    // resolver answers for an ordinary host, so it stays usable.
+    expect(blockedAddressReason('::ffff:93.184.216.34')).toBeNull();
+    expect(blockedAddressReason('64:ff9b::93.184.216.34')).toBeNull();
+    // The deprecated forms are refused even carrying a public address: nothing
+    // a documentation host publishes resolves there.
+    expect(blockedAddressReason('::93.184.216.34')).toBe('reserved');
+    expect(blockedAddressReason('2002:5db8:d822::')).toBe('reserved');
+
+    // Special-purpose space inside global unicast, and everything outside it.
+    expect(blockedAddressReason('2001:db8::1')).toBe('reserved');
+    expect(blockedAddressReason('2001::1')).toBe('reserved');
+    expect(blockedAddressReason('2001:20::1')).toBe('reserved');
+    expect(blockedAddressReason('100::1')).toBe('reserved');
+    expect(blockedAddressReason('fec0::1')).toBe('reserved');
+    expect(blockedAddressReason('abcd::1')).toBe('reserved');
+    expect(blockedAddressReason('192.0.2.1')).toBe('reserved');
+    expect(blockedAddressReason('203.0.113.9')).toBe('reserved');
+    // Global unicast still works, which is the point of the whole capability.
+    expect(blockedAddressReason('2606:4700:4700::1111')).toBeNull();
+
+    // An ambiguous or malformed form fails closed rather than being read the
+    // way one parser happens to read it: 0177.0.0.1 is loopback in octal.
+    for (const malformed of [
+      '0177.0.0.1',
+      '010.0.0.1',
+      '1.2.3.04',
+      '1.2.3.4.5',
+      '2130706433',
+      '12345::',
+      '1:2:3:4:5:6:7:8:9',
+      '::ffff:999.1.1.1',
+      ':::1',
+      '::ffff:1.2.3',
+    ]) {
+      expect(blockedAddressReason(malformed), malformed).toBe('unparseable');
+    }
+
+    // A resolver that disagrees with itself about what it returned is refused
+    // rather than believed.
+    expect(blockedAddressReason('127.0.0.1', 6)).toBe('unparseable');
+    expect(blockedAddressReason('::1', 4)).toBe('unparseable');
+    expect(blockedAddressReason('93.184.216.34', 4)).toBeNull();
+    expect(blockedAddressReason('2606:4700:4700::1111', 6)).toBeNull();
+  });
+
   it('[UNIT-DOC-ADDRESS-BLOCKED] pins the connection to an address it approved', async () => {
     const allowed = await lookupOnce([{ address: '93.184.216.34', family: 4 }]);
     expect(allowed.error).toBeNull();

@@ -138,7 +138,7 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-STUDIO-READ-HOST-PINNED           | automated | implemented | INT-STUDIO-HOST-PINNED                                                       |
 | TM-STUDIO-OWN-DATA-ONLY              | automated | implemented | UNIT-STUDIO-LOG-PRIVACY, UNIT-STUDIO-LOG-PARSE                               |
 | TM-STUDIO-ALL-OUTPUTS-OWN-DATA       | automated | planned     | Reserved for BGA-319                                                         |
-| TM-STUDIO-READ-ADDRESS-NORMALIZATION | automated | planned     | Reserved for BGA-323                                                         |
+| TM-STUDIO-READ-ADDRESS-NORMALIZATION | automated | implemented | E2E-STUDIO-READ-ADDRESS-NORMALIZATION                                        |
 | TM-STUDIO-READ-CANCELLATION          | automated | planned     | Reserved for BGA-326                                                         |
 | TM-STUDIO-SUCCESS-REDACTION          | automated | planned     | Reserved for BGA-327                                                         |
 | TM-STUDIO-SESSION-REDACTION          | automated | implemented | Environment provider only: UNIT-STUDIO-SESSION-REDACTION; BGA-321 owns files |
@@ -147,8 +147,8 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-STUDIO-NO-PRODUCTION-LOGS         | automated | implemented | INT-STUDIO-NO-PRODUCTION-LOGS                                                |
 | TM-DOC-UNTRUSTED                     | automated | implemented | UNIT-DOC-EXCERPT, UNIT-DOC-PROVENANCE, UNIT-DOC-SEARCH-PARSE                 |
 | TM-DOC-HOST-ALLOWLIST                | automated | implemented | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF         |
-| TM-DOC-NO-LOOPBACK                   | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED                                                     |
-| TM-DOC-ADDRESS-NORMALIZATION         | automated | planned     | Reserved for BGA-323                                                         |
+| TM-DOC-NO-LOOPBACK                   | automated | implemented | UNIT-DOC-ADDRESS-BLOCKED, UNIT-DOC-ADDRESS-NORMALIZATION                     |
+| TM-DOC-ADDRESS-NORMALIZATION         | automated | implemented | UNIT-DOC-ADDRESS-NORMALIZATION, E2E-DOCS-ADDRESS-NORMALIZATION               |
 | TM-DOC-REQUEST-CONTENT               | automated | implemented | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                            |
 | TM-DOC-EXPLICIT-QUERY-PRIVACY        | automated | planned     | Reserved for BGA-324                                                         |
 | TM-DOC-RESPONSE-BUDGET               | automated | implemented | UNIT-DOC-RESPONSE-BUDGET, UNIT-DOC-CACHE-BOUNDED                             |

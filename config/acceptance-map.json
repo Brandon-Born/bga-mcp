@@ -578,6 +578,30 @@
       "case": "Every returned value has a source line and a snapshot date",
       "boundary": "packaged",
       "scenarios": ["E2E-FRAMEWORK-VERSION-CURRENT"]
+    },
+    {
+      "item": "BGA-323",
+      "case": "Loopback, private, link-local, mapped, compatible, compressed, and alternate textual forms are refused according to their normalized address",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION", "E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "item": "BGA-323",
+      "case": "An unknown or unparseable address form fails closed",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "item": "BGA-323",
+      "case": "DNS results are checked as resolved and the socket uses only an approved address",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "item": "BGA-323",
+      "case": "The resolver makes zero connection attempts for a non-public result and cannot substitute a second answer",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION", "E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
     }
   ]
 }
