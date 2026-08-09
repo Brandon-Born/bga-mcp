@@ -37,25 +37,25 @@ Discovers supported BGA layouts and produces a normalized representation of:
 
 Validation rules operate on this normalized model instead of relying on isolated regular-expression checks.
 
-Layout detection and the first slice of the model are implemented in `src/project/`. Detection scores independent signals rather than matching one template, and the readers in `src/project/parse.ts` are textual: they never execute project code, and every construct they cannot interpret becomes an explicit unsupported finding. Action contracts, notifications, and database usage are absent from the model until their own parsers land.
+Layout detection and readers for states, actions, notifications, and database use are implemented in `src/project/`. They are textual and never execute project code: `src/project/php.ts` masks string and comment content before reading structure, so a description containing brackets cannot move a reader off the end of a call, and identifiers written as constants are resolved from the source that declares them rather than by running anything. The 2026-08-08 review showed that the modern/hybrid fixtures omitted documented constructs and some readers derived certain findings from incomplete or merely SQL-looking syntax. BGA-124 corrected the state readers and rules — a rule that depends on the whole machine now stays silent when part of it could not be read — and BGA-125 through BGA-128 own the rest, so those layout claims remain `unknown`.
 
-### Documentation index
+### Documentation retrieval
 
-Retrieves or builds a curated index of relevant BGA Studio documentation. Every result should include its canonical source URL, retrieval or snapshot date, and relevant framework version when known.
+Performs guarded, explicit, one-page/search retrieval from an allowlisted official wiki and community source, with a bounded in-memory dated cache. BGA-201 rejected crawling and shipping a curated index because the reviewed sources do not permit bulk collection or full-text redistribution. Every result carries a canonical source URL, retrieval/snapshot date, provenance, and untrusted-content label.
 
 The index must distinguish official documentation from community examples. A code example is evidence of an implementation pattern, not automatically proof of a supported public API.
 
 ### Studio adapter
 
-Optional component for authenticated Studio access. The first adapter should use documented SFTP behavior and SSH keys. Browser-session or undocumented endpoint automation requires separate review because it is more fragile and may create policy or compatibility risk.
+Optional component for authenticated Studio access. Future synchronization should use documented SFTP behavior and SSH keys. A separate reviewed boundary permits one experimental own-account log reader over an undocumented authenticated page; BGA-319 through BGA-328 record why that reader remains unreleased and off by default.
 
 ### Policy boundary
 
-Applies configured project roots, remote project allowlists, operation timeouts, output redaction, and mutation safeguards before an adapter runs.
+Applies configured project roots, remote project allowlists, operation deadlines, output budgets/redaction, and mutation safeguards before an adapter runs. These mechanisms are implemented but not release-verified: BGA-323 through BGA-330 own reproduced address, request-content, error-budget, cancellation, successful-redaction, credential-file, import-gate, and filesystem-bounding gaps.
 
-This component is implemented in `src/policy.ts` and is the only module permitted to import filesystem, network, or subprocess APIs; ESLint and the `GATE-POLICY-IMPORT-BOUNDARY` scenario enforce that. It resolves roots through the filesystem at startup, rejects traversal lexically, re-checks resolved locations after symlinks, and fails closed on unconfigured or invalid settings. Defaults are local, read-only, and network-off.
+This component is implemented in `src/policy.ts`, and the current production source has no privileged-effect import outside it. ESLint and `GATE-POLICY-IMPORT-BOUNDARY` catch an enumerated set of exact imports; BGA-329 owns alternate specifiers, dynamic imports, re-exports, repository-owned wrappers, and privileged globals. Static roots and links are checked before reads, but BGA-330 owns binding those checks to the exact opened object and bounding every encountered entry. Defaults are local, read-only, and network-off.
 
-Failures leave the process through the versioned public error contract in `src/errors.ts`. Known errors keep a stable code and redacted details; anything unexpected collapses to `internal.unexpected` with no stack trace. `src/redaction.ts` removes credentials, sessions, connection strings, player data, and out-of-root paths from results, errors, and log lines.
+Failures leave the process through the versioned public error contract in `src/errors.ts`. Known errors keep a stable code and redacted details; anything unexpected collapses to `internal.unexpected` with no stack trace. `src/redaction.ts` provides credential, session, connection-string, player-data, and path redaction, but the current publication boundary applies it reliably only to failures. BGA-325 bounds failure responses; BGA-327 extends minimization/redaction to successful text and structured content; BGA-321 covers file-sourced sessions.
 
 ### Verification harness
 
@@ -67,23 +67,23 @@ Adapters for external systems require an additional live harness. A Studio-backe
 
 ### Resources
 
-- `bga://project/summary` (implemented and verified)
-- `bga://project/states` (implemented and verified)
-- `bga://project/diagnostics` (implemented and verified)
-- `bga://docs/{topic}`
-- `bga://framework/version`
+- `bga://project/summary` (implemented; verification reopened)
+- `bga://project/states` (implemented; verification reopened)
+- `bga://project/diagnostics` (implemented; verification reopened)
+- `bga://docs/{topic}` (implemented; live relevance failing)
+- `bga://framework/version` (implemented; live extraction bug)
 
 ### Read-only tools
 
-- `inspect_project` (implemented and verified)
-- `validate_state_machine` (implemented and verified for the legacy layout)
-- `validate_action_contracts` (implemented and verified for the legacy layout)
-- `validate_notifications` (implemented and verified for the legacy layout)
-- `audit_database_usage` (implemented and verified for the legacy layout)
-- `validate_project` (implemented and verified; aggregates the four validators)
-- `run_pre_release_audit` (implemented and verified; runs the catalogued checks)
-- `search_bga_docs`
-- `read_studio_logs`
+- `inspect_project` (implemented; verification reopened)
+- `validate_state_machine` (implemented; legacy-only capability claim pending full matrix)
+- `validate_action_contracts` (implemented; legacy-only capability claim pending full matrix)
+- `validate_notifications` (implemented; legacy-only capability claim pending full matrix)
+- `audit_database_usage` (implemented; legacy-only capability claim pending full matrix)
+- `validate_project` (implemented; aggregates the four validators)
+- `run_pre_release_audit` (implemented; unsupported propagation bug open)
+- `search_bga_docs` (implemented; live evaluation failing)
+- `read_studio_logs` (experimental; live correctness/privacy blockers open)
 
 ### Mutating tools
 
@@ -112,7 +112,7 @@ Facts and suggestions are structurally distinct. Heuristics expose reduced certa
 
 ## Security model
 
-[THREAT_MODEL.md](THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks, and it is machine-checked. The documentation and Studio boundaries are unreviewed, which blocks any networked or mutating capability from being advertised.
+[THREAT_MODEL.md](THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks, and it is machine-checked. The documentation and Studio boundaries are reviewed but remain gated by their recorded preconditions; review alone does not verify a capability. BGA-018 owns exact machine/human field agreement after the current identifier-only check missed a stale boundary status.
 
 ## Credential and data handling
 
@@ -125,7 +125,7 @@ Facts and suggestions are structurally distinct. Heuristics expose reduced certa
 
 ## Compatibility strategy
 
-BGA projects exist along a range between the legacy and modern layouts rather than in one of two templates: the framework migrates metadata, game logic, states, and client logic independently, and keeps reading the older form of each. Detection is therefore capability-based and per component — it resolves a generation for each and derives the whole-project label from them, so a part-migrated project is read rather than refused. Original minimal modern, legacy, and hybrid fixture projects establish the structural baseline. The supported-layout, runtime, platform, protocol, transport, and client claims are published in [COMPATIBILITY.md](COMPATIBILITY.md) and enforced against the running server by CI.
+BGA projects exist along a range between the legacy and modern layouts rather than in one of two templates: the framework migrates metadata, game logic, states, and client logic independently, and keeps reading the older form of each. Detection is therefore capability-based and per component — it resolves a generation for each and derives the whole-project label from them, so a part-migrated project is read rather than refused. The same rule applies inside a component: the state machine's entry point comes from whatever form the project uses to declare it, and identifiers 1 and 99 belong to the framework in every generation. The modern and hybrid fixtures were structural inputs rather than support proof until BGA-124 rebuilt them on the documented constructs; modern and hybrid support stay `unknown` in [COMPATIBILITY.md](COMPATIBILITY.md) until BGA-125 through BGA-128 pass too.
 
 Unknown syntax should produce an explicit unsupported or uncertain result, not a clean bill of health.
 

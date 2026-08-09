@@ -69,9 +69,18 @@ export async function loadProjectContext(
   options: { readonly withPhpSources?: boolean; readonly withClientSources?: boolean } = {},
 ): Promise<ProjectContext> {
   const listing = await policy.listProjectFiles(projectRoot);
-  const model = await buildProjectModel(listing, {
-    read: async (relativePath) => await policy.readProjectFile(projectRoot, relativePath),
-  });
+
+  // The model reads the game logic to resolve state identifiers and the
+  // initial state, and the validators read the same files again. One cache
+  // means the second read is free rather than a second trip to disk.
+  const read = new Map<string, Promise<string>>();
+  const readOnce = async (relativePath: string): Promise<string> => {
+    const cached = read.get(relativePath) ?? policy.readProjectFile(projectRoot, relativePath);
+    read.set(relativePath, cached);
+    return await cached;
+  };
+
+  const model = await buildProjectModel(listing, { read: readOnce });
 
   const phpSources: PhpSource[] = [];
   const clientSources: PhpSource[] = [];
@@ -88,7 +97,7 @@ export async function loadProjectContext(
       break;
     }
     budget -= file.bytes;
-    const source = { path: file.path, text: await policy.readProjectFile(projectRoot, file.path) };
+    const source = { path: file.path, text: await readOnce(file.path) };
     if (file.path.endsWith('.php')) {
       phpSources.push(source);
     } else {

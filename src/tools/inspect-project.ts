@@ -16,6 +16,12 @@ const StateDefinitionSchema = z.strictObject({
   args: z.string().nullable(),
   possibleActions: z.array(z.string()),
   transitions: z.record(z.string(), z.number().int()),
+  origin: z.enum(['array', 'class', 'framework']),
+  description: z.string().nullable(),
+  descriptionMyTurn: z.string().nullable(),
+  zombie: z.string().nullable(),
+  redirects: z.array(z.number().int()),
+  edgesResolved: z.boolean(),
 });
 
 export const InspectProjectInputSchema = z.strictObject({
@@ -74,6 +80,13 @@ export const InspectProjectOutputSchema = z.strictObject({
     unsupported: z.array(z.string()),
     source: z.string().nullable(),
     sources: z.array(z.string()),
+    complete: z.strictObject({ declarations: z.boolean(), edges: z.boolean() }),
+    duplicateIds: z.array(z.number().int()),
+    initial: z.strictObject({
+      ids: z.array(z.number().int()),
+      origin: z.enum(['setup-new-game', 'state-1', 'default', 'unresolved']),
+      evidence: z.string(),
+    }),
   }),
   fileCount: z.number().int().nonnegative(),
   truncated: z.boolean(),

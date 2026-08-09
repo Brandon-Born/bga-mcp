@@ -78,17 +78,73 @@ $machinestates = [
       args: null,
       possibleActions: ['actPass', 'actPlay'],
       transitions: { pass: 99, play: 2 },
+      origin: 'array',
+      description: null,
+      descriptionMyTurn: null,
+      zombie: null,
+      redirects: [],
+      edgesResolved: true,
     });
     expect(outcome.value[2]?.transitions).toEqual({});
   });
 
+  it('resolves the constants the documentation shows beside the array', () => {
+    // "Using numeric constants is prone to errors. If you want you can declare
+    // state constants as PHP named constants."
+    const outcome = parseLegacyStates(`<?php
+if (!defined('STATE_END_GAME')) {
+    define('STATE_PLAYER_TURN', 2);
+    define('STATE_END_GAME', 99);
+}
+
+$machinestates = [
+    STATE_PLAYER_TURN => ['name' => 'playerTurn', 'transitions' => ['pass' => STATE_END_GAME]],
+];`);
+    expect(outcome.unsupported).toEqual([]);
+    expect(outcome.value[0]).toMatchObject({ id: 2, transitions: { pass: 99 } });
+  });
+
+  it('reads the GameStateBuilder form the migration guide recommends', () => {
+    const outcome = parseLegacyStates(`<?php
+use Bga\\GameFramework\\GameStateBuilder;
+use Bga\\GameFramework\\StateType;
+
+$machinestates = [
+    1 => GameStateBuilder::gameSetup(10)->build(),
+
+    10 => GameStateBuilder::create()
+        ->name('playerTurn')
+        ->description(clienttranslate('\${actplayer} must play a card, or pass'))
+        ->descriptionmyturn(clienttranslate('\${you} must play a card, or pass'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argPlayerTurn')
+        ->possibleactions(['actPlayCard', 'actPass'])
+        ->transitions(['playCard' => 10, 'pass' => 99])
+        ->build(),
+];`);
+
+    expect(outcome.unsupported).toEqual([]);
+    // The framework builds state 1 itself; all that is readable is where it goes.
+    expect(outcome.value[0]).toMatchObject({ id: 1, origin: 'framework', redirects: [10] });
+    expect(outcome.value[1]).toMatchObject({
+      id: 10,
+      name: 'playerTurn',
+      type: 'activeplayer',
+      args: 'argPlayerTurn',
+      possibleActions: ['actPlayCard', 'actPass'],
+      transitions: { playCard: 10, pass: 99 },
+      description: '${actplayer} must play a card, or pass',
+      descriptionMyTurn: '${you} must play a card, or pass',
+    });
+  });
+
   it('reports constructs it cannot interpret instead of dropping them', () => {
     expect(parseLegacyStates('<?php\n$machinestates = [];').unsupported).toEqual([
-      'no literal state entries',
+      { path: null, construct: 'no literal state entries', scope: 'declaration' },
     ]);
     for (const source of ['<?php\n$machinestates = $imported;', '<?php\n// nothing here']) {
       expect(parseLegacyStates(source).unsupported).toEqual([
-        'no literal $machinestates assignment',
+        { path: null, construct: 'no literal $machinestates assignment', scope: 'declaration' },
       ]);
     }
 
@@ -98,8 +154,12 @@ $machinestates = [
     2 => ['name' => 'playerTurn', 'transitions' => ['pass' => STATE_END]],
 ];`);
     expect(computed.unsupported).toEqual([
-      'non-literal state key STATE_SETUP',
-      'non-literal transition target in state 2',
+      { path: null, construct: 'non-literal state key STATE_SETUP', scope: 'declaration' },
+      {
+        path: null,
+        construct: 'unreadable transition target pass => STATE_END in state 2',
+        scope: 'edge',
+      },
     ]);
     expect(computed.value.map((state) => state.id)).toEqual([2]);
   });

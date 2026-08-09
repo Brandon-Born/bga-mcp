@@ -43,7 +43,15 @@ async function hashes(directory: string): Promise<Record<string, string>> {
 }
 
 describe('BGA project fixture corpus', () => {
-  it.each(['modern', 'modern-broken', 'legacy', 'legacy-broken', 'hybrid'])(
+  it.each([
+    'modern',
+    'modern-broken',
+    'modern-state-classes',
+    'modern-unreadable',
+    'legacy',
+    'legacy-broken',
+    'hybrid',
+  ])(
     '[GATE-FIXTURE-SAFETY] %s matches its declared baseline and remains safe and immutable',
     async (fixture) => {
       const layout = fixture.startsWith('legacy')
@@ -76,9 +84,17 @@ describe('BGA project fixture corpus', () => {
         expect(expected.diagnostics.every((code) => typeof code === 'string')).toBe(true);
       }
 
-      // A fixture that seeds defects must declare exactly which findings it expects,
-      // so a rule change cannot silently repurpose it. A clean fixture that
-      // declares expectations must declare passing ones.
+      // A fixture that seeds defects must declare exactly which findings it
+      // expects, so a rule change cannot silently repurpose it. A clean fixture
+      // that declares expectations must declare passing ones. A fixture of
+      // deliberately unreadable syntax must declare only what the reader
+      // reports about itself: the moment it declares a certain finding, some
+      // rule has derived a fact from a machine it could not read.
+      const kind = fixture.endsWith('-broken')
+        ? 'broken'
+        : fixture.endsWith('-unreadable')
+          ? 'unreadable'
+          : 'clean';
       for (const declared of [
         expected.stateMachine,
         expected.actionContracts,
@@ -88,19 +104,26 @@ describe('BGA project fixture corpus', () => {
         if (declared === undefined) {
           continue;
         }
-        if (fixture.endsWith('-broken')) {
+        if (kind === 'broken') {
           expect(declared.status).toBe('findings');
           expect(declared.codes.length).toBeGreaterThan(0);
+        } else if (kind === 'unreadable') {
+          expect(declared.status).toBe('unsupported');
+          expect(declared.codes.length).toBeGreaterThan(0);
+          expect(declared.codes.every((code) => code.endsWith('.unsupported'))).toBe(true);
         } else {
           expect(declared.status).toBe('passed');
           expect(declared.codes).toEqual([]);
         }
       }
-      if (fixture.endsWith('-broken')) {
+      if (kind === 'broken') {
         expect(expected.stateMachine).toBeDefined();
         expect(expected.actionContracts).toBeDefined();
         expect(expected.notifications).toBeDefined();
         expect(expected.database).toBeDefined();
+      }
+      if (kind === 'unreadable') {
+        expect(expected.stateMachine).toBeDefined();
       }
 
       for (const file of actualFiles) {

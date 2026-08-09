@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.0.0. Updated 2026-08-06. Backlog item: BGA-110.
+Catalog version 1.2.0. Updated 2026-08-08. Backlog items: BGA-110, BGA-124.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -11,7 +11,7 @@ Every automated check names the rule that implements it, the tool that runs it, 
 - **framework-behavior** — the BGA framework will not work otherwise. These are the strongest claims.
 - **community-convention** — a widely followed practice rather than a hard requirement, reported at a lower severity.
 - **project-inference** — inferred by comparing two parts of a project. Useful, but not a documented rule, and never reported as certain.
-- **official-documentation** — cited BGA Studio documentation. No check claims this kind yet; the framework-behavior entries below are derived from observed framework behavior and fixtures, and citing a page would be a stronger claim than the evidence supports.
+- **official-documentation** — cited BGA Studio documentation. The check records the sentence it rests on and the page it came from. The state-machine checks that could be traced to a sentence now claim this kind; the rest stay framework-behavior, because they are derived from how the framework runs a machine rather than stated on a page.
 
 A check with a `failing` fixture is proven in both directions: the valid fixture must not produce it, and the failing fixture must. The gate cross-checks that against the fixture's own declared findings.
 
@@ -19,19 +19,24 @@ A check with a `failing` fixture is proven in both directions: the valid fixture
 
 Run by `validate_state_machine`. Implemented in [`src/rules/state-machine.ts`](../src/rules/state-machine.ts).
 
-| Check                                   | Severity | Certainty | Source kind        | Failing fixture |
-| --------------------------------------- | -------- | --------- | ------------------ | --------------- |
-| `state.action.handler-missing`          | warning  | likely    | framework-behavior | yes             |
-| `state.args.handler-missing`            | warning  | likely    | framework-behavior | yes             |
-| `state.dead-end`                        | warning  | certain   | framework-behavior | yes             |
-| `state.id.duplicate`                    | error    | certain   | framework-behavior | no              |
-| `state.initial.missing`                 | error    | certain   | framework-behavior | no              |
-| `state.name.duplicate`                  | warning  | certain   | framework-behavior | yes             |
-| `state.name.missing`                    | warning  | certain   | framework-behavior | no              |
-| `state.possible-action.handler-missing` | warning  | likely    | framework-behavior | no              |
-| `state.transition.target-exists`        | error    | certain   | framework-behavior | yes             |
-| `state.type.unknown`                    | warning  | certain   | framework-behavior | yes             |
-| `state.unreachable`                     | warning  | certain   | framework-behavior | yes             |
+| Check                                   | Severity | Certainty | Source kind            | Failing fixture |
+| --------------------------------------- | -------- | --------- | ---------------------- | --------------- |
+| `state.action.handler-missing`          | warning  | likely    | framework-behavior     | yes             |
+| `state.args.handler-missing`            | warning  | likely    | framework-behavior     | yes             |
+| `state.dead-end`                        | warning  | certain   | framework-behavior     | yes             |
+| `state.id.duplicate`                    | error    | certain   | official-documentation | no              |
+| `state.id.reserved`                     | warning  | certain   | official-documentation | modern only     |
+| `state.initial.missing`                 | error    | certain   | official-documentation | no              |
+| `state.name.duplicate`                  | warning  | certain   | official-documentation | yes             |
+| `state.name.missing`                    | warning  | certain   | official-documentation | no              |
+| `state.possible-action.handler-missing` | warning  | likely    | framework-behavior     | no              |
+| `state.transition.target-exists`        | error    | certain   | official-documentation | yes             |
+| `state.type.unknown`                    | warning  | certain   | official-documentation | yes             |
+| `state.unreachable`                     | warning  | certain   | framework-behavior     | yes             |
+
+Two of these are about the framework's own states rather than the project's. Identifiers 1 and 99 are reserved, exist whether or not a project declares them, and must not be modified, so no rule judges them — except `state.id.reserved`, which reports a state class that takes one, because the documentation says a class "cannot use 1 or 99". Where the game starts is read from whichever form the project uses to declare it: the class `setupNewGame` returns, the declared state 1, or the documented default of state 2.
+
+A rule that depends on reading the whole machine — `state.transition.target-exists` and `state.unreachable` — reports nothing when part of it could not be read. The unreadable construct is reported instead, with the file it is in. This is why a fixture of deliberately unreadable syntax may declare no certain finding at all.
 
 ## Action contracts
 

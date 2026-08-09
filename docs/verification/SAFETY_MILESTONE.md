@@ -1,5 +1,8 @@
 # Safety and compatibility milestone verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-009, BGA-013, BGA-014, BGA-015, and BGA-016.
 
 This record states what was proven, on what evidence, and what deliberately remains unproven. It uses the vocabulary defined in [TESTING.md](../TESTING.md).

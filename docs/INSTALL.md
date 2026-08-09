@@ -7,8 +7,8 @@ Nothing here asks you to paste a secret into a chat, and nothing here is irrever
 ## Before you start
 
 - **Node.js 22.13 or newer** on the Node 22 line, or **Node.js 24 LTS or newer**. Check with `node --version`.
-- **An MCP client.** Anything speaking protocol `2025-11-25` or `2026-07-28` over stdio.
-- **A BGA project on disk**, in any layout. The legacy flat form, the modern `modules/php` form, and anything part-way between are all read.
+- **An MCP client.** The supported contract is protocol `2025-11-25` over stdio. A `2026-07-28` handshake/discovery smoke works, but that era remains unverified and is not a supported capability contract until BGA-017 and BGA-318 pass.
+- **A BGA project on disk**, in any layout. Detection can identify the legacy flat form, the modern `modules/php` form, and projects part-way between. Only the legacy-flat capability contract is currently supported; state-machine reading for the other two was corrected under BGA-124, and the rest of modern and hybrid validation remains unverified under BGA-125 through BGA-128.
 
 There is no published package yet, so installation means building the repository. That changes when BGA-403 lands.
 
@@ -54,36 +54,25 @@ A healthy first run says the server is ready and lists your project roots. Anyth
 
 Everything below is off unless you turn it on. The defaults are local, read-only, and network-free.
 
-| Option                       | What it enables                                   | What it costs                                                                                                                                                                            |
-| ---------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _(none)_                     | Project inspection and all five validators        | Nothing. The server reads your project and never writes to it.                                                                                                                           |
-| `--allow-network`            | `search_bga_docs` and the documentation resources | Outbound HTTPS to the BGA documentation wiki, one page per request you make. Your query leaves the machine; a query containing a file path or pasted source is refused rather than sent. |
-| `--experimental-studio-logs` | `read_studio_logs`                                | Reads a Studio page BGA does not document or version, so it can break without warning. See [reading your own Studio logs](#reading-your-own-studio-logs-experimental).                   |
-| `--allow-mutations`          | Nothing yet                                       | Reserved for Studio synchronization, which is not built.                                                                                                                                 |
+| Option                       | What it enables                                   | What it costs                                                                                                                                                                                                                                                 |
+| ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _(none)_                     | Project inspection and all five validators        | Nothing. The server reads your project and never writes to it.                                                                                                                                                                                                |
+| `--allow-network`            | `search_bga_docs` and the documentation resources | Outbound HTTPS to the BGA documentation wiki, one page per request you make. Your exact query leaves the machine. Obvious paths and recognized source markers are refused, but arbitrary text provenance cannot be inferred; never send project-derived text. |
+| `--experimental-studio-logs` | `read_studio_logs`                                | Reads a Studio page BGA does not document or version, so it can break without warning. See [reading your own Studio logs](#reading-your-own-studio-logs-experimental).                                                                                        |
+| `--allow-mutations`          | Nothing yet                                       | Reserved for Studio synchronization, which is not built.                                                                                                                                                                                                      |
 
 Two more shape the results rather than enabling anything: `--operation-timeout-ms` and `--max-output-bytes`.
 
 ## Reading your own Studio logs (experimental)
 
-This one reads an authenticated page that BGA has never documented, so treat a failure as a page change rather than a bug in your game. Only lines about accounts you own are returned; anyone else's line is withheld entirely rather than redacted, and production error logs and Sentry are never read at all.
+This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. The page preflight has a known foreign-name leak (BGA-319), and successful messages need broader credential redaction (BGA-327), so the capability is not ready for general live use.
 
 You need your own Studio session cookie. Sign in to `studio.boardgamearena.com`, open developer tools, find any request to that host, and copy its entire `Cookie` request header.
 
-Put it in a file rather than in your client's configuration — a cookie pasted into a launcher config lives in that file, in its backups, and often in a repository:
+> [!WARNING]
+> The 2026-08-08 live review found that `--studio-session-file` is not included in value-based redaction and is not bounded to a protected regular file (BGA-321 and BGA-328). Do not launch the server with that option or paste a cookie into a prompt, launcher configuration, shell command, or repository. The environment provider has existing exact-value error-redaction evidence, but no supported general live recipe is published while BGA-312's blockers remain open.
 
-```sh
-printf '%s' 'PASTE_THE_COOKIE_HEADER_HERE' > ~/.bga-mcp-session
-chmod 600 ~/.bga-mcp-session
-```
-
-Then check the setup before wiring it in. The game id is the number in your `studiogame?game=…` URL:
-
-```sh
-node dist/cli.js --allow-network --experimental-studio-logs \
-  --studio-session-file ~/.bga-mcp-session --studio-check 12345
-```
-
-It reports one problem at a time with the fix. Given a game id it also tells you whether the page really contains log lines and whether any of them are yours — which is the failure that would otherwise look like an empty result.
+The CLI preflight already accepts a project name, but do not use its page-fetching mode until BGA-319 removes foreign actor names and BGA-328 removes credential-file paths from diagnostics. The MCP tool itself still rejects the real alphabetic project identifier (BGA-320).
 
 You do not have to name your dev accounts up front: if your client supports it, the server asks the first time it needs them, and remembers your answer for the session. Declining is fine and it will not ask again.
 
@@ -118,6 +107,6 @@ That is everything. The server writes nothing outside its own directory — no c
 
 **Documentation search returns nothing useful.** Known and measured: retrieval currently answers 4 of the 9 questions in the maintained evaluation set. Topic lookups through `bga://docs/{topic}` are more reliable than search. Tracked in BGA-313.
 
-**Studio logs return nothing.** Run `--studio-check <gameId>`. The likely causes, in order: the session expired, your account names do not match what Studio spells them, or the page no longer carries the logs in its HTML.
+**Studio logs return nothing.** The capability remains experimental and unverified; see BGA-312 for the complete current blocker set rather than treating an empty result as a setup-only problem. The likely eventual causes include an expired session, wrong project/account identifier, or upstream page drift.
 
 **Anything else.** Run `check_setup` first and read what it says; it is more current than this document.

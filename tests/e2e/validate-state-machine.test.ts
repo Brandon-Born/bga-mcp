@@ -18,6 +18,8 @@ interface ValidationResult {
   readonly statesSource: string | null;
   readonly stateCount: number;
   readonly phpSourcesRead: number;
+  readonly initialState: { ids: number[]; origin: string; evidence: string };
+  readonly complete: { declarations: boolean; edges: boolean };
   readonly rules: { code: string; certainty: string; falsePositives: string[] }[];
   readonly diagnostics: {
     status: string;
@@ -26,11 +28,20 @@ interface ValidationResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
+let server: PackagedServer<
+  | 'cleangame'
+  | 'brokengame'
+  | 'moderngame'
+  | 'moderncleangame'
+  | 'stateclassgame'
+  | 'unreadablegame'
+>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let modernCleanRoot: string;
+let stateClassRoot: string;
+let unreadableRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
 let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
@@ -55,11 +66,15 @@ beforeAll(async () => {
     brokengame: 'legacy-broken',
     moderngame: 'modern-broken',
     moderncleangame: 'modern',
+    stateclassgame: 'modern-state-classes',
+    unreadablegame: 'modern-unreadable',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
   modernCleanRoot = server.projects.moderncleangame;
+  stateClassRoot = server.projects.stateclassgame;
+  unreadableRoot = server.projects.unreadablegame;
   expectedBroken = (
     await readFixtureExpectations<{
       stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
@@ -136,21 +151,25 @@ describe('packaged validate_state_machine', () => {
     expect(response.text).toContain('(likely)');
   });
 
-  it('[E2E-VALIDATE-STATES-UNSUPPORTED] never reports a clean result for states it cannot read', async () => {
+  it('[E2E-VALIDATE-STATES-UNSUPPORTED] never reports a clean result for states it cannot read, and derives nothing from them', async () => {
     const response = await withServer(
-      ['--project-root', modernRoot],
-      async (client) => await callValidate(client, { projectRoot: modernRoot }),
+      ['--project-root', unreadableRoot],
+      async (client) => await callValidate(client, { projectRoot: unreadableRoot }),
     );
 
-    // Modern state classes are read now, so "cannot read" means a state whose
-    // identifier is computed: the reader reports it rather than skipping it.
     expect(response.isError).toBe(false);
-    const unsupported = response.structured?.diagnostics.findings.filter(
-      (finding) => finding.kind === 'unsupported-syntax',
-    );
-    expect(unsupported?.length).toBeGreaterThan(0);
-    expect(unsupported?.[0]?.message).toContain('non-literal id');
-    expect(response.structured?.diagnostics.status).not.toBe('passed');
+    const findings = response.structured?.diagnostics.findings ?? [];
+    expect(response.structured?.diagnostics.status).toBe('unsupported');
+    expect(findings.every((finding) => finding.kind === 'unsupported-syntax')).toBe(true);
+    expect(findings.map((finding) => finding.message).join('\n')).toContain('non-literal id');
+
+    // The reader says what it could not read, and the rules that depend on
+    // reading all of it stay silent: state 40 is the identifier the computed
+    // class means to declare, so the transition to it is not a dangling target
+    // and nothing is called unreachable.
+    expect(response.structured?.complete).toEqual({ declarations: false, edges: false });
+    expect(findings.map((finding) => finding.code)).not.toContain('state.transition.target-exists');
+    expect(findings.map((finding) => finding.code)).not.toContain('state.unreachable');
   });
 
   it('[E2E-VALIDATE-STATES-IMMUTABLE] changes nothing in the project it validates', async () => {
@@ -209,7 +228,36 @@ describe('packaged validate_state_machine', () => {
       findings: [],
     });
     expect(structured?.statesRead).toBe(true);
-    expect(structured?.stateCount).toBe(3);
+    expect(structured?.stateCount).toBe(2);
+
+    // Regression, observed through the installed package before this fixture
+    // existed: a documented setupNewGame returning a class produced a certain
+    // state.initial.missing and two certain state.unreachable findings.
+    expect(structured?.initialState).toMatchObject({ ids: [2], origin: 'setup-new-game' });
+    expect(structured?.initialState.evidence).toContain('PlayerTurn::class');
+    expect(structured?.complete).toEqual({ declarations: true, edges: true });
+  });
+
+  it('[E2E-VALIDATE-STATES-MODERN-CONSTRUCTS] reads every documented state-class construct without a false finding', async () => {
+    const response = await withServer(
+      ['--project-root', stateClassRoot],
+      async (client) => await callValidate(client, { projectRoot: stateClassRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+    // Each of these produced a false or unsupported result in the installed
+    // package: identifiers written as StateConstants members, StateType::PRIVATE,
+    // a #[PossibleAction] handler, and class, identifier and transition redirects.
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.stateCount).toBe(4);
+    expect(structured?.initialState).toMatchObject({ ids: [10], origin: 'setup-new-game' });
+    expect(structured?.complete).toEqual({ declarations: true, edges: true });
+    expect(response.text).toContain('status passed');
   });
 
   it('[E2E-VALIDATE-STATES-MODERN-DEFECTS] finds exactly the defects the modern broken fixture declares', async () => {

@@ -1,5 +1,8 @@
 # CI failure proof
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 - **Backlog item:** BGA-005
 - **Verified:** 2026-08-06 (America/Chicago)
 - **Clean commit:** [`f2a90a729875de49e0d946fe53aae8695570b09e`](https://github.com/Brandon-Born/bga-mcp/commit/f2a90a729875de49e0d946fe53aae8695570b09e)

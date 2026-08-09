@@ -1,5 +1,8 @@
 # Aggregate validation verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-112.
 
 `validate_project` runs the four validators together. An aggregator is easy to build and easy to get quietly wrong, because the failure modes are all invisible: a part that silently drops out, a finding whose certainty is flattened on the way through, a truncated list that looks complete. This record states what stops each of those.

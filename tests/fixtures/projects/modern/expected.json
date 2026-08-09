@@ -7,8 +7,8 @@
     "gamepreferences.json",
     "modules/js/Game.js",
     "modules/php/Game.php",
-    "modules/php/States/GameEnd.php",
-    "modules/php/States/GameSetup.php",
+    "modules/php/StateConstants.php",
+    "modules/php/States/NextPlayer.php",
     "modules/php/States/PlayerTurn.php",
     "stats.json"
   ],

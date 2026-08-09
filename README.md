@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in early implementation. The installable stdio server advertises seven verified tools and three verified resources; the documentation and Studio capabilities below are still proposals.
+> This project is in early implementation. The installable stdio server currently advertises 10 tools and 11 concrete resources. A 2026-08-08 installed-package adversarial review reopened every formerly verified public capability-manifest entry and the affected backlog claims; unrelated foundation decisions remain verified. The Studio log reader remains experimental. See the [review record](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md).
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -22,10 +22,10 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 
 ## Capabilities
 
-Available now, local and read-only:
+Available now, local and read-only, with verification reopened:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
-  Every validator reads both the legacy forms (`states.inc.php`, `<game>.action.php`, `notifyAllPlayers`) and the modern ones (state classes, autowired `act…` methods, `bga->notify`), and reads each file in whichever form it is actually in. BGA migrates a project one file at a time, so most projects are part-way between; metadata, game logic, states, and client logic are each detected on their own, and a state machine split across `states.inc.php` and `modules/php/States` is read as one machine.
+  Layout detection recognizes legacy, modern, and part-migrated projects. The validators have readers for both generations, but the current review found false or unsupported results for documented modern state, action, notification, and query forms. The state readers and rules were corrected under BGA-124; treat modern and hybrid validation as unverified until BGA-125 through BGA-128 pass as well.
 
 - `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
 - `validate_action_contracts` — traces each player action from the client call, to the entry point in the action class, to the game method, and reports actions no state allows, missing entry points and methods, and arguments the two sides disagree about.
@@ -35,20 +35,24 @@ Available now, local and read-only:
 
 It also serves three read-only resources describing the single configured project: `bga://project/summary`, `bga://project/states`, and `bga://project/diagnostics`.
 
-- `run_pre_release_audit` — runs the catalogued pre-release checks and reports passed, failed, unsupported, and manual-required separately. It never counts a check it could not run, or one that needs a human, as passed.
+- `run_pre_release_audit` — runs the catalogued pre-release checks and reports passed, failed, unsupported, and manual-required separately. A check whose validator could not read part of the project stays unsupported: it is never counted as a pass, and never as a failure.
 
-Planned for the first useful release:
+Available behind explicit network permission, implemented but not verified:
 
-- `search_bga_docs`
+- `search_bga_docs`, seven fixed documentation-topic resources, and `bga://framework/version`. The maintained live evaluation currently fails, and the version resource has a confirmed extraction bug; see BGA-209 through BGA-211.
+
+Also available:
+
+- `check_setup` — reports local, documentation, and experimental Studio setup state. The 2026 protocol-era roots/input flow remains BGA-318.
+- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project now exists, but BGA-319 through BGA-323 and BGA-326 through BGA-328 block a safe successful read: output privacy, project identifiers, file sessions, default source ACLs, address normalization, cancellation, successful-result redaction, and session-file handling remain open.
 
 Later releases may add authenticated Studio operations:
 
 - `preview_studio_sync`
 - `sync_to_studio`
-- `read_studio_logs`
 - Test-table and saved-state workflows where they can be implemented reliably and responsibly.
 
-The names above are proposals, not a stable API.
+Current discovery names are not yet a stable release API. Future capability names are proposals.
 
 ## Design principles
 
@@ -63,7 +67,7 @@ The names above are proposals, not a stable API.
 
 ## Project status
 
-Seven tools and three resources are live and verified against the legacy, modern, and part-migrated layouts, and Phase 0 and Phase 1 are complete. `inspect_project` describes a project; `validate_state_machine` and `validate_action_contracts` find real cross-file defects in it — a transition to a state that does not exist, an unreachable state, an action the client sends that no state allows, a notification nobody handles, a query against a table the schema never declares. All seven run against the packed and installed artifact through a real MCP client and prove the project directory is unchanged after every call. See the [first capability](docs/verification/FIRST_CAPABILITY.md), [state-machine validation](docs/verification/STATE_MACHINE_VALIDATION.md), [action contract](docs/verification/ACTION_CONTRACTS.md), [notification contract](docs/verification/NOTIFICATIONS.md), [database audit](docs/verification/DATABASE_AUDIT.md), [aggregate validation](docs/verification/AGGREGATE_VALIDATION.md), [project resource](docs/verification/PROJECT_RESOURCES.md), and [read-only and network-off](docs/verification/READ_ONLY_NETWORK_OFF.md) records.
+Ten tools and eleven concrete resources are discoverable. The package lifecycle, legacy roots path, refusal behavior, read-only policy, and clean shutdown have real installed-client evidence. No public capability is currently release-verified: Phase 0 evidence claims and Phase 1 correctness/coverage were reopened after common documented BGA constructs produced false findings. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 
@@ -71,7 +75,7 @@ See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](d
 
 ## Install it
 
-See the [installation guide](docs/INSTALL.md) for setup, configuration, updating, removal, and troubleshooting. The short version, once built: point your client at `dist/cli.js`, and if it advertises its open folders as roots, that is the whole configuration.
+See the [installation guide](docs/INSTALL.md) for setup, configuration, updating, removal, and troubleshooting. The short version, once built: point your client at `dist/cli.js` and pass an explicit project root. Client-offered roots work on the 2025 protocol era; the 2026 input-required flow remains open in BGA-318.
 
 ## Develop locally
 
@@ -105,28 +109,28 @@ An MCP client can launch a development checkout after it has been built:
 
 Configuration is the policy boundary. Defaults are local, read-only, and network-off, and every relaxation is an explicit flag:
 
-| Option                         | Effect                                                                                          |
-| ------------------------------ | ----------------------------------------------------------------------------------------------- |
-| `--project-root <path>`        | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup. |
-| `--allow-remote-project <id>`  | Allowlist a BGA Studio project for a future mutation. Repeatable.                               |
-| `--operation-timeout-ms <n>`   | Deadline for a single operation.                                                                |
-| `--max-output-bytes <n>`       | Maximum bytes one result may return.                                                            |
-| `--allow-network`              | Permit network access. Off by default.                                                          |
-| `--experimental-studio-logs`   | Enable the experimental Studio log reader. Off by default.                                      |
-| `--studio-dev-account <name>`  | A Studio dev account you own. Repeatable. Only lines about these accounts are ever returned.    |
-| `--studio-session-file <path>` | Read the Studio session from a file instead of `BGA_STUDIO_SESSION`.                            |
-| `--allow-mutations`            | Permit explicitly confirmed mutating operations. Off by default.                                |
+| Option                         | Effect                                                                                                                                  |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `--project-root <path>`        | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup.                                         |
+| `--allow-remote-project <id>`  | Allowlist a BGA Studio project for a future mutation. Repeatable.                                                                       |
+| `--operation-timeout-ms <n>`   | Deadline for the public response; underlying work may continue until BGA-326 passes.                                                    |
+| `--max-output-bytes <n>`       | Successful-result payload budget; failure results bypass it until BGA-325 passes.                                                       |
+| `--allow-network`              | Permit network access. Off by default.                                                                                                  |
+| `--experimental-studio-logs`   | Enable the experimental Studio log reader. Off by default.                                                                              |
+| `--studio-dev-account <name>`  | A Studio dev account you own. Repeatable. The MCP result filter keeps only matching parsed lines; BGA-319 covers other output surfaces. |
+| `--studio-session-file <path>` | Read the Studio session from a file instead of `BGA_STUDIO_SESSION`; do not use with a real credential until BGA-321 and BGA-328 pass.  |
+| `--allow-mutations`            | Permit explicitly confirmed mutating operations. Off by default.                                                                        |
 
 Every tool reads only from the roots given here. `projectRoot` may be omitted when exactly one root is configured, and then means that root; with none or several configured, the call is refused with a stable error code rather than guessing which project was meant.
 
-The server writes only MCP frames to stdout, and every stderr line is redacted before it is written.
+The server reserves stdout for MCP frames. Shared protocol/shutdown logging uses redaction, but CLI/setup and successful-result output coverage remains incomplete under BGA-319, BGA-327, and BGA-328.
 
 ## Verification commands
 
 - `pnpm format:check`, `pnpm lint`, and `pnpm typecheck` enforce source quality.
 - `pnpm test:coverage` runs unit, integration, fixture-integrity, harness self-tests, and packed-server E2E with coverage thresholds.
 - `pnpm check:package` builds, packs, and checks package metadata.
-- `pnpm test:conformance` proves the official suite rejects a seeded violation and accepts the candidate for its supported scenario.
+- `pnpm test:conformance` proves the official suite rejects a seeded violation and exercises the measured 2025 stdio scenario set. The suite does not currently provide applicable 2026 stdio evidence.
 - `pnpm evidence` and `pnpm verify:evidence` write and check `.artifacts/verification-evidence.json`, which records what the run actually proved: see [docs/TESTING.md](docs/TESTING.md#verification-evidence).
 - `pnpm verify:threat-model`, `pnpm verify:compatibility`, and `pnpm verify:scenarios` prove the threat model, the compatibility matrix, and every claimed scenario stay consistent with the code and the tests. Each seeds its own defect first and fails on it.
 - `pnpm verify:safety-gates` proves the secret scanner detects a seeded credential without printing it, then scans the repository and every retained CI artifact.

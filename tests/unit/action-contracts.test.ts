@@ -19,6 +19,12 @@ function state(overrides: Partial<StateDefinition> = {}): StateDefinition {
     args: null,
     possibleActions: [],
     transitions: {},
+    origin: 'array',
+    description: null,
+    descriptionMyTurn: null,
+    zombie: null,
+    redirects: [],
+    edgesResolved: true,
     ...overrides,
   };
 }
@@ -44,6 +50,9 @@ function model(definitions: readonly StateDefinition[], parsed = true): ProjectM
       unsupported: [],
       source: 'states.inc.php',
       sources: ['states.inc.php'],
+      complete: { declarations: true, edges: true },
+      duplicateIds: [],
+      initial: { ids: [2], origin: 'state-1', evidence: 'test model' },
     },
     fileCount: 1,
     truncated: false,

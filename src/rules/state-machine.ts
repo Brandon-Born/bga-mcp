@@ -20,23 +20,53 @@ export interface StateMachineRule {
   readonly falsePositives: readonly string[];
 }
 
-/** The state types the BGA framework dispatches. */
+/**
+ * The state types the BGA framework dispatches.
+ *
+ * Both state pages list the same four and no others: "You can use 4 types of
+ * game states: StateType::ACTIVE_PLAYER … MULTIPLE_ACTIVE_PLAYER … PRIVATE …
+ * GAME", each with the name the array notation uses.
+ */
 export const KNOWN_STATE_TYPES = [
   'activeplayer',
   'multipleactiveplayer',
+  'private',
   'game',
-  'manager',
 ] as const;
 
-/** The identifier the framework enters first. */
-export const INITIAL_STATE_ID = 1;
+/**
+ * Identifiers the framework keeps for itself.
+ *
+ * "ID=1 is reserved for the first game state and should not be used (and you
+ * must not modify it). ID=99 is reserved for the last game state (end of the
+ * game)". They exist whether or not a project declares them — "States 1 and
+ * 99, that must not be changed, are now optional" — so they are always valid
+ * transition targets, and nothing a project could get wrong about them is the
+ * project's to fix.
+ */
+export const RESERVED_STATE_IDS = [1, 99] as const;
+
+const RESERVED = new Set<number>(RESERVED_STATE_IDS);
+
+/** Whether the rules that judge an authored state apply to this one. */
+function authored(state: StateDefinition): boolean {
+  return !RESERVED.has(state.id) && state.origin !== 'framework';
+}
 
 export const STATE_MACHINE_RULES: readonly StateMachineRule[] = [
   {
     code: 'state.initial.missing',
     severity: 'error',
     certainty: 'certain',
-    summary: `The framework enters state ${String(INITIAL_STATE_ID)} first, so it must be declared.`,
+    summary:
+      'Nothing names where the game starts: no setupNewGame return value, no state 1, and no state 2.',
+    falsePositives: [],
+  },
+  {
+    code: 'state.id.reserved',
+    severity: 'warning',
+    certainty: 'certain',
+    summary: 'A state class may not take identifier 1 or 99, which the framework reserves.',
     falsePositives: [],
   },
   {
@@ -71,25 +101,30 @@ export const STATE_MACHINE_RULES: readonly StateMachineRule[] = [
     code: 'state.type.unknown',
     severity: 'warning',
     certainty: 'certain',
-    summary: `A state type outside ${KNOWN_STATE_TYPES.join(', ')} is not dispatched by the framework.`,
-    falsePositives: ['A future framework release could add a state type this list does not know.'],
+    summary: `A state type outside ${KNOWN_STATE_TYPES.join(', ')} is not one of the four the framework documents.`,
+    falsePositives: [
+      'A future framework release could add a state type this list does not know.',
+      "Older project skeletons gave the reserved states 1 and 99 the type 'manager', which the current documentation does not list; this rule does not judge those two identifiers.",
+    ],
   },
   {
     code: 'state.unreachable',
     severity: 'warning',
     certainty: 'certain',
-    summary: `No chain of declared transitions reaches this state from state ${String(INITIAL_STATE_ID)}.`,
+    summary:
+      'No chain of transitions or handler redirects reaches this state from the entry point.',
     falsePositives: [
-      'A state entered only through a computed or non-literal transition target cannot be seen by this rule; that transition is reported as unsupported syntax instead.',
+      'A state entered only through a computed or non-literal transition target cannot be seen by this rule; that transition is reported as unsupported syntax instead, and the rule then stays silent for the whole machine.',
     ],
   },
   {
     code: 'state.dead-end',
     severity: 'warning',
     certainty: 'certain',
-    summary: 'A player-facing or game state with no transitions cannot hand control back.',
+    summary:
+      'A player-facing or game state with no transition and no handler redirect cannot hand control back.',
     falsePositives: [
-      'A game that ends inside such a state deliberately would be flagged; the end state is normally type manager, which this rule skips.',
+      'The reserved states, the states older skeletons typed manager, and private parallel states are not judged, because control leaves them by a route that is not their own transition.',
     ],
   },
   {
@@ -162,10 +197,11 @@ function declaresMethod(sources: readonly PhpSource[], method: string): boolean 
   return sources.some((source) => pattern.test(source.text));
 }
 
-function reachable(states: readonly StateDefinition[]): Set<number> {
+/** Every state an entry point leads to, by transition or by handler redirect. */
+function reachable(states: readonly StateDefinition[], from: readonly number[]): Set<number> {
   const byId = new Map(states.map((state) => [state.id, state]));
   const seen = new Set<number>();
-  const queue: number[] = byId.has(INITIAL_STATE_ID) ? [INITIAL_STATE_ID] : [];
+  const queue = [...from];
 
   while (queue.length > 0) {
     const current = queue.shift();
@@ -173,13 +209,22 @@ function reachable(states: readonly StateDefinition[]): Set<number> {
       continue;
     }
     seen.add(current);
-    for (const target of Object.values(byId.get(current)?.transitions ?? {})) {
+    const state = byId.get(current);
+    for (const target of [
+      ...Object.values(state?.transitions ?? {}),
+      ...(state?.redirects ?? []),
+    ]) {
       if (!seen.has(target)) {
         queue.push(target);
       }
     }
   }
   return seen;
+}
+
+/** Every state this one hands control to. */
+function outgoing(state: StateDefinition): number[] {
+  return [...Object.values(state.transitions), ...state.redirects];
 }
 
 /** Deterministic ordering: by code, then location, then message. */
@@ -192,8 +237,13 @@ function reachable(states: readonly StateDefinition[]): Set<number> {
  * and are reported as heuristics, because a method can exist without being
  * visible to a textual reader.
  *
- * Unsupported syntax is carried through unchanged, so a project the reader
- * cannot fully interpret never produces a clean result.
+ * Two things keep those certain rules honest. The framework's own states are
+ * not judged: identifiers 1 and 99 are reserved, exist whether or not the
+ * project declares them, and must not be modified. And a rule that depends on
+ * the whole machine stays silent when the reader could not read all of it —
+ * unsupported syntax is carried through instead, so a project the reader
+ * cannot fully interpret never produces a clean result and never produces a
+ * fabricated one.
  */
 export function validateStateMachine(
   model: ProjectModel,
@@ -201,6 +251,7 @@ export function validateStateMachine(
 ): DiagnosticResult {
   const findings: DiagnosticFinding[] = [];
   const source = model.states.source;
+  const { complete, initial } = model.states;
 
   // Anything the reader could not interpret stays visible in this result.
   for (const finding of model.diagnostics.findings) {
@@ -225,35 +276,53 @@ export function validateStateMachine(
   }
 
   const states = model.states.definitions;
-  const declared = new Set(states.map((state) => state.id));
+  // The reserved identifiers are always valid targets: the framework provides
+  // them, and a migrated project is told to stop declaring them.
+  const declared = new Set([...states.map((state) => state.id), ...RESERVED_STATE_IDS]);
 
-  if (!declared.has(INITIAL_STATE_ID)) {
+  if (initial.origin === 'unresolved' && complete.declarations && complete.edges) {
     findings.push(
       certain(
         'state.initial.missing',
-        `State ${String(INITIAL_STATE_ID)} is not declared, so the game has no entry point.`,
-        `No state declares identifier ${String(INITIAL_STATE_ID)}.`,
+        'The state machine has no entry point.',
+        initial.evidence,
         source,
-        `Declare state ${String(INITIAL_STATE_ID)} as the setup state.`,
+        'Return the first state class from setupNewGame, or declare the state the framework enters first.',
       ),
     );
   }
 
-  const seenIds = new Set<number>();
+  for (const id of model.states.duplicateIds) {
+    findings.push(
+      certain(
+        'state.id.duplicate',
+        `State ${String(id)} is declared more than once in the same source.`,
+        'A later entry with the same key replaces the earlier one.',
+        source,
+        'Give each state a unique identifier.',
+      ),
+    );
+  }
+
   const seenNames = new Map<string, number>();
   for (const state of states) {
-    if (seenIds.has(state.id)) {
+    // A class that takes a reserved identifier is the one thing worth saying
+    // about a reserved state, because the mistake is the project's.
+    if (state.origin === 'class' && RESERVED.has(state.id)) {
       findings.push(
         certain(
-          'state.id.duplicate',
-          `State ${String(state.id)} is declared more than once.`,
-          'A later entry with the same key replaces the earlier one.',
+          'state.id.reserved',
+          `State class ${state.name ?? String(state.id)} takes reserved identifier ${String(state.id)}.`,
+          'The framework reserves 1 for the first game state and 99 for the end of the game, and documents that a state class cannot use either.',
           source,
-          'Give each state a unique identifier.',
+          'Give the class an identifier of its own and leave 1 and 99 to the framework.',
         ),
       );
     }
-    seenIds.add(state.id);
+
+    if (!authored(state)) {
+      continue;
+    }
 
     if (state.name === null || state.name === '') {
       findings.push(
@@ -286,52 +355,71 @@ export function validateStateMachine(
         certain(
           'state.type.unknown',
           `State ${String(state.id)} declares unknown type '${state.type}'.`,
-          `The framework dispatches only ${KNOWN_STATE_TYPES.join(', ')}.`,
+          `The framework documents only ${KNOWN_STATE_TYPES.join(', ')}.`,
           source,
           `Use one of ${KNOWN_STATE_TYPES.join(', ')}.`,
         ),
       );
     }
 
-    for (const [name, target] of Object.entries(state.transitions)) {
-      if (!declared.has(target)) {
-        findings.push(
-          certain(
-            'state.transition.target-exists',
-            `Transition '${name}' of state ${String(state.id)} targets undefined state ${String(target)}.`,
-            `State ${String(target)} is not declared.`,
-            source,
-            `Declare state ${String(target)} or change the transition target.`,
-          ),
-        );
-      }
-    }
-
-    if (Object.keys(state.transitions).length === 0 && state.type !== 'manager') {
+    // A state whose own edges were all read is a dead end when it has none.
+    // Three kinds of state are not: the reserved ones, which the framework
+    // ends the game through; the ones older skeletons typed 'manager' for the
+    // same reason; and private parallel states, which a player leaves when the
+    // master multiactive state deactivates them rather than by transition.
+    if (
+      outgoing(state).length === 0 &&
+      state.edgesResolved &&
+      state.type !== 'manager' &&
+      state.type !== 'private'
+    ) {
       findings.push(
         certain(
           'state.dead-end',
           `State ${String(state.id)} has no transitions and cannot hand control back.`,
-          'The state declares an empty or absent transition map and is not a manager state.',
+          'The state declares no transition and no handler that redirects to another state.',
           source,
-          'Add a transition, or use the manager type if this state ends the game.',
+          'Add a transition, or redirect from a handler, or let the game end through state 99.',
         ),
       );
     }
   }
 
-  const reachableIds = reachable(states);
-  for (const state of states) {
-    if (!reachableIds.has(state.id)) {
-      findings.push(
-        certain(
-          'state.unreachable',
-          `State ${String(state.id)} cannot be reached from state ${String(INITIAL_STATE_ID)}.`,
-          'No chain of declared transitions leads to this state.',
-          source,
-          'Add a transition that reaches it, or remove the state.',
-        ),
-      );
+  if (complete.declarations) {
+    for (const state of states) {
+      for (const [name, target] of Object.entries(state.transitions)) {
+        if (!declared.has(target)) {
+          findings.push(
+            certain(
+              'state.transition.target-exists',
+              `Transition '${name}' of state ${String(state.id)} targets undefined state ${String(target)}.`,
+              `State ${String(target)} is not declared.`,
+              source,
+              `Declare state ${String(target)} or change the transition target.`,
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  // Reachability is a claim about every edge in the machine, so it is made
+  // only when every state and every edge was read, and only from an entry
+  // point that is known rather than assumed.
+  if (complete.declarations && complete.edges && initial.ids.length > 0) {
+    const reachableIds = reachable(states, initial.ids);
+    for (const state of states) {
+      if (authored(state) && !reachableIds.has(state.id)) {
+        findings.push(
+          certain(
+            'state.unreachable',
+            `State ${String(state.id)} cannot be reached from ${initial.ids.length === 1 ? `state ${String(initial.ids[0])}` : `states ${initial.ids.join(', ')}`}.`,
+            `No chain of transitions or handler redirects leads to this state. ${initial.evidence}`,
+            source,
+            'Add a transition that reaches it, or remove the state.',
+          ),
+        );
+      }
     }
   }
 

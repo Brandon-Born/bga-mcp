@@ -1,0 +1,25 @@
+{
+  "layout": "modern",
+  "files": [
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.json",
+    "gamepreferences.json",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/States/Computed.php",
+    "modules/php/States/PlayerTurn.php",
+    "stats.json"
+  ],
+  "diagnostics": ["project.states.unsupported", "project.states.unsupported"],
+  "stateMachine": {
+    "status": "unsupported",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 2
+    },
+    "codes": ["project.states.unsupported", "project.states.unsupported"]
+  }
+}

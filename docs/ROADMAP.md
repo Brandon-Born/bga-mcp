@@ -30,11 +30,11 @@ Exit criterion: the first tool contracts, fixtures, and executable acceptance sc
 
 Exit criterion: every advertised local capability passes its mapped end-to-end scenarios through a real MCP client; the server finds seeded cross-file defects, reports precise evidence, and never modifies project files.
 
-Reached for the legacy layout on 2026-08-06 and for the modern layout on 2026-08-07 (BGA-117 through BGA-121).
+An initial implementation was recorded for the legacy layout on 2026-08-06 and for the modern layout on 2026-08-07 (BGA-117 through BGA-121).
 
 Reading the official documentation for that work showed the premise behind it was too simple: BGA migration is per file, not per project. Metadata, game logic, states, player actions, and client logic each move from the legacy form to the modern one on their own schedule, and the documentation marks the older form of each as deprecated but still supported. A real project is therefore usually a mixture, and the two-template detector reports the most common mixture as `unrecognized`. BGA-122 and BGA-123 replaced the templates with per-component generations on 2026-08-07, so a part-migrated project is read in whatever form each of its files is in.
 
-Exit criterion reached on 2026-08-07.
+The 2026-08-08 installed-package adversarial review reopened the exit criterion. Common documented modern constructs produced false findings, and several literal acceptance cases never crossed the packaged public boundary. BGA-124 through BGA-128 own the correction; Phase 1 is not complete until they pass. BGA-124 landed the same day: the state machine is now read in whichever form the project declares it, the framework's own identifiers 1 and 99 are no longer judged as the project's, and a rule that cannot read the whole machine says so instead of guessing.
 
 ## Phase 2: Documentation
 
@@ -49,18 +49,18 @@ Exit criterion: every documentation capability passes end-to-end retrieval scena
 
 Built on 2026-08-07 (BGA-200, BGA-202 through BGA-208). The sources decided the shape of it: `en.doc.boardgamearena.com` refuses bulk AI collection and publishes no content licence, so there is no curated index to build and ship. Retrieval is one page per explicit request, cached locally with its date, quoted and attributed rather than reproduced. The original index-pipeline item was superseded before it started.
 
-The exit criterion is not met. Every capability is `implemented`, not `verified`: the refusals, the contracts, and the scoring are proven offline, but a real retrieval needs a third party's wiki, and a commit gate that depends on someone else's uptime is not a gate. The maintained question set (`pnpm test:docs-eval`) and the drift monitor (`pnpm docs:drift`) are the deliberate, network-dependent runs that close it, before a documentation release rather than on every commit.
+The exit criterion is not met. Every capability is `implemented`, not `verified`: the refusals, the contracts, and the scoring are proven offline, but a real retrieval needs a third party's wiki, and a commit gate that depends on someone else's uptime is not a gate. The 2026-08-08 maintained run answered only 4/9 questions and the live framework-version resource returned a forum link as a version. BGA-209 through BGA-211 own outage semantics, version extraction, and relevance evaluation; the drift monitor remains the deliberate network-dependent currency check.
 
 ## First-run experience
 
-- Take project roots from the client's `roots/list` rather than a command-line flag.
+- Take project roots through the protocol-era-appropriate client interaction rather than requiring a command-line flag.
 - Ask for a missing non-secret setting through the client, at the moment it is needed.
 - Expose the setup state to the agent, not only to a terminal the agent cannot read.
 - Remember the answers, if writing a configuration file survives a boundary decision.
 
 Exit criterion: a developer installs the server, points their client at it, and is told what to do next by the agent they are already talking to — without editing a launcher configuration file by hand.
 
-Opened on 2026-08-08 (BGA-314 through BGA-317). The prompt was fair criticism: the Studio setup was a paragraph of manual steps, and a preflight command addressed to a terminal is the wrong audience when the developer is talking to an agent. The MCP protocol already carries what is needed — client roots and elicitation — so most of this is using what is there rather than inventing a mechanism.
+Opened on 2026-08-08 (BGA-314 through BGA-318). The 2025 push-style roots and elicitation paths are implemented. The 2026 input-required path is not: an installed-client test showed the server never asked and then blamed a client that had advertised roots. BGA-318 owns that protocol-era gap and truthful setup wording.
 
 ## Phase 3: Studio bridge
 
@@ -71,9 +71,9 @@ Opened on 2026-08-08 (BGA-314 through BGA-317). The prompt was fair criticism: t
 
 Exit criterion: live end-to-end tests prove that every advertised Studio capability can safely preview and perform its operation, verify the exact target and result, clean up test state, and avoid exposing credentials. Capabilities without this evidence remain unreleased.
 
-The boundary was reviewed on 2026-08-07 and the phase is now narrower than it was. Synchronization stays, behind seven preconditions. Test tables, player perspectives, and saved states came out: each is an authenticated web page with no documented interface, so automating them means parsing HTML on someone else's platform, which this project's own non-goals rule out. BGA has not prohibited it; this is a judgement about what can be kept working, not a permission question.
+The boundary was reviewed on 2026-08-07 and the phase is now narrower than it was. Synchronization stays, now behind eight preconditions after the live project exposed BGA's default cross-developer readonly ACL (BGA-322). Test tables, player perspectives, and saved states came out: each is an authenticated web page with no documented interface, so automating them means parsing HTML on someone else's platform, which this project's own non-goals rule out. BGA has not prohibited it; this is a judgement about what can be kept working, not a permission question.
 
-Own-account log reading went the other way. The owner accepted that trade on 2026-08-07, on the condition that no other person's data comes back, and that condition is enforced by an allowlist that fails closed rather than by a promise. It ships as experimental, off by default, on its own read-side boundary (BGA-312). Player data is a separate and narrower concern that applies to production errors, not to a developer's own test tables. See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md); the items stay in the backlog in case BGA publishes an API.
+Own-account log reading went the other way. The owner accepted that trade on 2026-08-07, on the condition that no other person's data comes back. The 2026-08-08 live review established a dedicated private tutorial project but found that the current tool rejects Studio's real project-name identifier, file-backed sessions miss value redaction, preflight prints foreign actors, own-account messages can retain other credential shapes, and Private projects default to cross-developer readonly source sharing. The shared address guard and cancellation lifecycle also fail adversarial cases. BGA-319 through BGA-323 and BGA-326 through BGA-328 own those blockers. The capability remains experimental, off by default, and not live-verified (BGA-312). See the [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md).
 
 ## Phase 4: Public release
 

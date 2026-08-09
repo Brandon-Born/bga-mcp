@@ -18,7 +18,8 @@ final class PlayerTurn extends GameState
             type: StateType::ACTIVE_PLAYER,
             description: clienttranslate('${actplayer} must play a card or pass'),
             descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: ['pass' => 99],
+            // The target is still declared in states.inc.php.
+            transitions: ['pass' => 3],
         );
     }
 

@@ -1,5 +1,8 @@
 # Project resource verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-103, BGA-104, and BGA-105.
 
 Three read-only resources expose what the tools already compute, so an agent can read project context without spending a tool call. They are the first MCP surface in this project other than tools.

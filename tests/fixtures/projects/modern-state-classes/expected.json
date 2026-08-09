@@ -1,0 +1,28 @@
+{
+  "layout": "modern",
+  "files": [
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.json",
+    "gamepreferences.json",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/StateConstants.php",
+    "modules/php/States/ChooseToken.php",
+    "modules/php/States/NextPlayer.php",
+    "modules/php/States/PlayerSetup.php",
+    "modules/php/States/PlayerTurn.php",
+    "stats.json"
+  ],
+  "diagnostics": [],
+  "stateMachine": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  }
+}

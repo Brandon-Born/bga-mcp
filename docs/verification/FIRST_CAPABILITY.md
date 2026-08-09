@@ -1,5 +1,8 @@
 # First capability verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-100, BGA-101, and BGA-102, and closes part of BGA-015 and all of BGA-016.
 
 `inspect_project` is the first capability `bga-mcp` advertises. This record states what it does, what proves it, and what it deliberately does not do yet.

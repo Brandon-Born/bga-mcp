@@ -1,20 +1,19 @@
 {
   "$schema": "./compatibility.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-06",
+  "updatedAt": "2026-08-08",
   "claims": [
     {
       "id": "CLAIM-LAYOUT-MODERN",
       "dimension": "layout",
       "value": "modern-modules",
-      "support": "supported",
-      "notes": "Modules under modules/php and modules/js with JSON or JSONC metadata. State classes, autowired act\u2026 methods, the bga->notify API, and the modern client action API are read, so every validator produces real results. A construct that is not literal, such as a computed state identifier, is still reported as unsupported syntax.",
-      "fixtures": ["tests/fixtures/projects/modern", "tests/fixtures/projects/modern-broken"],
-      "scenarios": [
-        "GATE-FIXTURE-SAFETY",
-        "E2E-INSPECT-PROJECT-MODERN",
-        "E2E-VALIDATE-STATES-MODERN-CLEAN",
-        "E2E-VALIDATE-STATES-MODERN-DEFECTS"
+      "support": "unknown",
+      "notes": "Support claim reopened by the 2026-08-08 installed-package audit. Layout detection works, and BGA-124 restored the state half: documented state-class initial states, StateConstants identifiers, PRIVATE states, descriptions, zombie handling and class/id/transition redirects are read, and an unreadable construct is reported rather than turned into a certain finding. PossibleAction methods and injected parameters (BGA-125), state notification shortcuts (BGA-126), unrelated SQL-like strings (BGA-127) and the complete packaged matrix (BGA-128) still own the rest of this claim.",
+      "fixtures": [
+        "tests/fixtures/projects/modern",
+        "tests/fixtures/projects/modern-state-classes",
+        "tests/fixtures/projects/modern-unreadable",
+        "tests/fixtures/projects/modern-broken"
       ]
     },
     {
@@ -34,14 +33,9 @@
       "id": "CLAIM-LAYOUT-HYBRID",
       "dimension": "layout",
       "value": "part-migrated",
-      "support": "supported",
-      "notes": "A project part-way through the BGA migration, which the documentation describes as a per-file process: metadata, game logic, states, and client logic each move on their own schedule and the older form of each stays supported. Detection reports a generation per component and every validator reads each file in the form it is actually in. A state machine split across states.inc.php and modules/php/States is read as one machine.",
-      "fixtures": ["tests/fixtures/projects/hybrid"],
-      "scenarios": [
-        "GATE-FIXTURE-SAFETY",
-        "E2E-INSPECT-PROJECT-HYBRID",
-        "E2E-VALIDATE-PROJECT-HYBRID"
-      ]
+      "support": "unknown",
+      "notes": "Layout detection and aggregate validation have hybrid scenarios, but the original acceptance requires every capability and split-source precedence through the public boundary. BGA-124 corrected the class half and the GameStateBuilder half the hybrid fixture now uses; BGA-125 through BGA-128 own the rest of this claim.",
+      "fixtures": ["tests/fixtures/projects/hybrid"]
     },
     {
       "id": "CLAIM-LAYOUT-UNRECOGNIZED",
@@ -89,7 +83,7 @@
       "dimension": "runtime",
       "value": "20",
       "support": "unsupported",
-      "notes": "Outside the engines range and untested. Installation fails rather than degrading silently."
+      "notes": "Outside the engines range and untested. Package managers may reject or warn; no runtime behavior is claimed."
     },
     {
       "id": "CLAIM-PLATFORM-LINUX",
@@ -127,9 +121,8 @@
       "id": "CLAIM-PROTOCOL-2026-07-28",
       "dimension": "protocol",
       "value": "2026-07-28",
-      "support": "supported",
-      "notes": "Modern era. Covered by packaged stdio end-to-end tests; the pinned official conformance CLI offers no scenarios for it, as recorded in CONFORMANCE.md.",
-      "scenarios": ["E2E-STDIO-MODERN-DISCOVER", "GATE-COMPATIBILITY-MATRIX"]
+      "support": "unknown",
+      "notes": "Modern-era handshake and discovery work through the packaged stdio server, but the pinned official conformance CLI offers no applicable stdio scenarios and the input-required roots/setup flow is missing. Public capabilities no longer claim this protocol version until BGA-017 and BGA-318 pass. The observed smoke is retained in the adversarial-review record rather than attached here as support evidence for an unknown claim."
     },
     {
       "id": "CLAIM-PROTOCOL-OTHER",

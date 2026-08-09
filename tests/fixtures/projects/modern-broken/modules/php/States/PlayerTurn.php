@@ -15,9 +15,11 @@ final class PlayerTurn extends GameState
         parent::__construct(
             $game,
             id: 2,
+            name: 'playerTurn',
             type: StateType::ACTIVE_PLAYER,
             description: clienttranslate('${actplayer} must play a card or pass'),
             descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
+            // Deliberately defective: state 42 is declared nowhere.
             transitions: ['play' => 2, 'pass' => 42],
             updateGameProgression: true,
         );
@@ -30,6 +32,6 @@ final class PlayerTurn extends GameState
 
     public function zombie(int $playerId): string
     {
-        return 'pass';
+        return 'play';
     }
 }

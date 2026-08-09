@@ -1,6 +1,6 @@
 # Compatibility matrix
 
-Updated: 2026-08-06. Backlog item: BGA-009.
+Updated: 2026-08-08. Backlog item: BGA-009.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no fixture or scenario, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
 
@@ -14,12 +14,16 @@ Support levels use the vocabulary from [TESTING.md](TESTING.md):
 
 | Claim                     | Layout         | Support   | Fixture                               |
 | ------------------------- | -------------- | --------- | ------------------------------------- |
-| CLAIM-LAYOUT-MODERN       | modern-modules | supported | tests/fixtures/projects/modern        |
+| CLAIM-LAYOUT-MODERN       | modern-modules | unknown   | tests/fixtures/projects/modern        |
 | CLAIM-LAYOUT-LEGACY       | legacy-flat    | supported | tests/fixtures/projects/legacy        |
-| CLAIM-LAYOUT-HYBRID       | part-migrated  | supported | tests/fixtures/projects/hybrid        |
+| CLAIM-LAYOUT-HYBRID       | part-migrated  | unknown   | tests/fixtures/projects/hybrid        |
 | CLAIM-LAYOUT-UNRECOGNIZED | unrecognized   | unknown   | none — reported as unsupported syntax |
 
 BGA migrates a project one file at a time, and the documentation marks the older form of each file deprecated rather than removed. `legacy` and `modern` are therefore the two ends of a range, not two templates: detection resolves a generation for metadata, game logic, states, and client logic separately, and reports `hybrid` when they disagree. A project is `unrecognized` only when none of the four can be identified.
+
+Modern and hybrid support were reopened by the 2026-08-08 installed-package audit. Detection still works, but common documented state, action, notification, and query forms produced false findings, and the hybrid public-boundary matrix is incomplete. BGA-124 through BGA-128 own restoration of these claims.
+
+BGA-124 has landed the state half: the entry point comes from whichever form the project declares it in, the framework's own identifiers 1 and 99 are not judged as the project's, `StateConstants`, `GameStateBuilder` and the documented state types are read, handler redirects count as edges, and a construct the reader cannot interpret silences the rules that depend on it instead of producing a certain finding. Action tracing, notifications, database queries, and the complete packaged matrix are still owned by BGA-125 through BGA-128, so the claims stay `unknown`.
 
 ## File generations
 
@@ -46,12 +50,14 @@ Every supported runtime and platform combination runs the complete gate in CI. T
 | Claim                     | Value             | Support     |
 | ------------------------- | ----------------- | ----------- |
 | CLAIM-PROTOCOL-2025-11-25 | 2025-11-25        | supported   |
-| CLAIM-PROTOCOL-2026-07-28 | 2026-07-28        | supported   |
+| CLAIM-PROTOCOL-2026-07-28 | 2026-07-28        | unknown     |
 | CLAIM-PROTOCOL-OTHER      | any other version | unsupported |
 | CLAIM-TRANSPORT-STDIO     | stdio             | supported   |
 | CLAIM-TRANSPORT-HTTP      | streamable-http   | unsupported |
 
-The supported protocol list is checked against `SUPPORTED_PROTOCOL_VERSIONS` and the capability manifest, so the running server cannot negotiate a version this matrix does not claim. Streamable HTTP exists only as loopback test infrastructure for the official conformance CLI; see [CONFORMANCE.md](CONFORMANCE.md).
+The running server's negotiation constants and this matrix are not yet checked compositionally against every capability claim; BGA-017 owns that missing gate. Streamable HTTP exists only as loopback test infrastructure for the official conformance CLI; see [CONFORMANCE.md](CONFORMANCE.md).
+
+The installed server negotiates `2026-07-28` and supports basic discovery, but the compatibility claim is `unknown`: official stdio conformance is unavailable for that revision and its input-required roots/setup flow is missing. Public capability entries no longer claim that protocol until BGA-017 and BGA-318 pass.
 
 ## Clients
 

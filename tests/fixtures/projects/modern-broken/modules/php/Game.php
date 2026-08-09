@@ -5,9 +5,15 @@ declare(strict_types=1);
 namespace Bga\Games\BgaMcpModernFixture;
 
 use Bga\GameFramework\Actions\Types\IntParam;
+use Bga\Games\BgaMcpModernFixture\States\PlayerTurn;
 
 final class Game extends \Bga\GameFramework\Table
 {
+    protected function setupNewGame($players, $options = [])
+    {
+        return PlayerTurn::class;
+    }
+
     public function actPass(int $cardId): string
     {
         $this->bga->notify->all('playerPassed', clienttranslate('${player_name} passes'), [

@@ -98,13 +98,18 @@ export function auditPreRelease(
       continue;
     }
 
-    // The validator ran, but could not read the part of the project this check
-    // examines. Absence of a finding is not evidence of a pass.
-    if (group.status === 'unsupported') {
+    // The validator ran, but could not read all of what this check examines.
+    // Absence of a finding is not evidence of a pass, whether the validator
+    // understood none of the project or merely part of it: a rule that stays
+    // silent because its input was incomplete must not be reported as passing.
+    if (group.status === 'unsupported' || group.summary.unsupported > 0) {
       checks.push({
         ...shared,
         outcome: 'unsupported',
-        reason: `The ${group.id} validator could not read what this check examines.`,
+        reason:
+          group.status === 'unsupported'
+            ? `The ${group.id} validator could not read what this check examines.`
+            : `The ${group.id} validator reported ${String(group.summary.unsupported)} construct(s) it could not read, so this check has no verdict.`,
       });
       continue;
     }

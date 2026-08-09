@@ -9,12 +9,9 @@ namespace Bga\Games\BgaMcpHybridFixture;
 // support, and the client is still the flat dojo file.
 final class Game extends \Bga\GameFramework\Table
 {
-    public function stGameSetup(): void
+    public function stGameTurn(): void
     {
-    }
-
-    public function stGameEnd(): void
-    {
+        $this->gamestate->nextState('next');
     }
 
     public function actPass(string $comment): void

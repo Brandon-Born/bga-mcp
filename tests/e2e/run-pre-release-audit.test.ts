@@ -41,6 +41,7 @@ let cli: string;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
+let unreadableRoot: string;
 let catalogVersion: string;
 let manualCheckIds: string[];
 
@@ -123,14 +124,16 @@ beforeAll(async () => {
   cleanRoot = resolve(projects, 'cleangame');
   brokenRoot = resolve(projects, 'brokengame');
   modernRoot = resolve(projects, 'moderngame');
+  unreadableRoot = resolve(projects, 'unreadablegame');
   for (const [fixture, target] of [
     ['legacy', cleanRoot],
     ['legacy-broken', brokenRoot],
     ['modern', modernRoot],
+    ['modern-unreadable', unreadableRoot],
   ] as const) {
     await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
   }
-  for (const target of [cleanRoot, brokenRoot, modernRoot]) {
+  for (const target of [cleanRoot, brokenRoot, modernRoot, unreadableRoot]) {
     await rm(resolve(target, 'expected.json'));
   }
 }, 240_000);
@@ -193,6 +196,28 @@ describe('packaged run_pre_release_audit', () => {
     // Nothing is silently converted into a pass: every check has an outcome.
     const total = Object.values(result?.counts ?? {}).reduce((sum, count) => sum + count, 0);
     expect(total).toBe(result?.checks.length);
+  });
+
+  it('[E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED] keeps syntax it could not read as unsupported instead of failing it', async () => {
+    const response = await withServer(
+      ['--project-root', unreadableRoot],
+      async (client) => await audit(client, { projectRoot: unreadableRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const result = response.structured;
+    const stateChecks = result?.checks.filter((check) => check.group === 'state-machine') ?? [];
+
+    // Regression: the installed package turned a state class it could not read
+    // into two failed checks and reported unsupported: 0.
+    expect(stateChecks.length).toBeGreaterThan(0);
+    expect(stateChecks.filter((check) => check.outcome === 'failed')).toEqual([]);
+    expect(stateChecks.every((check) => check.outcome === 'unsupported')).toBe(true);
+    expect(result?.counts.unsupported).toBeGreaterThanOrEqual(stateChecks.length);
+    for (const check of stateChecks) {
+      expect(check.reason ?? '').not.toBe('');
+    }
+    expect(response.text).toContain('unsupported');
   });
 
   it('[E2E-PRE-RELEASE-MANUAL-NEVER-PASSES] never reports a manual check as passed', async () => {

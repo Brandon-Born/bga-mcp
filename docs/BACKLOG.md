@@ -50,11 +50,21 @@ The first dependency chain is:
 
 `BGA-001` and `BGA-002` → `BGA-003` → `BGA-004` and `BGA-005` → `BGA-006` through `BGA-012` → local capabilities beginning with `BGA-100`.
 
-Phase 1 delivered every local capability against the legacy layout, and `BGA-117` through `BGA-121` added the modern one. Research against the official documentation on 2026-08-07 then showed that "legacy" and "modern" are not two templates but the two ends of a per-file migration: metadata, game logic, states, player actions, and client logic each move independently, so a real project is usually part-way between. `BGA-122` and `BGA-123` closed that gap on 2026-08-07, for the same reason the modern readers did: a capability that refuses the shape most projects are actually in is not finished. Phase 1 is complete; `BGA-116` remains as a usability follow-up and Phase 2 documentation work may begin.
+Phase 1 delivered an initial local implementation against the repository's fixtures. The 2026-08-08 adversarial review then installed the packed artifact, exercised it through a real MCP client, and compared its output with documented BGA constructs that the fixtures omitted. That review found confident false positives in the modern state, action, notification, and database paths and incomplete public-boundary evidence across the local suite. Phase 1 is therefore reopened. BGA-124 through BGA-128 own the correctness and verification work; no local capability is release-verified until those items and the compositional evidence work in BGA-017 pass.
 
 Phase 2 begins at `BGA-207`, the first network path in the server. `BGA-201` was superseded before it started: reading the sources under `BGA-200` showed a crawl-and-ship index is not something they permit.
 
 Studio work begins only after `BGA-300` establishes a safe live test environment. Public release work begins only after all capabilities included in that release are verified.
+
+### Adversarial review reopening — 2026-08-08
+
+The [installed-package adversarial review](verification/ADVERSARIAL_REVIEW_2026-08-08.md) challenged every completion claim against the policy that created it. It made these existing items `implemented`, not `verified`:
+
+- **Foundation evidence:** BGA-005, BGA-006, BGA-007, BGA-008, BGA-009, and BGA-012 through BGA-016. Their implementation remains, but required CI, packaged-boundary, conformance, current-record, policy, output-safety, or privacy evidence is absent or contradicted.
+- **Local public boundary:** BGA-100 and BGA-102 through BGA-114. Their advertised behavior exists, but one or more literal verification cases are missing, and the validator family is downstream of observed false-certainty parser defects.
+- **Modern, hybrid, and first-run claims:** BGA-116 through BGA-123. The modern fixtures omit common documented forms, the installed package misclassifies several of those forms, hybrid/default-root coverage does not reach every capability, and the 2026 protocol-era roots flow is not implemented.
+
+The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-211, BGA-318 through BGA-330, and BGA-411 as permanent owners. A status may move back to `verified` only after its own original acceptance criteria and the applicable new owner both pass; closing a new bug without restoring the reopened item's evidence is not enough.
 
 ## Phase 0 — Foundation
 
@@ -100,7 +110,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-005 — Establish continuous integration
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-004
 - **Deliverable:** Required CI workflows for supported operating systems and runtime versions, with concurrency control and least-privilege permissions.
@@ -110,7 +120,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-006 — Define the machine-readable capability manifest
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** A versioned schema and manifest for every tool, resource, prompt, transport, adapter, stability level, compatibility claim, and required scenario.
@@ -120,7 +130,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-007 — Define the shared diagnostic contract
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** Versioned schemas for findings, locations, evidence, severity, certainty, suggestions, unsupported syntax, and aggregate results.
@@ -130,7 +140,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-008 — Build the representative fixture corpus
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-002
 - **Deliverable:** Minimal legal fixtures for supported modern and legacy BGA layouts, plus deliberately malformed variants for every validation rule.
@@ -140,13 +150,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-009 — Publish the compatibility matrix
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-008
 - **Deliverable:** Machine-readable and human-readable matrices for BGA layouts, file generations, runtimes, MCP versions, transports, and clients.
 - **Acceptance:** Every support claim maps to a fixture and passing scenario; unknown and unsupported combinations are explicit.
 - **Verification:** CI fails when a support claim lacks a fixture or passing evidence and when runtime behavior claims support outside the matrix.
-- **Evidence:** [`config/compatibility.json`](../config/compatibility.json) and [COMPATIBILITY.md](COMPATIBILITY.md) hold 18 claims. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:compatibility` seeds a missing fixture, an undocumented claim, and a protocol claim beyond `SUPPORTED_PROTOCOL_VERSIONS`, and fails on each before passing the real matrix. `GATE-COMPATIBILITY-MATRIX` proves runtime discovery stays inside the matrix; `pnpm verify:scenarios` proves every claimed scenario exists.
+- **Evidence:** [`config/compatibility.json`](../config/compatibility.json) and [COMPATIBILITY.md](COMPATIBILITY.md) hold 19 claims, 11 currently supported. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:compatibility` seeds a missing fixture, an undocumented claim, and a protocol claim beyond `SUPPORTED_PROTOCOL_VERSIONS`, and fails on each before passing the real matrix. The audit found that this gate does not compare each manifest capability's layout/protocol fields with the matrix; BGA-017 owns that composition gap. `pnpm verify:scenarios` proves every claimed scenario exists.
 
 ### BGA-010 — Build the packaged-server E2E harness
 
@@ -171,34 +181,35 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-012 — Define and emit verification evidence
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-005, BGA-006, BGA-010, BGA-011
 - **Deliverable:** A machine-readable evidence schema and CI artifact containing commit, package version, lock digest, environment, protocol version, scenario results, and timestamps.
 - **Acceptance:** Evidence maps every manifest capability to current results, is reproducible, and contains no credentials or private BGA data.
 - **Verification:** Schema validation, manifest coverage, tamper checks, and artifact redaction all run as release gates.
 - **Evidence:** See the [verification evidence record](verification/VERIFICATION_EVIDENCE.md). [`config/evidence.schema.json`](../config/evidence.schema.json) describes the document; `pnpm evidence` writes `.artifacts/verification-evidence.json` at the end of `pnpm check` and `pnpm verify:evidence` checks it, both wired into the complete gate and the CI artifact upload. The document records the commit and whether the tree was clean, the package version and lock digest, the Node version and platform, the supported protocol versions and every conformance check, and each manifest capability with the result of every scenario it requires, down to the test file and title. A scenario with no test in the run is recorded as `missing` rather than omitted, and a capability advertised as `verified` whose evidence is anything less fails the gate. `integrity` seals the document with a digest over a canonical serialization, so a later edit is detectable. The emitter refuses to write a document containing a known credential format and the gate scans it again. `pnpm verify:evidence` builds five defective documents — wrong schema version, dropped capability, scenario that did not run, field edited after sealing, credential in a test title — and requires itself to reject each before reporting on the real artifact. `GATE-EVIDENCE-COVERAGE`, `GATE-EVIDENCE-TAMPER`, and `GATE-EVIDENCE-REDACTION` cover the same properties as executable tests, owned by the new `AC-FALSE-VERIFICATION` abuse case and by `TM-ARTIFACT-SCAN`.
-- **Note:** BGA-011 remains `implemented` rather than `verified`. The first version of this artifact handled that badly: it listed both claimed protocol versions beside a single conformance run under one `passed`, which reads as if both had been exercised. Conformance coverage is now recorded per claimed version, `partial` is a distinct outcome, and the gate rejects a document whose overall word is stronger than its per-version results. The current run records `2025-11-25: passed` and `2026-07-28: not-run`. Signing and per-release publication are BGA-404 and BGA-407.
+- **Note:** BGA-011 remains `implemented` rather than `verified`. The first version of this artifact handled that badly: it listed both claimed protocol versions beside a single conformance run under one `passed`, which reads as if both had been exercised. Conformance coverage is now recorded per claimed version, `partial` is a distinct outcome, and the gate rejects a document whose overall word is stronger than its per-version results. The latest pre-audit record has `2025-11-25: passed` and `2026-07-28: not-applicable`; the audit removed the latter from the support constant, transport claim, and public capability entries until applicable stdio evidence exists. The packaged 2026 handshake/discovery smoke remains retained as observed behavior, not release support. Signing and per-release publication are BGA-404 and BGA-407.
 
 ### BGA-013 — Complete the initial threat model
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-002
 - **Deliverable:** A threat model covering local file access, symlinks and traversal, tool arguments, subprocesses, documentation content, SFTP, browser sessions, logs, credentials, supply chain, and MCP-client trust.
 - **Acceptance:** Assets, actors, trust boundaries, abuse cases, mitigations, residual risk, and test requirements are recorded. Networked and mutating capabilities cannot start before their boundary is reviewed.
 - **Verification:** Each required mitigation maps to an automated negative or security scenario, or to an explicit manual control with an owner.
-- **Evidence:** [THREAT_MODEL.md](THREAT_MODEL.md) and [`config/threat-model.json`](../config/threat-model.json) record 15 abuse cases, 24 mitigations, and 5 residual risks across 7 trust boundaries. See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:threat-model` seeds an unknown mitigation reference, a manual control without an owner, an adapter advertised across an unreviewed boundary, a reviewed boundary whose preconditions are still planned, and an undocumented control, and fails on each before passing the real model. Both boundaries were reviewed on 2026-08-07; each records preconditions, and the gate keeps a capability closed until its own preconditions are implemented.
+- **Evidence:** [THREAT_MODEL.md](THREAT_MODEL.md) and [`config/threat-model.json`](../config/threat-model.json) now record 29 abuse cases, 59 mitigations, and 10 residual risks across 8 trust boundaries. Broad pre-audit controls were narrowed to the behavior actually observed, with separate planned controls for BGA-319 and BGA-321 through BGA-330. `pnpm verify:threat-model` checks schema, identifiers, references, ownership, and named boundary preconditions; BGA-018 owns exact machine/human comparison and compositional self-invalidation.
 
 ### BGA-014 — Add secret and artifact safety gates
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-004, BGA-005, BGA-013
 - **Deliverable:** Secret scanning, publisher-artwork checks where practical, log redaction tests, and CI artifact inspection.
 - **Acceptance:** Known credential formats and seeded sensitive values are blocked or redacted; scans never upload the sensitive fixture itself as an artifact.
 - **Verification:** Seeded secrets in source, tool output, logs, and evidence each fail the appropriate gate without revealing the complete value.
 - **Evidence:** See the [safety and compatibility milestone](verification/SAFETY_MILESTONE.md). `pnpm verify:safety-gates` writes a seeded credential outside the repository, proves the scanner detects it in artifact content and in a log line, proves the printed finding is masked, then scans the repository and every retained artifact directory. `GATE-SECRET-SCAN-SOURCE`, `GATE-SECRET-SCAN-ARTIFACT`, `GATE-LOG-REDACTION`, and `GATE-FIXTURE-SAFETY` cover each rule, artifact output, stderr redaction, and fixture asset safety. CI runs the scan before the upload step and skips the upload when it fails.
+- **Adversarial finding, 2026-08-08:** The gate does not seed a secret into a successful MCP result despite that literal verification requirement. `audit_database_usage` can return a secret-bearing SQL literal, and an own-account Studio log line containing an Authorization bearer value passes its local screen. BGA-327 owns successful-result minimization/redaction; this item cannot return to `verified` until a packaged seeded-secret result is rejected or scrubbed.
 
 ### BGA-015 — Implement the policy boundary
 
@@ -208,23 +219,45 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Central enforcement for configured project roots, remote project allowlists, operation timeouts, network policy, mutation intent, and output limits.
 - **Acceptance:** Capabilities cannot bypass policy through alternate paths; configuration is explicit and fails closed; defaults are local, read-only, and network-off.
 - **Verification:** Packaged-server E2E covers traversal, symlink escape, unlisted roots, unlisted remotes, missing mutation confirmation, timeout, and oversized output.
-- **Evidence:** [`src/policy.ts`](../src/policy.ts) is the single gate for roots, traversal, symlink escape, remote allowlist, network, mutation intent, timeouts, and output budget, and an ESLint rule plus `GATE-POLICY-IMPORT-BOUNDARY` prevent any other module from importing filesystem, network, or subprocess APIs. `INT-POLICY-*` scenarios cover every decision against a real filesystem, and `E2E-POLICY-CONFIG-FAILS-CLOSED` and `E2E-POLICY-ROOT-UNAVAILABLE` prove the packaged artifact refuses unsafe configuration at startup. BGA-102 added packaged tool-call evidence for five of the seven required decisions: traversal, symlink escape, unlisted roots, timeout, and oversized output all fail through `inspect_project` against the installed artifact. Unlisted remotes and missing mutation confirmation remain covered only by integration scenarios, because no capability reaches a remote target or mutates anything yet. This item stays `implemented` until BGA-304 supplies the mutating capability that can prove those two.
+- **Evidence:** [`src/policy.ts`](../src/policy.ts) is the current production path for roots, traversal, symlink checks, remote allowlists, network, mutation intent, timeout responses, and successful-result budgets. The current source contains no privileged-effect import outside it, and `GATE-POLICY-IMPORT-BOUNDARY` catches the enumerated exact imports; BGA-329 owns alternate specifiers, dynamic imports, re-exports, repository-owned wrappers, and privileged globals. `INT-POLICY-*` scenarios cover each existing decision, and `E2E-POLICY-CONFIG-FAILS-CLOSED` and `E2E-POLICY-ROOT-UNAVAILABLE` prove packaged startup refusals. BGA-102 added packaged calls for traversal, static symlink escape, unlisted roots, a timeout response, and successful-result output refusal. BGA-325, BGA-326, and BGA-330 show why those observations do not yet prove final failure bounds, underlying cancellation, or race-safe entry-bounded traversal. Unlisted remotes and mutation confirmation remain integration-only because no mutating adapter exists.
+- **Adversarial findings, 2026-08-08:** The implementation exists, but several gates are incomplete. Error results bypass the output budget (BGA-325); a timeout wins the response race without cancelling ignored work or slow non-2xx response bodies (BGA-326); alternate module specifiers, dynamic imports, and global `fetch` bypass the import rule (BGA-329); and listing/read limits do not bound all directory entries or close filesystem races (BGA-330). This item remains `implemented`, not complete or verified, until those owners pass through the installed public boundary.
 
 ### BGA-016 — Implement shared error handling and redaction
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-007, BGA-013, BGA-015
 - **Deliverable:** Stable public errors and redaction utilities for paths, credentials, sessions, connection strings, player data, and internal failures.
 - **Acceptance:** Errors remain actionable without stack-trace leakage or secrets; unexpected failures receive stable codes and safe context.
 - **Verification:** Every public capability inherits negative E2E scenarios seeded with sensitive values and proves they are absent from results and evidence.
 - **Evidence:** [`src/errors.ts`](../src/errors.ts) publishes the versioned public error contract with stable codes, and [`src/redaction.ts`](../src/redaction.ts) removes private keys, tokens, sessions, connection credentials, player data, and out-of-root paths. `UNIT-REDACTION-CREDENTIALS`, `UNIT-REDACTION-PATHS`, `UNIT-REDACTION-PLAYER-DATA`, `UNIT-ERROR-UNEXPECTED-COLLAPSE`, and `GATE-LOG-REDACTION` prove seeded values never survive a published error or a log line. BGA-102 supplies the inherited negative scenarios: `E2E-INSPECT-PROJECT-REDACTION` proves a refusal carries a redacted path rather than an absolute one, and `E2E-INSPECT-PROJECT-SYMLINK-ESCAPE` proves seeded key material behind a link never reaches a result. Every future capability inherits the same requirement through its manifest entry.
+- **Adversarial findings, 2026-08-08:** Shared redaction is applied to published failures, not to every successful structured result. Raw SQL text and permitted own-account Studio messages can retain seeded credential values (BGA-327). A Studio session loaded from `--studio-session-file` is sent to BGA but never registered in `redactionOptions`, which reads only the environment (BGA-321), and Studio preflight prints both foreign actors and the absolute session-file path (BGA-319 and BGA-328).
+
+### BGA-017 — Make verification claims compositional and self-invalidating
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-005, BGA-006, BGA-009, BGA-011, BGA-012
+- **Deliverable:** Evidence gates that derive a public capability's status from every prerequisite it claims: the exact packaged artifact, runnable passing scenarios, compatibility claims, transport and protocol conformance, current human records, and retained CI evidence.
+- **Acceptance:** A capability cannot be `verified` while any claimed transport/protocol version lacks applicable passing conformance. A scenario identifier counts only when it prefixes a runnable, unskipped test assertion that passed in the retained result; a string in fixture data or a skipped/filtered test does not count. Each manifest entry identifies its most recent passing CI evidence as required by [TESTING.md](TESTING.md). Compatibility, rule-catalog, threat-model, and packaged E2E claim results are retained rather than inferred from source text. Human verification records are explicitly historical or are checked against the current manifest, commands, claim counts, scenario counts, and test result.
+- **Verification:** Seeded gates reject partial/not-applicable conformance behind a `verified` capability, a scenario identifier present only in data, a skipped assertion, a missing CI-evidence reference, stale verification counts, and a claim whose test ran against a different artifact. The untampered current run passes and identifies the package hash it exercised.
+- **Finding:** The 2026-08-08 audit found that `verify-evidence` accepts overall partial conformance while every formerly verified capability claims both protocol versions; `scripts/lib/scenarios.ts` matches arbitrary string literals; the manifest schema has no field for the CI evidence TESTING requires; and several documents calling themselves current are behind the actual manifest and test run. BGA-005, BGA-006, BGA-007, BGA-009, and BGA-012 stay reopened until this item passes.
+
+### BGA-018 — Enforce exact machine/human threat-model agreement
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013
+- **Deliverable:** A threat-model gate that compares the complete machine-readable and human-readable boundary/control state, not identifier presence alone.
+- **Acceptance:** Boundary status, review date, gates, preconditions, mitigation status/control/owner, and residual-risk disposition cannot disagree between `config/threat-model.json` and [THREAT_MODEL.md](THREAT_MODEL.md). A privacy control covers every output surface that can publish the protected data, including terminal diagnostics and CI logs, rather than only the MCP tool response.
+- **Verification:** Seeded mismatches for every compared field fail. A seeded foreign Studio actor name in a tool result, CLI diagnostic, stderr line, and retained artifact is absent from each surface, while an own-account line remains usable where the capability permits it.
+- **Finding:** `TB-DOCS-NETWORK` was `reviewed` in the machine model but still `unreviewed` in the human table, and the existing Studio privacy scenarios intentionally expected a foreign actor name in preflight output. The current gate passed both contradictions. BGA-013 and BGA-016 remain reopened; BGA-319 owns the concrete Studio leak.
 
 ## Phase 1 — Read-only local MVP
 
 ### BGA-100 — Detect BGA project layouts
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-008, BGA-009, BGA-015
 - **Deliverable:** Capability-based discovery for supported modern and legacy project layouts.
@@ -245,7 +278,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-102 — Implement `inspect_project`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-100, BGA-101
 - **Deliverable:** A read-only tool that explains the detected layout, components, capabilities, missing expected files, and uncertainty.
@@ -255,7 +288,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-103 — Implement `bga://project/summary`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-102
 - **Deliverable:** A resource exposing the normalized project summary without triggering mutation or network access.
@@ -266,7 +299,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-104 — Implement `bga://project/states`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-106
 - **Deliverable:** A resource exposing normalized states, transitions, handlers, locations, and uncertainty.
@@ -277,7 +310,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-105 — Implement `bga://project/diagnostics`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-112
 - **Deliverable:** A resource exposing current aggregate validation findings.
@@ -288,7 +321,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-106 — Implement `validate_state_machine`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Cross-file validation for state identifiers, types, transitions, targets, handlers, reachability where provable, and supported BGA state conventions.
@@ -299,7 +332,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-107 — Implement `validate_action_contracts`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace client action calls to server endpoints, argument validation, and game methods for supported layouts.
@@ -310,7 +343,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-108 — Implement `validate_notifications`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace server notifications to client subscriptions and compare supported payload shapes and handler use.
@@ -321,7 +354,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-109 — Implement `audit_database_usage`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Compare `dbmodel.sql` with supported query usage and detect high-confidence schema, reference, and unsafe-pattern findings.
@@ -332,7 +365,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-110 — Define the pre-release rule catalog
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-007, BGA-008
 - **Deliverable:** A versioned catalog mapping automatable BGA pre-release checks to official sources, rule implementations, fixtures, severities, and limitations.
@@ -342,7 +375,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-111 — Implement `run_pre_release_audit`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-102, BGA-106, BGA-107, BGA-108, BGA-109, BGA-110
 - **Deliverable:** A read-only audit that runs supported pre-release rules and returns passed, failed, unsupported, and manual-required checks separately.
@@ -352,7 +385,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-112 — Implement `validate_project`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-106, BGA-107, BGA-108, BGA-109
 - **Deliverable:** A deterministic aggregator for project validations with selectable rule groups and bounded results.
@@ -362,7 +395,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-113 — Implement explicit unknown-syntax handling
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-101
 - **Deliverable:** Shared behavior for syntax that cannot be parsed or relationships that cannot be proven.
@@ -372,13 +405,13 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-114 — Enforce local read-only and network-off behavior
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-015, BGA-102 through BGA-113
 - **Deliverable:** Technical enforcement and evidence that local inspection, resources, and validation cannot mutate source or initiate network access.
 - **Acceptance:** The policy applies regardless of tool inputs and detects attempted adapter or dependency escape.
 - **Verification:** E2E runs local capabilities in a network-denied environment, snapshots filesystem metadata/content, and fails on any outbound connection or mutation.
-- **Evidence:** `tests/e2e/network-denied.ts` replaces every network primitive — `net`, `tls`, `http`, `https`, `dns`, `dns/promises`, `dgram`, `fetch`, and `net.Socket.prototype.connect` — with functions that throw and record the attempt, and is loaded before the packaged server starts. `E2E-READ-ONLY-NETWORK-DENIED` runs every advertised tool and all three resources under that denial: all complete, the attempt log stays empty, and the project is unchanged by content digest and by per-file size and modification time. `E2E-READ-ONLY-NETWORK-HARNESS` proves the denial itself works by making an outbound connection fail and appear in the log, so the first scenario's empty log is evidence rather than an artifact of a harness that does nothing. `E2E-READ-ONLY-INPUT-CANNOT-ESCAPE` proves the policy holds whatever the client sends: an outside root, a traversal, and the filesystem root are all refused while a legitimate call succeeds, and a file outside the root is untouched.
+- **Evidence:** `tests/e2e/network-denied.ts` replaces every network primitive — `net`, `tls`, `http`, `https`, `dns`, `dns/promises`, `dgram`, `fetch`, and `net.Socket.prototype.connect` — with functions that throw and record the attempt, and is loaded before the packaged server starts. `E2E-READ-ONLY-NETWORK-DENIED` runs every advertised tool and the three project resources under that denial: all complete, the attempt log stays empty, and the project is unchanged by content digest and by per-file size and modification time. It does not read all eight network-backed concrete resources; that inventory-wide negative sweep remains part of BGA-128/BGA-017's public-boundary composition work. `E2E-READ-ONLY-NETWORK-HARNESS` proves the denial itself works by making an outbound connection fail and appear in the log. `E2E-READ-ONLY-INPUT-CANNOT-ESCAPE` proves the policy holds for an outside root, traversal, and filesystem root while a legitimate call succeeds and an outside file stays untouched.
 
 ### BGA-115 — Read the modern project layout
 
@@ -389,7 +422,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-117 — Capture a representative modern fixture pair
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-008
 - **Deliverable:** Original modern fixtures matching the current framework — a valid one and a defective variant — replacing the minimal stub that only proves layout detection.
@@ -400,7 +433,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-118 — Read modern state classes
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-101, BGA-106, BGA-117
 - **Deliverable:** A reader for state classes under `modules/php/States`, extracting the identifier, type, description, transitions, and action methods from the `parent::__construct` call and the class body, plus the `GameStateBuilder` form.
@@ -411,7 +444,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-119 — Read modern action autowiring and the modern client action API
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-107, BGA-117, BGA-118
 - **Deliverable:** Action-contract tracing for projects with no `.action.php`: autowired public `act…` methods on the game class as the server side, and `this.bga.actions.performAction` alongside the existing `bgaPerformAction` and `ajaxcall` on the client side.
@@ -422,7 +455,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-120 — Read the modern notification API
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-108, BGA-117
 - **Deliverable:** Notification reading for `$this->bga->notify->all` and `$this->bga->notify->player`, and for the promise-based client setup that replaces `dojo.subscribe`.
@@ -433,7 +466,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-121 — Confirm the database audit on the modern layout
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P2
 - **Depends on:** BGA-109, BGA-117
 - **Deliverable:** Evidence that the database audit already works for modern projects, or the changes needed if it does not.
@@ -444,7 +477,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-122 — Model the project layout as independent per-file generations
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-100, BGA-101, BGA-117
 - **Deliverable:** Layout detection that reports a generation per migratable component rather than matching one of two whole-project templates, and a derived `hybrid` layout label for a project whose components are not all one generation.
@@ -456,7 +489,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-123 — Read a partially migrated state machine from both sources
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-118, BGA-122
 - **Deliverable:** State reading that merges `states.inc.php` with the state classes under `modules/php/States` when both are present, instead of taking the first source found.
@@ -467,13 +500,69 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 ### BGA-116 — Reduce first-run friction
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P2
 - **Depends on:** BGA-102, BGA-112
 - **Deliverable:** Input and documentation changes that make a correctly configured server pleasant to use: `projectRoot` optional when exactly one root is configured, help text that states a project root must be an absolute path, and tool descriptions that state which layouts a validator supports.
 - **Acceptance:** Omitting `projectRoot` with one configured root behaves as if it had been passed; omitting it with none or several fails with the existing stable codes rather than guessing. No change weakens a policy check.
 - **Verification:** Packaged scenarios cover the omitted argument with zero, one, and several configured roots, and prove the refusals keep their current error codes.
 - **Evidence:** `resolveProjectRoot` in [`src/tools/project-context.ts`](../src/tools/project-context.ts) resolves an omitted `projectRoot` to the sole configured root and refuses otherwise, and every tool calls it as the first statement of its handler, so the rule cannot reach six tools and miss the seventh. The resources use the same function with their own ambiguity wording, so the argument rule and the resource rule cannot drift apart. `E2E-INSPECT-PROJECT-DEFAULT-ROOT` proves the omitted argument returns byte-identical output to the explicit one; `E2E-INSPECT-PROJECT-DEFAULT-ROOT-AMBIGUOUS` proves two roots are refused with `resource.project.ambiguous` while an explicit root still works on the same server; `E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED` proves no roots are refused with `policy.root.unconfigured` and told which flag to pass. Each tool's `projectRoot` description states the default and that the path is absolute, and each tool description states which layouts it reads. The six `*-INVALID-INPUT` scenarios kept every other malformed input and dropped only `{}`, which is now valid input rather than a weakened check.
+
+### BGA-124 — Correct modern state semantics and replace the false clean fixture
+
+- **Status:** implemented
+- **Priority:** P0
+- **Depends on:** BGA-008, BGA-101, BGA-106, BGA-117, BGA-118, BGA-123
+- **Deliverable:** A documented modern-state reader and layout-aware validator whose clean fixture uses current state-class constructs rather than carrying the legacy states 1 and 99 into the class model.
+- **Acceptance:** The modern initial state comes from the class or identifier returned by `setupNewGame`; absence of state 1 is not an error. State 1 and state 99 conventions are interpreted by generation rather than imposed on every representation. Identifiers expressed through `StateConstants`, supported class constants, and `GameStateBuilder` are resolved without executing code. `StateType::PRIVATE` is accepted. Description fields, `getArgs`, `onEnteringState`, `zombie`, `#[PossibleAction]`, class/id/transition returns, and both sides of a partially migrated machine survive normalization. A construct outside the documented static forms produces one located unsupported result and no downstream reachability or dangling-target facts derived from the incomplete model.
+- **Verification:** Original packaged fixtures cover setup returning a class, no state 1 or 99 class, constant identifiers, every documented state type, `GameStateBuilder`, descriptions, zombie handling, class/id/transition redirects, and split legacy/class sources. Each observed false finding is a regression assertion, and `run_pre_release_audit` preserves unsupported rather than converting it into failed checks.
+- **Finding:** The installed package reported `state.initial.missing` and two `state.unreachable` findings for a documented `setupNewGame(): return PlayerTurn::class`; it rejected `StateConstants::STATE_PLAYER_TURN`, warned that `StateType::PRIVATE` was unknown, and converted incomplete parsing into certain validation failures. The current “clean modern” fixture instead defines class states 1 and 99, so it could not expose these defects.
+- **Evidence:** [Modern state semantics verification](verification/MODERN_STATE_SEMANTICS.md) records the whole correction. [`src/project/php.ts`](../src/project/php.ts) masks string and comment content before reading structure, so a `clienttranslate` description containing brackets no longer moves the reader off the end of a call, and collects the `define()` and class constants both spellings use. [`src/project/modern.ts`](../src/project/modern.ts) reads every documented constructor argument, resolves identifiers through constants, keeps descriptions, `getArgs`, `onEnteringState`, `zombie` and `#[PossibleAction]`, and resolves class, identifier and transition redirects into edges; `readInitialState` reads what `setupNewGame` returns. [`src/project/parse.ts`](../src/project/parse.ts) reads the `GameStateBuilder` chain beside the array form and marks `gameSetup`/`endScore` as the framework's own states. [`src/project/model.ts`](../src/project/model.ts) resolves the entry point per generation, records whether declarations and edges were read completely, and reports duplicates per source. [`src/rules/state-machine.ts`](../src/rules/state-machine.ts) seeds reachability from the resolved entry point, treats 1 and 99 as the framework's, accepts the four documented types, and stays silent about the whole machine when part of it could not be read; `state.id.reserved` is the one thing it says about a class that takes a reserved identifier. `run_pre_release_audit` leaves a check `unsupported` whenever its validator reported an unreadable construct. `tests/fixtures/projects/modern` is rebuilt on the documented shapes, `modern-state-classes` and `modern-unreadable` are new, and the fixture-integrity gate fails if an `-unreadable` fixture ever declares a certain finding. Proven through the installed package by `E2E-VALIDATE-STATES-MODERN-CLEAN`, `E2E-VALIDATE-STATES-MODERN-CONSTRUCTS`, `E2E-VALIDATE-STATES-MODERN-DEFECTS`, `E2E-VALIDATE-STATES-UNSUPPORTED`, `E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED`, `E2E-INSPECT-PROJECT-MODERN` and `E2E-INSPECT-PROJECT-HYBRID`. It stays `implemented` rather than `verified` because the evidence system itself is reopened: BGA-017 owns compositional verification and BGA-005 owns the current CI record.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says to add `return PlayerTurn::class` in `setupNewGame`, says state-class IDs “cannot use 1 or 99,” lists `StateType::PRIVATE` among “4 types of game states,” documents class/id/transition return values, and shows the `StateConstants` example. [Your game state machine: states.inc.php](https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php) documents the `GameStateBuilder` chain, `GameStateBuilder::gameSetup(2)` “only keep this line if your initial state is not 2,” and the `define()` constants. [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says “States 1 and 99, that must not be changed, are now optional” and preserves the independently migrated older forms.
+- **Open questions:** The current documentation lists four state types and no longer mentions `manager`, which older skeletons gave the reserved states; it is accepted on identifiers 1 and 99, which no rule judges, and reported as undocumented anywhere else. The state-class page marks the default entry point of a project that returns nothing “(_to be confirmed_)”; the reader uses state 2 and says so in its evidence. A `transitions` target written as a class name is not documented, so it is reported as unreadable rather than assumed. `GameStateBuilder::endScore()` has no documented transitions, so it is treated as the framework's state rather than judged as the project's.
+
+### BGA-125 — Correct modern action-contract tracing
+
+- **Status:** planned
+- **Priority:** P0
+- **Depends on:** BGA-107, BGA-119, BGA-124
+- **Deliverable:** Action tracing that models both state-class and Game.php autowiring, including framework-injected parameters and documented parameter attributes.
+- **Acceptance:** A state method bearing `#[PossibleAction]` is a callable entry point. The documented camel- and snake-case active/current player identifiers and state `args` are framework-injected, not client request fields. An action absent from the current state is still traced to Game.php because framework-wide actions may run from any state. Supported parameter attributes such as `#[IntParam]` contribute their documented validation contract instead of being skipped. Legacy `.action.php` remains supported independently.
+- **Verification:** Packaged scenarios cover state-class-only actions, Game.php fallback actions, every documented injected-name alias, attributes with passing and failing client arguments, mixed legacy/modern action wiring, dynamic unsupported syntax, and exact client-to-server parameter comparison.
+- **Finding:** A documented `#[PossibleAction] actPlay($cardId, $active_player_id, $currentPlayerId)` produced `action.entry-point.missing`, and a valid Game.php-wide `actPass` produced `action.call.not-declared`. The parser also exposed both injected identifiers as client arguments and skipped `#[IntParam]` semantics.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says actions need `#[PossibleAction]`, lists the injected parameter aliases, and says the framework checks Game.php for actions available in any state. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents autowired actions and parameter attributes.
+
+### BGA-126 — Correct modern notification sends and registrations
+
+- **Status:** planned
+- **Priority:** P0
+- **Depends on:** BGA-108, BGA-120, BGA-124
+- **Deliverable:** Notification tracing for every documented Game.php and state-class send form, with client handlers counted only when they are actually registered.
+- **Acceptance:** `$this->bga->notify->all/player`, the state-class `$this->notif->all/player` shortcut, and still-supported legacy sends normalize to the same contract. A `notif_*` method is auto-bound only when `setupPromiseNotifications` registers it with the applicable prefix/handlers/ignore list; otherwise it is merely a method. Manual `dojo.subscribe` continues to work. Framework-predefined notifications that the documentation says need no custom subscription are not reported as unhandled.
+- **Verification:** Packaged scenarios cover every send form, setup present/absent, custom prefixes and handlers, ignored notifications, mixed generations, payload agreement/disagreement, dynamic names, malformed payloads, and predefined notifications.
+- **Finding:** The installed package ignored the documented state shortcut and emitted `notification.handled.not-sent`; separately, the client reader treats every `notif_*` method as bound even without `setupPromiseNotifications`.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says state classes can write `$this->notif->all`. [Game interface logic: Game.js](https://en.doc.boardgamearena.com/Game_interface_logic:_yourgamename.js) says `setupPromiseNotifications` “auto-detect[s] all notifications” with the configured prefix and handlers. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents `bga->notify->all` and `bga->notify->player`.
+
+### BGA-127 — Restrict database findings to executed framework database calls
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-109, BGA-121
+- **Deliverable:** A database-use reader that distinguishes a SQL-looking string from a query passed to a documented BGA database helper.
+- **Acceptance:** A quoted string is a query only when data flow places it in `DbQuery`, `getObjectFromDB`, `getObjectListFromDB`, or another explicitly supported helper call. Unrelated examples, exceptions, logs, comments, templates, and dead string assignments produce no schema finding. A dynamic helper argument that cannot be resolved is one located unsupported construct; it is not reconstructed and does not make an undeclared table or column certain.
+- **Verification:** Packaged scenarios cover inline queries, assigned-then-called queries, each supported helper, unrelated SQL-like strings in every excluded context, dynamic concatenation, malformed SQL, multiple statements, framework tables, and zero database/network execution.
+- **Finding:** Adding only `$example = 'SELECT imaginary_id FROM ghost';` to an otherwise clean project made the installed tool count a third query and report the certain error `database.table.undeclared`; pre-release turned it into a failed check.
+- **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) defines `DbQuery(string $sql)` as the generic database-access method and documents the specialized query helpers. [Game database model: dbmodel.sql](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql) documents the project schema boundary.
+
+### BGA-128 — Complete the packaged public-boundary matrix for local capabilities
+
+- **Status:** planned
+- **Priority:** P0
+- **Depends on:** BGA-017, BGA-124, BGA-125, BGA-126, BGA-127
+- **Deliverable:** The missing installed-artifact scenarios required by the original acceptance criteria of BGA-007, BGA-008, BGA-016, BGA-100, BGA-102 through BGA-114, and BGA-116 through BGA-123. Superseded BGA-115 remains excluded.
+- **Acceptance:** The packaged server covers empty, partial, ambiguous, nested, permission-denied, oversized, malformed, and unknown-syntax projects; every rule has positive and negative public evidence; every resource covers every supported generation, limits, and in-session refresh; every tool receives relevant escape/redaction and default-root cases; aggregate and pre-release preserve failures and unsupported syntax; and every claimed hybrid/split-source/duplicate-precedence path crosses the public boundary. Fixture integrity runs the product and proves each declared normalized model and finding set rather than validating only the fixture's self-description.
+- **Verification:** A generated coverage report maps each literal acceptance case to the exact installed-package assertion and retained result. Removing or skipping any mapped test, swapping in a source-launched server, or changing the fixture without its observed result fails the gate.
+- **Finding:** The review found the missing cases documented in the reopened items: among them packaged permission failure, resource output limits and refresh, dynamic/malformed validator paths, four state rules' negative fixtures, modern rule-catalog fixtures, per-tool malicious inputs and default roots, and public hybrid coverage beyond inspection plus aggregate validation.
 
 ## Phase 2 — Documentation
 
@@ -505,8 +594,9 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** The first network path in the server: a fetch confined to allowlisted documentation sources, owned by the policy boundary, implementing the boundary review's preconditions TM-DOC-HOST-ALLOWLIST, TM-DOC-NO-LOOPBACK, TM-DOC-REQUEST-CONTENT, and TM-DOC-RESPONSE-BUDGET.
 - **Acceptance:** Only a host in [`config/doc-sources.json`](../config/doc-sources.json) may be reached, over HTTPS, with redirects confined to the allowlist and a redirect out of it refused rather than followed. A host resolving to a loopback, link-local, or private address is refused after resolution, not merely by name. A request carries only the client's explicit query — never project file content, path, or game name — and that is enforced where the request is built rather than trusted to the caller. Response size and time are bounded by the same policy budget every other capability uses. Network access stays off by default: with `--allow-network` absent, every one of these paths refuses before it resolves anything.
 - **Verification:** Negative scenarios cover an unlisted host, an HTTP URL, a redirect that leaves the allowlist, a DNS name resolving to loopback and to a private range, an oversized response, a slow response, and a request built from project content. `E2E-READ-ONLY-NETWORK-DENIED` must keep passing unchanged, proving the local capabilities still reach no network at all.
-- **Evidence:** `fetchDocumentation` in [`src/policy.ts`](../src/policy.ts) is the only outbound request in the server, and the only code allowed to import `node:https` and `node:dns` — `GATE-POLICY-IMPORT-BOUNDARY` keeps it that way. A caller names a source identifier and a page path, never a host, so the URL is built from reviewed catalog data; a protocol-relative, absolute, or traversing path is refused, and the constructed URL must still be HTTPS, on the source's host, and inside its canonical prefix. Every redirect hop is re-checked against the allowlist and refused rather than followed when it leaves, bounded at three hops. `createGuardedLookup` checks every address a name answers with and hands the socket the address it approved, so a name answering with one public and one private address is refused entirely and no second DNS answer can be substituted after the check. `readBoundedUtf8` destroys the stream the moment the budget is passed rather than buffering an oversized page. `requestContentViolation` refuses a query that is empty, over 200 characters, carries control characters, contains a filesystem path or a configured project root, or contains source syntax. `UNIT-DOC-ADDRESS-BLOCKED`, `UNIT-DOC-HOST-ALLOWLIST`, `UNIT-DOC-REQUEST-CONTENT`, `UNIT-DOC-RESPONSE-BUDGET`, `INT-DOC-NETWORK-OFF`, `INT-DOC-HOST-ALLOWLIST`, and `INT-DOC-REQUEST-CONTENT` cover these, and `E2E-READ-ONLY-NETWORK-DENIED` passes unchanged. TM-DOC-HOST-ALLOWLIST, TM-DOC-NO-LOOPBACK, TM-DOC-REQUEST-CONTENT, and TM-DOC-RESPONSE-BUDGET move from `planned` to `implemented`.
-- **Note:** `implemented`, not `verified`, and the reason is structural. Every guard is proven at unit and integration level, and none is proven end to end through a real MCP client, because no capability exposes documentation retrieval yet — that is BGA-202. Two acceptance items are also not directly exercised: a real redirect off the allowlist and a real oversized response would need a live server, and the guard refuses loopback by design, so a local test server is exactly what it will not talk to. The mechanisms behind both are unit-tested against synthetic input instead. This item becomes `verified` when BGA-202 puts a capability in front of it and the packaged scenarios can drive the refusals through the public boundary.
+- **Evidence:** `fetchDocumentation` in [`src/policy.ts`](../src/policy.ts) is the current outbound documentation path. A caller names a source and page path rather than a host; catalog construction, HTTPS/prefix checks, redirect confinement, network-off behavior, bounded successful-body reads, and obvious path/source-marker refusals have unit and integration coverage. Packaged `search_bga_docs` and fixed-resource scenarios now reach this path through a real MCP client, including network-off and selected invalid requests. The current source contains no second privileged import path, but BGA-329 owns making that property non-bypassable. The threat model now narrows the implemented controls to these observations and records the missing complete address, privacy, and lifecycle invariants separately.
+- **Note:** Public documentation capabilities now exist, so the old “no capability exposes retrieval” reason is obsolete. This item remains `implemented` because installed/live calls and source probes disproved parts of its original acceptance: address normalization, arbitrary-query provenance, cancellation, redirect/error-body lifecycle, and full public negative coverage are incomplete. BGA-323, BGA-324, and BGA-326 own those corrections; BGA-128/BGA-017 own the inventory-wide evidence composition.
+- **Adversarial findings, 2026-08-08:** Three stated preconditions are not established. Hexadecimal IPv4-mapped IPv6 forms such as `::ffff:7f00:1` pass the address guard even though they map to loopback/private IPv4 (BGA-323). A plausible project-derived query such as `SELECT unreleased_secret FROM internal_table` passes the request-content heuristic, so the implementation cannot prove the caller's provenance claim (BGA-324). Slow redirect and non-2xx bodies are resumed without a bounded drain or socket destruction after the operation has already resolved/rejected, and callers do not propagate the timeout signal (BGA-326). TM-DOC-NO-LOOPBACK, TM-DOC-REQUEST-CONTENT, and TM-DOC-RESPONSE-BUDGET remain implementation claims with open correctness bugs, not verified controls.
 - **Sources:** [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md), [DOCUMENTATION_SOURCES.md](DOCUMENTATION_SOURCES.md).
 
 ### BGA-208 — Implement the dated documentation cache
@@ -518,7 +608,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** A cache entry stores the canonical URL, the retrieval timestamp, the source's own last-modified signal where it publishes one, and the source's authority. Nothing is served without its date. An entry older than its source's `maxCacheDays` is refetched or reported as stale, never served as current. Retrieved text is stored and returned labelled as untrusted content. The cache holds excerpts, never whole pages, because no approved source permits retaining full text. It is per-developer local state, never part of the published package, and it is never populated by anything but an explicit lookup.
 - **Verification:** Integration scenarios cover a cold lookup, a warm hit, an expired entry, an entry whose source authority is community, and a source that changed upstream. A packaged scenario proves provenance and snapshot date survive to the client, and that a cached excerpt is never returned without them.
 - **Evidence:** [`src/docs/cache.ts`](../src/docs/cache.ts) holds excerpts keyed by URL, bounded in count and excerpt length, evicting by least recent use. Every read returns `retrievedAt`, `ageDays`, and `stale`, so there is no way to obtain an entry without its date; an entry whose date cannot be parsed is treated as maximally old rather than fresh. Staleness is per source, so the same entry is fresh against the maintained reference's 30 days and stale against a community page's 7. [`src/docs/retrieve.ts`](../src/docs/retrieve.ts) assembles the only result shape a caller may show: title, URL, source, authority, provenance, dates, staleness, excerpt, and an untrusted-content notice, all required rather than optional. A fresh entry is served without a request; a stale one is refetched, and the stale copy comes back only when the refetch fails, marked stale and dated. [`src/docs/excerpt.ts`](../src/docs/excerpt.ts) strips script, style, template, and comment content before quoting, because that is where text aimed at an agent hides and it is not what the developer saw. `UNIT-DOC-SNAPSHOT-DATE`, `UNIT-DOC-CACHE-BOUNDED`, `UNIT-DOC-EXCERPT`, and `UNIT-DOC-PROVENANCE` cover these; TM-DOC-PROVENANCE, TM-DOC-UNTRUSTED, and TM-DOC-SNAPSHOT-INTEGRITY move from `planned` to `implemented`.
-- **Note:** The cache is in memory for the life of the process, which is a decision rather than an omission. Persisting it would give a server whose only filesystem behaviour is reading a reason to write, and that is a change to the local-filesystem boundary, not a convenience — a restart costs one repeated fetch. `implemented` rather than `verified` for the same reason as BGA-207: no capability exposes retrieval yet, so none of this is proven end to end through a real client.
+- **Note:** The cache is in memory for the life of the process, which is a decision rather than an omission. Persisting it would give a mostly read-only server a new write boundary; a restart instead costs one repeated fetch. Public documentation capabilities now exercise cold retrieval through a real client, but the original cache acceptance still lacks packaged warm-hit, expiry, upstream-change, and per-session provenance scenarios. BGA-128/BGA-211 own that missing public/live evaluation rather than the obsolete claim that no retrieval capability exists.
 - **Sources:** [documentation boundary review](verification/DOCS_BOUNDARY_REVIEW.md), [DOCUMENTATION_SOURCES.md](DOCUMENTATION_SOURCES.md).
 
 ### BGA-202 — Implement `search_bga_docs`
@@ -532,6 +622,8 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Evidence:** [`src/tools/search-bga-docs.ts`](../src/tools/search-bga-docs.ts) searches the allowlisted sources through the MediaWiki search API, which is the `search=yes` use the sources' content signals permit and which returns each page's last edit as its own freshness signal. Every result carries title, canonical URL, source, authority, provenance, retrieval date, last edit, age, staleness, and a `trust: untrusted-content` label, and the response carries a notice saying the text is documentation to read rather than instructions to follow. An official-host community page is labelled `community`, because the host does not vouch for it. Results are capped at five and excerpts at 1,200 characters, so this is a citation list rather than a corpus. It is the only capability with `openWorldHint`. `E2E-DOCS-ADVERTISED`, `E2E-DOCS-NETWORK-OFF`, `E2E-DOCS-REQUEST-CARRIES-NO-PROJECT-DATA`, `E2E-DOCS-UNKNOWN-SOURCE`, and `E2E-DOCS-INVALID-INPUT` run through the packaged artifact; `UNIT-DOC-SEARCH-PARSE` covers reading the API response, including a malformed one and a hit with no title. `E2E-READ-ONLY-NETWORK-DENIED` now calls this tool too and proves it refuses because the network is off rather than because the harness blocked it — the attempt log stays empty.
 - **Note:** `implemented`, not `verified`. The scenarios that need a live wiki — a real result with real provenance, a stale source, and adversarial page content — cannot run in an offline CI, so what is proven here is every refusal and the shape of the contract, not a successful retrieval. Those belong with BGA-205's evaluation set, which is where a network-dependent suite can be run deliberately rather than on every commit.
 - **Correction:** Two defects were found by hand on 2026-08-08 and fixed — a missing `srwhat=text`, which made the wiki match titles only and return nothing for `notifyAllPlayers`, `getArgs`, and `dbmodel`; and unescaped control characters in wiki snippets, which made `JSON.parse` throw and the parser return an empty result rather than a failure. Every offline scenario passed before and after, because they assert against responses this project wrote. BGA-313 records the live run that would have caught them.
+- **Adversarial finding, 2026-08-08:** When DNS was unavailable, every page/source fetch failed but the installed tool returned `isError: false`, an empty result, and “No documentation matched.” `sourcesSearched` named both sources even though neither was successfully searched. BGA-209 owns the outage/no-match distinction.
+- **Adversarial finding, 2026-08-08:** The public free-text query is also the outbound-data surface in BGA-324: SQL-shaped project content without one of eight markers passes the policy and becomes MediaWiki `srsearch`. Errors reflecting an oversized `sourceId` bypass the output budget (BGA-325). This item cannot be verified until those cross-cutting owners pass.
 
 ### BGA-203 — Implement `bga://docs/{topic}`
 
@@ -543,6 +635,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** Resource E2E lists templates, reads valid topics, rejects invalid/traversal topics, and verifies provenance and size bounds.
 - **Evidence:** [`src/docs/topics.ts`](../src/docs/topics.ts) resolves a topic through a fixed table rather than a search, for two reasons: a resource must mean the same page every time, and a topic that became an arbitrary path would hand URI text to the request builder. Every page in the table was retrieved and read while writing it. The template lists one entry per topic, so a client sees the topics instead of guessing at a URI shape, and the community page says so in its description. An unknown topic is refused with the list of known ones, and a topic shaped like a path or a wiki special page is refused the same way, before any request is built. `E2E-DOCS-TOPIC-LISTED`, `E2E-DOCS-TOPIC-UNKNOWN`, and `E2E-DOCS-TOPIC-NETWORK-OFF` run through the packaged artifact.
 - **Note:** `implemented`. Reading a real topic needs a live wiki, so what is proven offline is the listing, the refusals, and the network-off behaviour.
+- **Adversarial finding, 2026-08-08:** All seven live topics returned the right canonical URL and authority, but several excerpts did not answer their topic: `game-logic` quoted cross-game persistence, `file-reference` skipped the central file list, and `studio` began in the table of contents. BGA-211 owns fixed-topic relevance evidence.
 
 ### BGA-204 — Implement `bga://framework/version`
 
@@ -554,6 +647,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** Resource E2E covers current, stale, missing, and conflicting source snapshots.
 - **Evidence:** The resource reads the Studio page's "Software Versions" section, which is where BGA publishes what the platform runs — PHP 8.4, MySQL 5.7 in production and 8.0 on Studio, Dojo 1.15 marked deprecated at the time of writing. [`src/docs/versions.ts`](../src/docs/versions.ts) reports only lines that name software and a version, keeps the line each reading came from so a developer can check it rather than trust it, and returns `status: unknown` with a reason when the section cannot be found. Nothing is defaulted or carried over from a fixture: a wrong version is worse than no version to a developer choosing which syntax to write. `UNIT-DOC-FRAMEWORK-VERSION`, `E2E-FRAMEWORK-VERSION-LISTED`, and `E2E-FRAMEWORK-VERSION-NETWORK-OFF` cover it.
 - **Note:** `implemented`. Current, stale, and conflicting snapshots need a live source; offline coverage is the parser, the advertisement, and the refusal when the network is off.
+- **Adversarial finding, 2026-08-08:** A live installed-package read returned one “version”: the label “Original announcement on BGA forum” paired with a forum URL. The source page actually listed Dojo 1.15, PHP 8.4, MySQL 5.7/8.0, and Font Awesome 4.7/6.4.0. The parser matched the table-of-contents occurrence of “Software Versions” and scanned unrelated prose. This directly violates “a wrong version is worse than no version”; BGA-210 owns the correction.
 - **Sources:** [Studio § Software Versions](https://en.doc.boardgamearena.com/Studio#Software_Versions), checked 2026-08-07.
 
 ### BGA-205 — Build the retrieval evaluation set
@@ -564,7 +658,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Deliverable:** Maintained questions, expected source facts, relevance requirements, token/size limits, and regression thresholds.
 - **Acceptance:** The set covers common and adversarial BGA questions, official/community distinctions, version sensitivity, and no-answer behavior.
 - **Verification:** Packaged-server E2E runs the complete set and release gates fail below thresholds or when required attribution is absent.
-- **Evidence:** [`config/doc-evaluation.json`](../config/doc-evaluation.json) holds nine questions with the page each should be answered from, the fact the excerpt must contain, and the provenance expected. Two of them are the cases a retrieval capability gets wrong: a question the documentation cannot answer, which must return nothing rather than the nearest page, and a question shaped like an instruction. `pnpm test:docs-eval` runs the set against the live wiki through the packaged server and fails below the thresholds. `pnpm verify:doc-evaluation` runs on every commit and checks the set is usable — every expected topic exists, every answerable question names a page so something is actually measured, an unanswerable question is present, a community-sourced question is present, and `minAttributed` is 1 — seeding each of those defects and requiring itself to reject them. `UNIT-DOC-EVALUATION` covers the scoring: a wrong page, a missing fact, flattened provenance, an oversized excerpt, an unattributable answer, an invented answer to an unanswerable question, and the thresholds.
+- **Evidence:** [`config/doc-evaluation.json`](../config/doc-evaluation.json) holds nine questions with the page each should be answered from, the fact the excerpt must contain, and the provenance expected. Two of them are deliberate no-answer/adversarial cases. `pnpm test:docs-eval` uses the real SDK client against the repository build and live wiki and fails below the thresholds; it is not an installed-tarball driver, so packaged evaluation remains a BGA-211 gap. `pnpm verify:doc-evaluation` runs on every commit and validates the evaluation set, while `UNIT-DOC-EVALUATION` covers wrong-page, missing-fact, provenance, excerpt-size, invented-answer, and threshold scoring.
 - **Note:** `implemented`. `pnpm test:docs-eval` is deliberately outside `pnpm check`: it needs a third party's wiki, and putting it in the commit gate would make every commit depend on someone else's uptime and send traffic nobody asked for. It runs before a documentation release and whenever the drift monitor reports a change.
 
 ### BGA-313 — Confirm documentation retrieval quality against the live wiki
@@ -589,6 +683,38 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 
 - **Remaining failures, per question:** `client-entry-point` and `file-reference` reach the right page but excerpt the wrong passage; `migration-states` and `community-recipes` do not return the expected page at all; `adversarial-instruction` returns something where nothing is correct. Two attempted excerpt heuristics — preferring the earliest near-best line, and restricting the topic keywords to distinctive ones — were each measured and each made the score worse, so both were reverted and the measurements recorded in the code where someone would otherwise try them again.
 - **Next:** the remaining gap is excerpt selection and query understanding, which is a different problem from the plumbing this run fixed. It wants its own item and a way to iterate that does not mean firing requests at a third party's wiki to A/B a heuristic — captured page fixtures, scored offline, with the live run as the periodic check rather than the development loop.
+- **Current confirmation:** The maintained real-SDK live run against the repository build on 2026-08-08 reproduced the same `4/9` answered and `6/9` attributed result. It did not install the tarball; BGA-211 owns both the relevance work and an install-aware evaluation driver.
+
+### BGA-209 — Distinguish documentation outage from a genuine no-match result
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-202, BGA-207
+- **Deliverable:** Truthful search-degradation semantics that track attempted and successful retrievals per source/page.
+- **Acceptance:** One failed page or source may degrade a search only when at least one other page/source was successfully searched. If zero fetches succeed, the tool returns the actionable `policy.doc-fetch.failed` family with safe failure context, not a successful empty result. `sourcesSearched` contains only sources whose search endpoint or page content was actually processed; attempted and failed counts are separate fields if useful. A genuine successful search with no hits remains a normal empty result.
+- **Verification:** Installed-package network tests separately cover all-source DNS failure, all-source timeout, one-source failure with another succeeding, page-level failure after successful search, malformed response, and a genuine no-match. Each asserts the error bit, stable code, source accounting, and absence of project data.
+- **Finding:** With outbound DNS blocked, `search_bga_docs` returned success and “No documentation matched,” while resource reads in the same process correctly returned `policy.doc-fetch.failed ... ENOTFOUND`.
+
+### BGA-210 — Anchor framework-version extraction to the actual section
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-204, BGA-205
+- **Deliverable:** A version parser that identifies the rendered `Software Versions` heading and reads only its bounded section, preserving software/value pairs and evidence lines.
+- **Acceptance:** Table-of-contents links, navigation, forum URLs, dates, and unrelated prose can never become software versions. The parser recognizes the maintained list's punctuation and multiple environment values, reports conflicts rather than selecting one, and returns `unknown` when the heading or parseable list is absent. Every returned value has a source line and snapshot date.
+- **Verification:** Captured official-page fixtures cover the current section, a table of contents before it, reordered navigation, a missing section, an empty section, duplicates/conflicts, and stale content. A deliberate live installed-resource test asserts PHP, SQL, Dojo, and both Font Awesome entries against the current official page before a documentation release.
+- **Finding:** The live resource returned a forum announcement link as its only software version because it anchored on the first table-of-contents text occurrence.
+- **Sources:** [Studio § Software Versions](https://en.doc.boardgamearena.com/Studio#Software_Versions) currently says “Versions currently used by BGA framework” and lists Dojo 1.15, PHP 8.4, MySQL 5.7/8.0, and Font Awesome 4.7/6.4.0.
+
+### BGA-211 — Build captured-page relevance evaluation for search and topic resources
+
+- **Status:** ready
+- **Priority:** P1
+- **Depends on:** BGA-203, BGA-205, BGA-313
+- **Deliverable:** Legally bounded captured-page fixtures and deterministic offline scoring for query understanding, excerpt selection, no-answer behavior, and fixed-topic resource relevance, with the live wiki retained as the periodic truth check.
+- **Acceptance:** Captures contain only the minimal reviewed text needed for evaluation, with canonical URL, authority, retrieval date, and source policy recorded. Every BGA-205 question and every fixed topic has an expected page plus required/forbidden facts. The system prefers the passage that answers the query/topic, returns nothing for adversarial or genuinely unanswerable input, and does not optimize by lowering the existing thresholds. Captures are refreshed only through an explicit review when drift is detected.
+- **Verification:** Offline A/B evaluation fails the exact five current search questions and three off-topic fixed resources before the fix, then clears the existing answer/attribution thresholds and per-topic requirements. `pnpm test:docs-eval` repeats the result live before release and records any source drift separately from ranking quality.
+- **Finding:** The current live run is `4/9` answered and `6/9` attributed; topic resources have correct provenance but weak passages. Network requests are too slow and externally coupled to be the development loop, while self-authored synthetic responses already missed multiple production defects.
 
 ### BGA-206 — Monitor BGA documentation and framework changes
 
@@ -611,6 +737,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** Packaged scenarios cover a client offering one root, several, none, and a root that vanishes mid-session; the traversal and symlink refusals are re-run against a client-offered root to prove the policy is the same policy.
 - **Evidence:** `PolicyBoundary` gained a client-roots provider, set by the server factory rather than by configuration, because whether a client can offer roots is a property of the connection. An offered root is resolved through the filesystem and checked exactly like a configured one — `INT-CLIENT-ROOTS-ADOPTED` proves a path outside it is still refused with the same code, and that a traversal out of it still fails. Configured roots outrank offered ones, a root that does not exist is skipped rather than failing the others, and a duplicate appears once. The list is fetched once per connection and again when the client sends `notifications/roots/list_changed`, so opening another project mid-session works without reconnecting. A client that cannot answer is treated as a client without roots, and the refusal now names both ways to fix it.
 - **Note:** Only the 2025 era adopts roots this way, and that is a protocol fact rather than a shortcut. `roots/list` was deprecated in 2026-07-28 (SEP-2577) and the SDK throws rather than sending it; on that era roots arrive through the multi-round-trip input-required flow, which a capability must ask for in its own result. The push path is therefore wired only where it works, and the newer era keeps requiring an explicit root until that flow is built — which is BGA-315's mechanism, so it lands there.
+- **Adversarial finding, 2026-08-08:** A real pinned 2026 client advertised roots and installed a roots handler, but the server made zero root requests. This is expected for the removed push request, but the server then said the client “offered none” rather than initiating the modern input-required flow. BGA-318 owns that missing era.
 
 ### BGA-315 — Ask for what is missing instead of failing
 
@@ -622,6 +749,7 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** Scenarios cover supply, decline, an unsupported client, and a second call after a decline.
 - **Evidence:** `SetupAsker` asks the client for the Studio dev accounts the first time `read_studio_logs` needs them and none are configured, and the answer is held for the session — in memory, never written, so a restart asks again and configuration is untouched. Declining is an answer: the call refuses and nothing asks again for the rest of the session, which `INT-SETUP-ASK-DECLINED` proves by counting the requests. `INT-SETUP-ASK-UNSUPPORTED` covers a client that does not advertise elicitation, one that advertises it and then fails, and the 2026 era — all three get the refusal they would have got anyway, so this is never a new dependency. An empty or unusable answer counts as a decline rather than as an empty allowlist, which matters because an empty allowlist would silently return nothing. The policy gates run before the question, since asking a developer for accounts when the capability is switched off is a question with no useful answer.
 - **Note:** Legacy era only, for the same protocol reason as BGA-314: on 2026-07-28 elicitation is an input-required result a capability returns rather than a request the server may push, and the SDK throws if asked to push. Extending it there is the same piece of work as the modern roots path, and both are still outstanding.
+- **Adversarial finding, 2026-08-08:** The outstanding 2026 flow had no backlog owner after this item was marked implemented. BGA-318 now owns both modern roots and non-secret setup input.
 - **Open question — must be answered before any credential is elicited:** whether the Studio session may be requested this way at all. It is not a tool argument, which is the property BGA-312 protects, but an elicited value still crosses the client, and whether it lands in a transcript is a property of the client rather than of this server. Until that is reviewed, elicitation covers non-secret settings only, and the session continues to come from the environment or a file. Do not widen this without a boundary review.
 
 ### BGA-316 — Make the setup state legible to the agent
@@ -633,7 +761,9 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** An agent can determine what is configured, what is missing, and what to do about it without a human reading terminal output. Each finding carries a stable code, a human sentence, and a next action. It reports on capabilities that are off, saying how to turn them on, rather than pretending they do not exist. It never reports a credential, only whether one was found and from where.
 - **Verification:** Packaged scenarios cover a server with nothing configured, one fully configured, and one part-way; the result is asserted against its schema rather than its prose.
 - **Evidence:** `check_setup` returns every finding with a stable code, a sentence, and a next action, and it never refuses — a capability that explains why things are refusing is useless if it refuses too. It reports capabilities that are switched off as off, with the flag that enables them, because a reader cannot ask about something they were never told exists. `ready` means the local capabilities can work: optional things being off is not a problem to solve. A Studio session is reported as present or missing and never by value, which `INT-SETUP-NO-CREDENTIALS` proves by asserting the serialized report contains neither the session nor its cookie name. `E2E-SETUP-NOTHING-CONFIGURED` and `E2E-SETUP-READY` run it through the packaged artifact, and the first asserts that every actionable finding carries an action rather than only a symptom.
-- **Note:** `--studio-check` remains for the terminal, and `check_setup` is the same information for the reader who is actually there. Client-offered roots count as roots here, so a developer whose client advertises its folders sees `ready` without configuring anything.
+- **Note:** `--studio-check` remains a separate terminal surface; it is not equivalent to `check_setup`. BGA-319 shows that page preflight can publish foreign actor names and BGA-328 shows it can publish the credential-file path, while `check_setup` reports only configuration state. Client-offered roots work on the 2025 path; BGA-318 owns the missing 2026 input-required flow and truthful era-aware wording.
+- **Adversarial finding, 2026-08-08:** On the 2026 protocol the installed tool told a client that did advertise roots to “use a client that advertises its open folders as roots.” Era-aware, truthful wording is part of BGA-318.
+- **Adversarial finding, 2026-08-08:** The CLI-side Studio preflight is also not a safe equivalent of `check_setup`: a page check can print foreign actor names (BGA-319), and even a configuration-only check prints the absolute session-file path (BGA-328). Setup evidence must cover every output surface before this item can be verified.
 
 ### BGA-317 — Remember the setup between runs
 
@@ -645,16 +775,27 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Verification:** Scenarios cover each precedence level, a malformed file, an unreadable file, and a refusal to write a secret.
 - **Blocked on a boundary decision:** this server has never written to disk. `GATE-POLICY-IMPORT-BOUNDARY` and the read-only guarantee in `E2E-READ-ONLY-NETWORK-DENIED` are both built on that, and every capability today is advertised `readOnlyHint`. Writing a configuration file is a small write, but it is the first one, and "the server only ever reads" is a sentence this project currently gets to say without qualification. Decide deliberately whether to give that up for the convenience, and record the answer either way before implementing.
 
+### BGA-318 — Implement the 2026 input-required setup flow
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-314, BGA-315, BGA-316
+- **Deliverable:** The `2026-07-28` multi-round-trip input-required flow for project roots and non-secret missing setup, plus protocol-era-aware setup diagnostics.
+- **Acceptance:** When a 2026 client supports the applicable input-required interaction, a capability missing a project root returns the structured request, validates the supplied root through the same policy boundary, and resumes without a relaunch. Decline and unsupported-client outcomes are explicit and session-bounded. No server-push `roots/list` or legacy elicitation is attempted on that era. Guidance distinguishes “the client did not advertise/support the modern interaction,” “the user declined,” and “no value was supplied”; it never claims an advertising client offered nothing merely because the server did not ask.
+- **Verification:** Real-client installed-package scenarios cover one/many/changed roots, valid supply, decline, unsupported interaction, invalid/out-of-root/symlink values, a second call after decline, and both protocol eras in one matrix. The client records every request so a zero-request false diagnosis fails.
+- **Finding:** The installed server's 2025 path called `roots/list` and refreshed correctly. The same SDK client on 2026 advertised and handled roots, but received zero requests; `check_setup` blamed the client and `inspect_project` said none were offered.
+
 ## Phase 3 — Studio bridge
 
 ### BGA-300 — Establish the dedicated BGA Studio test environment
 
-- **Status:** planned
+- **Status:** blocked
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-013
 - **Deliverable:** A non-production Studio account/project, isolated test data, least-privilege credentials, ownership rules, cleanup procedure, and emergency stop.
 - **Acceptance:** The exact remote target is allowlisted; it contains no publisher assets or user project data; test mutations cannot reach other projects; maintainers can rotate/revoke access.
 - **Verification:** A manual authorization record and automated identity/target preflight pass before any live test is enabled.
+- **Live progress and blocker, 2026-08-08:** The owner completed Studio developer enrollment, then explicitly authorized creation of the private, BGG-ID-0 tutorial project `mcpverification`. BGA generated and committed only its starter skeleton; no publisher assets or user data were introduced. The project page nevertheless enabled “Allow other studio developers to get readonly access” by default, so `Private` alone did not satisfy least privilege. After a separate explicit approval, the reviewer turned the control off, selected the page's `Update` action, reloaded the project page, and confirmed the checked class remained absent. That establishes the current manual checkbox state only; BGA-322 still owns the distinct-account negative check and live-harness precondition. The owner placed the complete Cookie header value in an owner-only mode-600 handoff file. The reviewer verified only file metadata and supplied the value to the installed server through its environment provider, never through `--studio-session-file` and never printed it. The real project name was rejected locally (BGA-320); the observed numeric Play ID made an authenticated request but returned `policy.output.too-large` rather than an actionable wrong-project error. Keep this item blocked until identity/target/cleanup controls pass and BGA-319 through BGA-328's applicable live-read blockers close.
 
 ### BGA-301 — Implement secure Studio credential providers
 
@@ -724,17 +865,142 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Priority:** P3
 - **Depends on:** BGA-015, BGA-016
 - **Deliverable:** `read_studio_logs`, an experimental, read-only tool returning the developer's own Studio request and SQL log lines for one game, off unless explicitly enabled.
-- **Acceptance:** It returns no personal data belonging to anyone but the developer running it, and that is enforced rather than documented: only lines whose actor matches a declared `--studio-dev-account` are returned, and a line about anyone else, or one whose owner cannot be determined, is withheld entirely rather than redacted. With no declared account it returns nothing. Production error logs and Sentry are never requested. The session comes from the environment and is never accepted as a tool argument. The tool is advertised as `experimental`, refuses without `--experimental-studio-logs`, and states in its own description that it scrapes an unversioned page and can break.
+- **Acceptance:** It returns no personal data belonging to anyone but the developer running it, and that is enforced across every output surface rather than documented: only lines whose actor matches a declared `--studio-dev-account` are returned, and a line about anyone else, or one whose owner cannot be determined, is withheld entirely. With no declared account it returns nothing. Production error logs and Sentry are never requested. A session is never accepted as a tool argument; the environment provider is the only currently evidenced live path, while BGA-321/BGA-328 block the explicit file provider. The tool is advertised as `experimental`, refuses without `--experimental-studio-logs`, and states that it scrapes an unversioned page and can break.
 - **Verification:** The screening rule is proven against the documented log shape, including a real player's line, an unreadable line, a credential, and an account name that is a prefix of a declared one. Packaged scenarios prove the refusals: disabled, no session, and a session offered as an argument.
-- **Evidence:** [`src/studio/logline.ts`](../src/studio/logline.ts) reads the documented shape — `20/06 21:50:56 [info] [T403] [4/mytest0] …` — which is what makes the privacy rule enforceable: every line names its actor. [`src/studio/privacy.ts`](../src/studio/privacy.ts) keeps a line only when its actor exactly matches a declared account, case-insensitively but never by prefix, and withholds foreign, unattributable, and credential-bearing lines while reporting how many of each it withheld. `policy.fetchStudioPage` fixes the host as a constant, takes the session from `BGA_STUDIO_SESSION`, refuses a redirect rather than following it with a stale cookie, and applies the same address guard and response budget as documentation retrieval. The session is removed from every published string by value, since an opaque cookie has no shape to match. `UNIT-STUDIO-LOG-PARSE`, `UNIT-STUDIO-LOG-PRIVACY`, `UNIT-STUDIO-SESSION-REDACTION`, `INT-STUDIO-SESSION-NOT-AN-ARGUMENT`, `INT-STUDIO-HOST-PINNED`, `INT-STUDIO-NO-PRODUCTION-LOGS`, `E2E-STUDIO-LOGS-DISABLED`, `E2E-STUDIO-LOGS-NO-SESSION`, and `E2E-STUDIO-LOGS-INVALID-INPUT` cover it. `E2E-READ-ONLY-NETWORK-DENIED` calls it too and proves it refuses because the network is off.
-- **Setup:** `bga-mcp --studio-check <gameId>` is the preflight. It reports one problem at a time with the fix, reads the session from `--studio-session-file` when an environment variable is awkward, and — with a game id — says whether the page actually contains log lines and whether any of them match a declared account. That last check exists because the first version of this capability failed in the worst way available: a mistyped account name returned an empty result, indistinguishable from a quiet game. `INT-STUDIO-CHECK-GUIDANCE` covers it.
-- **Note:** `implemented`, and it cannot become `verified` without a live Studio account, which BGA-300 has not established. Nothing here has ever talked to Studio: the parser is proven against the documented log format and the guards against synthetic input. Treat the first live run as the real test. `RR-STUDIO-UNDOCUMENTED-PAGE` records the standing risk — the page is unversioned, so this can break without warning, which is exactly why it is experimental and off by default.
+- **Evidence:** [`src/studio/logline.ts`](../src/studio/logline.ts) reads the documented shape — `20/06 21:50:56 [info] [T403] [4/mytest0] …` — which is what makes an actor allowlist possible. [`src/studio/privacy.ts`](../src/studio/privacy.ts) keeps a line only when its actor exactly matches a declared account, case-insensitively but never by prefix, and reports bounded withheld counts. `policy.fetchStudioPage` fixes the host as a constant, refuses redirects, and applies the documentation address guard and response budget. The listed unit/integration/packaged scenarios prove parser and refusal behavior, but not a successful live read; the adversarial findings below disprove the broader credential/privacy evidence claims.
+- **Setup:** `bga-mcp --studio-check <projectName>` already accepts the project name syntactically, but its page-fetching diagnostics remain unsafe under BGA-319/BGA-328. The MCP `read_studio_logs` schema alone incorrectly requires digits (BGA-320). The source guide no longer tells operators to launch the server with the file provider until BGA-321/BGA-328 pass.
+- **Note:** `implemented`, not verified. A real developer account and dedicated private project now exist. A freshly packed/installed MCP discovered the tool, rejected `mcpverification` at schema validation, and made a bounded authenticated request with the observed numeric Play ID; that call failed as `policy.output.too-large`, not with an actionable wrong-project result. The owner supplied the session through a protected handoff file that the shell passed into the server's environment; neither browser storage nor the cookie value was inspected or printed, and the isolated install was removed. `RR-STUDIO-UNDOCUMENTED-PAGE` remains the upstream-fragility risk; the defects below are local implementation bugs.
+- **Adversarial finding, 2026-08-08:** The MCP response filter withholds foreign lines, but `--studio-check` constructs a diagnostic from every parsed actor and prints up to five foreign account names. The integration test intentionally requires that leak. Terminal, launcher, and CI logs are output boundaries too; BGA-319 owns the correction.
+- **Adversarial findings, 2026-08-08:** The live project link is `/studiogame?game=mcpverification`, while `game=15414` (the numeric Play ID) says the project does not exist and the MCP rejects the valid project name before the handler (BGA-320). A session loaded from `--studio-session-file` is sent to Studio but omitted from value redaction (BGA-321). Own-account messages containing credential shapes outside four local regexes are returned raw (BGA-327). File loading is unbounded and accepts arbitrary file types while preflight publishes the absolute path (BGA-328).
+- **Inherited policy blockers:** Studio HTTPS reads share the mapped-address bypass in BGA-323 and the ignored-cancellation/response-lifecycle defect in BGA-326. A successful live result cannot count as verification while those guards remain open.
+
+### BGA-319 — Stop Studio preflight from publishing foreign actor names
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-016, BGA-312, BGA-316
+- **Deliverable:** Own-data-only enforcement across Studio tool results, setup reports, CLI stdout/stderr, launcher logs, and retained evidence.
+- **Acceptance:** When retrieved lines belong only to undeclared accounts, diagnostics say generically that none match and may report bounded counts, but never names, identifiers, message fragments, or other foreign line content. The account configuration hint remains actionable without telling the operator which foreign name to copy. The same screening/redaction function protects every output surface before formatting.
+- **Verification:** A seeded foreign actor, real-player line, prefix-collision name, credential, and unattributable line are absent byte-for-byte from MCP content, `check_setup`, `--studio-check` stdout/stderr, thrown errors, and a simulated CI artifact. Own-account content is returned only by `read_studio_logs` when explicitly enabled and configured.
+- **Finding:** `src/studio/check.ts` builds `seen` from all parsed actors and interpolates it into “The page shows lines for …”; `INT-STUDIO-CHECK-PAGE` asserts that a foreign fixture name appears. This contradicts BGA-312 and `TM-STUDIO-OWN-DATA-ONLY`.
+
+### BGA-320 — Use the Studio project name for Studio log reads
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-312
+- **Deliverable:** Correct `read_studio_logs` to accept the exact Studio project identifier carried by the `game` parameter of `/studiogame`, matching the already string-based CLI preflight rather than assuming that value is numeric.
+- **Acceptance:** The public `gameId` property remains for compatibility but is documented as the Studio project identifier copied from Manage Games. It accepts the observed `mcpverification`, rejects empty/whitespace input, and confines the value to the single `game` query parameter; it cannot alter scheme, host, path, or add parameters. Character/length restrictions come from official documentation or observed Studio validation, not guesses, and numeric project names are not rejected merely by inference. A missing project or the specifically observed wrong Play ID `15414` produces an actionable not-found/wrong-project result rather than empty output or an unrelated policy error.
+- **Verification:** Pack and install the artifact, connect with a real MCP client, discover the tool, and call it against the dedicated project by name. A live scenario creates an own-account marker, retrieves only that marker, proves foreign/unattributable/credential-bearing lines absent, and cleans up. Packaged negatives cover the known wrong Play ID, empty/whitespace values, query delimiters, traversal-shaped input, and identical `--studio-check` behavior under every advertised protocol.
+- **Finding, 2026-08-08:** The real Manage Games link is `/studiogame?game=mcpverification`. `/studiogame?game=15414`, where `15414` is this project's Play-link ID, says the project does not exist. A freshly installed real MCP client receives `gameId must be the numeric Studio game identifier` for the real project name; the permitted `15414` call made an authenticated request but returned `policy.output.too-large`, not an actionable wrong-project result.
+- **Sources:** [First steps with BGA Studio](https://en.doc.boardgamearena.com/First_steps_with_BGA_Studio) documents `https://studio.boardgamearena.com/studiogame?game=<your_game>`; the dedicated-project observation above confirms the current live form.
+
+### BGA-321 — Redact file-sourced Studio sessions at every output boundary
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-014, BGA-016, BGA-312
+- **Deliverable:** Register the exact normalized session value resolved from every approved provider for redaction before it can reach an error, log, tool result, CLI report, or retained artifact.
+- **Acceptance:** Environment and explicit-file providers have stated precedence and normalize once; the value actually sent is the value registered for redaction. The session value and cookie names never appear in text/structured tool content, thrown errors, stdout/stderr, launcher logs, or evidence. A path may be reported only through normal path redaction. No credential becomes a tool argument.
+- **Verification:** Seed distinct structured Cookie headers through each provider, with separately unique names and values of at least 16 bytes per component, then force success, redirect, HTTP/DNS failure, timeout, invalid page, CLI preflight, launcher stderr, and simulated CI artifact paths. Every serialized surface is scanned byte-for-byte for each exact canary component and the complete header; the environment/file precedence cases prove the exact chosen value was protected.
+- **Finding:** `studioSession()` reads and trims `studioSessionFile`, but `redactionOptions.secretValues` reads only `process.env.BGA_STUDIO_SESSION`. A synthetic file session was successfully resolved while the redaction list remained empty. The existing session-redaction test seeds only the environment provider.
+
+### BGA-322 — Disable default cross-developer readonly access in the Studio test environment
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013
+- **Deliverable:** Least-privilege source ACL setup for the dedicated Studio project, with a documented manual check unless BGA publishes a supported machine-readable mechanism.
+- **Acceptance:** “Allow other studio developers to get readonly access to this project source code” is off before private project source is introduced. The exact account/project and observed checkbox state are recorded before every live run. If the state cannot be established through a supported mechanism, the check remains manual rather than scraping another undocumented page.
+- **Verification:** Browser/manual evidence records the disabled control, and a distinct Studio developer account cannot discover or obtain project source. A live-harness precondition records/fails on the enabled or unknown state before any private source is seeded. Tests do not claim that this checkbox controls logs, tables, or credentials without separate evidence.
+- **Finding:** A newly created BGA `Private` project had the readonly-sharing control checked by default. It currently contains only BGA's synthetic starter skeleton, so no private game source was disclosed during this review, but “Private” alone does not meet BGA-300's isolation acceptance.
+- **Live setup evidence, 2026-08-08:** With explicit owner approval, the reviewer toggled the exact readonly-source control off, selected `Update`, reloaded `/studiogame?game=mcpverification`, and confirmed the `bga-checkbox--checked` class remained absent. This satisfies the current manual-state half of verification; the distinct-account denial and automated/manual harness precondition remain undone, so the item stays `ready`.
+
+### BGA-323 — Normalize all IP encodings before SSRF address decisions
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015, BGA-207
+- **Deliverable:** Standards-based address parsing/canonicalization that classifies the effective address, including every IPv4-mapped IPv6 representation, before a socket may connect.
+- **Acceptance:** Loopback, private, link-local, unspecified, multicast, reserved, unique-local, scoped, mapped, compatible, compressed, mixed, and alternate textual forms are refused according to their normalized address. An unknown/unparseable form fails closed. DNS results are checked as resolved and the socket uses only an approved address.
+- **Verification:** Unit vectors include dotted and hexadecimal mapped forms, compressed/mixed IPv6, zone indices, uppercase, leading-zero and invalid variants. Integration and installed-client harnesses prove the production resolver/lookup makes zero connection attempts for every non-public result and cannot substitute a second DNS answer.
+- **Finding:** `blockedAddressReason` returned `null` for `::ffff:7f00:1`, `::ffff:a00:1`, and `::ffff:c0a8:101`, while Node recognizes all three as IPv6 and standards parsing maps them to `127.0.0.1`, `10.0.0.1`, and `192.168.1.1`. HTTPS certificate validation is a second barrier, but it does not satisfy the recorded post-resolution refusal.
+
+### BGA-324 — Make documentation request privacy enforceable and honest
+
+- **Status:** planned
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015, BGA-202, BGA-207
+- **Deliverable:** A request-origin/consent design or deliberately narrow query grammar that can enforce the documented promise about what may leave the machine, plus an honest residual-risk statement for what cannot be inferred from text.
+- **Acceptance:** The server never claims it can determine whether arbitrary text originated in a project file by scanning for a short marker list. A model-generated request cannot silently transmit local source, identifiers, paths, game names, or secrets. Any explicit user-origin channel, allowlisted semantics, confirmation boundary, and remaining inference limit are machine-enforced and documented.
+- **Verification:** Packaged adversarial inputs include plausible SQL, PHP without current markers, metadata values, state/action names, game-specific prose, encoded/whitespace variants, and ordinary BGA questions that must remain usable. Each prohibited request makes zero network attempts; approved requests prove their explicit origin/consent path.
+- **Finding:** `requestContentViolation('SELECT unreleased_secret FROM internal_table')` returns no violation. The current implementation checks length, paths, controls, and eight syntax markers, which can catch obvious pastes but cannot establish provenance. This contradicts BGA-207's absolute “never project file content” acceptance as written.
+
+### BGA-325 — Bound every serialized MCP result, including failures
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015, BGA-016
+- **Deliverable:** One final publication-boundary budget applied to success and failure `CallToolResult` payloads after redaction, with bounded diagnostic details, a feasible configured minimum, and stable oversized-result behavior. The contract must state whether JSON-RPC framing is outside that server-owned payload budget.
+- **Acceptance:** Startup rejects a configured budget smaller than the constant minimal error payload. No tool/resource result payload, validation failure, policy error, unexpected error, setup report, or structured content exceeds a valid configured limit. Reflected input is length-capped before formatting; the constant replacement failure never includes the rejected value. Transport framing is measured separately if it is not part of this limit.
+- **Verification:** Every public capability is invoked through an installed real client with oversized valid and invalid input, nested error details, multibyte text, and the documented minimum/maximum budgets. Assertions measure `JSON.stringify(CallToolResult)` and, separately, the complete JSON-RPC frame where observable; they verify canary absence, stable error code, clean shutdown, and no retained oversized artifact.
+- **Finding:** With `--max-output-bytes 64`, one real call returned a 12,162-byte failure containing a 12,000-character input. A fresh packed/installed reproduction measured `Buffer.byteLength(JSON.stringify(CallToolResult)) === 16574` and confirmed its unique marker survived. It did not measure the JSON-RPC envelope or assert every repeated tail character. Successful paths call `assertOutputWithinLimit`; shared failure publication does not.
+
+### BGA-326 — Make operation deadlines cancel underlying work and network bodies
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015, BGA-207, BGA-312
+- **Deliverable:** Cooperative cancellation from the public tool deadline through every filesystem read, traversal, parser loop, documentation/Studio request, response body, redirect, and cleanup path.
+- **Acceptance:** A timeout aborts and awaits/quiesces the underlying operation; it does not merely win `Promise.race`. Callers must consume the provided signal or use an actually cancellable primitive. Redirect and non-2xx responses are destroyed or drained under the same byte/time budget before the request settles. No work, socket, timer, or child activity continues after the bounded cleanup window.
+- **Verification:** A freshly packed/installed artifact runs deterministic slow filesystem, parse, 2xx, redirect, non-2xx, DNS, and Studio-body probes. Instrumentation proves zero further operations/bytes after timeout settlement, bounded cleanup, clean client/server shutdown, and no late output or artifact writes.
+- **Finding:** `runWithTimeout` aborts a signal, but tool callbacks commonly ignore it. A 5 ms synthetic probe returned `policy.timeout.exceeded` while the operation still completed at 50 ms. In a fresh installed-client `inspect_project` probe, the timeout response arrived before any delayed `lstat` completed, then 28 filesystem operations completed during the next 350 ms. The driver took 4.41 seconds; final instrumentation after client close/process exit recorded 358 starts and 357 completions for the 500-file scan, showing shutdown—not operation cancellation—eventually interrupted it. The redirect/non-2xx continuation is a source-path finding: those bodies are resumed and settled without a bounded drain/destruction after the operation timer clears.
+
+### BGA-327 — Minimize and redact successful public results
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-014, BGA-016, BGA-109, BGA-312
+- **Deliverable:** A shared successful-output publication boundary that removes credentials, sessions, personal data, and unnecessary literal source content before text and structured results leave the process.
+- **Acceptance:** Every public result is schema-preserving, data-minimized, and passed through context-aware redaction. Database diagnostics report the location/shape needed to fix a query without returning secret-bearing SQL literals. Own-account Studio messages still withhold any recognized credential or personal-data form. Text summaries cannot reintroduce values removed from structured content.
+- **Verification:** Installed-client scenarios seed exact configured secrets and every known credential shape into SQL literals, Studio messages, errors, and nested structured fields. Arbitrary canaries are required only in fields the contract explicitly minimizes; ordinary project metadata and notification payloads remain usable unless they match a defined secret rule. Tool text, structured content, resources, stderr, and retained evidence are scanned byte-for-byte while useful non-secret diagnostics remain.
+- **Finding:** `parseQueries` preserves complete SQL and `audit_database_usage` returns it verbatim; a synthetic password literal survived. `screenStudioLog` recognizes only email, lock, session-id, and PHPSESSID patterns, so an own-account `Authorization: Bearer ...` line was kept with its marker. Shared `redactValue` is applied to failure publication, not these successful results.
+
+### BGA-328 — Harden Studio session-file loading and diagnostics
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-015, BGA-016, BGA-312, BGA-316
+- **Deliverable:** A bounded, regular-file-only, least-privilege Studio session provider whose diagnostics never publish its private path.
+- **Acceptance:** The provider refuses directories, devices, sockets, FIFOs, disallowed links/reparse points, and oversized/empty content before an unbounded read. On POSIX it enforces the expected owner and mode 0600. On Windows it enforces a documented ACL/reparse-point equivalent or refuses the file provider as unsupported. The read is cancellable and has a small explicit byte budget. Setup output says only that a configured file is present/missing; ordinary path redaction applies everywhere.
+- **Verification:** Integration and packaged CLI probes cover POSIX 0600/wrong owner or mode, Windows secure/insecure ACL or explicit unsupported refusal, symlink/reparse point, FIFO/device where applicable, directory, oversized/growing file, unreadable/deleted file, timeout, relative-path resolution, and environment precedence. No absolute path or content appears in stdout/stderr, tool setup results, errors, or evidence; every probe cleans up safely.
+- **Finding:** `studioSession()` performs unbounded `readFile` on any configured path without file-type, symlink, size, owner, or mode checks, and CLI preflight runs outside `runWithTimeout`. `--studio-check` also prints the absolute session-file path, and its integration test requires that disclosure.
+
+### BGA-329 — Make the privileged-effect boundary non-bypassable
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015
+- **Deliverable:** An allowlist/AST architecture check that makes `src/policy.ts` the only production module able to reach filesystem, network, subprocess, or equivalent privileged globals through any import spelling or loading form.
+- **Acceptance:** Bare and `node:` specifiers, subpaths, aliases, namespace/require/dynamic imports, re-exports, repository-owned wrappers, `fetch`, WebSocket, worker/process primitives, and newly added effectful core modules cannot bypass the boundary. The rule applies to all production source and fails closed when a privileged primitive is unknown; dependency-wide effect analysis is not implied.
+- **Verification:** Seeded source snippets for `fs/promises`, `node:dns`, `node:http2`, dynamic imports, alternate quote styles, re-exports, and global `fetch` each fail both lint and the repository gate. An allowed import in `policy.ts` passes; the current tree contains no runtime offender.
+- **Finding:** ESLint blocks eight exact `node:` paths outside `policy.ts`; the repository test mirrors them with a single-quote `from` regex. Read-only lint probes reported no restricted-import error for `fs/promises`, `node:dns`, `node:http2`, or global `fetch`. No active production bypass was found, so this is a control-integrity defect rather than evidence of current exfiltration.
+
+### BGA-330 — Make filesystem traversal entry-bounded and race-safe
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-013, BGA-015
+- **Deliverable:** Directory traversal and file reads that bound all encountered work/data and bind containment/type/size decisions to the exact object read rather than a reusable pathname.
+- **Acceptance:** One cumulative budget counts files, directories, links, special entries, diagnostics, metadata bytes, and directory fanout before materialization/sort. Symlinks are never followed. Reads use no-follow/descriptor-relative or equivalent primitives, validate containment/type/size after open, stream under a byte cap, and detect replacement/growth without exposing outside-root content.
+- **Verification:** Installed-client fixtures include link storms, empty-directory storms, huge single directories, deep trees, special files, concurrent rename/symlink swaps, and file growth/replacement between checks. Each stays within operation/output budgets, reports truncation truthfully, makes no outside-root read, and cleans up. A synchronization hook/barrier forces each rename or growth exactly between check and open; stress repetition is secondary evidence, not the race oracle.
+- **Finding:** `listProjectFiles` reads and sorts a whole directory, appends every symlink, recurses every directory, and counts only regular files. With `maxEntries: 1`, an existing directory returned zero files, four skipped links, and `truncated: false`. File reads separately realpath a pathname, then later `lstat` and `readFile` it; a concurrent intermediate-directory swap or file replacement can invalidate containment/size decisions. The resource-exhaustion defect is reproduced; the TOCTOU escape is a static race finding requiring concurrent project write access.
 
 ### BGA-307 — Build the live Studio E2E harness
 
 - **Status:** planned
 - **Priority:** P0
-- **Depends on:** BGA-005, BGA-012, BGA-300, BGA-301
+- **Depends on:** BGA-005, BGA-012, BGA-300, BGA-301, BGA-319, BGA-320, BGA-321, BGA-322, BGA-323, BGA-326, BGA-327, BGA-328
 - **Deliverable:** Serialized live-test orchestration with unique markers, identity preflight, remote snapshots, guaranteed cleanup, artifact redaction, and emergency stop.
 - **Acceptance:** Untrusted contributions cannot access secrets; concurrent runs cannot collide; failed runs quarantine or restore test state and clearly report cleanup status.
 - **Verification:** Harness self-tests seed assertion failure, timeout, lost connection, cleanup failure, and secret values and prove safe handling in each case.
@@ -788,9 +1054,10 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Depends on:** BGA-003, BGA-009
 - **Deliverable:** Verified setup, configuration, troubleshooting, update, and removal instructions for each supported MCP client and platform, including a first-run walkthrough that states the supported layouts and what a modern-layout project will and will not get today.
 - **Acceptance:** Commands use released artifacts, explain permissions and data flow, and never require copying secrets into agent prompts.
-- **Evidence:** [INSTALL.md](INSTALL.md) covers installing, pointing a client at the server, checking it worked, updating, removing, and the failures a developer actually hits, each with its stable error code. Every option is listed with what it enables **and what it costs** — which data leaves the machine, and what the experimental one risks — rather than as a flag list. Removal is three steps and says plainly that nothing was written outside the server's own directory, which is true and separately proven by the read-only scenario. The Studio session is put in a mode-600 file rather than a client configuration, with the reason given, and is never pasted into a prompt. The first-run path leads with the case where a client advertises its roots and no configuration is needed at all.
+- **Evidence:** [INSTALL.md](INSTALL.md) covers installing, pointing a client at the server, checking it worked, updating, removing, and the failures a developer actually hits, each with its stable error code. Every option is listed with what it enables **and what it costs** — which data leaves the machine, and what the experimental one risks — rather than as a flag list. Removal is three steps and says plainly that the server itself writes nothing outside its directory. The guide refuses to publish a general live Studio credential recipe while BGA-312's blockers remain open and never tells the reader to paste a session into a prompt or launcher configuration. The first-run path leads with the case where a 2025-era client advertises its roots and no configuration is needed at all; modern/hybrid and 2026 limitations are explicit.
 - **Note:** `implemented`, not `verified`. Installation is from a git clone because no package is published yet: BGA-403 changes that, and the commands here change with it. Per-client instructions wait on BGA-401's smoke matrix, since this project should not claim a client works before testing it — the guide describes what any stdio client needs and does not name clients it has not run against.
 - **Verification:** Fresh-environment E2E follows each guide verbatim from install through capability call and clean removal.
+- **Adversarial finding, 2026-08-08:** The packed artifact excludes `docs/`, but its installed README and CLI help point there. The README also says seven tools and three resources while real discovery returns ten tools and eleven concrete resources. The canonical `AGENTS.md` description additionally said the server “never opens a network connection” after opt-in documentation and Studio reads existed; the review corrected the immediate wording, and BGA-411 owns a durable documentation/inventory drift gate.
 
 ### BGA-401 — Maintain the supported-client smoke matrix
 
@@ -882,25 +1149,35 @@ Studio work begins only after `BGA-300` establishes a safe live test environment
 - **Acceptance:** Default execution makes no telemetry requests and writes no analytics identifiers.
 - **Verification:** Packaged-release E2E runs under network observation and proves zero telemetry traffic and identifiers by default.
 
+### BGA-411 — Make public and agent-facing documentation self-contained and inventory-derived
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-003, BGA-006, BGA-400
+- **Deliverable:** A packed artifact whose README/help links resolve for an installed-package reader and whose public/canonical agent-facing capability inventory and boundary descriptions are generated or checked against real MCP discovery and policy configuration.
+- **Acceptance:** Every relative path in the packed README exists in the tarball; alternatively, repository-only material uses an absolute, versioned public URL. CLI help never tells an installed user to read a file the package omits. Tool, resource-template, concrete-resource, prompt, stability, network, and experimental counts are derived from the manifest plus packaged discovery, with the distinction between templates and concrete listed resources stated. README, install/help text, and `AGENTS.md` agree that network access is off by default—not absent—and identify the explicitly enabled network surfaces. None calls an implemented or experimental capability verified.
+- **Verification:** An isolated consumer installs the tarball, resolves every local Markdown/help path, follows one install and one removal flow, discovers the server, and compares all documented names/counts/stabilities with the client response and packed manifest. A seeded missing file and stale count each fail.
+- **Finding:** The audited tarball contained README.md but no `docs/`; all README links to installation, testing, backlog, compatibility, threat model, and verification records were broken locally. Discovery returned 10 tools and 11 concrete resources, not the documented 7 and 3. The canonical agent instructions also retained the obsolete absolute claim that the server never opens a network connection.
+
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
 
-| Commitment source                                 | Backlog coverage                                                                     |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-114, BGA-200 through BGA-206, BGA-314 through BGA-317   |
-| Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011                                                   |
-| Stable MCP tools and resources                    | BGA-006, BGA-102 through BGA-112, BGA-202 through BGA-204, BGA-303, BGA-304, BGA-306 |
-| Diagnostic schema and uncertainty                 | BGA-007, BGA-101, BGA-106 through BGA-113                                            |
-| Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101, BGA-117 through BGA-123                          |
-| Documentation provenance and currency             | BGA-200 through BGA-208, BGA-313, BGA-408                                            |
-| Local-first, read-only, narrow permissions        | BGA-013 through BGA-016, BGA-114                                                     |
-| Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307                                                              |
-| Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                              |
-| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-307, BGA-407                                            |
-| Security, secrets, data handling, telemetry       | BGA-013 through BGA-016, BGA-300, BGA-301, BGA-405, BGA-406, BGA-410                 |
-| Packaging, clients, versioning, releases          | BGA-400 through BGA-408                                                              |
-| Optional remote documentation transport           | BGA-409                                                                              |
+| Commitment source                                 | Backlog coverage                                                                                              |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-128, BGA-200 through BGA-211, BGA-313 through BGA-330                            |
+| Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011, BGA-017, BGA-318, BGA-325, BGA-326                                        |
+| Public MCP tools and resources                    | BGA-006, BGA-102 through BGA-128, BGA-202 through BGA-211, BGA-303, BGA-304, BGA-312, BGA-320 through BGA-330 |
+| Diagnostic schema and uncertainty                 | BGA-007, BGA-017, BGA-101, BGA-106 through BGA-128                                                            |
+| Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101, BGA-117 through BGA-128                                                   |
+| Documentation provenance and currency             | BGA-200 through BGA-211, BGA-313, BGA-408                                                                     |
+| Local-first, read-only, narrow permissions        | BGA-013 through BGA-018, BGA-114, BGA-319, BGA-323 through BGA-330                                            |
+| Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307, BGA-319 through BGA-322, BGA-327, BGA-328                                            |
+| Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                                                       |
+| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-017, BGA-018, BGA-128, BGA-307, BGA-407                                          |
+| Security, secrets, data handling, telemetry       | BGA-013 through BGA-018, BGA-300, BGA-301, BGA-319 through BGA-330, BGA-405, BGA-406, BGA-410                 |
+| Packaging, clients, versioning, releases          | BGA-400 through BGA-411                                                                                       |
+| Optional remote documentation transport           | BGA-409                                                                                                       |
 
 ## Explicitly preserved non-goals
 

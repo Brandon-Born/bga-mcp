@@ -172,9 +172,23 @@ describe('packaged inspect_project', () => {
       truncated: false,
     });
     expect(response.text).toContain('modern layout (certain)');
-    const diagnostics = (response.structured as { diagnostics: { status: string } }).diagnostics;
+    const modern = response.structured as {
+      diagnostics: { status: string };
+      states: {
+        definitions: { id: number; origin: string; description: string | null }[];
+        initial: { ids: number[]; origin: string };
+      };
+    };
     // Modern state classes are read now, so a sound modern project is clean.
-    expect(diagnostics.status).toBe('passed');
+    expect(modern.diagnostics.status).toBe('passed');
+    // The entry point is the class setupNewGame returns; there is no state 1
+    // to declare, and its absence is not a defect.
+    expect(modern.states.initial).toMatchObject({ ids: [2], origin: 'setup-new-game' });
+    expect(modern.states.definitions.map((state) => state.id)).toEqual([2, 20]);
+    expect(modern.states.definitions[0]).toMatchObject({
+      origin: 'class',
+      description: '${actplayer} must play a card, or pass',
+    });
     expect(await digest(modernRoot)).toBe(before);
   });
 
@@ -221,7 +235,7 @@ describe('packaged inspect_project', () => {
       'states.inc.php',
       'modules/php/States/PlayerTurn.php',
     ]);
-    expect(structured.states.definitions.map((state) => state.id)).toEqual([1, 2, 99]);
+    expect(structured.states.definitions.map((state) => state.id)).toEqual([2, 3]);
     // Nothing here is a defect: the only finding says the migration is part-way.
     expect(structured.diagnostics.findings.map((finding) => finding.code)).toEqual([
       'project.states.partially-migrated',

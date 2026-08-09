@@ -1,5 +1,8 @@
 # Database audit verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-109, and completes the validator set BGA-112 will aggregate.
 
 `audit_database_usage` compares what `dbmodel.sql` declares with what the PHP sources actually query. It is the fourth validator and the one with the widest gap between what can be proven and what can only be suspected, so the certainty split matters more here than anywhere else.

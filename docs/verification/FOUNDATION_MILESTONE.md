@@ -1,5 +1,8 @@
 # Foundation milestone verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 - **Backlog scope:** BGA-001 through BGA-008, BGA-010, and BGA-011
 - **Verification refreshed:** 2026-08-06 (America/Chicago)
 - **Package:** `bga-mcp@0.0.0-development`
@@ -12,7 +15,7 @@
 | Current BGA workflows | Source-attributed catalog covers project setup, SFTP, edit/refresh, states/actions, multiplayer testing, saved states, logs, automated tests, pre-release edges, and release workflow.                                                                                                                |
 | Selected stack        | A real SDK client discovers and invokes `milestone_proof` over stdio and shuts the process down on Node 22.17.1 and Node 24.19.0.                                                                                                                                                                     |
 | Distributable server  | E2E builds a tarball, installs it into an isolated root with a cache-first registry fallback, launches only the installed CLI, verifies it, uninstalls it, and removes temporary state.                                                                                                               |
-| Supported stdio eras  | The installed artifact negotiates `2025-11-25` legacy initialization and pinned `2026-07-28` discovery. An unsupported pinned version is rejected.                                                                                                                                                    |
+| Observed stdio eras   | The installed artifact negotiates `2025-11-25` legacy initialization and pinned `2026-07-28` discovery. Only `2025-11-25` remains in the supported contract; an unrecognized pinned version is rejected.                                                                                              |
 | Empty public surface  | Server identity, empty runtime capabilities, empty tool/resource/prompt discovery, errors, stdout discipline, and shutdown are asserted through the real client. There are currently no public BGA functions to invoke.                                                                               |
 | E2E harness faults    | Real subprocess fixtures prove detection of startup, handshake, schema, response, side-effect, timeout, and cleanup failures.                                                                                                                                                                         |
 | Capability manifest   | The packed schema and manifest validate and exactly match runtime discovery. Seeded unsupported stability, missing scenarios, duplicate names, and stale capabilities fail the gate.                                                                                                                  |

@@ -1,5 +1,8 @@
 # Notification contract verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-108.
 
 `validate_notifications` checks the one BGA contract that breaks in silence. When an action is misrouted the framework raises an error; when a notification is misnamed, nothing happens at all — no error, no log, the interface simply never updates and the developer goes looking in the wrong place.

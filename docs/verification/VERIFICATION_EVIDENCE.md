@@ -1,5 +1,8 @@
 # Verification evidence
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-07. Covers BGA-012, the last Phase 0 item.
 
 Every `verified` in this repository has so far been a claim a reader had to take on trust: the gate passed on someone's machine, and the backlog says so. This artifact is that claim written down by the run itself.
@@ -33,6 +36,6 @@ Like every other `pnpm verify:*` command, `pnpm verify:evidence` builds six defe
 
 Signing and per-release publication are BGA-404 and BGA-407. This item produces the artifact and proves it cannot quietly lie; distributing it with a signature is release work.
 
-## Current run
+## Historical recorded run
 
 11 capabilities and 78 required scenarios, all passed; 288 tests passed. Official conformance is `partial`: `2025-11-25` passed against the packaged binary with 26 baselined scenarios, `2026-07-28` is not applicable to a stdio product.

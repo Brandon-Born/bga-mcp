@@ -32,7 +32,7 @@ Two were already recorded: prompt injection through retrieved content (AC-DOC-PR
 
 ## Preconditions: what must exist before anything crosses
 
-The boundary is now **reviewed**, which is not the same as open. It records seven preconditions, all currently `planned`, and the gate refuses to advertise any capability on this boundary until every one of them is implemented:
+The boundary became **reviewed**, which was not the same as open. At review time it recorded seven planned preconditions. They were later implemented in partial form and documentation capabilities became discoverable; the 2026-08-08 adversarial addendum below narrows three claims and adds corrective planned controls.
 
 | Precondition              | Requirement                                                                          |
 | ------------------------- | ------------------------------------------------------------------------------------ |
@@ -50,11 +50,21 @@ Before this review, the gate could only ask whether a boundary was reviewed. Mar
 
 Three changes fix that:
 
-1. **Every capability names the boundary it crosses.** The manifest requires it; the current seven tools and three resources all name TB-LOCAL-FILESYSTEM.
+1. **Every capability names the boundary it crosses.** The current manifest contains 10 tools and 5 resource templates; discovery expands the templates to 11 concrete resources across local, documentation, and Studio-read boundaries.
 2. **A boundary may record preconditions.** A reviewed boundary with planned preconditions is a closed boundary.
 3. **The gate refuses a capability whose boundary is unreviewed _or_ whose preconditions are still planned**, and proves it by seeding a `search_bga_docs` capability on TB-DOCS-NETWORK and requiring the gate to reject it.
 
-So the review unblocks Phase 2 _work_ without unblocking Phase 2 _shipping_. Building the retrieval capability is now permitted; advertising it still requires the seven mitigations to exist.
+So the review unblocked Phase 2 _work_ without treating the review itself as Phase 2 _shipping_. The implementation later marked the seven historical controls implemented and advertised the capabilities; the addendum records why that still did not establish release verification.
+
+## Adversarial addendum — 2026-08-08
+
+Installed/live and source probes disproved the breadth of three original controls:
+
+- TM-DOC-NO-LOOPBACK blocks the tested address spellings but misses hexadecimal IPv4-mapped IPv6; TM-DOC-ADDRESS-NORMALIZATION and BGA-323 own semantic classification.
+- TM-DOC-REQUEST-CONTENT catches obvious paths and markers but cannot prove arbitrary text provenance; TM-DOC-EXPLICIT-QUERY-PRIVACY and BGA-324 own the enforceable contract.
+- TM-DOC-RESPONSE-BUDGET bounds successful bodies and returns timeout errors, but cancellation and redirect/non-success body lifecycle are incomplete; TM-DOC-RESPONSE-LIFECYCLE and BGA-326 own the correction.
+
+The current verifier gates the named historical preconditions but does not automatically incorporate later planned controls into release status. BGA-018 owns that compositional self-invalidation gap. Documentation capabilities therefore remain `implemented`, not verified.
 
 ## Residual risk
 

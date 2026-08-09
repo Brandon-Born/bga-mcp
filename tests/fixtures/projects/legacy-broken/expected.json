@@ -18,7 +18,7 @@
     "status": "findings",
     "summary": {
       "errors": 1,
-      "warnings": 7,
+      "warnings": 6,
       "information": 0,
       "unsupported": 0
     },
@@ -29,7 +29,6 @@
       "state.name.duplicate",
       "state.transition.target-exists",
       "state.type.unknown",
-      "state.unreachable",
       "state.unreachable"
     ]
   },

@@ -7,6 +7,7 @@ namespace Bga\Games\BgaMcpModernFixture\States;
 use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
 use Bga\Games\BgaMcpModernFixture\Game;
+use Bga\Games\BgaMcpModernFixture\StateConstants;
 
 final class PlayerTurn extends GameState
 {
@@ -14,11 +15,14 @@ final class PlayerTurn extends GameState
     {
         parent::__construct(
             $game,
-            id: 2,
+            id: StateConstants::STATE_PLAYER_TURN,
             type: StateType::ACTIVE_PLAYER,
-            description: clienttranslate('${actplayer} must play a card or pass'),
-            descriptionMyTurn: clienttranslate('${you} must play a card or pass'),
-            transitions: ['play' => 2, 'pass' => 99],
+            description: clienttranslate('${actplayer} must play a card, or pass'),
+            descriptionMyTurn: clienttranslate('${you} must play a card, or pass'),
+            transitions: [
+                'play' => StateConstants::STATE_PLAYER_TURN,
+                'pass' => StateConstants::STATE_NEXT_PLAYER,
+            ],
             updateGameProgression: true,
         );
     }

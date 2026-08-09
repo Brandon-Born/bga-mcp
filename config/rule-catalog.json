@@ -1,8 +1,8 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.1.0",
-  "updatedAt": "2026-08-07",
+  "catalogVersion": "1.2.0",
+  "updatedAt": "2026-08-08",
   "checks": [
     {
       "id": "action.argument.mismatch",
@@ -497,7 +497,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -520,7 +524,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -528,7 +536,7 @@
       "automatable": true,
       "group": "state-machine",
       "tool": "validate_state_machine",
-      "summary": "A player-facing or game state with no transitions cannot hand control back.",
+      "summary": "A player-facing or game state with no transition and no handler redirect cannot hand control back.",
       "severity": "warning",
       "certainty": "certain",
       "implementation": "src/rules/state-machine.ts",
@@ -544,7 +552,11 @@
         "validModern": "tests/fixtures/projects/modern",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -558,15 +570,48 @@
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "Your game state machine: states.inc.php says identifiers \"must be positive integers\" and \"You must not use the same ID twice.\"",
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.id.reserved",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "A state class may not take identifier 1 or 99, which the framework reserves.",
+      "severity": "warning",
+      "certainty": "certain",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "official-documentation",
+          "reference": "State classes: State directory says of a state class identifier: \"Note: you may use any ID, even an ID greater than 100. But you cannot use 1 or 99.\"",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
+        "failingModern": "tests/fixtures/projects/modern-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-STATES-MODERN-CLEAN",
+        "E2E-VALIDATE-STATES-MODERN-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -574,21 +619,26 @@
       "automatable": true,
       "group": "state-machine",
       "tool": "validate_state_machine",
-      "summary": "The framework enters state 1 first, so it must be declared.",
+      "summary": "Nothing names where the game starts: no setupNewGame return value, no state 1, and no state 2.",
       "severity": "error",
       "certainty": "certain",
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "State classes: State directory says \"To indicate your initial state, add return PlayerTurn::class; to the code of setupNewGame function in Game.php\", and the array form reserves \"ID=1 ... for the first game state\". The BGA Studio Migration Guide adds that \"States 1 and 99, that must not be changed, are now optional\", and the skeleton comments its state 1 line \"only keep this line if your initial state is not 2\".",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -602,8 +652,9 @@
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "Both state pages say \"Several game states can share the same name; however, this is not recommended.\"",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -611,7 +662,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -625,15 +680,20 @@
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "Your game state machine: states.inc.php lists name as Mandatory: \"The name of a game state is used to identify it in your game logic.\"",
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
         }
       ],
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -655,7 +715,11 @@
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -669,8 +733,9 @@
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "Your game state machine: states.inc.php says \"With 'transitions' you specify which game state(s) you can jump to from a given game state\", naming each target by identifier.",
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
         }
       ],
       "fixtures": {
@@ -679,7 +744,11 @@
         "validModern": "tests/fixtures/projects/modern",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -687,14 +756,15 @@
       "automatable": true,
       "group": "state-machine",
       "tool": "validate_state_machine",
-      "summary": "A state type outside activeplayer, multipleactiveplayer, game, and manager is not dispatched by the framework.",
+      "summary": "A state type outside activeplayer, multipleactiveplayer, private, and game is not one of the four the framework documents.",
       "severity": "warning",
       "certainty": "certain",
       "implementation": "src/rules/state-machine.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "The BGA framework dispatches states from $machinestates by identifier, type, and transition target; a target it cannot resolve stops the game."
+          "kind": "official-documentation",
+          "reference": "Both state pages say \"You can use 4 types of game states\" and list ACTIVE_PLAYER, MULTIPLE_ACTIVE_PLAYER, PRIVATE and GAME with the name each has in the array notation.",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -703,7 +773,11 @@
         "validModern": "tests/fixtures/projects/modern",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -711,7 +785,7 @@
       "automatable": true,
       "group": "state-machine",
       "tool": "validate_state_machine",
-      "summary": "No chain of declared transitions reaches this state from state 1.",
+      "summary": "No chain of transitions or handler redirects reaches this state from the entry point.",
       "severity": "warning",
       "certainty": "certain",
       "implementation": "src/rules/state-machine.ts",
@@ -727,7 +801,11 @@
         "validModern": "tests/fixtures/projects/modern",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+      ],
       "owner": "Brandon Born"
     },
     {

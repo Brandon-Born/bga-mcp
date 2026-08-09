@@ -1,7 +1,7 @@
 {
   "$schema": "./threat-model.schema.json",
   "schemaVersion": 1,
-  "reviewedAt": "2026-08-07",
+  "reviewedAt": "2026-08-08",
   "assets": [
     {
       "id": "ASSET-LOCAL-SOURCE",
@@ -21,7 +21,7 @@
     {
       "id": "ASSET-STUDIO-PROJECT",
       "name": "Remote Studio project",
-      "description": "Files, tables, and saved state belonging to a Studio project."
+      "description": "Shared, hard-to-restore files, tables, and saved state belonging to a Studio project; the observed default readonly ACL can expose project source to other Studio developers."
     },
     {
       "id": "ASSET-PLAYER-DATA",
@@ -69,6 +69,12 @@
       "name": "BGA Studio service",
       "trust": "semi-trusted",
       "description": "Remote SFTP and web endpoints whose responses the server would parse."
+    },
+    {
+      "id": "ACTOR-OTHER-STUDIO-DEVELOPER",
+      "name": "Other BGA Studio developer",
+      "trust": "untrusted",
+      "description": "A separate developer account that must not gain access to the dedicated private test project's source through the observed default readonly-sharing ACL."
     },
     {
       "id": "ACTOR-DEPENDENCY",
@@ -137,13 +143,14 @@
         "TM-STUDIO-UPLOAD-SCOPE",
         "TM-STUDIO-PREVIEW-FIRST",
         "TM-STUDIO-NO-REMOTE-DELETE",
-        "TM-STUDIO-CREDENTIAL-REDACTION"
+        "TM-STUDIO-CREDENTIAL-REDACTION",
+        "TM-STUDIO-READONLY-SHARING-DISABLED"
       ]
     },
     {
       "id": "TB-STUDIO-READ",
       "name": "BGA Studio own-account reads",
-      "description": "Authenticated reads of the developer's own Studio pages. Reviewed 2026-08-07 and reopened on the owner's decision: reading your own logs is reasonable, the page is undocumented, so a capability here is experimental and returns only the developer's own data.",
+      "description": "Authenticated reads of the developer's own Studio pages. Reviewed 2026-08-07 and reopened on the owner's decision: reading your own logs is reasonable, but the page is undocumented and the 2026-08-08 audit recorded additional planned controls in the boundary's abuse cases before release verification.",
       "status": "reviewed",
       "gates": ["network"],
       "reviewedAt": "2026-08-07",
@@ -180,7 +187,7 @@
       "assets": ["ASSET-LOCAL-PRIVATE"],
       "boundary": "TB-LOCAL-FILESYSTEM",
       "impact": "A crafted repository exfiltrates files the developer never configured.",
-      "mitigations": ["TM-POLICY-SYMLINK"]
+      "mitigations": ["TM-POLICY-SYMLINK", "TM-POLICY-OBJECT-BOUND-READS"]
     },
     {
       "id": "AC-UNCONFIGURED-ROOT",
@@ -198,7 +205,11 @@
       "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-LOCAL-SOURCE"],
       "boundary": "TB-PROCESS",
       "impact": "Command or path injection executes code or reads arbitrary files.",
-      "mitigations": ["TM-POLICY-SINGLE-GATE", "TM-POLICY-TRAVERSAL"]
+      "mitigations": [
+        "TM-POLICY-SINGLE-GATE",
+        "TM-POLICY-COMPLETE-EFFECT-GATE",
+        "TM-POLICY-TRAVERSAL"
+      ]
     },
     {
       "id": "AC-RESOURCE-EXHAUSTION",
@@ -207,7 +218,13 @@
       "assets": ["ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-PROCESS",
       "impact": "The agent context is swamped or the server stops responding to the client.",
-      "mitigations": ["TM-POLICY-TIMEOUT", "TM-POLICY-OUTPUT-LIMIT"]
+      "mitigations": [
+        "TM-POLICY-TIMEOUT",
+        "TM-POLICY-CANCELLATION",
+        "TM-POLICY-OUTPUT-LIMIT",
+        "TM-POLICY-FINAL-OUTPUT-LIMIT",
+        "TM-POLICY-OBJECT-BOUND-READS"
+      ]
     },
     {
       "id": "AC-SECRET-IN-OUTPUT",
@@ -216,7 +233,7 @@
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-OUTPUT",
       "impact": "Credentials or personal data are copied into an agent transcript that may be stored remotely.",
-      "mitigations": ["TM-REDACTION", "TM-ERROR-COLLAPSE"]
+      "mitigations": ["TM-REDACTION", "TM-SUCCESS-OUTPUT-REDACTION", "TM-ERROR-COLLAPSE"]
     },
     {
       "id": "AC-SECRET-IN-ARTIFACT",
@@ -269,17 +286,12 @@
     },
     {
       "id": "AC-STUDIO-SESSION-REUSE",
-      "title": "A browser session or undocumented endpoint is used for Studio access",
+      "title": "A synchronization reuses a browser session or undocumented endpoint",
       "actor": "ACTOR-STUDIO-SERVICE",
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-PLAYER-DATA"],
       "boundary": "TB-STUDIO",
-      "impact": "Session material is exposed and access controls or terms may be bypassed.",
-      "mitigations": [
-        "TM-NO-BROWSER-SESSION",
-        "TM-BOUNDARY-REVIEW",
-        "TM-NO-STUDIO-LOGS",
-        "TM-STUDIO-READ-HOST-PINNED"
-      ]
+      "impact": "A future mutating adapter could expose session material or bypass the reviewed SFTP boundary.",
+      "mitigations": ["TM-NO-BROWSER-SESSION", "TM-BOUNDARY-REVIEW"]
     },
     {
       "id": "AC-DOC-PROMPT-INJECTION",
@@ -297,7 +309,11 @@
       "assets": ["ASSET-LOCAL-SOURCE"],
       "boundary": "TB-DOCS-NETWORK",
       "impact": "Unreleased game code leaves the developer machine without consent.",
-      "mitigations": ["TM-NETWORK-OFF-DEFAULT", "TM-BOUNDARY-REVIEW"]
+      "mitigations": [
+        "TM-NETWORK-OFF-DEFAULT",
+        "TM-BOUNDARY-REVIEW",
+        "TM-DOC-EXPLICIT-QUERY-PRIVACY"
+      ]
     },
     {
       "id": "AC-DEPENDENCY-COMPROMISE",
@@ -324,7 +340,7 @@
       "assets": ["ASSET-LOCAL-PRIVATE"],
       "boundary": "TB-DOCS-NETWORK",
       "impact": "The server becomes a proxy into the developer network, reaching services the client could not reach itself.",
-      "mitigations": ["TM-DOC-HOST-ALLOWLIST", "TM-DOC-NO-LOOPBACK"]
+      "mitigations": ["TM-DOC-HOST-ALLOWLIST", "TM-DOC-NO-LOOPBACK", "TM-DOC-ADDRESS-NORMALIZATION"]
     },
     {
       "id": "AC-DOC-REQUEST-LEAK",
@@ -333,7 +349,11 @@
       "assets": ["ASSET-LOCAL-SOURCE"],
       "boundary": "TB-DOCS-NETWORK",
       "impact": "A search built from file content sends unreleased game code to a third party in a URL or body.",
-      "mitigations": ["TM-DOC-REQUEST-CONTENT", "TM-NETWORK-OFF-DEFAULT"]
+      "mitigations": [
+        "TM-DOC-REQUEST-CONTENT",
+        "TM-DOC-EXPLICIT-QUERY-PRIVACY",
+        "TM-NETWORK-OFF-DEFAULT"
+      ]
     },
     {
       "id": "AC-DOC-OVERSIZED",
@@ -342,7 +362,7 @@
       "assets": ["ASSET-CLIENT-CONTEXT"],
       "boundary": "TB-DOCS-NETWORK",
       "impact": "The agent context is flooded or the server hangs waiting on a remote host.",
-      "mitigations": ["TM-DOC-RESPONSE-BUDGET"]
+      "mitigations": ["TM-DOC-RESPONSE-BUDGET", "TM-DOC-RESPONSE-LIFECYCLE"]
     },
     {
       "id": "AC-DOC-STALE-SNAPSHOT",
@@ -360,7 +380,11 @@
       "assets": ["ASSET-LOCAL-SOURCE"],
       "boundary": "TB-DOCS-NETWORK",
       "impact": "A third party learns which game and which problem a developer is working on, from timing and query terms alone.",
-      "mitigations": ["TM-NETWORK-OFF-DEFAULT", "TM-DOC-REQUEST-CONTENT"]
+      "mitigations": [
+        "TM-NETWORK-OFF-DEFAULT",
+        "TM-DOC-REQUEST-CONTENT",
+        "TM-DOC-EXPLICIT-QUERY-PRIVACY"
+      ]
     },
     {
       "id": "AC-FALSE-VERIFICATION",
@@ -385,11 +409,14 @@
       "title": "Production Studio logs carry other players' identifiers into an agent's context",
       "actor": "ACTOR-DEVELOPER",
       "assets": ["ASSET-PLAYER-DATA", "ASSET-CLIENT-CONTEXT"],
-      "boundary": "TB-STUDIO",
+      "boundary": "TB-STUDIO-READ",
       "impact": "Production error logs and Sentry issues name affected users, so reading them exports real players' data to wherever the agent's context goes. Logs from a developer's own Studio test tables are not this case: those identifiers are their own dev accounts.",
       "mitigations": [
         "TM-STUDIO-OWN-DATA-ONLY",
+        "TM-STUDIO-ALL-OUTPUTS-OWN-DATA",
+        "TM-STUDIO-SUCCESS-REDACTION",
         "TM-STUDIO-NO-PRODUCTION-LOGS",
+        "TM-NO-STUDIO-LOGS",
         "TM-BOUNDARY-REVIEW"
       ]
     },
@@ -403,17 +430,54 @@
       "mitigations": ["TM-STUDIO-NO-REMOTE-DELETE", "TM-STUDIO-PREVIEW-FIRST"]
     },
     {
+      "id": "AC-STUDIO-PROJECT-DISCLOSURE",
+      "title": "A private Studio test project exposes source through the default readonly-sharing ACL",
+      "actor": "ACTOR-OTHER-STUDIO-DEVELOPER",
+      "assets": ["ASSET-STUDIO-PROJECT"],
+      "boundary": "TB-STUDIO",
+      "impact": "Unreleased project source can be visible to unrelated Studio developers even though the project was created as Private.",
+      "mitigations": ["TM-STUDIO-READONLY-SHARING-DISABLED", "TM-BOUNDARY-REVIEW"]
+    },
+    {
+      "id": "AC-STUDIO-FILE-SESSION-LOG",
+      "title": "A file-sourced Studio session reaches a result, log line, or artifact",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-STUDIO-READ",
+      "impact": "The documented file provider can supply the live credential without registering that exact value for redaction.",
+      "mitigations": [
+        "TM-STUDIO-SESSION-REDACTION",
+        "TM-STUDIO-FILE-SESSION-REDACTION",
+        "TM-STUDIO-FILE-SESSION-BLOCKED",
+        "TM-REDACTION"
+      ]
+    },
+    {
       "id": "AC-STUDIO-CREDENTIAL-LOG",
       "title": "A Studio credential or host reaches a result, a log line, or an artifact",
       "actor": "ACTOR-DEVELOPER",
       "assets": ["ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-STUDIO",
       "impact": "A credential that appears in stderr or a retained CI artifact must be rotated, and the developer may not know it leaked.",
-      "mitigations": [
-        "TM-STUDIO-CREDENTIAL-REDACTION",
-        "TM-REDACTION",
-        "TM-STUDIO-SESSION-REDACTION"
-      ]
+      "mitigations": ["TM-STUDIO-CREDENTIAL-REDACTION", "TM-REDACTION"]
+    },
+    {
+      "id": "AC-STUDIO-READ-SSRF",
+      "title": "An authenticated Studio read connects to a non-public resolved address",
+      "actor": "ACTOR-STUDIO-SERVICE",
+      "assets": ["ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-STUDIO-READ",
+      "impact": "A valid alternate IP representation can bypass textual classification and reach a loopback or private address.",
+      "mitigations": ["TM-STUDIO-READ-HOST-PINNED", "TM-STUDIO-READ-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "id": "AC-STUDIO-READ-EXHAUSTION",
+      "title": "A Studio session source or response continues consuming resources after failure",
+      "actor": "ACTOR-STUDIO-SERVICE",
+      "assets": ["ASSET-CLIENT-CONTEXT", "ASSET-STUDIO-CREDENTIALS"],
+      "boundary": "TB-STUDIO-READ",
+      "impact": "A special or oversized credential file, slow body, or ignored abort can hang or continue work after the public call returns.",
+      "mitigations": ["TM-STUDIO-FILE-SESSION-BLOCKED", "TM-STUDIO-READ-CANCELLATION"]
     }
   ],
   "mitigations": [
@@ -447,35 +511,71 @@
     },
     {
       "id": "TM-POLICY-SYMLINK",
-      "title": "Paths are re-checked after the filesystem resolves links",
+      "title": "Static paths are re-checked after the filesystem resolves links",
       "boundary": "TB-LOCAL-FILESYSTEM",
       "control": "automated",
       "status": "implemented",
       "scenarios": ["INT-POLICY-SYMLINK-ESCAPE"]
     },
     {
+      "id": "TM-POLICY-OBJECT-BOUND-READS",
+      "title": "Containment, type, and size checks are bound to the exact opened object and all encountered entries consume one budget",
+      "boundary": "TB-LOCAL-FILESYSTEM",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-330",
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+    },
+    {
       "id": "TM-POLICY-SINGLE-GATE",
-      "title": "Only the policy boundary may import filesystem, network, or subprocess modules",
+      "title": "Current production source routes the enumerated filesystem, network, and subprocess imports through the policy boundary",
       "boundary": "TB-PROCESS",
       "control": "automated",
       "status": "implemented",
       "scenarios": ["GATE-POLICY-IMPORT-BOUNDARY"]
     },
     {
+      "id": "TM-POLICY-COMPLETE-EFFECT-GATE",
+      "title": "Alternate specifiers, dynamic imports, re-exports, repository-owned wrappers, and privileged globals cannot bypass the policy boundary",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-329",
+      "scenarios": ["GATE-POLICY-COMPLETE-EFFECT-BOUNDARY"]
+    },
+    {
       "id": "TM-POLICY-TIMEOUT",
-      "title": "Every operation runs under a configured deadline and is aborted on expiry",
+      "title": "The public caller receives a configured deadline failure when the timeout race expires",
       "boundary": "TB-PROCESS",
       "control": "automated",
       "status": "implemented",
       "scenarios": ["INT-POLICY-TIMEOUT"]
     },
     {
+      "id": "TM-POLICY-CANCELLATION",
+      "title": "A deadline cancels and quiesces the underlying filesystem, parser, and network work before the operation settles",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-326",
+      "scenarios": ["E2E-POLICY-CANCELLATION"]
+    },
+    {
       "id": "TM-POLICY-OUTPUT-LIMIT",
-      "title": "Oversized results are refused rather than streamed into the client",
+      "title": "Successful tool results that reach the shared post-check are refused when their result payload exceeds the configured budget",
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
       "scenarios": ["INT-POLICY-OUTPUT-LIMIT"]
+    },
+    {
+      "id": "TM-POLICY-FINAL-OUTPUT-LIMIT",
+      "title": "Every final result payload, including failures, is bounded under a feasible configured minimum",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-325",
+      "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
     },
     {
       "id": "TM-POLICY-REMOTE-ALLOWLIST",
@@ -507,7 +607,7 @@
     },
     {
       "id": "TM-REDACTION",
-      "title": "Credentials, sessions, connection strings, player data, and outside paths are redacted",
+      "title": "Shared failure publication redacts configured credentials, sessions, connection strings, player data, and outside paths",
       "boundary": "TB-OUTPUT",
       "control": "automated",
       "status": "implemented",
@@ -516,6 +616,15 @@
         "UNIT-REDACTION-PATHS",
         "UNIT-REDACTION-PLAYER-DATA"
       ]
+    },
+    {
+      "id": "TM-SUCCESS-OUTPUT-REDACTION",
+      "title": "Successful text and structured results are minimized and redact exact configured secrets and known credential forms",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-327",
+      "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
     },
     {
       "id": "TM-ERROR-COLLAPSE",
@@ -642,7 +751,7 @@
     },
     {
       "id": "TM-DOC-NO-LOOPBACK",
-      "title": "A host resolving to a loopback, link-local, or private address is refused",
+      "title": "Recognized dotted IPv4 and literal IPv6 loopback, link-local, and private forms are refused after resolution",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
@@ -650,8 +759,17 @@
       "scenarios": ["UNIT-DOC-ADDRESS-BLOCKED"]
     },
     {
+      "id": "TM-DOC-ADDRESS-NORMALIZATION",
+      "title": "Every resolved address is normalized semantically before non-public address classification and socket use",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-323",
+      "scenarios": ["E2E-DOCS-ADDRESS-NORMALIZATION"]
+    },
+    {
       "id": "TM-DOC-REQUEST-CONTENT",
-      "title": "A request carries only the client\u2019s explicit query, never project file content",
+      "title": "Documentation requests originate from the explicit tool argument and obvious pasted paths or known source markers are refused",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
@@ -659,13 +777,31 @@
       "scenarios": ["UNIT-DOC-REQUEST-CONTENT", "INT-DOC-REQUEST-CONTENT"]
     },
     {
+      "id": "TM-DOC-EXPLICIT-QUERY-PRIVACY",
+      "title": "The outbound-query contract makes consent or narrow semantics enforceable without claiming that string heuristics prove provenance",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-324",
+      "scenarios": ["E2E-DOCS-EXPLICIT-QUERY-PRIVACY"]
+    },
+    {
       "id": "TM-DOC-RESPONSE-BUDGET",
-      "title": "A documentation response is bounded in size and time by the policy boundary",
+      "title": "A successful documentation response body is read under an explicit byte budget and the public caller has a deadline",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-207",
       "scenarios": ["UNIT-DOC-RESPONSE-BUDGET", "UNIT-DOC-CACHE-BOUNDED"]
+    },
+    {
+      "id": "TM-DOC-RESPONSE-LIFECYCLE",
+      "title": "Timeouts, redirects, and non-success responses destroy or boundedly drain every body and socket before settlement",
+      "boundary": "TB-DOCS-NETWORK",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-326",
+      "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE"]
     },
     {
       "id": "TM-DOC-SNAPSHOT-INTEGRITY",
@@ -756,18 +892,29 @@
       "scenarios": ["E2E-STUDIO-CREDENTIAL-REDACTION"]
     },
     {
+      "id": "TM-STUDIO-READONLY-SHARING-DISABLED",
+      "title": "The dedicated private Studio project has cross-developer readonly source sharing disabled before live test data is seeded",
+      "boundary": "TB-STUDIO",
+      "control": "manual",
+      "status": "planned",
+      "owner": "Brandon Born",
+      "cadence": "Before every live Studio test run until BGA-322 defines a repeatable supported check",
+      "evidence": "Live 2026-08-08 project inspection found the control enabled; BGA-322 blocks live testing",
+      "backlog": "BGA-322"
+    },
+    {
       "id": "TM-NO-STUDIO-LOGS",
-      "title": "Studio logs, test tables, saved states, and player perspectives are not automated, because no documented interface exists and production logs carry player data",
+      "title": "Production logs and Sentry, test-table workflows, saved states, and player perspectives are not automated; experimental own-account Studio log reading is the reviewed exception",
       "boundary": "TB-STUDIO",
       "control": "manual",
       "status": "implemented",
       "owner": "Brandon Born",
-      "cadence": "Re-read if BGA publishes an API for logs or tables",
-      "evidence": "docs/verification/STUDIO_BOUNDARY_REVIEW.md decision, recorded against BGA-305"
+      "cadence": "Re-read if BGA publishes an API for production logs, tables, saved states, or perspectives",
+      "evidence": "docs/verification/STUDIO_BOUNDARY_REVIEW.md decision and the explicit BGA-312 own-account exception"
     },
     {
       "id": "TM-STUDIO-SESSION-FROM-ENVIRONMENT",
-      "title": "The Studio session comes from the environment and is never accepted as a tool argument",
+      "title": "The Studio session is never accepted as a tool argument",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
@@ -776,7 +923,7 @@
     },
     {
       "id": "TM-STUDIO-READ-HOST-PINNED",
-      "title": "Studio reads go to the one documented Studio host over HTTPS, with the address guard applied and redirects refused",
+      "title": "Studio reads use one fixed Studio HTTPS host and path family and refuse redirects",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
@@ -785,7 +932,7 @@
     },
     {
       "id": "TM-STUDIO-OWN-DATA-ONLY",
-      "title": "Only log lines about the developer's declared own dev accounts are returned; anything else is withheld rather than redacted",
+      "title": "The read_studio_logs MCP result withholds parsed lines not attributable to the developer's declared own accounts",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
@@ -793,13 +940,67 @@
       "backlog": "BGA-312"
     },
     {
+      "id": "TM-STUDIO-ALL-OUTPUTS-OWN-DATA",
+      "title": "Foreign and unattributable Studio values are absent from MCP content, setup output, CLI stdout and stderr, errors, and artifacts",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-319",
+      "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA"]
+    },
+    {
+      "id": "TM-STUDIO-READ-ADDRESS-NORMALIZATION",
+      "title": "Studio reads normalize every resolved address before non-public classification and socket use",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-323",
+      "scenarios": ["E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
+    },
+    {
+      "id": "TM-STUDIO-READ-CANCELLATION",
+      "title": "Studio credential reads, requests, response bodies, and parsing stop and quiesce when the deadline expires",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-326",
+      "scenarios": ["E2E-STUDIO-READ-CANCELLATION"]
+    },
+    {
+      "id": "TM-STUDIO-SUCCESS-REDACTION",
+      "title": "Successful Studio results minimize messages and redact exact configured secrets and known credential forms",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-327",
+      "scenarios": ["E2E-STUDIO-SUCCESS-REDACTION"]
+    },
+    {
       "id": "TM-STUDIO-SESSION-REDACTION",
-      "title": "The session value is removed from every published error, log line, and artifact",
+      "title": "An environment-sourced session value is removed from published errors, log lines, and artifacts",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
       "status": "implemented",
       "scenarios": ["UNIT-STUDIO-SESSION-REDACTION"],
       "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-STUDIO-FILE-SESSION-BLOCKED",
+      "title": "The server refuses the Studio file-session provider until it can establish a bounded regular protected file on the current platform",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-328",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "id": "TM-STUDIO-FILE-SESSION-REDACTION",
+      "title": "The exact normalized Studio session selected from a file provider is registered before any output is published",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "planned",
+      "backlog": "BGA-321",
+      "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
     },
     {
       "id": "TM-STUDIO-NO-PRODUCTION-LOGS",
@@ -814,13 +1015,13 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Policy decisions are proven by unit, integration, and startup scenarios. No public tool exists yet, so no packaged end-to-end tool call exercises them. BGA-102 must add that evidence before BGA-015 can become verified.",
+      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove final failure budgets, cancellation, a complete privileged-effect gate, or race-safe bounded traversal. BGA-325, BGA-326, BGA-329, and BGA-330 own those remaining gaps.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },
     {
       "id": "RR-STUDIO-UNREVIEWED",
-      "description": "Superseded by the 2026-08-07 review. The boundary is reviewed: synchronization may be built once its preconditions exist, and log, table, saved-state, and browser access stay closed. Every Studio capability remains unreleased until its preconditions are implemented.",
+      "description": "The Studio boundaries were reviewed on 2026-08-07. Synchronization remains unimplemented behind planned controls; experimental own-account log reading is discoverable but remains unreleased and has additional open correctness, privacy, address, cancellation, and credential-file controls from the 2026-08-08 audit.",
       "abuseCases": [
         "AC-CREDENTIAL-AS-ARGUMENT",
         "AC-STUDIO-WRONG-TARGET",
@@ -830,7 +1031,7 @@
     },
     {
       "id": "RR-DOC-CONTENT-UNREVIEWED",
-      "description": "Documentation retrieval is unreviewed and unimplemented. Prompt injection through retrieved content has no runtime mitigation yet; the network-off default is the only control.",
+      "description": "Documentation retrieval is reviewed and implemented behind explicit network enablement, host restrictions, provenance, and untrusted-content labelling. Those controls do not prove arbitrary query provenance or prevent an agent from acting on hostile retrieved prose; BGA-324 and RR-DOC-INJECTION-RESIDUAL carry those limits.",
       "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-SOURCE-EXFILTRATION"],
       "acceptedBy": "Brandon Born"
     },

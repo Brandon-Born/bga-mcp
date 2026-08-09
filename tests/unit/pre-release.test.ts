@@ -142,6 +142,28 @@ describe('pre-release audit', () => {
     ).toBe('unsupported');
   });
 
+  it('[E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED] leaves a check unsupported when its validator read only part of the project', () => {
+    // The validator ran and found a real defect elsewhere, but also reported a
+    // construct it could not read. A check with no finding of its own has not
+    // been shown to pass: its input was incomplete.
+    const partial: GroupOutcome = {
+      ...group('state-machine', 'findings'),
+      summary: { ...EMPTY, unsupported: 1 },
+      findingCount: 1,
+    };
+    const audit = auditPreRelease(
+      CATALOG,
+      [partial, group('database', 'passed')],
+      diagnostics([finding('database.table.undeclared')]),
+    );
+
+    const check = audit.checks.find((entry) => entry.id === 'state.initial.missing');
+    expect(check?.outcome).toBe('unsupported');
+    expect(check?.reason).toContain('could not read');
+    expect(audit.counts.unsupported).toBe(1);
+    expect(audit.counts.failed).toBe(1);
+  });
+
   it('counts every check exactly once', () => {
     const audit = auditPreRelease(
       CATALOG,

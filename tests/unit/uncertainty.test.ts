@@ -115,7 +115,10 @@ describe('shared uncertainty handling', () => {
 
     for (const [name, outcome] of Object.entries(outcomes)) {
       expect(outcome.unsupported.length, `${name} reported nothing unsupported`).toBeGreaterThan(0);
-      for (const construct of outcome.unsupported) {
+      for (const entry of outcome.unsupported) {
+        // The state readers say what an unreadable construct leaves
+        // incomplete; the others report the construct alone.
+        const construct = typeof entry === 'string' ? entry : entry.construct;
         expect(construct.length, `${name} reported an empty reason`).toBeGreaterThan(5);
       }
     }

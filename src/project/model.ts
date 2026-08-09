@@ -7,14 +7,16 @@ import {
   type LayoutDetection,
   type ProjectLayout,
 } from './layout.js';
-import { parseModernStates } from './modern.js';
+import { parseModernStates, readInitialState } from './modern.js';
 import {
   parseLegacyMetadata,
   parseLegacyStates,
   parseModernMetadata,
   type GameMetadata,
   type StateDefinition,
+  type UnreadableConstruct,
 } from './parse.js';
+import type { PhpSource } from './php.js';
 
 /** Reads project files. Backed by the policy boundary; never by direct filesystem access. */
 export interface ProjectReader {
@@ -43,6 +45,9 @@ export interface ProjectComponent {
   readonly expected: boolean;
 }
 
+/** How the state the framework enters first was established. */
+export type InitialStateOrigin = 'setup-new-game' | 'state-1' | 'default' | 'unresolved';
+
 export interface ProjectStates {
   /** False when the layout's state definitions could not be read at all. */
   readonly parsed: boolean;
@@ -52,6 +57,22 @@ export interface ProjectStates {
   readonly source: string | null;
   /** Every source read. A partially migrated project has more than one. */
   readonly sources: readonly string[];
+  /**
+   * What the reader managed to read completely.
+   *
+   * A rule may only claim a fact about the whole machine — that a target is
+   * undeclared, or that a state is unreachable — when the part it depends on
+   * is complete.
+   */
+  readonly complete: { readonly declarations: boolean; readonly edges: boolean };
+  /** Identifiers one source declared twice, which the merged machine cannot show. */
+  readonly duplicateIds: readonly number[];
+  /** The state or states the framework enters first, and how that was known. */
+  readonly initial: {
+    readonly ids: readonly number[];
+    readonly origin: InitialStateOrigin;
+    readonly evidence: string;
+  };
 }
 
 export interface ProjectModel {
@@ -296,10 +317,97 @@ function mergeStates(
   return [...merged.values()].sort((left, right) => left.id - right.id);
 }
 
+/**
+ * Identifiers one source declares twice.
+ *
+ * Merging keeps one state per identifier, which is what the framework runs, so
+ * the duplicate has to be recorded here or nothing downstream could see it. A
+ * state declared once in each source is a migration in progress, not a
+ * duplicate, so the two sources are counted separately.
+ */
+function duplicateIdentifiers(...sources: readonly (readonly StateDefinition[])[]): number[] {
+  const duplicates = new Set<number>();
+  for (const source of sources) {
+    const seen = new Set<number>();
+    for (const definition of source) {
+      if (seen.has(definition.id)) {
+        duplicates.add(definition.id);
+      }
+      seen.add(definition.id);
+    }
+  }
+  return [...duplicates].sort((left, right) => left - right);
+}
+
+const NO_INITIAL_STATE = {
+  ids: [],
+  origin: 'unresolved',
+  evidence: 'No state machine was read, so its entry point is unknown.',
+} as const;
+
+/**
+ * Resolves the state the framework enters first.
+ *
+ * The two generations declare it differently, and the framework kept both:
+ * a state class project "add[s] `return PlayerTurn::class;` to the code of
+ * `setupNewGame`", while `states.inc.php` reserves identifier 1 for it. Both
+ * pages then say the declaration is optional — "States 1 and 99, that must not
+ * be changed, are now optional" — and the skeleton comments its state 1 line
+ * with "only keep this line if your initial state is not 2", so an undeclared
+ * entry point means state 2 rather than a broken machine.
+ */
+function resolveInitialState(
+  definitions: readonly StateDefinition[],
+  supporting: readonly PhpSource[],
+  classIds: ReadonlyMap<string, number>,
+  unreadable: UnreadableConstruct[],
+): ProjectStates['initial'] {
+  const declared = new Set(definitions.map((state) => state.id));
+  const setup = readInitialState(supporting, definitions, classIds);
+
+  if (setup.unreadable !== null) {
+    unreadable.push(setup.unreadable);
+    return {
+      ids: [],
+      origin: 'unresolved',
+      evidence: `${setup.unreadable.construct} in ${setup.unreadable.path ?? 'the game logic'}`,
+    };
+  }
+  if (setup.ids.length > 0) {
+    return {
+      ids: setup.ids,
+      origin: 'setup-new-game',
+      evidence: setup.evidence ?? 'setupNewGame names the initial state.',
+    };
+  }
+  if (declared.has(1)) {
+    return {
+      ids: [1],
+      origin: 'state-1',
+      evidence: 'State 1 is declared, and the framework reserves it for the first game state.',
+    };
+  }
+  if (declared.has(2)) {
+    return {
+      ids: [2],
+      origin: 'default',
+      evidence:
+        'Neither setupNewGame nor state 1 names an entry point, so the framework default of state 2 was used.',
+    };
+  }
+  return {
+    ids: [],
+    origin: 'unresolved',
+    evidence:
+      'No setupNewGame return value, no state 1, and no state 2: nothing names where the game starts.',
+  };
+}
+
 async function readStates(
   reader: ProjectReader,
   layout: ProjectLayout,
   paths: readonly string[],
+  supporting: readonly PhpSource[],
   findings: DiagnosticFinding[],
 ): Promise<ProjectStates> {
   const legacySource = paths.find((path) => path === 'states.inc.php');
@@ -310,24 +418,14 @@ async function readStates(
   const sources: string[] = [];
   let legacyDefinitions: readonly StateDefinition[] = [];
   let modernDefinitions: readonly StateDefinition[] = [];
-  const unsupported: string[] = [];
+  let classIds: ReadonlyMap<string, number> = new Map();
+  const unreadable: UnreadableConstruct[] = [];
 
   if (legacySource !== undefined) {
     sources.push(legacySource);
-    const outcome = parseLegacyStates(await reader.read(legacySource));
+    const outcome = parseLegacyStates(await reader.read(legacySource), supporting);
     legacyDefinitions = outcome.value;
-    unsupported.push(...outcome.unsupported);
-    for (const construct of outcome.unsupported) {
-      findings.push(
-        unsupportedSyntax(
-          'project.states.unsupported',
-          `Part of the state machine could not be read: ${construct}.`,
-          construct,
-          'php',
-          legacySource,
-        ),
-      );
-    }
+    unreadable.push(...outcome.unsupported.map((entry) => ({ ...entry, path: legacySource })));
   }
 
   if (modernStateFiles.length > 0) {
@@ -335,74 +433,131 @@ async function readStates(
     const classSources = await Promise.all(
       modernStateFiles.map(async (path) => ({ path, text: await reader.read(path) })),
     );
-    const outcome = parseModernStates(classSources);
+    const outcome = parseModernStates(classSources, supporting);
     modernDefinitions = outcome.value;
-    unsupported.push(...outcome.unsupported);
-    for (const construct of outcome.unsupported) {
-      findings.push(
-        unsupportedSyntax(
-          'project.states.unsupported',
-          `Part of the state machine could not be read: ${construct}.`,
-          construct,
-          'php',
-          modernStateFiles[0],
-        ),
-      );
-    }
+    classIds = outcome.classIds;
+    unreadable.push(...outcome.unsupported);
     if (outcome.value.length === 0 && outcome.unsupported.length === 0) {
-      findings.push(
-        unsupportedSyntax(
-          'project.states.modern-classes',
-          'State classes were found but none declared a readable state.',
-          'class-based state definitions under modules/php/States',
-          'php',
-          modernStateFiles[0],
-        ),
-      );
+      unreadable.push({
+        path: modernStateFiles[0] ?? null,
+        construct: 'class-based state definitions under modules/php/States',
+        scope: 'declaration',
+      });
     }
   }
 
-  if (sources.length > 0) {
-    const definitions = mergeStates(legacyDefinitions, modernDefinitions);
-    if (legacyDefinitions.length > 0 && modernDefinitions.length > 0) {
-      const migrated = modernDefinitions.filter((state) =>
-        legacyDefinitions.some((other) => other.id === state.id),
-      );
+  if (sources.length === 0) {
+    if (layout !== 'unrecognized') {
       findings.push(
         issue(
-          'project.states.partially-migrated',
-          'information',
-          `The state machine is split across both forms: ${String(legacyDefinitions.length)} in states.inc.php and ${String(modernDefinitions.length)} in modules/php/States. Both were read as one machine.`,
-          migrated.length === 0
-            ? 'No state is declared in both forms.'
-            : `${String(migrated.length)} state(s) declared in both forms were read from the class, which is the form the framework runs.`,
-          legacySource,
-          'Remove a state from states.inc.php once its class exists, and remove the file once every class does.',
+          'project.states.missing',
+          'warning',
+          'No state machine definition was found.',
+          'Neither states.inc.php nor modules/php/States was present.',
+          undefined,
+          'Add the state definitions for the project layout in use.',
         ),
       );
     }
     return {
-      parsed: definitions.length > 0,
-      definitions,
-      unsupported,
-      source: sources[0] ?? null,
-      sources,
+      parsed: false,
+      definitions: [],
+      unsupported: [],
+      source: null,
+      sources: [],
+      complete: { declarations: true, edges: true },
+      duplicateIds: [],
+      initial: NO_INITIAL_STATE,
     };
   }
 
-  if (layout !== 'unrecognized') {
+  const definitions = mergeStates(legacyDefinitions, modernDefinitions);
+  const initial = resolveInitialState(definitions, supporting, classIds, unreadable);
+
+  for (const entry of unreadable) {
     findings.push(
-      issue(
-        'project.states.missing',
-        'warning',
-        'No state machine definition was found.',
-        'Neither states.inc.php nor modules/php/States was present.',
-        undefined,
-        'Add the state definitions for the project layout in use.',
+      unsupportedSyntax(
+        'project.states.unsupported',
+        `Part of the state machine could not be read: ${entry.construct}.`,
+        entry.construct,
+        'php',
+        entry.path ?? undefined,
       ),
     );
   }
-  return { parsed: false, definitions: [], unsupported: [], source: null, sources: [] };
+
+  if (legacyDefinitions.length > 0 && modernDefinitions.length > 0) {
+    const migrated = modernDefinitions.filter((state) =>
+      legacyDefinitions.some((other) => other.id === state.id),
+    );
+    findings.push(
+      issue(
+        'project.states.partially-migrated',
+        'information',
+        `The state machine is split across both forms: ${String(legacyDefinitions.length)} in states.inc.php and ${String(modernDefinitions.length)} in modules/php/States. Both were read as one machine.`,
+        migrated.length === 0
+          ? 'No state is declared in both forms.'
+          : `${String(migrated.length)} state(s) declared in both forms were read from the class, which is the form the framework runs.`,
+        legacySource,
+        'Remove a state from states.inc.php once its class exists, and remove the file once every class does.',
+      ),
+    );
+  }
+
+  return {
+    parsed: definitions.length > 0,
+    definitions,
+    unsupported: unreadable.map((entry) => entry.construct),
+    source: sources[0] ?? null,
+    sources,
+    complete: {
+      declarations: !unreadable.some((entry) => entry.scope === 'declaration'),
+      edges: !unreadable.some((entry) => entry.scope === 'edge'),
+    },
+    duplicateIds: duplicateIdentifiers(legacyDefinitions, modernDefinitions),
+    initial,
+  };
+}
+
+/** Bounds how much supporting PHP the model reads to resolve constants. */
+const MAX_SUPPORTING_FILES = 20;
+
+/**
+ * Reads the game-logic files the state machine refers to.
+ *
+ * `setupNewGame` names the initial state class, and the state identifiers a
+ * project uses may be constants declared beside it, so the machine cannot be
+ * read from the state files alone. A file that cannot be read is recorded
+ * rather than failing the whole model: it costs resolution, not the result.
+ */
+async function readSupportingSources(
+  reader: ProjectReader,
+  components: readonly ProjectComponent[],
+  findings: DiagnosticFinding[],
+): Promise<PhpSource[]> {
+  const paths = components
+    .filter((component) => component.id === 'game-logic')
+    .flatMap((component) => component.files)
+    .filter((path) => path.endsWith('.php'))
+    .slice(0, MAX_SUPPORTING_FILES);
+
+  const sources: PhpSource[] = [];
+  for (const path of paths) {
+    try {
+      sources.push({ path, text: await reader.read(path) });
+    } catch {
+      findings.push(
+        unsupportedSyntax(
+          'project.states.unsupported',
+          `Game logic in ${path} could not be read, so constants and the initial state it declares were not resolved.`,
+          `unreadable game logic file ${path}`,
+          'php',
+          path,
+        ),
+      );
+    }
+  }
+  return sources;
 }
 
 /**
@@ -496,7 +651,15 @@ export async function buildProjectModel(
   }
 
   const metadata = await readMetadata(reader, detection, paths, findings);
-  const states = await readStates(reader, detection.layout, paths, findings);
+  const hasStateSource = paths.some(
+    (path) =>
+      path === 'states.inc.php' ||
+      (path.startsWith('modules/php/States/') && path.endsWith('.php')),
+  );
+  const supporting = hasStateSource
+    ? await readSupportingSources(reader, components, findings)
+    : [];
+  const states = await readStates(reader, detection.layout, paths, supporting, findings);
 
   return {
     schemaVersion: MODEL_SCHEMA_VERSION,

@@ -61,10 +61,15 @@ describe('tool handlers over a real client connection', () => {
   it('reads a modern project through the same tools', async () => {
     await withClient([modernRoot], async (call) => {
       const outcome = await call('inspect_project', { projectRoot: modernRoot });
-      expect(outcome.text).toContain('States: 3 definitions');
+      expect(outcome.text).toContain('States: 2 definitions');
 
       const validation = await call('validate_state_machine', { projectRoot: modernRoot });
-      expect(validation.structured).toMatchObject({ statesRead: true, stateCount: 3 });
+      expect(validation.structured).toMatchObject({
+        statesRead: true,
+        stateCount: 2,
+        // No state 1 exists to declare, and none is asked for.
+        initialState: { ids: [2], origin: 'setup-new-game' },
+      });
       expect(validation.text).toContain('status passed');
     });
   });
@@ -73,7 +78,7 @@ describe('tool handlers over a real client connection', () => {
     await withClient([brokenRoot], async (call) => {
       const outcome = await call('validate_state_machine', { projectRoot: brokenRoot });
       expect(outcome.isError).toBe(false);
-      expect(outcome.text).toContain('1 errors, 7 warnings');
+      expect(outcome.text).toContain('1 errors, 6 warnings');
       expect(outcome.text).toContain('state.transition.target-exists');
       expect(outcome.text).toContain('(likely)');
       expect(outcome.structured).toMatchObject({ phpSourcesRead: 7, stateCount: 4 });

@@ -1,5 +1,8 @@
 # Read-only and network-off verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-110, BGA-111, BGA-113, and BGA-114, and completes Phase 1.
 
 Every local capability claims two things a developer has to take on trust unless it is measured: it does not change the project, and it does not talk to the network. This record is the measurement.

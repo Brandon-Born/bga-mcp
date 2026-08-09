@@ -7,28 +7,26 @@
     "gamepreferences.json",
     "modules/js/Game.js",
     "modules/php/Game.php",
-    "modules/php/States/Computed.php",
     "modules/php/States/GameEnd.php",
-    "modules/php/States/GameSetup.php",
     "modules/php/States/Orphan.php",
     "modules/php/States/PlayerTurn.php",
     "stats.json"
   ],
-  "diagnostics": ["project.states.unsupported"],
+  "diagnostics": [],
   "stateMachine": {
     "status": "findings",
     "summary": {
       "errors": 1,
-      "warnings": 4,
+      "warnings": 5,
       "information": 0,
-      "unsupported": 1
+      "unsupported": 0
     },
     "codes": [
-      "project.states.unsupported",
       "state.dead-end",
+      "state.id.reserved",
+      "state.name.duplicate",
       "state.transition.target-exists",
       "state.type.unknown",
-      "state.unreachable",
       "state.unreachable"
     ]
   },

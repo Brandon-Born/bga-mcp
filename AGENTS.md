@@ -2,7 +2,7 @@
 
 Instructions for any coding agent working in this repository, in the [AGENTS.md](https://agents.md) format. This file is canonical; `CLAUDE.md` points here so Claude Code reads the same rules. Change this file, not a copy of it.
 
-`bga-mcp` is a local, read-only MCP server that inspects and validates BoardGameArena game projects. It reads a developer's project from disk and reports cross-file defects. It never writes to a project and never opens a network connection.
+`bga-mcp` is a local, read-only MCP server that inspects and validates BoardGameArena game projects. It reads a developer's project from disk and reports cross-file defects. It never writes to a project. Network access is off by default; explicitly enabled documentation and experimental Studio reads use the reviewed policy boundaries recorded in the threat model.
 
 [docs/BACKLOG.md](docs/BACKLOG.md) is the executable source of truth for planned work. [CONTRIBUTING.md](CONTRIBUTING.md) states the contribution rules; everything below is in addition to them.
 

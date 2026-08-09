@@ -1,5 +1,8 @@
 # State-machine validation verification
 
+> [!CAUTION]
+> Historical evidence only. The [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md) reopened the associated backlog and manifest claims. Do not treat this record as current release verification.
+
 Recorded: 2026-08-06. Covers BGA-106.
 
 `validate_state_machine` is the first capability that judges a project rather than describing it. This record states what it checks, how certain each check is, and where it can be wrong.

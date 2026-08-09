@@ -25,6 +25,14 @@ export const ValidateStateMachineOutputSchema = z.strictObject({
   statesSource: z.string().nullable(),
   stateCount: z.number().int().nonnegative(),
   phpSourcesRead: z.number().int().nonnegative(),
+  /** Where the framework enters the machine, and how that was established. */
+  initialState: z.strictObject({
+    ids: z.array(z.number().int()),
+    origin: z.enum(['setup-new-game', 'state-1', 'default', 'unresolved']),
+    evidence: z.string(),
+  }),
+  /** What the reader read completely, and so which rules were allowed to speak. */
+  complete: z.strictObject({ declarations: z.boolean(), edges: z.boolean() }),
   rules: z.array(
     z.strictObject({
       code: z.string(),
@@ -46,7 +54,11 @@ transition targets, unreachable states, dead ends, and whether the action, args,
 and possible-action methods a state names are declared in readable PHP source.
 
 Reads states from states.inc.php, from state classes under modules/php/States,
-or from both at once while a project is part-way through migrating them.
+or from both at once while a project is part-way through migrating them. The
+entry point comes from what the project's own generation uses to declare it:
+the state class setupNewGame returns, or the reserved identifier 1, or the
+framework default. Identifiers 1 and 99 belong to the framework and are never
+reported as the project's mistake.
 
 Structural findings are reported as facts. Cross-file handler findings are
 reported as heuristics with their known limitations, never as facts. Syntax the
@@ -102,6 +114,12 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
             statesSource: context.model.states.source,
             stateCount: context.model.states.definitions.length,
             phpSourcesRead: context.phpSources.length,
+            initialState: {
+              ids: [...context.model.states.initial.ids],
+              origin: context.model.states.initial.origin,
+              evidence: context.model.states.initial.evidence,
+            },
+            complete: { ...context.model.states.complete },
             rules: STATE_MACHINE_RULES.map((rule) => ({
               ...rule,
               falsePositives: [...rule.falsePositives],

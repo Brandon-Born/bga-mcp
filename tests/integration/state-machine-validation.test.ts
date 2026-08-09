@@ -67,18 +67,30 @@ describe('state-machine validation against the fixture corpus', () => {
     expect(target?.suggestions[0]?.message).toContain('42');
   });
 
-  it('reads modern state classes and reports what it cannot interpret', async () => {
-    const clean = await validate('modern');
-    expect(clean.result.status).toBe('passed');
+  it('reads modern state classes and finds exactly the defects they declare', async () => {
+    for (const fixture of ['modern', 'modern-state-classes']) {
+      const clean = await validate(fixture);
+      expect(clean.result.status, fixture).toBe('passed');
+      expect(clean.result.findings, fixture).toEqual([]);
+    }
 
     const broken = await validate('modern-broken');
-    const codes = broken.result.findings.map((finding) => finding.code);
-    expect(codes).toContain('state.transition.target-exists');
-    expect(codes).toContain('project.states.unsupported');
-    const unreadable = broken.result.findings.find(
-      (finding) => finding.kind === 'unsupported-syntax',
-    );
-    expect(unreadable?.message).toContain('non-literal id');
+    const declared = broken.expected.stateMachine;
+    expect(broken.result.summary).toEqual(declared?.summary);
+    expect(broken.result.findings.map((finding) => finding.code)).toEqual(declared?.codes);
+  });
+
+  it('derives no fact about a machine it could not fully read', async () => {
+    const { result, expected, context } = await validate('modern-unreadable');
+
+    // Every finding is the reader reporting its own limit, located in the file
+    // that caused it. The transition to state 40 is not called a dangling
+    // target and no state is called unreachable: the reader cannot see the
+    // state whose identifier it failed to read.
+    expect(result.status).toBe('unsupported');
+    expect(result.findings.map((finding) => finding.code)).toEqual(expected.stateMachine?.codes);
+    expect(result.findings.every((finding) => finding.kind === 'unsupported-syntax')).toBe(true);
+    expect(context.model.states.definitions[0]?.transitions).toEqual({ pass: 40 });
   });
 
   it('produces byte-identical results across repeated runs', async () => {

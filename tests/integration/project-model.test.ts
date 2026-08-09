@@ -37,19 +37,69 @@ describe('normalized project model', () => {
     });
 
     // State classes are read into the same shape the legacy declaration gives.
+    // There is no class for state 1 or 99: the framework reserves both, and
+    // the initial state is the class setupNewGame returns.
     expect(result.states.parsed).toBe(true);
     expect(result.states.definitions.map((state) => state.name)).toEqual([
-      'GameSetup',
       'PlayerTurn',
-      'GameEnd',
+      'NextPlayer',
     ]);
-    expect(result.states.definitions[1]).toMatchObject({
+    expect(result.states.initial).toEqual({
+      ids: [2],
+      origin: 'setup-new-game',
+      evidence: 'setupNewGame in modules/php/Game.php returns PlayerTurn::class',
+    });
+    expect(result.states.definitions[0]).toMatchObject({
       id: 2,
       type: 'activeplayer',
       args: 'getArgs',
-      transitions: { play: 2, pass: 99 },
+      zombie: 'zombie',
+      // The identifiers are StateConstants members, resolved without running
+      // the project, and the description survives its clienttranslate call.
+      transitions: { play: 2, pass: 20 },
+      description: '${actplayer} must play a card, or pass',
+      descriptionMyTurn: '${you} must play a card, or pass',
     });
+    // onEnteringState redirects by class name and by state identifier.
+    expect(result.states.definitions[1]).toMatchObject({ id: 20, redirects: [2, 99] });
+    expect(result.states.complete).toEqual({ declarations: true, edges: true });
     expect(result.diagnostics.status).toBe('passed');
+  });
+
+  it('reads the documented state-class constructs of the state-class fixture', async () => {
+    const root = resolve(fixturesRoot, 'modern-state-classes');
+    const policy = await createPolicyBoundary({ projectRoots: [root] });
+    const result = await model(policy, root);
+
+    expect(result.states.initial).toMatchObject({ ids: [10], origin: 'setup-new-game' });
+    expect(
+      result.states.definitions.map((state) => [state.id, state.type, state.possibleActions]),
+    ).toEqual([
+      [10, 'multipleactiveplayer', []],
+      [11, 'private', ['actChooseToken']],
+      [20, 'activeplayer', ['actPlayToken', 'actPass']],
+      [30, 'game', []],
+    ]);
+    // initialPrivate names the private state each active player is moved into.
+    expect(result.states.definitions[0]?.redirects).toEqual([11]);
+    expect(result.diagnostics.status).toBe('passed');
+  });
+
+  it('reports what it cannot read and resolves nothing from it', async () => {
+    const root = resolve(fixturesRoot, 'modern-unreadable');
+    const policy = await createPolicyBoundary({ projectRoots: [root] });
+    const result = await model(policy, root);
+
+    expect(result.states.complete).toEqual({ declarations: false, edges: false });
+    expect(result.diagnostics.findings.map((finding) => finding.code)).toEqual([
+      'project.states.unsupported',
+      'project.states.unsupported',
+    ]);
+    // Each report names the file it is about, not the first state file read.
+    expect(result.diagnostics.findings.map((finding) => finding.locations[0]?.uri)).toEqual([
+      'modules/php/States/Computed.php',
+      'modules/php/States/PlayerTurn.php',
+    ]);
   });
 
   it('describes the legacy fixture including its state machine', async () => {
@@ -100,13 +150,15 @@ describe('normalized project model', () => {
     // until the last class exists, so it is read as one machine.
     expect(result.states.sources).toEqual(['states.inc.php', 'modules/php/States/PlayerTurn.php']);
     expect(result.states.definitions.map((state) => [state.id, state.name])).toEqual([
-      [1, 'gameSetup'],
       [2, 'PlayerTurn'],
-      [99, 'gameEnd'],
+      [3, 'gameTurn'],
     ]);
-    // A transition crossing the two sources in each direction resolves.
-    expect(result.states.definitions[0]?.transitions).toEqual({ '': 2 });
-    expect(result.states.definitions[1]?.transitions).toEqual({ pass: 99 });
+    // A transition crossing the two sources in each direction resolves, and the
+    // GameStateBuilder chain resolves its constants without running the file.
+    expect(result.states.definitions[0]?.transitions).toEqual({ pass: 3 });
+    expect(result.states.definitions[1]?.transitions).toEqual({ next: 2, endGame: 99 });
+    // States 1 and 99 are optional now, so the framework starts at state 2.
+    expect(result.states.initial).toMatchObject({ ids: [2], origin: 'default' });
 
     // Nothing is missing: an autowired project needs no <game>.action.php, and
     // a modern game class needs no <game>.view.php.

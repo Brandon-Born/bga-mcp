@@ -33,7 +33,7 @@ The official server scenarios for this revision test the **stateless** Streamabl
 
 Making it pass would mean the proxy synthesizing an initialize handshake for the stdio child, at which point the suite would be measuring the proxy's protocol work. That is the opposite of why the proxy exists, so the revision is recorded as **not applicable** with that reason, in `conformance-results/candidate-2026-07-28/not-applicable.json` and in the verification evidence.
 
-The stdio evidence for this revision is `E2E-STDIO-MODERN-DISCOVER` and its neighbours, which negotiate `2026-07-28` with a real SDK client against the packaged artifact and exercise discovery and tool calls over it. That is genuine evidence, and it is weaker than official conformance; the evidence artifact records the difference rather than blurring it.
+The stdio evidence for this revision is `E2E-STDIO-MODERN-DISCOVER` and its neighbours, which negotiate `2026-07-28` with a real SDK client against the packaged artifact and exercise discovery and tool calls over it. That is genuine observed-behavior evidence, and it is weaker than official conformance; the support constant, transport manifest, capability entries, and evidence artifact therefore exclude this revision until BGA-017 and BGA-318 pass.
 
 ## Why BGA-011 is still `implemented`
 

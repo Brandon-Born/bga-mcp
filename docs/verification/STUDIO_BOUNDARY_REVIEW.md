@@ -21,14 +21,18 @@ Two very different things, and conflating them is how this boundary gets crossed
 
 ## Abuse cases
 
-Three were already recorded: a credential passed as an ordinary tool argument (AC-CREDENTIAL-AS-ARGUMENT), a synchronization writing to the wrong project (AC-STUDIO-WRONG-TARGET), and browser-session or undocumented-endpoint use (AC-STUDIO-SESSION-REUSE). The review adds four:
+Three were already recorded: a credential passed as an ordinary tool argument (AC-CREDENTIAL-AS-ARGUMENT), a synchronization writing to the wrong project (AC-STUDIO-WRONG-TARGET), and browser-session or undocumented-endpoint use for synchronization (AC-STUDIO-SESSION-REUSE). The original review added four; the 2026-08-08 addendum added four more:
 
-| Abuse case                 | The problem                                                                                                            |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| AC-STUDIO-UPLOAD-SCOPE     | A sync uploads files outside the project — keys, `.env`, notes — because the source scope was wider than intended      |
-| AC-STUDIO-PLAYER-DATA      | Production logs and Sentry carry player identifiers, so reading logs pulls other people's data into an agent's context |
-| AC-STUDIO-DESTRUCTIVE-SYNC | A sync deletes or overwrites remote files that exist only on Studio, with no local copy to restore them from           |
-| AC-STUDIO-CREDENTIAL-LOG   | A credential, host, or account name reaches stderr, an error message, or a retained CI artifact                        |
+| Abuse case                   | The problem                                                                                                            |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| AC-STUDIO-UPLOAD-SCOPE       | A sync uploads files outside the project — keys, `.env`, notes — because the source scope was wider than intended      |
+| AC-STUDIO-PLAYER-DATA        | Production logs and Sentry carry player identifiers, so reading logs pulls other people's data into an agent's context |
+| AC-STUDIO-DESTRUCTIVE-SYNC   | A sync deletes or overwrites remote files that exist only on Studio, with no local copy to restore them from           |
+| AC-STUDIO-CREDENTIAL-LOG     | A credential, host, or account name reaches stderr, an error message, or a retained CI artifact                        |
+| AC-STUDIO-PROJECT-DISCLOSURE | A Private project exposes source because BGA's cross-developer readonly source ACL defaults on                         |
+| AC-STUDIO-FILE-SESSION-LOG   | A session loaded by the documented file provider is used without registering that value for redaction                  |
+| AC-STUDIO-READ-SSRF          | An alternate address representation can bypass the inherited textual private-address classifier                        |
+| AC-STUDIO-READ-EXHAUSTION    | A credential source or response body can keep consuming resources after the public operation fails                     |
 
 AC-STUDIO-PLAYER-DATA needs a distinction this review originally missed. Studio has more than one kind of log, and they are not equally sensitive:
 
@@ -39,23 +43,24 @@ Only the second is an abuse case. The first is the ordinary thing a developer do
 
 ## What this review opens
 
-**The SFTP half, with preconditions.** Connection diagnostics, a preview of what a sync would do, and a guarded sync are all buildable against a documented mechanism with a documented address. Seven preconditions must exist before any of it may be advertised:
+**The SFTP half, with preconditions.** Connection diagnostics, a preview of what a sync would do, and a guarded sync are all buildable against a documented mechanism with a documented address. Eight preconditions must exist before any of it may be advertised:
 
-| Precondition                   | Requirement                                                                                                          |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| TM-STUDIO-CREDENTIAL-PROVIDER  | Credentials come from the environment or an agent, never from a tool argument                                        |
-| TM-STUDIO-HOST-PINNED          | Only the documented Studio host and port, over SFTP, with the host key verified against a stored fingerprint         |
-| TM-STUDIO-TARGET-CONFIRMED     | A mutation names its exact remote project and the client repeats it back, or nothing happens                         |
-| TM-STUDIO-UPLOAD-SCOPE         | Only files inside the configured project root are uploaded, resolved through the same policy that guards local reads |
-| TM-STUDIO-PREVIEW-FIRST        | Every mutation has a dry run that lists exactly what would change, and execution requires explicit intent            |
-| TM-STUDIO-NO-REMOTE-DELETE     | Deleting or overwriting a remote file that has no local counterpart is refused, not resolved                         |
-| TM-STUDIO-CREDENTIAL-REDACTION | Credentials, hosts, and account names are redacted from every result, error, log line, and artifact                  |
+| Precondition                        | Requirement                                                                                                          |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| TM-STUDIO-CREDENTIAL-PROVIDER       | Credentials come from the environment or an agent, never from a tool argument                                        |
+| TM-STUDIO-HOST-PINNED               | Only the documented Studio host and port, over SFTP, with the host key verified against a stored fingerprint         |
+| TM-STUDIO-TARGET-CONFIRMED          | A mutation names its exact remote project and the client repeats it back, or nothing happens                         |
+| TM-STUDIO-UPLOAD-SCOPE              | Only files inside the configured project root are uploaded, resolved through the same policy that guards local reads |
+| TM-STUDIO-PREVIEW-FIRST             | Every mutation has a dry run that lists exactly what would change, and execution requires explicit intent            |
+| TM-STUDIO-NO-REMOTE-DELETE          | Deleting or overwriting a remote file that has no local counterpart is refused, not resolved                         |
+| TM-STUDIO-CREDENTIAL-REDACTION      | Credentials, hosts, and account names are redacted from every result, error, log line, and artifact                  |
+| TM-STUDIO-READONLY-SHARING-DISABLED | The dedicated Private project has cross-developer readonly source sharing disabled before live data is seeded        |
 
 The capability gate already enforces this shape: a reviewed boundary with planned preconditions is a closed boundary, and it refuses to advertise a capability whose preconditions are not implemented.
 
 ## What this review does not open
 
-**Studio logs, test tables, saved states, and player perspectives stay closed.** The reason is narrower than it first looks, and worth stating precisely, because the wrong reason would rule out something reasonable.
+**Production logs and Sentry, test-table workflows, saved states, and player perspectives stay closed.** Experimental own-account log reading is the owner-approved exception described in the addendum. The reason for the remaining closed features is narrower than it first looks.
 
 **The blocker is that there is no documented interface, and the rule against building on one is ours.** This needs saying plainly, because "not permitted" would imply an authority that has not spoken.
 
@@ -112,5 +117,45 @@ What changed:
   unless asked for, and its own description tells the developer it scrapes an
   unversioned page and can break. `RR-STUDIO-UNDOCUMENTED-PAGE` records that.
 
-`TM-NO-STUDIO-LOGS` stays as written for test tables, saved states, and player
-perspectives, which nobody has asked for and which involve real tables.
+`TM-NO-STUDIO-LOGS` is narrowed to production logs/Sentry, test-table workflows,
+saved states, and player perspectives; the experimental own-account log reader
+is the explicit exception.
+
+## Live addendum, 2026-08-08
+
+The account owner completed developer enrollment and authorized one BGG-ID-0
+Private tutorial project, `mcpverification`. BGA generated only its starter
+skeleton; no publisher assets or user data were introduced. The live and
+adversarial probes established these blockers before a successful log read was
+possible:
+
+- The real Studio page uses `/studiogame?game=mcpverification`, as the official
+  [First steps with BGA Studio](https://en.doc.boardgamearena.com/First_steps_with_BGA_Studio)
+  guide says. The current public schema requires digits, while the
+  numeric Play ID does not identify the Studio project. BGA-320 owns this.
+- The documented file provider resolves a cookie value that is absent from the
+  redaction registry, and its loader/path diagnostics have separate safety
+  gaps. BGA-321 and BGA-328 own these. For this audit, the owner staged the
+  complete Cookie header in a protected mode-600 handoff file; the shell passed
+  it into the installed server's environment provider, and the MCP never
+  received `--studio-session-file`.
+- The new Private project had cross-developer readonly source access enabled by
+  default. BGA-322 adds it as the eighth TB-STUDIO precondition and blocks all
+  private source until the ACL is disabled and independently checked. After a
+  separate owner approval, the reviewer turned the control off, selected
+  `Update`, reloaded the project page, and confirmed the checked class remained
+  absent. The distinct-account denial and repeatable preflight remain undone.
+  The observed checkbox does not establish access to logs, tables, or
+  credentials.
+- The inherited address classifier accepts hexadecimal IPv4-mapped private
+  addresses, timeouts do not quiesce underlying work, and successful Studio
+  messages can retain credential shapes. BGA-323, BGA-326, and BGA-327 own the
+  corresponding read-boundary controls.
+
+No browser storage or credential value was inspected or printed by the
+reviewer. A freshly packed and installed MCP discovered the tool. The real
+project name failed schema validation without a request; the observed numeric
+Play ID made an authenticated request but returned `policy.output.too-large`
+instead of identifying the wrong project. The cookie appeared in neither result
+nor stderr, and the isolated install was removed. BGA-312 remains implemented
+and unverified.

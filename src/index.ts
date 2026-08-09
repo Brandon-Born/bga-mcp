@@ -204,8 +204,8 @@ export {
   type ServerActionEntry,
 } from './project/actions.js';
 export {
-  INITIAL_STATE_ID,
   KNOWN_STATE_TYPES,
+  RESERVED_STATE_IDS,
   STATE_MACHINE_RULES,
   validateStateMachine,
   type PhpSource,
