@@ -45,6 +45,35 @@ export interface ToolResponse<T = Record<string, unknown>> {
  * a suite asks for, with each fixture's `expected.json` removed so the copy
  * looks like a real project.
  */
+/**
+ * Records which build a packaged suite installed, and proves it is the shared
+ * one.
+ *
+ * A scenario is only evidence for the artifact it ran against, so the suite
+ * hashes what it installs and appends the result where the evidence emitter
+ * reads it. A suite that somehow installed a different tarball shows up as a
+ * different digest instead of passing quietly.
+ */
+export async function recordInstalledArtifact(suite: string, artifact: string): Promise<string> {
+  const digest = `sha256:${createHash('sha256')
+    .update(await readFile(artifact))
+    .digest('hex')}`;
+  expect(digest, `${suite} installed an artifact other than the one packed for this run`).toBe(
+    inject('packedArtifactDigest'),
+  );
+
+  try {
+    await writeFile(
+      resolve(repositoryRoot, `.artifacts/packaged-runs/${suite}.json`),
+      `${JSON.stringify({ suite, digest }, null, 2)}\n`,
+    );
+  } catch {
+    // The directory is created by global setup. A suite run on its own without
+    // it still installs and asserts; it simply contributes no retained row.
+  }
+  return digest;
+}
+
 export async function installPackagedServer<Fixture extends string>(
   label: string,
   fixtures: Readonly<Record<Fixture, string>>,
@@ -57,9 +86,11 @@ export async function installPackagedServer<Fixture extends string>(
     `${JSON.stringify({ name: `bga-mcp-${label}-install`, private: true, packageManager: 'pnpm@11.15.1' })}\n`,
   );
 
+  const artifact = inject('packedArtifact');
+  await recordInstalledArtifact(label, artifact);
   const install = await runCommand(
     corepackCommand,
-    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, artifact],
     { timeoutMs: 120_000 },
   );
   expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);

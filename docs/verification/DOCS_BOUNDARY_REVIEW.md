@@ -2,6 +2,10 @@
 
 Reviewed: 2026-08-07. Boundary: TB-DOCS-NETWORK. Backlog: unblocks Phase 2 (BGA-200 through BGA-206).
 
+```verification-record
+{ "kind": "review", "scope": "TB-DOCS-NETWORK" }
+```
+
 This is the review the threat model required before any capability may retrieve BGA documentation. It records what crosses the boundary, what an attacker controls, what must be built before anything crosses it, and what stays unresolved.
 
 ## What crosses

@@ -66,7 +66,9 @@ it('[INT-POLICY-TIMEOUT] aborts and reports an operation that outlives its deadl
 
 `pnpm verify:scenarios` fails when a required scenario has no declaring test, and when a declared identifier is required by nothing. Identifiers reserved by planned work are recorded as such and may not be claimed as evidence.
 
-The declaration proves the test exists and runs in the complete gate. The test run itself proves it passes, and the evidence artifact below records which of the two happened for every required scenario.
+A declaration has to be a test, and one that runs. The identifier alone is just characters: the same characters in fixture data, in a comment, or in the title of a skipped test would otherwise satisfy the existence check while nothing was asserted. Only the title argument of a runnable `it`/`test` call counts — including the `it.each(table)('[ID] …')` form — and `.skip`, `.todo`, `.failing`, or an enclosing skipped `describe` makes the declaration inert rather than evidence. The gate proves this on a seeded tree containing each of those shapes before it looks at the real one.
+
+The declaration proves the test exists and runs in the complete gate. The test run itself proves it passes, and the evidence artifact below records which of the two happened for every required scenario. In that artifact the same rule applies again: a scenario whose tests were all skipped is `missing`, exactly as if no test had ever been written.
 
 ## Capability manifest
 
@@ -77,6 +79,8 @@ The repository will maintain a machine-readable manifest containing every advert
 - Positive, negative, security, and mutation scenario identifiers.
 - Whether a live external environment is required.
 - The most recent passing evidence produced by CI.
+
+CI evidence is a `ciEvidence` reference on every entry, resolving to a run recorded once in the manifest's `ciRuns`: its workflow, URL, commit, completion time, conclusion, and the matrix jobs it ran. Only a passing run may be recorded there. The evidence artifact then reports, per entry, whether that run covers the commit being verified or is `stale` — evidence of an earlier commit is evidence of that commit and of nothing else.
 
 CI must fail when runtime capability discovery and the manifest differ, or when a manifest entry lacks a required end-to-end scenario.
 
@@ -119,11 +123,22 @@ A release must publish or retain machine-readable evidence containing the packag
 
 `pnpm check` ends by writing `.artifacts/verification-evidence.json` and checking it. The document is described by [`config/evidence.schema.json`](../config/evidence.schema.json) and records the commit and whether the tree was clean, the package version and lock digest, the Node version and platform, the supported protocol versions and conformance runs, and every advertised capability with the result of each scenario it requires.
 
-Three properties make it evidence rather than a summary:
+Four properties make it evidence rather than a summary:
 
 - **It records absence.** A required scenario with no test in the run is `missing`, not omitted, and a capability with a missing or failed scenario cannot be `passed`. The gate fails when a capability advertised as `verified` has anything less. Protocol versions follow the same rule: each claimed version carries its own official-conformance result, a version nobody exercised is `not-run`, one the suite cannot measure for the shipped transport is `not-applicable` with its reason, and the overall status may not be stronger than the per-version results. A revision that passed against a reviewed baseline also records how many scenarios that baseline excused, because a pass means much less when the exclusion list is long.
+- **It is compositional.** `verified` is a claim about every prerequisite at once, so the gate checks them together: a capability may not be `verified` while any protocol version it claims lacks applicable passing conformance, nor while the CI run it points at failed, is unrecorded, or belongs to a different commit. Every compatibility claim, catalogued rule, and threat-model mitigation that names scenarios carries its retained result here rather than being inferred from source text, and packaged scenarios record the digest of the artifact they installed, so a claim proven against a different build is visible instead of assumed away.
 - **It is sealed.** `integrity` is a SHA-256 digest of the document with that field removed, computed over a canonical serialization, so an artifact edited after its run no longer matches itself.
 - **It is scanned before it is written.** The emitter refuses to write a document containing a known credential format, and the gate scans it again, because a test title or file path is a plausible carrier into a published artifact.
+
+### Human records
+
+Every document under `docs/verification/` says what it is, in a fenced `verification-record` block:
+
+```verification-record
+{ "kind": "run", "capabilities": 16, "scenarios": 115, "claims": 75, "tests": 413 }
+```
+
+A `run` record is checked against the artifact: its capability, scenario, claim, and test counts must match the run, and every `pnpm …` command it names must exist. A `review` record names the boundary or artifact it reviewed and has no run to check against. A record marked `> Historical evidence only.` describes a run that is over and is left alone. A record that stops matching the repository must be updated or marked historical; there is no third option in which it quietly keeps claiming to be current.
 
 `pnpm evidence` records a run; it never creates one. It reads the Vitest results and conformance output that `pnpm check` has already produced, so the artifact always describes the run that gated the change.
 

@@ -9,6 +9,7 @@ import type { Client } from '@modelcontextprotocol/client';
 import { inject } from 'vitest';
 
 import { connectStdio } from '../helpers/mcp.js';
+import { recordInstalledArtifact } from '../helpers/packaged.js';
 import { runCommand } from '../helpers/process.js';
 import { waitForProcessExit } from '../helpers/scenario.js';
 
@@ -102,9 +103,11 @@ beforeAll(async () => {
   );
 
   // The artifact is packed once for the whole run; see tests/global-setup.ts.
+  const artifact = inject('packedArtifact');
+  await recordInstalledArtifact('inspect-project', artifact);
   const install = await runCommand(
     corepackCommand,
-    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, artifact],
     { timeoutMs: 120_000 },
   );
   expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);

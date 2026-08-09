@@ -1,8 +1,9 @@
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 
 import { GateReport, expectSeededFailure, reportOrExit } from './lib/gate.js';
-import { collectDeclaredScenarios } from './lib/scenarios.js';
+import { collectDeclarations, type ScenarioDeclaration } from './lib/scenarios.js';
 
 const repositoryRoot = resolve(import.meta.dirname, '..');
 const testsRoot = resolve(repositoryRoot, 'tests');
@@ -94,18 +95,42 @@ function collectRequirements(
   return { required, reserved };
 }
 
-function verify(requirements: Requirements, declared: Map<string, string[]>): GateReport {
+/** Groups the declarations that can actually run, by identifier. */
+function runnable(declarations: readonly ScenarioDeclaration[]): Map<string, string[]> {
+  const declared = new Map<string, string[]>();
+  for (const declaration of declarations) {
+    if (declaration.runnable) {
+      declared.set(declaration.id, [...(declared.get(declaration.id) ?? []), declaration.file]);
+    }
+  }
+  return declared;
+}
+
+function verify(
+  requirements: Requirements,
+  declarations: readonly ScenarioDeclaration[],
+): GateReport {
   const report = new GateReport();
+  const declared = runnable(declarations);
+
   for (const [scenario, owners] of requirements.required) {
+    // An identifier that appears only in a skipped test, or only in data, is
+    // not evidence. Saying which of the two it is turns the failure into a fix.
+    const inert = declarations.find(
+      (declaration) => declaration.id === scenario && !declaration.runnable,
+    );
     report.require(
       declared.has(scenario),
-      `${scenario} is required by ${owners.join(', ')} but no test declares it`,
+      inert === undefined
+        ? `${scenario} is required by ${owners.join(', ')} but no runnable test declares it`
+        : `${scenario} is required by ${owners.join(', ')} but ${inert.file} ${inert.reason ?? 'cannot run it'}, so it proves nothing`,
     );
     report.require(
       !requirements.reserved.has(scenario),
       `${scenario} is both required and reserved for planned work`,
     );
   }
+
   for (const [scenario, files] of declared) {
     report.require(
       requirements.required.has(scenario),
@@ -117,16 +142,97 @@ function verify(requirements: Requirements, declared: Map<string, string[]>): Ga
 
 function proveGateDetectsSeededDefects(
   requirements: Requirements,
-  declared: Map<string, string[]>,
+  declarations: readonly ScenarioDeclaration[],
 ): void {
   const missing: Requirements = {
     required: new Map([...requirements.required, ['E2E-NEVER-WRITTEN', ['seeded owner']]]),
     reserved: requirements.reserved,
   };
-  expectSeededFailure('missing scenario', verify(missing, declared));
+  expectSeededFailure('missing scenario', verify(missing, declarations));
 
-  const orphaned = new Map([...declared, ['E2E-ORPHANED-DECLARATION', ['seeded.test.ts']]]);
+  const orphaned: ScenarioDeclaration[] = [
+    ...declarations,
+    { id: 'E2E-ORPHANED-DECLARATION', file: 'seeded.test.ts', runnable: true },
+  ];
   expectSeededFailure('orphan scenario', verify(requirements, orphaned));
+
+  // A required scenario whose only declaration cannot run must fail as loudly
+  // as one with no declaration at all.
+  const skipped: Requirements = {
+    required: new Map([...requirements.required, ['E2E-SEEDED-SKIPPED', ['seeded owner']]]),
+    reserved: requirements.reserved,
+  };
+  expectSeededFailure(
+    'skipped declaration',
+    verify(skipped, [
+      ...declarations,
+      {
+        id: 'E2E-SEEDED-SKIPPED',
+        file: 'seeded.test.ts',
+        runnable: false,
+        reason: 'declared inside it.skip',
+      },
+    ]),
+  );
+}
+
+/**
+ * Proves the reader only counts a declaration that is a runnable assertion.
+ *
+ * The identifier is just characters: before this gate, the same characters in
+ * fixture data satisfied the existence check while nothing was asserted. Both
+ * failing shapes are written to a temporary tree and read back.
+ */
+async function proveReaderRejectsNonAssertions(): Promise<void> {
+  const root = await mkdtemp(join(tmpdir(), 'bga-mcp-scenarios-'));
+  try {
+    await writeFile(
+      join(root, 'data.ts'),
+      [
+        "export const rows = ['[E2E-SEEDED-DATA-ONLY] looks like a declaration'];",
+        "// it('[E2E-SEEDED-COMMENTED] commented out', () => {});",
+        'const label = `[E2E-SEEDED-TEMPLATE-DATA] in a template`;',
+      ].join('\n'),
+    );
+    await writeFile(
+      join(root, 'skipped.test.ts'),
+      [
+        "it.skip('[E2E-SEEDED-SKIPPED-CASE] never runs', () => {});",
+        "it.todo('[E2E-SEEDED-TODO-CASE] not written yet');",
+        "describe.skip('suite', () => { it('[E2E-SEEDED-IN-SKIPPED-SUITE] cannot run', () => {}); });",
+        "it('[E2E-SEEDED-RUNNABLE] runs', () => {});",
+      ].join('\n'),
+    );
+
+    const declarations = await collectDeclarations(root);
+    const byId = new Map(declarations.map((entry) => [entry.id, entry]));
+    const report = new GateReport();
+
+    for (const id of ['E2E-SEEDED-DATA-ONLY', 'E2E-SEEDED-COMMENTED', 'E2E-SEEDED-TEMPLATE-DATA']) {
+      report.require(!byId.has(id), `${id} is not a test call, but the reader counted it`);
+    }
+    for (const id of [
+      'E2E-SEEDED-SKIPPED-CASE',
+      'E2E-SEEDED-TODO-CASE',
+      'E2E-SEEDED-IN-SKIPPED-SUITE',
+    ]) {
+      report.require(
+        byId.get(id)?.runnable === false,
+        `${id} cannot run, but the reader treated it as evidence`,
+      );
+    }
+    report.require(
+      byId.get('E2E-SEEDED-RUNNABLE')?.runnable === true,
+      'A runnable declaration was not recognized, so the reader rejects real evidence',
+    );
+
+    if (report.failed) {
+      reportOrExit('Scenario declaration reader', report, '');
+      process.exit(1);
+    }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
 }
 
 async function main(): Promise<void> {
@@ -136,14 +242,16 @@ async function main(): Promise<void> {
     await loadJson<Compatibility>('config/compatibility.json'),
     await loadJson<RuleCatalog>('config/rule-catalog.json'),
   );
-  const declared = await collectDeclaredScenarios(testsRoot);
+  const declarations = await collectDeclarations(testsRoot);
 
-  proveGateDetectsSeededDefects(requirements, declared);
+  await proveReaderRejectsNonAssertions();
+  proveGateDetectsSeededDefects(requirements, declarations);
 
+  const inert = declarations.filter((declaration) => !declaration.runnable).length;
   reportOrExit(
     'Scenario coverage',
-    verify(requirements, declared),
-    `Scenario coverage is complete and its gate detects seeded defects: ${String(requirements.required.size)} required scenarios are declared by executable tests, ${String(requirements.reserved.size)} are reserved for planned work.`,
+    verify(requirements, declarations),
+    `Scenario coverage is complete and its gate detects seeded defects: ${String(requirements.required.size)} required scenarios are declared by runnable test assertions, ${String(requirements.reserved.size)} are reserved for planned work, and ${String(inert)} declaration(s) that cannot run were refused as evidence.`,
   );
 }
 

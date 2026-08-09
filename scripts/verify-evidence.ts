@@ -1,12 +1,15 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
 
 import {
+  claimsEvidence,
   conformanceStatus,
   integrityDigest,
+  manifestEntries,
   sealEvidence,
+  type ClaimSource,
   type Evidence,
   type Manifest,
 } from './lib/evidence.js';
@@ -15,6 +18,17 @@ import { scanText } from './lib/secret-scan.js';
 
 const repositoryRoot = resolve(import.meta.dirname, '..');
 const evidencePath = resolve(repositoryRoot, '.artifacts/verification-evidence.json');
+const recordsRoot = resolve(repositoryRoot, 'docs/verification');
+
+/** The marker a record carries when it describes a run that is over. */
+const HISTORICAL = '> Historical evidence only.';
+/** The block a record carries when it claims to describe the current run. */
+const CURRENT_RUN = /```verification-record\n([\s\S]*?)```/u;
+
+interface Sources {
+  readonly manifest: Manifest;
+  readonly claims: readonly { readonly kind: string; readonly id: string }[];
+}
 
 async function loadJson<T>(path: string): Promise<T> {
   return JSON.parse(await readFile(path, 'utf8')) as T;
@@ -34,16 +48,15 @@ function validator(schema: object): (value: unknown) => string[] {
 /**
  * Checks one evidence document.
  *
- * The four rules are the four ways this artifact could lie: it could be
- * malformed, it could omit a capability the server advertises, it could have
- * been edited after the run it describes, or it could carry a secret into a
- * published artifact.
+ * The rules are the ways this artifact could lie. It could be malformed, omit
+ * a capability the server advertises, or be edited after the run it describes.
+ * It could carry a secret. And — the reason this gate was rewritten — it could
+ * be true in every part while adding up to a claim nothing supports: a
+ * capability called verified on a protocol version no conformance run covers,
+ * or with CI evidence for a different commit, or a claim whose scenarios never
+ * ran, or a scenario proven against a different build of the package.
  */
-function check(
-  evidence: unknown,
-  manifest: Manifest,
-  validate: (value: unknown) => string[],
-): GateReport {
+function check(evidence: unknown, sources: Sources, validate: (value: unknown) => string[]) {
   const report = new GateReport();
 
   for (const error of validate(evidence)) {
@@ -56,37 +69,20 @@ function check(
   }
 
   const document = evidence as Evidence;
+  const { manifest } = sources;
+  const entries = manifestEntries(manifest);
 
-  const advertised = [
-    ...manifest.transports.map((entry) => entry.name),
-    ...manifest.capabilities.tools.map((entry) => entry.name),
-    ...manifest.capabilities.resources.map((entry) => entry.name),
-    ...manifest.capabilities.prompts.map((entry) => entry.name),
-    ...manifest.adapters.map((entry) => entry.name),
-  ].sort();
+  const advertised = entries.map((entry) => entry.name).sort();
   const recorded = document.capabilities.map((entry) => entry.name).sort();
   report.require(
     JSON.stringify(advertised) === JSON.stringify(recorded),
     `Evidence does not cover every advertised capability (manifest: ${advertised.join(', ')}; evidence: ${recorded.join(', ')})`,
   );
 
-  const requiredById = new Map<string, readonly string[]>([
-    ...manifest.transports.map(
-      (entry) => [entry.name, entry.requiredScenarios] as [string, readonly string[]],
-    ),
-    ...manifest.capabilities.tools.map(
-      (entry) => [entry.name, entry.requiredScenarios] as [string, readonly string[]],
-    ),
-    ...manifest.capabilities.resources.map(
-      (entry) => [entry.name, entry.requiredScenarios] as [string, readonly string[]],
-    ),
-    ...manifest.capabilities.prompts.map(
-      (entry) => [entry.name, entry.requiredScenarios] as [string, readonly string[]],
-    ),
-    ...manifest.adapters.map(
-      (entry) => [entry.name, entry.requiredScenarios] as [string, readonly string[]],
-    ),
-  ]);
+  const requiredById = new Map(entries.map((entry) => [entry.name, entry.requiredScenarios]));
+  const conformanceByVersion = new Map(
+    document.protocol.conformance.coverage.map((entry) => [entry.version, entry.status]),
+  );
 
   for (const capability of document.capabilities) {
     const required = [...(requiredById.get(capability.name) ?? [])].sort();
@@ -106,28 +102,81 @@ function check(
       !(capability.stability === 'verified' && capability.status !== 'passed'),
       `${capability.name} is advertised as verified but its evidence status is ${capability.status}`,
     );
+
+    if (capability.stability !== 'verified') {
+      continue;
+    }
+    // Verified is a claim about every prerequisite, not only the scenarios.
+    for (const version of capability.protocolVersions) {
+      const status = conformanceByVersion.get(version) ?? 'not-run';
+      report.require(
+        status === 'passed',
+        `${capability.name} is advertised as verified on protocol ${version}, whose official conformance is ${status}`,
+      );
+    }
+    report.require(
+      capability.ci.conclusion === 'success',
+      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} concluded ${capability.ci.conclusion}`,
+    );
+    report.require(
+      capability.ci.covers === 'this-commit',
+      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} is ${capability.ci.covers === 'stale' ? 'for a different commit' : 'not recorded in the manifest'}`,
+    );
+  }
+
+  // Claims are retained results, not source-text inferences: every claim that
+  // names scenarios appears here with what those scenarios actually did.
+  const claimed = new Set(document.claims.map((claim) => `${claim.kind}:${claim.id}`));
+  for (const source of sources.claims) {
+    report.require(
+      claimed.has(`${source.kind}:${source.id}`),
+      `${source.kind} ${source.id} names scenarios but the evidence retains no result for it`,
+    );
+  }
+  for (const claim of document.claims) {
+    report.require(
+      claim.status === 'passed',
+      `${claim.kind} ${claim.id} is declared ${claim.declared} but its retained scenario results are ${claim.status}`,
+    );
   }
 
   report.require(
     document.tests.failed === 0,
     `Evidence records ${String(document.tests.failed)} failed test(s), so it is not evidence of a passing run`,
   );
-  // Conformance is not required to be complete — the pinned official CLI has no
-  // scenarios for the newer claimed version, which is why BGA-011 stays
-  // `implemented` (docs/CONFORMANCE.md). What is required is that the artifact
-  // says so: every claimed version appears with its own result, and the overall
-  // word may not be stronger than those results.
+
+  // Every claimed version appears with its own result, and the overall word may
+  // not be stronger than those results. Conformance itself is allowed to be
+  // partial; what it may not do is stand behind a verified capability, which
+  // the per-capability rule above enforces.
   const { conformance } = document.protocol;
   const covered = conformance.coverage.map((entry) => entry.version).sort();
-  const claimed = [...document.protocol.supportedVersions].sort();
+  const claimedVersions = [...document.protocol.supportedVersions].sort();
   report.require(
-    JSON.stringify(covered) === JSON.stringify(claimed),
-    `Conformance coverage does not account for every claimed protocol version (claimed: ${claimed.join(', ')}; covered: ${covered.join(', ')})`,
+    JSON.stringify(covered) === JSON.stringify(claimedVersions),
+    `Conformance coverage does not account for every claimed protocol version (claimed: ${claimedVersions.join(', ')}; covered: ${covered.join(', ')})`,
   );
   report.require(conformance.status !== 'failed', 'Evidence records a failed conformance run');
   report.require(
     conformance.status === conformanceStatus(conformance.coverage),
     `Conformance is recorded as ${conformance.status}, but its per-version results say ${conformanceStatus(conformance.coverage)}`,
+  );
+
+  // A packaged scenario proves something about the artifact it installed.
+  for (const run of document.package.artifactRuns ?? []) {
+    report.require(
+      run.digest === document.package.artifactDigest,
+      `The ${run.suite} suite ran against ${run.digest}, which is not the artifact this evidence describes (${document.package.artifactDigest ?? 'none recorded'})`,
+    );
+  }
+  const packaged = document.capabilities.some((capability) =>
+    capability.scenarios.some((scenario) =>
+      scenario.tests.some((test) => test.file.startsWith('tests/e2e/')),
+    ),
+  );
+  report.require(
+    !packaged || document.package.artifactDigest !== undefined,
+    'Packaged scenarios ran but the evidence does not identify the artifact they exercised',
   );
 
   const digest = integrityDigest(document);
@@ -147,13 +196,95 @@ function check(
   return report;
 }
 
+/**
+ * Checks the human records against the run they describe.
+ *
+ * Each record says what it is. One marked historical describes a run that is
+ * over and is left alone. A review records a decision about a boundary or an
+ * artifact, and there is no run to check it against. A run record states the
+ * counts it belongs to, and those are compared with what actually happened —
+ * which is the only thing that stops a document that calls itself current from
+ * drifting behind the repository it describes.
+ */
+export function checkRecords(
+  records: readonly { readonly name: string; readonly text: string }[],
+  document: Evidence,
+  commands: ReadonlySet<string>,
+): GateReport {
+  const report = new GateReport();
+  const actual = {
+    capabilities: document.capabilities.length,
+    scenarios: document.scenarios.required,
+    claims: document.claims.length,
+    tests: document.tests.total,
+  };
+
+  for (const record of records) {
+    if (record.text.includes(HISTORICAL)) {
+      continue;
+    }
+    const block = CURRENT_RUN.exec(record.text);
+    if (block === null) {
+      report.require(
+        false,
+        `${record.name} is neither marked historical nor carries a verification-record block, so nothing says what it describes or checks it`,
+      );
+      continue;
+    }
+
+    let stated: Record<string, unknown>;
+    try {
+      stated = JSON.parse(block[1] ?? '{}') as Record<string, unknown>;
+    } catch {
+      report.require(false, `${record.name} has an unreadable verification-record block`);
+      continue;
+    }
+
+    if (stated.kind === 'review') {
+      report.require(
+        typeof stated.scope === 'string' && stated.scope.length > 0,
+        `${record.name} declares itself a review but names no scope`,
+      );
+      continue;
+    }
+
+    report.require(
+      stated.kind === 'run',
+      `${record.name} declares kind ${JSON.stringify(stated.kind)}, which is neither run nor review`,
+    );
+    for (const [key, value] of Object.entries(actual)) {
+      report.require(
+        stated[key] === value,
+        `${record.name} records ${key} as ${JSON.stringify(stated[key])}, but this run has ${JSON.stringify(value)}`,
+      );
+    }
+    // A record that tells a reader to run a command the repository no longer
+    // has is as stale as one with the wrong counts.
+    for (const command of record.text.matchAll(/`pnpm ([a-z][\w:-]*)/gu)) {
+      const name = command[1] ?? '';
+      report.require(
+        commands.has(name),
+        `${record.name} names \`pnpm ${name}\`, which this repository does not define`,
+      );
+    }
+  }
+
+  return report;
+}
+
 /** A minimal document that passes every rule, used to seed each failure from. */
 function soundEvidence(manifest: Manifest): Evidence {
   return sealEvidence({
     schemaVersion: 1,
     generatedAt: '2026-08-07T00:00:00.000Z',
     source: { commit: '0'.repeat(40), clean: true },
-    package: { name: 'bga-mcp', version: '0.0.0-seed', lockDigest: `sha256:${'0'.repeat(64)}` },
+    package: {
+      name: 'bga-mcp',
+      version: '0.0.0-seed',
+      lockDigest: `sha256:${'0'.repeat(64)}`,
+      artifactDigest: `sha256:${'1'.repeat(64)}`,
+      artifactRuns: [{ suite: 'seed', digest: `sha256:${'1'.repeat(64)}` }],
+    },
     environment: {
       node: 'v22.0.0',
       platform: 'linux',
@@ -172,17 +303,24 @@ function soundEvidence(manifest: Manifest): Evidence {
         ],
       },
     },
-    capabilities: [
-      ...manifest.transports.map((entry) => ({ kind: 'transport' as const, ...entry })),
-      ...manifest.capabilities.tools.map((entry) => ({ kind: 'tool' as const, ...entry })),
-      ...manifest.capabilities.resources.map((entry) => ({ kind: 'resource' as const, ...entry })),
-      ...manifest.capabilities.prompts.map((entry) => ({ kind: 'prompt' as const, ...entry })),
-      ...manifest.adapters.map((entry) => ({ kind: 'adapter' as const, ...entry })),
-    ].map((entry) => ({
+    ci: [
+      {
+        id: 'ci-1',
+        workflow: 'CI',
+        url: 'https://github.com/example/example/actions/runs/1',
+        commit: '0'.repeat(40),
+        completedAt: '2026-08-07T00:00:00Z',
+        conclusion: 'success',
+        jobs: ['ubuntu-latest / Node 22'],
+      },
+    ],
+    capabilities: manifestEntries(manifest).map((entry) => ({
       kind: entry.kind,
       name: entry.name,
       stability: entry.stability,
       status: 'passed' as const,
+      protocolVersions: [...(entry.protocolVersions ?? [])],
+      ci: { id: 'ci-1', conclusion: 'success', covers: 'this-commit' as const },
       scenarios: entry.requiredScenarios.map((id) => ({
         id,
         status: 'passed' as const,
@@ -191,22 +329,67 @@ function soundEvidence(manifest: Manifest): Evidence {
         ],
       })),
     })),
+    claims: [
+      {
+        kind: 'compatibility',
+        id: 'CLAIM-SEED',
+        declared: 'supported',
+        status: 'passed',
+        scenarios: [
+          {
+            id: 'E2E-SEED',
+            status: 'passed',
+            tests: [
+              { file: 'tests/e2e/seed.test.ts', title: '[E2E-SEED] seeded', status: 'passed' },
+            ],
+          },
+        ],
+      },
+    ],
     scenarios: { required: 0, passed: 0, failed: 0, missing: 0 },
     tests: { files: 1, total: 1, passed: 1, failed: 0, skipped: 0 },
   });
 }
 
-async function main(): Promise<void> {
-  const schema = await loadJson<object>(resolve(repositoryRoot, 'config/evidence.schema.json'));
-  const manifest = await loadJson<Manifest>(resolve(repositoryRoot, 'config/capabilities.json'));
-  const validate = validator(schema);
-  const sound = soundEvidence(manifest);
+/** The claims that name scenarios, from the three sources that declare them. */
+async function readClaimSources(): Promise<Sources['claims']> {
+  const compatibility = await loadJson<{ claims: ClaimSource[] }>(
+    resolve(repositoryRoot, 'config/compatibility.json'),
+  );
+  const rules = await loadJson<{ checks: ClaimSource[] }>(
+    resolve(repositoryRoot, 'config/rule-catalog.json'),
+  );
+  const threatModel = await loadJson<{ mitigations: ClaimSource[] }>(
+    resolve(repositoryRoot, 'config/threat-model.json'),
+  );
 
-  // Each seeded defect is one of the four ways the artifact could lie.
-  expectSeededFailure('evidence schema', check({ ...sound, schemaVersion: 2 }, manifest, validate));
+  return [
+    ...compatibility.claims.map((claim) => ({ kind: 'compatibility', ...claim })),
+    ...rules.checks.map((check) => ({ kind: 'rule', ...check })),
+    ...threatModel.mitigations.map((mitigation) => ({ kind: 'mitigation', ...mitigation })),
+  ]
+    .filter((entry) => claimsEvidence(entry))
+    .map((entry) => ({ kind: entry.kind, id: entry.id }));
+}
+
+function proveGateDetectsSeededDefects(
+  sources: Sources,
+  validate: (value: unknown) => string[],
+): void {
+  const sound = soundEvidence(sources.manifest);
+  const seeded: Sources = { manifest: sources.manifest, claims: [] };
+  const verified = (evidence: Evidence): Evidence =>
+    sealEvidence({
+      ...evidence,
+      capabilities: evidence.capabilities.map((capability, position) =>
+        position === 0 ? { ...capability, stability: 'verified' as const } : capability,
+      ),
+    });
+
+  expectSeededFailure('evidence schema', check({ ...sound, schemaVersion: 2 }, seeded, validate));
   expectSeededFailure(
     'evidence manifest coverage',
-    check({ ...sound, capabilities: sound.capabilities.slice(1) }, manifest, validate),
+    check({ ...sound, capabilities: sound.capabilities.slice(1) }, seeded, validate),
   );
   expectSeededFailure(
     'evidence scenario coverage',
@@ -225,7 +408,7 @@ async function main(): Promise<void> {
             : capability,
         ),
       }),
-      manifest,
+      seeded,
       validate,
     ),
   );
@@ -249,13 +432,106 @@ async function main(): Promise<void> {
           },
         },
       }),
-      manifest,
+      seeded,
+      validate,
+    ),
+  );
+  // A verified capability standing on conformance that does not cover the
+  // version it claims. This is the compositional rule: every part below is
+  // true, and the conclusion still is not.
+  expectSeededFailure(
+    'verified capability without applicable conformance',
+    check(
+      verified(
+        sealEvidence({
+          ...sound,
+          protocol: {
+            ...sound.protocol,
+            supportedVersions: ['2025-11-25', '2026-07-28'],
+            conformance: {
+              ...sound.protocol.conformance,
+              status: 'partial',
+              coverage: [
+                { version: '2025-11-25', status: 'passed', runs: 1 },
+                {
+                  version: '2026-07-28',
+                  status: 'not-applicable',
+                  runs: 0,
+                  reason: 'the suite cannot measure it',
+                },
+              ],
+            },
+          },
+          capabilities: sound.capabilities.map((capability) => ({
+            ...capability,
+            protocolVersions: ['2025-11-25', '2026-07-28'],
+          })),
+        }),
+      ),
+      seeded,
+      validate,
+    ),
+  );
+  expectSeededFailure(
+    'verified capability with stale CI evidence',
+    check(
+      verified(
+        sealEvidence({
+          ...sound,
+          capabilities: sound.capabilities.map((capability) => ({
+            ...capability,
+            ci: { ...capability.ci, covers: 'stale' as const },
+          })),
+        }),
+      ),
+      seeded,
+      validate,
+    ),
+  );
+  expectSeededFailure(
+    'claim without a retained result',
+    check(
+      sound,
+      { ...seeded, claims: [{ kind: 'compatibility', id: 'CLAIM-UNRETAINED' }] },
+      validate,
+    ),
+  );
+  expectSeededFailure(
+    'claim whose scenarios did not run',
+    check(
+      sealEvidence({
+        ...sound,
+        claims: sound.claims.map((claim) => ({
+          ...claim,
+          status: 'missing' as const,
+          scenarios: claim.scenarios.map((scenario) => ({
+            ...scenario,
+            status: 'missing' as const,
+            tests: [],
+          })),
+        })),
+      }),
+      seeded,
+      validate,
+    ),
+  );
+  expectSeededFailure(
+    'scenario proven against a different artifact',
+    check(
+      sealEvidence({
+        ...sound,
+        package: {
+          ...sound.package,
+          artifactRuns: [{ suite: 'seed', digest: `sha256:${'2'.repeat(64)}` }],
+        },
+      }),
+      seeded,
       validate,
     ),
   );
   expectSeededFailure(
     'evidence tamper',
-    check({ ...sound, generatedAt: '2026-01-01T00:00:00.000Z' }, manifest, validate),
+    check({ ...sound, generatedAt: '2026-01-01T00:00:00.000Z' }, seeded, validate),
   );
   expectSeededFailure(
     'evidence redaction',
@@ -279,10 +555,66 @@ async function main(): Promise<void> {
             : capability,
         ),
       }),
-      manifest,
+      seeded,
       validate,
     ),
   );
+
+  // A human record that says it is current, and is not.
+  const commands = new Set(['check']);
+  expectSeededFailure(
+    'stale verification record',
+    checkRecords(
+      [
+        {
+          name: 'seeded-record.md',
+          text: '```verification-record\n{"kind":"run","capabilities":1,"scenarios":1,"claims":1,"tests":1}\n```',
+        },
+      ],
+      sound,
+      commands,
+    ),
+  );
+  expectSeededFailure(
+    'unchecked verification record',
+    checkRecords(
+      [{ name: 'seeded-record.md', text: 'Recorded: today. Everything passed.' }],
+      sound,
+      commands,
+    ),
+  );
+  expectSeededFailure(
+    'review without a scope',
+    checkRecords(
+      [{ name: 'seeded-review.md', text: '```verification-record\n{"kind":"review"}\n```' }],
+      sound,
+      commands,
+    ),
+  );
+  expectSeededFailure(
+    'record naming a command that no longer exists',
+    checkRecords(
+      [
+        {
+          name: 'seeded-record.md',
+          text: '```verification-record\n{"kind":"run","capabilities":0,"scenarios":0,"claims":1,"tests":1}\n```\nRun `pnpm verify:imaginary` to reproduce.',
+        },
+      ],
+      sound,
+      commands,
+    ),
+  );
+}
+
+async function main(): Promise<void> {
+  const schema = await loadJson<object>(resolve(repositoryRoot, 'config/evidence.schema.json'));
+  const sources: Sources = {
+    manifest: await loadJson<Manifest>(resolve(repositoryRoot, 'config/capabilities.json')),
+    claims: await readClaimSources(),
+  };
+  const validate = validator(schema);
+
+  proveGateDetectsSeededDefects(sources, validate);
 
   // The gate proved it can fail; now it reports on the real artifact.
   let evidence: unknown;
@@ -296,25 +628,43 @@ async function main(): Promise<void> {
     return;
   }
 
-  const report = check(evidence, manifest, validate);
+  const report = check(evidence, sources, validate);
   if (report.failed) {
     reportOrExit('verification evidence', report, '');
     return;
   }
 
-  // Only a document that passed every rule is described back, so the summary
-  // cannot narrate fields a malformed artifact does not have.
   const document = evidence as Evidence;
+  const records = await Promise.all(
+    (await readdir(recordsRoot))
+      .filter((name) => name.endsWith('.md'))
+      .map(async (name) => ({ name, text: await readFile(resolve(recordsRoot, name), 'utf8') })),
+  );
+  const packageMetadata = await loadJson<{ scripts: Record<string, string> }>(
+    resolve(repositoryRoot, 'package.json'),
+  );
+  const recordReport = checkRecords(
+    records,
+    document,
+    new Set(Object.keys(packageMetadata.scripts)),
+  );
+  for (const failure of recordReport.failures) {
+    report.require(false, failure);
+  }
+
+  const current = records.filter((record) => !record.text.includes(HISTORICAL));
+  const runRecords = current.filter((record) => record.text.includes('"kind": "run"')).length;
   reportOrExit(
     'verification evidence',
     report,
     'Verification evidence is complete and its gate detects seeded defects: ' +
-      `${String(document.capabilities.length)} capabilities and ${String(document.scenarios.required)} required scenarios recorded ` +
-      `from commit ${document.source.commit.slice(0, 7)} on Node ${document.environment.node}, ` +
+      `${String(document.capabilities.length)} capabilities, ${String(document.claims.length)} retained claims, and ${String(document.scenarios.required)} required scenarios recorded ` +
+      `from commit ${document.source.commit.slice(0, 7)} on Node ${document.environment.node} against package ${document.package.artifactDigest?.slice(0, 14) ?? 'unpacked'}, ` +
       `official conformance ${document.protocol.conformance.status} ` +
       `(${document.protocol.conformance.coverage
         .map((entry) => `${entry.version}: ${entry.status}`)
-        .join(', ')}).`,
+        .join(', ')}), ` +
+      `${String(runRecords)} run record(s) checked against this run and ${String(current.length - runRecords)} review(s) scoped.`,
   );
 }
 

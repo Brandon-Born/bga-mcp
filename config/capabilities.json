@@ -5,6 +5,24 @@
     "name": "bga-mcp",
     "version": "0.0.0-development"
   },
+  "ciRuns": [
+    {
+      "id": "ci-31283119741",
+      "workflow": "CI",
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/31283119741",
+      "commit": "a178783c1a858c00dfafe3acd010b98c48d633fe",
+      "completedAt": "2026-08-08T23:07:35Z",
+      "conclusion": "success",
+      "jobs": [
+        "ubuntu-latest / Node 22",
+        "ubuntu-latest / Node 24",
+        "macos-latest / Node 22",
+        "macos-latest / Node 24",
+        "windows-latest / Node 22",
+        "windows-latest / Node 24"
+      ]
+    }
+  ],
   "transports": [
     {
       "name": "stdio",
@@ -16,7 +34,8 @@
         "E2E-STDIO-UNADVERTISED-METHOD",
         "E2E-STDIO-SHUTDOWN",
         "E2E-PACK-INSTALL-REMOVE"
-      ]
+      ],
+      "ciEvidence": "ci-31283119741"
     }
   ],
   "capabilities": {
@@ -40,7 +59,8 @@
           "E2E-AUDIT-DATABASE-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "check_setup",
@@ -56,7 +76,8 @@
           "INT-SETUP-NO-CREDENTIALS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "inspect_project",
@@ -84,7 +105,8 @@
           "INT-CLIENT-ROOTS-ADOPTED"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "read_studio_logs",
@@ -111,7 +133,8 @@
           "INT-SETUP-ASK-UNSUPPORTED"
         ],
         "liveStudioRequired": true,
-        "boundary": "TB-STUDIO-READ"
+        "boundary": "TB-STUDIO-READ",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "run_pre_release_audit",
@@ -131,7 +154,8 @@
           "E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "search_bga_docs",
@@ -151,7 +175,8 @@
           "INT-DOCS-SUMMARY"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-DOCS-NETWORK"
+        "boundary": "TB-DOCS-NETWORK",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "validate_action_contracts",
@@ -172,7 +197,8 @@
           "E2E-VALIDATE-ACTIONS-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "validate_notifications",
@@ -193,7 +219,8 @@
           "E2E-VALIDATE-NOTIFICATIONS-MODERN-DEFECTS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "validate_project",
@@ -213,7 +240,8 @@
           "E2E-VALIDATE-PROJECT-HYBRID"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "validate_state_machine",
@@ -235,7 +263,8 @@
           "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       }
     ],
     "resources": [
@@ -255,7 +284,8 @@
           "INT-DOCS-REFUSALS"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-DOCS-NETWORK"
+        "boundary": "TB-DOCS-NETWORK",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "bga://framework/version",
@@ -271,7 +301,8 @@
           "INT-DOCS-NETWORK-OFF"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-DOCS-NETWORK"
+        "boundary": "TB-DOCS-NETWORK",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "bga://project/diagnostics",
@@ -288,7 +319,8 @@
           "E2E-RESOURCE-IMMUTABLE"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "bga://project/states",
@@ -305,7 +337,8 @@
           "E2E-RESOURCE-IMMUTABLE"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       },
       {
         "name": "bga://project/summary",
@@ -322,7 +355,8 @@
           "E2E-RESOURCE-IMMUTABLE"
         ],
         "liveStudioRequired": false,
-        "boundary": "TB-LOCAL-FILESYSTEM"
+        "boundary": "TB-LOCAL-FILESYSTEM",
+        "ciEvidence": "ci-31283119741"
       }
     ],
     "prompts": []

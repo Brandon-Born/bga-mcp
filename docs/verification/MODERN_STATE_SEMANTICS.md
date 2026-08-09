@@ -2,6 +2,18 @@
 
 Recorded: 2026-08-08. Covers BGA-124, the correctness owner for the state-machine findings of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
+This record describes a run, so it states which one. `pnpm verify:evidence` compares every number below with the artifact that run produced, and fails when they disagree — a record that stops being true has to be updated or marked historical, not left to drift.
+
+```verification-record
+{
+  "kind": "run",
+  "capabilities": 16,
+  "scenarios": 115,
+  "claims": 75,
+  "tests": 413
+}
+```
+
 The review installed the packed artifact, pointed it at a project written to the state-class documentation, and got confident nonsense back. This record states what was wrong, what the documentation actually says, what changed, and what is proven by which test.
 
 ## What the installed package got wrong

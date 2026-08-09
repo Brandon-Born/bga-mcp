@@ -1,15 +1,17 @@
 import { execFile } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
 
 import {
   buildCapabilityEvidence,
+  buildClaimEvidence,
   indexScenarioResults,
   readConformance,
   sealEvidence,
   summarizeScenarios,
+  type ClaimSource,
   type Evidence,
   type Manifest,
   type VitestReport,
@@ -28,6 +30,21 @@ async function git(...arguments_: string[]): Promise<string> {
 
 async function loadJson<T>(path: string): Promise<T> {
   return JSON.parse(await readFile(path, 'utf8')) as T;
+}
+
+/**
+ * Reads what each packaged suite recorded about the artifact it installed.
+ *
+ * One file per suite, because the suites run in parallel workers and a shared
+ * file would keep whichever record won the race.
+ */
+async function readPackagedRuns(directory: string): Promise<{ suite: string; digest: string }[]> {
+  try {
+    const names = (await readdir(directory)).filter((name) => name.endsWith('.json')).sort();
+    return await Promise.all(names.map(async (name) => await loadJson(resolve(directory, name))));
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -59,23 +76,47 @@ async function main(): Promise<void> {
   const lock = await readFile(resolve(repositoryRoot, 'pnpm-lock.yaml'));
 
   const supportedVersions = [
-    ...new Set(manifest.transports.flatMap((transport) => transport.protocolVersions)),
+    ...new Set(manifest.transports.flatMap((transport) => transport.protocolVersions ?? [])),
   ].sort();
+  const commit = await git('rev-parse', 'HEAD');
   const index = indexScenarioResults(report, repositoryRoot);
-  const capabilities = buildCapabilityEvidence(manifest, index);
+  const capabilities = buildCapabilityEvidence(manifest, index, commit);
+  const claims = buildClaimEvidence(
+    {
+      compatibility: await loadJson<{ claims: ClaimSource[] }>(
+        resolve(repositoryRoot, 'config/compatibility.json'),
+      ),
+      rules: await loadJson<{ checks: ClaimSource[] }>(
+        resolve(repositoryRoot, 'config/rule-catalog.json'),
+      ),
+      threatModel: await loadJson<{ mitigations: ClaimSource[] }>(
+        resolve(repositoryRoot, 'config/threat-model.json'),
+      ),
+    },
+    index,
+  );
+
+  // Written by the test run's global setup, which packs the artifact every
+  // packaged suite installs. Absent when only unit and integration tests ran.
+  const artifact: { digest?: string } = await loadJson<{ digest?: string }>(
+    resolve(repositoryRoot, '.artifacts/packaged-artifact.json'),
+  ).catch(() => ({}));
+  const artifactRuns = await readPackagedRuns(resolve(repositoryRoot, '.artifacts/packaged-runs'));
 
   const evidence: Evidence = sealEvidence({
     $schema: '../config/evidence.schema.json',
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),
     source: {
-      commit: await git('rev-parse', 'HEAD'),
+      commit,
       clean: (await git('status', '--porcelain')).length === 0,
     },
     package: {
       name: packageMetadata.name,
       version: packageMetadata.version,
       lockDigest: `sha256:${createHash('sha256').update(lock).digest('hex')}`,
+      ...(artifact.digest === undefined ? {} : { artifactDigest: artifact.digest }),
+      ...(artifactRuns.length === 0 ? {} : { artifactRuns }),
     },
     environment: {
       node: process.version,
@@ -93,7 +134,9 @@ async function main(): Promise<void> {
         supportedVersions,
       ),
     },
+    ci: manifest.ciRuns,
     capabilities,
+    claims,
     scenarios: summarizeScenarios(capabilities),
     tests: {
       files: report.testResults?.length ?? 0,

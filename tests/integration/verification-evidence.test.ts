@@ -16,13 +16,25 @@ import { scanText } from '../../scripts/lib/secret-scan.js';
 /** Split so the literal never appears as a single token in the repository. */
 const SEEDED_CREDENTIAL = ['AKIA', 'IOSFODNN7EXAMPLE'].join('');
 
+const CI_RUN = {
+  id: 'ci-1',
+  workflow: 'CI',
+  url: 'https://github.com/example/example/actions/runs/1',
+  commit: '0'.repeat(40),
+  completedAt: '2026-08-07T00:00:00Z',
+  conclusion: 'success' as const,
+  jobs: ['ubuntu-latest / Node 22'],
+};
+
 const manifest: Manifest = {
+  ciRuns: [CI_RUN],
   transports: [
     {
       name: 'stdio',
       stability: 'implemented',
       protocolVersions: ['2025-11-25'],
       requiredScenarios: ['E2E-STDIO-LEGACY-INITIALIZE'],
+      ciEvidence: 'ci-1',
     },
   ],
   capabilities: {
@@ -30,7 +42,9 @@ const manifest: Manifest = {
       {
         name: 'inspect_project',
         stability: 'verified',
+        protocolVersions: ['2025-11-25'],
         requiredScenarios: ['E2E-INSPECT-PROJECT-MODERN', 'E2E-INSPECT-PROJECT-HYBRID'],
+        ciEvidence: 'ci-1',
       },
     ],
     resources: [],
@@ -70,7 +84,11 @@ function reverseKeys(value: unknown): unknown {
 }
 
 function evidenceFor(vitest: VitestReport): Evidence {
-  const capabilities = buildCapabilityEvidence(manifest, indexScenarioResults(vitest, '/repo'));
+  const capabilities = buildCapabilityEvidence(
+    manifest,
+    indexScenarioResults(vitest, '/repo'),
+    '0'.repeat(40),
+  );
   return sealEvidence({
     schemaVersion: 1,
     generatedAt: '2026-08-07T00:00:00.000Z',
@@ -92,7 +110,9 @@ function evidenceFor(vitest: VitestReport): Evidence {
         runs: [],
       },
     },
+    ci: [CI_RUN],
     capabilities,
+    claims: [],
     scenarios: summarizeScenarios(capabilities),
     tests: { files: 1, total: 1, passed: 1, failed: 0, skipped: 0 },
   });

@@ -2,6 +2,10 @@
 
 Reviewed: 2026-08-07. Boundary: TB-STUDIO. Backlog: affects Phase 3 (BGA-300 through BGA-311).
 
+```verification-record
+{ "kind": "review", "scope": "TB-STUDIO" }
+```
+
 This is the review the threat model required before any capability may reach a BGA Studio account. It records what crosses, what an attacker controls, what must exist first, and — the part that matters most here — which half of Phase 3 this review **does not** open.
 
 ## What crosses

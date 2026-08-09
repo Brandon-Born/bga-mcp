@@ -1,4 +1,5 @@
-import { mkdtemp, readdir, rm } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,6 +15,8 @@ declare module 'vitest' {
   interface ProvidedContext {
     /** Absolute path of the packed artifact every end-to-end suite installs. */
     readonly packedArtifact: string;
+    /** Its SHA-256, so a suite can prove it installed this build and no other. */
+    readonly packedArtifactDigest: string;
   }
 }
 
@@ -39,7 +42,26 @@ export default async function setup(project: TestProject): Promise<() => Promise
     throw new Error('Package manager produced no tarball');
   }
 
-  project.provide('packedArtifact', resolve(packRoot, archive));
+  const artifact = resolve(packRoot, archive);
+  const digest = `sha256:${createHash('sha256')
+    .update(await readFile(artifact))
+    .digest('hex')}`;
+
+  // The digest is written where the evidence emitter can find it, so the
+  // artifact records which build the packaged scenarios were proven against
+  // rather than leaving that to be assumed. Each suite then writes its own
+  // file beside it: suites run in parallel workers, so one shared file would
+  // lose whichever record lost the race.
+  await mkdir(resolve(repositoryRoot, '.artifacts'), { recursive: true });
+  await rm(resolve(repositoryRoot, '.artifacts/packaged-runs'), { recursive: true, force: true });
+  await mkdir(resolve(repositoryRoot, '.artifacts/packaged-runs'), { recursive: true });
+  await writeFile(
+    resolve(repositoryRoot, '.artifacts/packaged-artifact.json'),
+    `${JSON.stringify({ digest, packedAt: new Date().toISOString() }, null, 2)}\n`,
+  );
+
+  project.provide('packedArtifact', artifact);
+  project.provide('packedArtifactDigest', digest);
   return async () => {
     await rm(packRoot, { recursive: true, force: true });
   };

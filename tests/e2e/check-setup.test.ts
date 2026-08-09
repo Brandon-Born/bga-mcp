@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { inject } from 'vitest';
 
 import { connectStdio } from '../helpers/mcp.js';
+import { recordInstalledArtifact } from '../helpers/packaged.js';
 import { runCommand } from '../helpers/process.js';
 import { waitForProcessExit } from '../helpers/scenario.js';
 
@@ -60,9 +61,11 @@ beforeAll(async () => {
     resolve(installRoot, 'package.json'),
     `${JSON.stringify({ name: 'bga-mcp-setup-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
   );
+  const artifact = inject('packedArtifact');
+  await recordInstalledArtifact('check-setup', artifact);
   const install = await runCommand(
     corepackCommand,
-    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, inject('packedArtifact')],
+    ['pnpm', 'add', '--prefer-offline', '--dir', installRoot, artifact],
     { timeoutMs: 120_000 },
   );
   expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);

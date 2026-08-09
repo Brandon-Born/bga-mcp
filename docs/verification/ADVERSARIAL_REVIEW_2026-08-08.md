@@ -1,5 +1,9 @@
 # Installed-package adversarial review — 2026-08-08
 
+```verification-record
+{ "kind": "review", "scope": "packaged artifact f8ab96cea1380395dde6cd01eb0b7358b3f305d10fe71074e6fd7c71bdada93e" }
+```
+
 ## Verdict
 
 The package installs, negotiates both advertised MCP versions, exposes its runtime inventory, enforces important refusal paths, and shuts down cleanly. It is **not ready to describe any public capability as verified**.

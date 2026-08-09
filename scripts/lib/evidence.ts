@@ -27,10 +27,44 @@ export interface ScenarioResult {
   readonly tests: readonly TestResult[];
 }
 
+export interface CiEvidence {
+  /** The manifest's identifier for the run. */
+  readonly id: string;
+  readonly workflow: string;
+  readonly url: string;
+  readonly commit: string;
+  readonly completedAt: string;
+  readonly conclusion: 'success' | 'failure';
+  readonly jobs: readonly string[];
+}
+
 export interface CapabilityEvidence {
   readonly kind: 'transport' | 'tool' | 'resource' | 'prompt' | 'adapter';
   readonly name: string;
   readonly stability: 'experimental' | 'implemented' | 'verified';
+  readonly status: ResultStatus;
+  /** Protocol versions the entry claims. An adapter claims none. */
+  readonly protocolVersions: readonly string[];
+  /**
+   * The CI evidence the manifest points at, and whether it covers this commit.
+   *
+   * A run of an older commit is real evidence of that commit, and none of this
+   * one, so it is recorded as `stale` rather than accepted or discarded.
+   */
+  readonly ci: {
+    readonly id: string;
+    readonly conclusion: string;
+    readonly covers: 'this-commit' | 'stale' | 'unknown';
+  };
+  readonly scenarios: readonly ScenarioResult[];
+}
+
+/** A compatibility claim, catalogued rule, or threat-model mitigation. */
+export interface ClaimEvidence {
+  readonly kind: 'compatibility' | 'rule' | 'mitigation';
+  readonly id: string;
+  /** The word the source document uses for it: supported, verified, and so on. */
+  readonly declared: string;
   readonly status: ResultStatus;
   readonly scenarios: readonly ScenarioResult[];
 }
@@ -44,6 +78,10 @@ export interface Evidence {
     readonly name: string;
     readonly version: string;
     readonly lockDigest: string;
+    /** Digest of the packed tarball the end-to-end suites installed. */
+    readonly artifactDigest?: string;
+    /** Every packaged suite and the artifact digest it actually installed. */
+    readonly artifactRuns?: readonly { readonly suite: string; readonly digest: string }[];
   };
   readonly environment: {
     readonly node: string;
@@ -72,7 +110,11 @@ export interface Evidence {
       }[];
     };
   };
+  /** The CI runs the manifest entries point at. */
+  readonly ci: readonly CiEvidence[];
   readonly capabilities: readonly CapabilityEvidence[];
+  /** Retained results for every claim that names scenarios, not source text. */
+  readonly claims: readonly ClaimEvidence[];
   readonly scenarios: {
     readonly required: number;
     readonly passed: number;
@@ -89,26 +131,35 @@ export interface Evidence {
   readonly integrity?: { readonly algorithm: 'sha256'; readonly value: string };
 }
 
+interface ManifestEntry {
+  readonly name: string;
+  readonly stability: 'experimental' | 'implemented' | 'verified';
+  readonly protocolVersions?: readonly string[];
+  readonly requiredScenarios: readonly string[];
+  /** Identifier of the CI run in `ciRuns` that last passed for this entry. */
+  readonly ciEvidence: string;
+}
+
 export interface Manifest {
-  readonly transports: readonly {
-    readonly name: string;
-    readonly stability: 'experimental' | 'implemented' | 'verified';
-    readonly protocolVersions: readonly string[];
-    readonly requiredScenarios: readonly string[];
-  }[];
-  readonly capabilities: Record<
-    'tools' | 'resources' | 'prompts',
-    readonly {
-      readonly name: string;
-      readonly stability: 'experimental' | 'implemented' | 'verified';
-      readonly requiredScenarios: readonly string[];
-    }[]
-  >;
-  readonly adapters: readonly {
-    readonly name: string;
-    readonly stability: 'experimental' | 'implemented' | 'verified';
-    readonly requiredScenarios: readonly string[];
-  }[];
+  readonly ciRuns: readonly CiEvidence[];
+  readonly transports: readonly ManifestEntry[];
+  readonly capabilities: Record<'tools' | 'resources' | 'prompts', readonly ManifestEntry[]>;
+  readonly adapters: readonly ManifestEntry[];
+}
+
+/** The other three sources of claims that name scenarios. */
+export interface ClaimSources {
+  readonly compatibility: { readonly claims: readonly ClaimSource[] };
+  readonly rules: { readonly checks: readonly ClaimSource[] };
+  readonly threatModel: { readonly mitigations: readonly ClaimSource[] };
+}
+
+export interface ClaimSource {
+  readonly id: string;
+  readonly support?: string;
+  readonly status?: string;
+  readonly automatable?: boolean;
+  readonly scenarios?: readonly string[];
 }
 
 /** One executable test, as the Vitest JSON reporter records it. */
@@ -132,6 +183,8 @@ export interface VitestReport {
   readonly testResults?: readonly VitestFile[];
 }
 
+/** Identifiers a title declares, which must be at its very start. */
+const DECLARED_IDENTIFIERS = /^((?:\[[A-Z0-9]+(?:-[A-Z0-9]+)+\])+)/u;
 const IDENTIFIER = /\[([A-Z0-9]+(?:-[A-Z0-9]+)+)\]/gu;
 
 function normalizeStatus(status: string | undefined): 'passed' | 'failed' | 'skipped' {
@@ -144,9 +197,11 @@ function normalizeStatus(status: string | undefined): 'passed' | 'failed' | 'ski
 /**
  * Indexes every test run by the scenario identifiers its title declares.
  *
- * A scenario with no test in the index did not run, which the evidence records
- * as `missing` rather than silently omitting it — an absent result is the case
- * this artifact exists to make visible.
+ * A declaration is a prefix, not a mention: the identifiers have to open the
+ * test's own title, so a test that merely names a scenario in passing does not
+ * become evidence for it. A scenario with no test in the index did not run,
+ * which the evidence records as `missing` rather than silently omitting it —
+ * an absent result is the case this artifact exists to make visible.
  */
 export function indexScenarioResults(
   report: VitestReport,
@@ -169,7 +224,10 @@ export function indexScenarioResults(
           ? { durationMs: assertion.duration }
           : {}),
       };
-      for (const match of title.matchAll(IDENTIFIER)) {
+      // `fullName` is "suite > case", so the declaration sits at the start of
+      // the last segment.
+      const own = (assertion.title ?? title.split(' > ').at(-1) ?? '').trim();
+      for (const match of (DECLARED_IDENTIFIERS.exec(own)?.[1] ?? '').matchAll(IDENTIFIER)) {
         const id = match[1];
         if (id === undefined) {
           continue;
@@ -181,42 +239,127 @@ export function indexScenarioResults(
   return index;
 }
 
+/**
+ * The result of one scenario.
+ *
+ * A scenario whose tests were all skipped is `missing`, not `failed` and
+ * certainly not `passed`: skipping is how a test stops being evidence, and the
+ * artifact should read the same as if it had never been written.
+ */
 function scenarioResult(id: string, index: Map<string, TestResult[]>): ScenarioResult {
   const tests = index.get(id) ?? [];
-  if (tests.length === 0) {
-    return { id, status: 'missing', tests: [] };
+  if (tests.length === 0 || tests.every((test) => test.status === 'skipped')) {
+    return { id, status: 'missing', tests };
   }
   const status = tests.every((test) => test.status === 'passed') ? 'passed' : 'failed';
   return { id, status, tests };
 }
 
-/** Maps every manifest entry to the results of the scenarios it requires. */
-export function buildCapabilityEvidence(
+function rollUp(scenarios: readonly ScenarioResult[]): ResultStatus {
+  if (scenarios.some((scenario) => scenario.status === 'failed')) {
+    return 'failed';
+  }
+  return scenarios.some((scenario) => scenario.status === 'missing') ? 'missing' : 'passed';
+}
+
+/** Every manifest entry, with the kind it was declared under. */
+export function manifestEntries(
   manifest: Manifest,
-  index: Map<string, TestResult[]>,
-): CapabilityEvidence[] {
-  const entries: {
-    kind: CapabilityEvidence['kind'];
-    name: string;
-    stability: CapabilityEvidence['stability'];
-    requiredScenarios: readonly string[];
-  }[] = [
+): (ManifestEntry & { kind: CapabilityEvidence['kind'] })[] {
+  return [
     ...manifest.transports.map((entry) => ({ kind: 'transport' as const, ...entry })),
     ...manifest.capabilities.tools.map((entry) => ({ kind: 'tool' as const, ...entry })),
     ...manifest.capabilities.resources.map((entry) => ({ kind: 'resource' as const, ...entry })),
     ...manifest.capabilities.prompts.map((entry) => ({ kind: 'prompt' as const, ...entry })),
     ...manifest.adapters.map((entry) => ({ kind: 'adapter' as const, ...entry })),
   ];
+}
 
-  return entries.map(({ kind, name, stability, requiredScenarios }) => {
-    const scenarios = requiredScenarios.map((id) => scenarioResult(id, index));
-    const status: ResultStatus = scenarios.some((scenario) => scenario.status === 'failed')
-      ? 'failed'
-      : scenarios.some((scenario) => scenario.status === 'missing')
-        ? 'missing'
-        : 'passed';
-    return { kind, name, stability, status, scenarios };
+/**
+ * Maps every manifest entry to the results of the scenarios it requires, the
+ * protocol versions it claims, and the CI run it points at.
+ *
+ * The CI reference is resolved rather than copied: an entry naming a run that
+ * the manifest does not record, or a run of a different commit, has to be
+ * visible in the artifact for the gate to act on it.
+ */
+export function buildCapabilityEvidence(
+  manifest: Manifest,
+  index: Map<string, TestResult[]>,
+  commit: string,
+): CapabilityEvidence[] {
+  const runs = new Map(manifest.ciRuns.map((run) => [run.id, run]));
+
+  return manifestEntries(manifest).map((entry) => {
+    const scenarios = entry.requiredScenarios.map((id) => scenarioResult(id, index));
+    const run = runs.get(entry.ciEvidence);
+    return {
+      kind: entry.kind,
+      name: entry.name,
+      stability: entry.stability,
+      status: rollUp(scenarios),
+      protocolVersions: [...(entry.protocolVersions ?? [])],
+      ci: {
+        id: entry.ciEvidence,
+        conclusion: run?.conclusion ?? 'unknown',
+        covers:
+          run === undefined
+            ? 'unknown'
+            : run.commit === commit
+              ? 'this-commit'
+              : ('stale' as const),
+      },
+      scenarios,
+    };
   });
+}
+
+/**
+ * Whether an entry claims its scenarios as evidence or merely reserves them.
+ *
+ * Planned work names the identifiers it intends to use. Those are reservations,
+ * not claims, and the scenario gate already refuses to let a reservation be
+ * required by anything.
+ */
+export function claimsEvidence(entry: ClaimSource): boolean {
+  return entry.status !== 'planned' && (entry.scenarios ?? []).length > 0;
+}
+
+/**
+ * Retains the result of every claim that names scenarios.
+ *
+ * Compatibility claims, catalogued rules, and threat-model mitigations all
+ * point at scenario identifiers. Their gates check that the identifier exists;
+ * only this records what the identified test actually did, so a claim can no
+ * longer rest on a name that matched something in a source file.
+ */
+export function buildClaimEvidence(
+  sources: ClaimSources,
+  index: Map<string, TestResult[]>,
+): ClaimEvidence[] {
+  const claims: ClaimEvidence[] = [];
+  const collect = (kind: ClaimEvidence['kind'], entries: readonly ClaimSource[]): void => {
+    for (const entry of entries.filter(claimsEvidence)) {
+      const ids = entry.scenarios ?? [];
+      if (ids.length === 0) {
+        continue;
+      }
+      const scenarios = ids.map((id) => scenarioResult(id, index));
+      claims.push({
+        kind,
+        id: entry.id,
+        declared:
+          entry.support ?? entry.status ?? (entry.automatable === true ? 'automated' : 'declared'),
+        status: rollUp(scenarios),
+        scenarios,
+      });
+    }
+  };
+
+  collect('compatibility', sources.compatibility.claims);
+  collect('rule', sources.rules.checks);
+  collect('mitigation', sources.threatModel.mitigations);
+  return claims;
 }
 
 export function summarizeScenarios(
