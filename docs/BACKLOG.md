@@ -66,6 +66,18 @@ The [installed-package adversarial review](verification/ADVERSARIAL_REVIEW_2026-
 
 The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-211, BGA-318 through BGA-330, and BGA-411 as permanent owners. A status may move back to `verified` only after its own original acceptance criteria and the applicable new owner both pass; closing a new bug without restoring the reopened item's evidence is not enough.
 
+### Restored on 2026-08-09
+
+The correctness owners of the 2026-08-08 review — BGA-124 through BGA-128 — passed, and BGA-017 replaced the evidence system that let a claim stand on less than it named. [CI run 31330457842](https://github.com/Brandon-Born/bga-mcp/actions/runs/31330457842) then passed the six-job matrix on `af34a07`, which is the commit `main` now points at.
+
+The reopened Phase 1 items and the foundation-evidence items they depended on are `verified` again. Each acceptance case of the local capabilities is mapped in [`config/acceptance-map.json`](../config/acceptance-map.json) to the installed-package assertion that proves it, and `pnpm verify:acceptance-map` fails if any of them stops being proven where it claims to be.
+
+Three of the reopened items stay `implemented`, each for a reason of its own rather than for want of coverage:
+
+- **BGA-011** — official conformance covers `2025-11-25`; the pinned CLI has no stdio scenarios for `2026-07-28`, so no capability claims that revision.
+- **BGA-013 and BGA-016** — BGA-018 owns the machine/human threat-model agreement and the privacy surfaces beyond a tool response; the packaged error and redaction cases are proven, the boundary agreement is not.
+- **BGA-014 and BGA-015** are unchanged by this work and keep their own evidence requirements.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
@@ -110,7 +122,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-005 — Establish continuous integration
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-004
 - **Deliverable:** Required CI workflows for supported operating systems and runtime versions, with concurrency control and least-privilege permissions.
@@ -120,7 +132,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-006 — Define the machine-readable capability manifest
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** A versioned schema and manifest for every tool, resource, prompt, transport, adapter, stability level, compatibility claim, and required scenario.
@@ -130,7 +142,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-007 — Define the shared diagnostic contract
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-002
 - **Deliverable:** Versioned schemas for findings, locations, evidence, severity, certainty, suggestions, unsupported syntax, and aggregate results.
@@ -140,7 +152,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-008 — Build the representative fixture corpus
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-002
 - **Deliverable:** Minimal legal fixtures for supported modern and legacy BGA layouts, plus deliberately malformed variants for every validation rule.
@@ -150,7 +162,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-009 — Publish the compatibility matrix
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-001, BGA-008
 - **Deliverable:** Machine-readable and human-readable matrices for BGA layouts, file generations, runtimes, MCP versions, transports, and clients.
@@ -181,7 +193,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-012 — Define and emit verification evidence
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-005, BGA-006, BGA-010, BGA-011
 - **Deliverable:** A machine-readable evidence schema and CI artifact containing commit, package version, lock digest, environment, protocol version, scenario results, and timestamps.
@@ -235,7 +247,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-017 — Make verification claims compositional and self-invalidating
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-005, BGA-006, BGA-009, BGA-011, BGA-012
 - **Deliverable:** Evidence gates that derive a public capability's status from every prerequisite it claims: the exact packaged artifact, runnable passing scenarios, compatibility claims, transport and protocol conformance, current human records, and retained CI evidence.
@@ -259,7 +271,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-100 — Detect BGA project layouts
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-008, BGA-009, BGA-015
 - **Deliverable:** Capability-based discovery for supported modern and legacy project layouts.
@@ -280,7 +292,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-102 — Implement `inspect_project`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-100, BGA-101
 - **Deliverable:** A read-only tool that explains the detected layout, components, capabilities, missing expected files, and uncertainty.
@@ -290,7 +302,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-103 — Implement `bga://project/summary`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-102
 - **Deliverable:** A resource exposing the normalized project summary without triggering mutation or network access.
@@ -301,7 +313,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-104 — Implement `bga://project/states`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-101, BGA-106
 - **Deliverable:** A resource exposing normalized states, transitions, handlers, locations, and uncertainty.
@@ -312,7 +324,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-105 — Implement `bga://project/diagnostics`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-006, BGA-007, BGA-112
 - **Deliverable:** A resource exposing current aggregate validation findings.
@@ -323,7 +335,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-106 — Implement `validate_state_machine`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Cross-file validation for state identifiers, types, transitions, targets, handlers, reachability where provable, and supported BGA state conventions.
@@ -334,7 +346,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-107 — Implement `validate_action_contracts`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace client action calls to server endpoints, argument validation, and game methods for supported layouts.
@@ -345,7 +357,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-108 — Implement `validate_notifications`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace server notifications to client subscriptions and compare supported payload shapes and handler use.
@@ -356,7 +368,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-109 — Implement `audit_database_usage`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Compare `dbmodel.sql` with supported query usage and detect high-confidence schema, reference, and unsafe-pattern findings.
@@ -367,7 +379,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-110 — Define the pre-release rule catalog
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-001, BGA-007, BGA-008
 - **Deliverable:** A versioned catalog mapping automatable BGA pre-release checks to official sources, rule implementations, fixtures, severities, and limitations.
@@ -377,7 +389,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-111 — Implement `run_pre_release_audit`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-102, BGA-106, BGA-107, BGA-108, BGA-109, BGA-110
 - **Deliverable:** A read-only audit that runs supported pre-release rules and returns passed, failed, unsupported, and manual-required checks separately.
@@ -387,7 +399,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-112 — Implement `validate_project`
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-106, BGA-107, BGA-108, BGA-109
 - **Deliverable:** A deterministic aggregator for project validations with selectable rule groups and bounded results.
@@ -397,7 +409,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-113 — Implement explicit unknown-syntax handling
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-101
 - **Deliverable:** Shared behavior for syntax that cannot be parsed or relationships that cannot be proven.
@@ -407,7 +419,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-114 — Enforce local read-only and network-off behavior
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-015, BGA-102 through BGA-113
 - **Deliverable:** Technical enforcement and evidence that local inspection, resources, and validation cannot mutate source or initiate network access.
@@ -424,7 +436,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-117 — Capture a representative modern fixture pair
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-008
 - **Deliverable:** Original modern fixtures matching the current framework — a valid one and a defective variant — replacing the minimal stub that only proves layout detection.
@@ -435,7 +447,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-118 — Read modern state classes
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-101, BGA-106, BGA-117
 - **Deliverable:** A reader for state classes under `modules/php/States`, extracting the identifier, type, description, transitions, and action methods from the `parent::__construct` call and the class body, plus the `GameStateBuilder` form.
@@ -446,7 +458,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-119 — Read modern action autowiring and the modern client action API
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-107, BGA-117, BGA-118
 - **Deliverable:** Action-contract tracing for projects with no `.action.php`: autowired public `act…` methods on the game class as the server side, and `this.bga.actions.performAction` alongside the existing `bgaPerformAction` and `ajaxcall` on the client side.
@@ -457,7 +469,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-120 — Read the modern notification API
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-108, BGA-117
 - **Deliverable:** Notification reading for `$this->bga->notify->all` and `$this->bga->notify->player`, and for the promise-based client setup that replaces `dojo.subscribe`.
@@ -468,7 +480,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-121 — Confirm the database audit on the modern layout
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P2
 - **Depends on:** BGA-109, BGA-117
 - **Deliverable:** Evidence that the database audit already works for modern projects, or the changes needed if it does not.
@@ -479,7 +491,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-122 — Model the project layout as independent per-file generations
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-100, BGA-101, BGA-117
 - **Deliverable:** Layout detection that reports a generation per migratable component rather than matching one of two whole-project templates, and a derived `hybrid` layout label for a project whose components are not all one generation.
@@ -491,7 +503,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-123 — Read a partially migrated state machine from both sources
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-118, BGA-122
 - **Deliverable:** State reading that merges `states.inc.php` with the state classes under `modules/php/States` when both are present, instead of taking the first source found.
@@ -502,7 +514,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-116 — Reduce first-run friction
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P2
 - **Depends on:** BGA-102, BGA-112
 - **Deliverable:** Input and documentation changes that make a correctly configured server pleasant to use: `projectRoot` optional when exactly one root is configured, help text that states a project root must be an absolute path, and tool descriptions that state which layouts a validator supports.
@@ -512,7 +524,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-124 — Correct modern state semantics and replace the false clean fixture
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-008, BGA-101, BGA-106, BGA-117, BGA-118, BGA-123
 - **Deliverable:** A documented modern-state reader and layout-aware validator whose clean fixture uses current state-class constructs rather than carrying the legacy states 1 and 99 into the class model.
@@ -525,7 +537,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-125 — Correct modern action-contract tracing
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-107, BGA-119, BGA-124
 - **Deliverable:** Action tracing that models both state-class and Game.php autowiring, including framework-injected parameters and documented parameter attributes.
@@ -538,7 +550,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-126 — Correct modern notification sends and registrations
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-108, BGA-120, BGA-124
 - **Deliverable:** Notification tracing for every documented Game.php and state-class send form, with client handlers counted only when they are actually registered.
@@ -551,7 +563,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-127 — Restrict database findings to executed framework database calls
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-109, BGA-121
 - **Deliverable:** A database-use reader that distinguishes a SQL-looking string from a query passed to a documented BGA database helper.
@@ -564,7 +576,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-128 — Complete the packaged public-boundary matrix for local capabilities
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-017, BGA-124, BGA-125, BGA-126, BGA-127
 - **Deliverable:** The missing installed-artifact scenarios required by the original acceptance criteria of BGA-007, BGA-008, BGA-016, BGA-100, BGA-102 through BGA-114, and BGA-116 through BGA-123. Superseded BGA-115 remains excluded.

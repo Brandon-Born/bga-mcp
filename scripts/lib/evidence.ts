@@ -46,15 +46,21 @@ export interface CapabilityEvidence {
   /** Protocol versions the entry claims. An adapter claims none. */
   readonly protocolVersions: readonly string[];
   /**
-   * The CI evidence the manifest points at, and whether it covers this commit.
+   * The CI evidence the manifest points at, and how it relates to this commit.
    *
-   * A run of an older commit is real evidence of that commit, and none of this
-   * one, so it is recorded as `stale` rather than accepted or discarded.
+   * `this-commit` is the run of exactly this commit. `ancestor` is a run of a
+   * commit this one is built on: real evidence of code that is in this
+   * history, which is what "the most recent passing evidence produced by CI"
+   * means for any commit made after that run. `stale` is a run of a commit
+   * that is not in this history at all — an abandoned branch — and proves
+   * nothing here.
    */
   readonly ci: {
     readonly id: string;
     readonly conclusion: string;
-    readonly covers: 'this-commit' | 'stale' | 'unknown';
+    readonly covers: 'this-commit' | 'ancestor' | 'stale' | 'unknown';
+    /** Commits between that run and this one, when it is an ancestor. */
+    readonly commitsBehind?: number;
   };
   readonly scenarios: readonly ScenarioResult[];
 }
@@ -264,6 +270,27 @@ function rollUp(scenarios: readonly ScenarioResult[]): ResultStatus {
   return scenarios.some((scenario) => scenario.status === 'missing') ? 'missing' : 'passed';
 }
 
+/** How far back each known commit is from the one being verified. */
+export interface CommitHistory {
+  /** Commit to the number of commits between it and HEAD, for ancestors only. */
+  readonly ancestors: ReadonlyMap<string, number>;
+}
+
+function coverage(
+  runCommit: string | undefined,
+  commit: string,
+  history: CommitHistory,
+): Pick<CapabilityEvidence['ci'], 'covers' | 'commitsBehind'> {
+  if (runCommit === undefined) {
+    return { covers: 'unknown' };
+  }
+  if (runCommit === commit) {
+    return { covers: 'this-commit' };
+  }
+  const behind = history.ancestors.get(runCommit);
+  return behind === undefined ? { covers: 'stale' } : { covers: 'ancestor', commitsBehind: behind };
+}
+
 /** Every manifest entry, with the kind it was declared under. */
 export function manifestEntries(
   manifest: Manifest,
@@ -289,6 +316,7 @@ export function buildCapabilityEvidence(
   manifest: Manifest,
   index: Map<string, TestResult[]>,
   commit: string,
+  history: CommitHistory = { ancestors: new Map() },
 ): CapabilityEvidence[] {
   const runs = new Map(manifest.ciRuns.map((run) => [run.id, run]));
 
@@ -304,12 +332,7 @@ export function buildCapabilityEvidence(
       ci: {
         id: entry.ciEvidence,
         conclusion: run?.conclusion ?? 'unknown',
-        covers:
-          run === undefined
-            ? 'unknown'
-            : run.commit === commit
-              ? 'this-commit'
-              : ('stale' as const),
+        ...coverage(run?.commit, commit, history),
       },
       scenarios,
     };

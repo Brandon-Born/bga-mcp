@@ -118,9 +118,12 @@ function check(evidence: unknown, sources: Sources, validate: (value: unknown) =
       capability.ci.conclusion === 'success',
       `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} concluded ${capability.ci.conclusion}`,
     );
+    // "The most recent passing evidence produced by CI": a run of this commit,
+    // or of a commit this one is built on. A run that is not in this history
+    // at all is evidence of some other line of work.
     report.require(
-      capability.ci.covers === 'this-commit',
-      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} is ${capability.ci.covers === 'stale' ? 'for a different commit' : 'not recorded in the manifest'}`,
+      capability.ci.covers === 'this-commit' || capability.ci.covers === 'ancestor',
+      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} is ${capability.ci.covers === 'stale' ? 'a run of a commit outside this history' : 'not recorded in the manifest'}`,
     );
   }
 

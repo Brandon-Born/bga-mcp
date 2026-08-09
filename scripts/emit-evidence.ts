@@ -80,7 +80,21 @@ async function main(): Promise<void> {
   ].sort();
   const commit = await git('rev-parse', 'HEAD');
   const index = indexScenarioResults(report, repositoryRoot);
-  const capabilities = buildCapabilityEvidence(manifest, index, commit);
+
+  // How far back each recorded CI run is from this commit. A run of a commit
+  // this one is built on is evidence of code that is in this history; a run of
+  // a commit that is not in it proves nothing here.
+  const ancestors = new Map<string, number>();
+  for (const run of manifest.ciRuns) {
+    const behind = await git('rev-list', '--count', `${run.commit}..HEAD`).catch(() => null);
+    const ancestor = await git('merge-base', '--is-ancestor', run.commit, 'HEAD')
+      .then(() => true)
+      .catch(() => false);
+    if (ancestor && behind !== null) {
+      ancestors.set(run.commit, Number(behind));
+    }
+  }
+  const capabilities = buildCapabilityEvidence(manifest, index, commit, { ancestors });
   const claims = buildClaimEvidence(
     {
       compatibility: await loadJson<{ claims: ClaimSource[] }>(

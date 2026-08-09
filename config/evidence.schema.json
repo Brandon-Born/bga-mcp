@@ -341,8 +341,12 @@
                 "minLength": 1
               },
               "covers": {
-                "enum": ["this-commit", "stale", "unknown"],
-                "description": "stale means the referenced run passed for a different commit, which is evidence of that commit and not this one."
+                "enum": ["this-commit", "ancestor", "stale", "unknown"],
+                "description": "ancestor means the run covered a commit this one is built on; stale means a commit outside this history, which proves nothing here."
+              },
+              "commitsBehind": {
+                "type": "integer",
+                "minimum": 0
               }
             }
           }

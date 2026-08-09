@@ -3,7 +3,7 @@
 An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
 
 > [!IMPORTANT]
-> This project is in early implementation. The installable stdio server currently advertises 10 tools and 11 concrete resources. A 2026-08-08 installed-package adversarial review reopened every formerly verified public capability-manifest entry and the affected backlog claims; unrelated foundation decisions remain verified. The Studio log reader remains experimental. See the [review record](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md).
+> This project is in early implementation. The installable stdio server currently advertises 10 tools and 11 concrete resources. A [2026-08-08 installed-package adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) reopened every formerly verified capability; the readers it faulted were corrected against the official documentation, every acceptance case was proven through the installed server, and the seven local project tools, the three project resources and the stdio transport are verified again on protocol `2025-11-25`. The documentation capabilities and the Studio log reader are not: they remain implemented and experimental respectively.
 
 `bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
 
@@ -22,7 +22,7 @@ This server will focus on the gaps that benefit from structured BGA knowledge an
 
 ## Capabilities
 
-Available now, local and read-only, with verification reopened:
+Available now, local and read-only, verified on protocol `2025-11-25`:
 
 - `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
   Layout detection recognizes legacy, modern, and part-migrated projects. The validators have readers for both generations, but the current review found false or unsupported results for documented modern state, action, notification, and query forms. Every reader was corrected against the official documentation under BGA-124 through BGA-127, and BGA-128 proved each affected acceptance case through the installed server, so the modern and part-migrated layouts are inside the compatibility contract again. No capability is release-verified yet: that waits on CI evidence for the commit being claimed.
@@ -67,7 +67,7 @@ Current discovery names are not yet a stable release API. Future capability name
 
 ## Project status
 
-Ten tools and eleven concrete resources are discoverable. The package lifecycle, legacy roots path, refusal behavior, read-only policy, and clean shutdown have real installed-client evidence. No public capability is currently release-verified: Phase 0 evidence claims and Phase 1 correctness/coverage were reopened after common documented BGA constructs produced false findings. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
+Ten tools and eleven concrete resources are discoverable. The seven local project tools, the three project resources and the stdio transport are verified on protocol `2025-11-25`: every acceptance case they claim is mapped to an assertion against the installed package, and [CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/31330457842) passes the six-job matrix. The documentation capabilities stay implemented — their maintained retrieval evaluation fails and the framework-version resource has a confirmed extraction bug — and the Studio log reader stays experimental and not live-verified. See the [2026-08-08 adversarial review](docs/verification/ADVERSARIAL_REVIEW_2026-08-08.md) and the [implementation backlog](docs/BACKLOG.md).
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md) and [compatibility matrix](docs/COMPATIBILITY.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 
