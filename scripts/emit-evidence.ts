@@ -85,7 +85,18 @@ async function main(): Promise<void> {
   // this one is built on is evidence of code that is in this history; a run of
   // a commit that is not in it proves nothing here.
   const ancestors = new Map<string, number>();
+  const present = new Set<string>();
   for (const run of manifest.ciRuns) {
+    // Whether the checkout even has the commit. Without this, a shallow clone
+    // reports every recorded run as belonging to another line of work.
+    if (
+      await git('cat-file', '-e', `${run.commit}^{commit}`).then(
+        () => true,
+        () => false,
+      )
+    ) {
+      present.add(run.commit);
+    }
     const behind = await git('rev-list', '--count', `${run.commit}..HEAD`).catch(() => null);
     const ancestor = await git('merge-base', '--is-ancestor', run.commit, 'HEAD')
       .then(() => true)
@@ -94,7 +105,7 @@ async function main(): Promise<void> {
       ancestors.set(run.commit, Number(behind));
     }
   }
-  const capabilities = buildCapabilityEvidence(manifest, index, commit, { ancestors });
+  const capabilities = buildCapabilityEvidence(manifest, index, commit, { ancestors, present });
   const claims = buildClaimEvidence(
     {
       compatibility: await loadJson<{ claims: ClaimSource[] }>(

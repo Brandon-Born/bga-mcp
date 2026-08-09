@@ -9,6 +9,7 @@ import {
   integrityDigest,
   manifestEntries,
   sealEvidence,
+  type CapabilityEvidence,
   type ClaimSource,
   type Evidence,
   type Manifest,
@@ -123,7 +124,7 @@ function check(evidence: unknown, sources: Sources, validate: (value: unknown) =
     // at all is evidence of some other line of work.
     report.require(
       capability.ci.covers === 'this-commit' || capability.ci.covers === 'ancestor',
-      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} is ${capability.ci.covers === 'stale' ? 'a run of a commit outside this history' : 'not recorded in the manifest'}`,
+      `${capability.name} is advertised as verified but its CI evidence ${capability.ci.id} ${describeCoverage(capability.ci.covers)}`,
     );
   }
 
@@ -273,6 +274,23 @@ export function checkRecords(
   }
 
   return report;
+}
+
+/**
+ * Says what is wrong with a CI reference, in the terms of what happened.
+ *
+ * A run whose commit this checkout does not hold and a run of a commit that
+ * belongs to another line of work fail the same rule for opposite reasons, and
+ * only one of them is fixed by looking at the code.
+ */
+function describeCoverage(covers: CapabilityEvidence['ci']['covers']): string {
+  if (covers === 'stale') {
+    return 'is a run of a commit outside this history';
+  }
+  if (covers === 'unknown') {
+    return 'cannot be placed in this history — the checkout does not hold that commit, so fetch the history rather than trusting this';
+  }
+  return 'is not recorded in the manifest';
 }
 
 /** A minimal document that passes every rule, used to seed each failure from. */

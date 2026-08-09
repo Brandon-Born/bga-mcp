@@ -148,6 +148,38 @@ describe('verification evidence', () => {
     });
   });
 
+  it('[GATE-EVIDENCE-COVERAGE] separates a CI run it cannot place from one outside this history', () => {
+    const results = indexScenarioResults(
+      report(['[E2E-STDIO-LEGACY-INITIALIZE] negotiates the legacy protocol version', 'passed']),
+      '/repo',
+    );
+    const other = '1'.repeat(40);
+
+    // A checkout that holds the run's commit and does not have it in its
+    // history: the run really does belong to another line of work.
+    const foreign = buildCapabilityEvidence(manifest, results, other, {
+      ancestors: new Map(),
+      present: new Set([CI_RUN.commit]),
+    });
+    expect(foreign[0]?.ci.covers).toBe('stale');
+
+    // A shallow checkout, which is what CI does by default. Nothing is known
+    // about the run either way, and saying it is outside this history would be
+    // the artifact stating something it cannot see.
+    const shallow = buildCapabilityEvidence(manifest, results, other, {
+      ancestors: new Map(),
+      present: new Set(),
+    });
+    expect(shallow[0]?.ci.covers).toBe('unknown');
+
+    // Neither may stand behind a verified capability; only the reason differs.
+    const ancestor = buildCapabilityEvidence(manifest, results, other, {
+      ancestors: new Map([[CI_RUN.commit, 2]]),
+      present: new Set([CI_RUN.commit]),
+    });
+    expect(ancestor[0]?.ci).toMatchObject({ covers: 'ancestor', commitsBehind: 2 });
+  });
+
   it('[GATE-EVIDENCE-COVERAGE] reports a failed test as a failed scenario and capability', () => {
     const evidence = evidenceFor(
       report(

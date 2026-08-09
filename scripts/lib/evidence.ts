@@ -274,6 +274,16 @@ function rollUp(scenarios: readonly ScenarioResult[]): ResultStatus {
 export interface CommitHistory {
   /** Commit to the number of commits between it and HEAD, for ancestors only. */
   readonly ancestors: ReadonlyMap<string, number>;
+  /**
+   * Commits this checkout actually has.
+   *
+   * A shallow clone holds one commit and nothing it was built on, so asking
+   * whether a recorded run is an ancestor gets "no" for a reason that has
+   * nothing to do with the run. That is a different answer from "this run
+   * belongs to another line of work", and reporting the second when the first
+   * is true would be the artifact stating something it cannot know.
+   */
+  readonly present?: ReadonlySet<string>;
 }
 
 function coverage(
@@ -288,7 +298,10 @@ function coverage(
     return { covers: 'this-commit' };
   }
   const behind = history.ancestors.get(runCommit);
-  return behind === undefined ? { covers: 'stale' } : { covers: 'ancestor', commitsBehind: behind };
+  if (behind !== undefined) {
+    return { covers: 'ancestor', commitsBehind: behind };
+  }
+  return { covers: history.present?.has(runCommit) === false ? 'unknown' : 'stale' };
 }
 
 /** Every manifest entry, with the kind it was declared under. */

@@ -27,6 +27,13 @@ jobs:
         node: [22, 24]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The evidence gate asks whether the CI run a capability points at is
+          # of a commit this one is built on. A shallow clone has no history to
+          # answer with, so every recorded run reads as belonging to another
+          # line of work and every verified capability fails for want of a fact
+          # the checkout withheld.
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: ${{ matrix.node }}
