@@ -1,0 +1,485 @@
+{
+  "$schema": "./acceptance-map.schema.json",
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-09",
+  "owner": "BGA-128",
+  "cases": [
+    {
+      "item": "BGA-007",
+      "case": "Facts and suggestions are distinct in a public result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-SEEDED-DEFECTS"]
+    },
+    {
+      "item": "BGA-007",
+      "case": "Heuristic findings expose their uncertainty to the client",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-SEEDED-DEFECTS"]
+    },
+    {
+      "item": "BGA-007",
+      "case": "Results carry human-readable content beside stable machine fields",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+    },
+    {
+      "item": "BGA-008",
+      "case": "Fixtures contain no private source, publisher artwork, or credential",
+      "boundary": "repository",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
+    },
+    {
+      "item": "BGA-008",
+      "case": "Each fixture declares the normalized model and findings the product actually produces",
+      "boundary": "repository",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
+    },
+    {
+      "item": "BGA-008",
+      "case": "Each fixture identifies the BGA behavior it represents",
+      "boundary": "packaged",
+      "missing": "The fixture README describes the corpus, but no gate checks that each fixture names the construct it stands for."
+    },
+    {
+      "item": "BGA-016",
+      "case": "A refused path is reported with a stable code and no leaked location",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-UNLISTED-ROOT"]
+    },
+    {
+      "item": "BGA-016",
+      "case": "Secrets inside a project never reach a successful result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-REDACTION"]
+    },
+    {
+      "item": "BGA-016",
+      "case": "An unexpected validator failure keeps a stable code and safe context",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-PARTIAL-FAILURE"]
+    },
+    {
+      "item": "BGA-016",
+      "case": "Redaction is proven for every tool that returns project content",
+      "boundary": "packaged",
+      "missing": "Only inspect_project has a packaged redaction case; the four validators and the resources do not."
+    },
+    {
+      "item": "BGA-100",
+      "case": "Detection identifies the components a project actually has",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-INSPECT-PROJECT-LEGACY",
+        "E2E-INSPECT-PROJECT-MODERN",
+        "E2E-INSPECT-PROJECT-HYBRID"
+      ]
+    },
+    {
+      "item": "BGA-100",
+      "case": "A project matching no layout is reported with the markers that were found",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-UNRECOGNIZED"]
+    },
+    {
+      "item": "BGA-100",
+      "case": "Detection never reads outside the configured root",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-TRAVERSAL", "E2E-INSPECT-PROJECT-SYMLINK-ESCAPE"]
+    },
+    {
+      "item": "BGA-100",
+      "case": "An empty project directory is reported rather than treated as unreadable",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-EMPTY"]
+    },
+    {
+      "item": "BGA-100",
+      "case": "A partial project reports which component identified its form",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-PARTIAL"]
+    },
+    {
+      "item": "BGA-100",
+      "case": "A project whose files cannot be read reports the refusal",
+      "boundary": "packaged",
+      "missing": "No packaged permission-denied project case exists."
+    },
+    {
+      "item": "BGA-100",
+      "case": "A project nested inside another configured root resolves to one project",
+      "boundary": "packaged",
+      "missing": "No packaged nested-root case exists."
+    },
+    {
+      "item": "BGA-102",
+      "case": "The published output schema is stable and complete",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-MODERN"]
+    },
+    {
+      "item": "BGA-102",
+      "case": "Paths in a result are project-relative and safe",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-LEGACY"]
+    },
+    {
+      "item": "BGA-102",
+      "case": "Inspection changes no file in the project",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-MODERN", "E2E-INSPECT-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-102",
+      "case": "A large project stays within the output limit",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-OUTPUT-LIMIT"]
+    },
+    {
+      "item": "BGA-103",
+      "case": "The summary resource matches inspect_project semantics",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RESOURCE-SUMMARY"]
+    },
+    {
+      "item": "BGA-103",
+      "case": "The resource declares its media type and version",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RESOURCE-DISCOVERY"]
+    },
+    {
+      "item": "BGA-103",
+      "case": "The resource stays bounded for a large project",
+      "boundary": "packaged",
+      "missing": "The output limit is proven for inspect_project only, not for the resources."
+    },
+    {
+      "item": "BGA-104",
+      "case": "Legacy and modern state representations produce one documented shape",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RESOURCE-STATES"]
+    },
+    {
+      "item": "BGA-104",
+      "case": "The states resource is proven on every supported generation",
+      "boundary": "packaged",
+      "missing": "E2E-RESOURCE-STATES reads the legacy fixture only; modern and hybrid are not read through the resource."
+    },
+    {
+      "item": "BGA-105",
+      "case": "Diagnostics are deterministic for unchanged files",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+    },
+    {
+      "item": "BGA-105",
+      "case": "Diagnostics carry the rule and evidence versions",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+    },
+    {
+      "item": "BGA-105",
+      "case": "Diagnostics never imply an unsupported check passed",
+      "boundary": "packaged",
+      "missing": "No packaged resource case reads a project with unsupported syntax."
+    },
+    {
+      "item": "BGA-105",
+      "case": "A resource refreshes within one session when the project changes",
+      "boundary": "packaged",
+      "missing": "No packaged in-session refresh case exists."
+    },
+    {
+      "item": "BGA-106",
+      "case": "A valid machine passes and the rule catalog ships with the result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+    },
+    {
+      "item": "BGA-106",
+      "case": "Every seeded defect is found, with facts and heuristics distinguished",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-SEEDED-DEFECTS"]
+    },
+    {
+      "item": "BGA-106",
+      "case": "Every state rule has positive and negative public evidence",
+      "boundary": "packaged",
+      "missing": "state.initial.missing, state.id.duplicate, state.name.missing and state.possible-action.handler-missing have no packaged failing case."
+    },
+    {
+      "item": "BGA-107",
+      "case": "Missing entry points, mismatched arguments, and broken handler links are located",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"]
+    },
+    {
+      "item": "BGA-107",
+      "case": "A dynamic or malformed action call is reported rather than guessed",
+      "boundary": "packaged",
+      "missing": "The unsupported action path has unit coverage only."
+    },
+    {
+      "item": "BGA-108",
+      "case": "Missing handlers, name mismatches, and payload disagreements are distinguished",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS"]
+    },
+    {
+      "item": "BGA-108",
+      "case": "A dynamic notification name or payload is reported rather than guessed",
+      "boundary": "packaged",
+      "missing": "The unsupported notification path has unit coverage only."
+    },
+    {
+      "item": "BGA-109",
+      "case": "SQL is read without connecting to or executing against a database",
+      "boundary": "packaged",
+      "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-READ-ONLY-NETWORK-DENIED"]
+    },
+    {
+      "item": "BGA-109",
+      "case": "A query the reader cannot follow is reported rather than reconstructed",
+      "boundary": "packaged",
+      "scenarios": ["E2E-AUDIT-DATABASE-MODERN-DEFECTS"]
+    },
+    {
+      "item": "BGA-109",
+      "case": "Malformed SQL and dialect limits are explicit in a public result",
+      "boundary": "packaged",
+      "missing": "No packaged case sends malformed SQL through the tool."
+    },
+    {
+      "item": "BGA-110",
+      "case": "Manual-only checks stay manual in a public result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PRE-RELEASE-MANUAL-NEVER-PASSES"]
+    },
+    {
+      "item": "BGA-110",
+      "case": "The catalog version used is identified in the result",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PRE-RELEASE-CATALOG-VERSION"]
+    },
+    {
+      "item": "BGA-110",
+      "case": "Every automated rule has valid and failing fixtures, enforced for the modern layout too",
+      "boundary": "packaged",
+      "missing": "The rule-catalog gate cross-checks the legacy failing fixture only; failingModern is unchecked."
+    },
+    {
+      "item": "BGA-111",
+      "case": "An unimplemented or unrun check is never converted into a pass",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PRE-RELEASE-PARTIAL-SUPPORT", "E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED"]
+    },
+    {
+      "item": "BGA-111",
+      "case": "A failing project fails the checks it breaks, with their findings",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PRE-RELEASE-FAILING"]
+    },
+    {
+      "item": "BGA-112",
+      "case": "Aggregation preserves the evidence and certainty of each part",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-MATCHES-PARTS"]
+    },
+    {
+      "item": "BGA-112",
+      "case": "Skipped and unsupported groups are reported as such",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-GROUP-SELECTION"]
+    },
+    {
+      "item": "BGA-112",
+      "case": "A failed validator cannot be hidden by the aggregate",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-PARTIAL-FAILURE"]
+    },
+    {
+      "item": "BGA-113",
+      "case": "Unknown syntax produces an unsupported result with a location and reason",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-UNSUPPORTED"]
+    },
+    {
+      "item": "BGA-113",
+      "case": "Unsupported syntax never becomes an implicit pass",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED"]
+    },
+    {
+      "item": "BGA-113",
+      "case": "Unknown syntax is handled the same way in the action and notification validators",
+      "boundary": "packaged",
+      "missing": "Only the state machine and the database audit have a packaged unsupported-syntax case."
+    },
+    {
+      "item": "BGA-114",
+      "case": "The read-only policy holds regardless of tool input",
+      "boundary": "packaged",
+      "scenarios": ["E2E-READ-ONLY-INPUT-CANNOT-ESCAPE"]
+    },
+    {
+      "item": "BGA-114",
+      "case": "An attempted network escape by a dependency is detected",
+      "boundary": "packaged",
+      "scenarios": ["E2E-READ-ONLY-NETWORK-DENIED", "E2E-READ-ONLY-NETWORK-HARNESS"]
+    },
+    {
+      "item": "BGA-116",
+      "case": "An omitted projectRoot with one configured root behaves as if it had been passed",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-DEFAULT-ROOT"]
+    },
+    {
+      "item": "BGA-116",
+      "case": "An omitted projectRoot with none or several roots keeps its stable refusal",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED",
+        "E2E-INSPECT-PROJECT-DEFAULT-ROOT-AMBIGUOUS"
+      ]
+    },
+    {
+      "item": "BGA-116",
+      "case": "Every tool that takes projectRoot has the same default behavior",
+      "boundary": "packaged",
+      "missing": "Only inspect_project has packaged default-root cases."
+    },
+    {
+      "item": "BGA-117",
+      "case": "The modern fixtures use the constructs the documentation describes",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-MODERN-CONSTRUCTS", "E2E-VALIDATE-ACTIONS-STATE-CLASSES"]
+    },
+    {
+      "item": "BGA-117",
+      "case": "The defective modern fixture declares its expected findings",
+      "boundary": "repository",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
+    },
+    {
+      "item": "BGA-118",
+      "case": "A modern project produces real state findings rather than unsupported syntax",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-MODERN-DEFECTS"]
+    },
+    {
+      "item": "BGA-118",
+      "case": "A state name defaults to its class name and the state types map to the same outcomes",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"]
+    },
+    {
+      "item": "BGA-118",
+      "case": "getArgs, onEnteringState and zombie are recognized as the handlers they are",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"]
+    },
+    {
+      "item": "BGA-118",
+      "case": "What the reader cannot interpret stays unsupported syntax",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-STATES-UNSUPPORTED"]
+    },
+    {
+      "item": "BGA-119",
+      "case": "A modern project no longer reports action.trace.unavailable for lacking an action class",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTIONS-MODERN-CLEAN"]
+    },
+    {
+      "item": "BGA-119",
+      "case": "Parameters are compared through the framework autowiring rather than request reads",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTIONS-STATE-CLASSES"]
+    },
+    {
+      "item": "BGA-119",
+      "case": "Parameter attributes are read where present",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTIONS-MODERN-DEFECTS"]
+    },
+    {
+      "item": "BGA-120",
+      "case": "A modern project compares notifications in both directions",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-MODERN-DEFECTS"
+      ]
+    },
+    {
+      "item": "BGA-120",
+      "case": "The legacy send and subscribe forms keep working",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+    },
+    {
+      "item": "BGA-120",
+      "case": "A project mixing both generations is read correctly",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-121",
+      "case": "The database audit is proven on the modern layout",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-MODERN-CLEAN",
+        "E2E-AUDIT-DATABASE-MODERN-DEFECTS",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+      ]
+    },
+    {
+      "item": "BGA-122",
+      "case": "The most common part-migrated shape is detected and read",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-122",
+      "case": "Each component reports its own generation and the files that produced it",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-122",
+      "case": "A project with no resolvable generation stays unrecognized, with the markers found",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-UNRECOGNIZED"]
+    },
+    {
+      "item": "BGA-122",
+      "case": "Every capability runs against the hybrid layout through the public boundary",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-INSPECT-PROJECT-HYBRID",
+        "E2E-VALIDATE-PROJECT-HYBRID",
+        "E2E-VALIDATE-STATES-HYBRID",
+        "E2E-VALIDATE-ACTIONS-HYBRID",
+        "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
+        "E2E-AUDIT-DATABASE-HYBRID"
+      ]
+    },
+    {
+      "item": "BGA-123",
+      "case": "Both state sources are read into one machine",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-123",
+      "case": "A transition crossing the two sources is not a dangling target",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-PROJECT-HYBRID"]
+    },
+    {
+      "item": "BGA-123",
+      "case": "A state declared in both sources is taken from the class",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+    }
+  ]
+}

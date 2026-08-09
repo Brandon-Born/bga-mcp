@@ -19,6 +19,18 @@ if (!defined('STATE_END_GAME')) {
 }
 
 $machinestates = [
+    // Migrated to modules/php/States/PlayerTurn.php and not yet removed from
+    // here, which is what a project looks like part-way through. The framework
+    // runs the class, so the class is what a reader must take.
+    STATE_PLAYER_TURN => GameStateBuilder::create()
+        ->name('playerTurnBeforeMigration')
+        ->description('')
+        ->descriptionmyturn('')
+        ->type(StateType::ACTIVE_PLAYER)
+        ->possibleactions(['actPass'])
+        ->transitions(['pass' => STATE_GAME_TURN])
+        ->build(),
+
     STATE_GAME_TURN => GameStateBuilder::create()
         ->name('gameTurn')
         ->description('')

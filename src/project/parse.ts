@@ -428,13 +428,16 @@ export function parseLegacyStates(
 
   for (const part of splitTopLevel(masked, span.start + 1, span.end)) {
     const entry = source.slice(part.start, part.end);
-    const arrow = maskLiterals(entry).indexOf('=>');
+    // The key is read from the masked copy, where a comment above the entry is
+    // blanked. Reading it from the source would make the comment part of it.
+    const maskedEntry = masked.slice(part.start, part.end);
+    const arrow = maskedEntry.indexOf('=>');
     if (arrow === -1) {
       report(`state entry without an identifier: ${entry.trim()}`, 'declaration');
       continue;
     }
 
-    const key = entry.slice(0, arrow);
+    const key = maskedEntry.slice(0, arrow);
     const id = resolveIntExpression(key, constants);
     if (id === null) {
       report(`non-literal state key ${key.trim()}`, 'declaration');

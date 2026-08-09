@@ -35,11 +35,13 @@ let server: PackagedServer<
   | 'moderncleangame'
   | 'stateclassgame'
   | 'unreadablegame'
+  | 'hybridgame'
 >;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let modernCleanRoot: string;
+let hybridRoot: string;
 let stateClassRoot: string;
 let unreadableRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
@@ -66,6 +68,7 @@ beforeAll(async () => {
     brokengame: 'legacy-broken',
     moderngame: 'modern-broken',
     moderncleangame: 'modern',
+    hybridgame: 'hybrid',
     stateclassgame: 'modern-state-classes',
     unreadablegame: 'modern-unreadable',
   });
@@ -73,6 +76,7 @@ beforeAll(async () => {
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
   modernCleanRoot = server.projects.moderncleangame;
+  hybridRoot = server.projects.hybridgame;
   stateClassRoot = server.projects.stateclassgame;
   unreadableRoot = server.projects.unreadablegame;
   expectedBroken = (
@@ -272,5 +276,22 @@ describe('packaged validate_state_machine', () => {
     expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
       expectedModern.codes,
     );
+  });
+  it('[E2E-VALIDATE-STATES-HYBRID] reads a part-migrated project through the public boundary', async () => {
+    const response = await withServer(
+      ['--project-root', hybridRoot],
+      async (client) => await callValidate(client, { projectRoot: hybridRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    // Nothing in the hybrid fixture is a defect: its metadata, client and one
+    // state are still in the older form while its game logic and another state
+    // have moved, and every capability must read that as one project.
+    expect(response.structured?.layout).toBe('hybrid');
+    expect(response.structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
   });
 });

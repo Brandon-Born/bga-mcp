@@ -88,7 +88,7 @@ describe('pre-release audit', () => {
     expect(audit.counts.failed).toBe(1);
   });
 
-  it('[E2E-PRE-RELEASE-MANUAL-NEVER-PASSES] never counts a manual check as passed', () => {
+  it('never counts a manual check as passed', () => {
     const audit = auditPreRelease(
       CATALOG,
       [group('state-machine', 'passed'), group('database', 'passed')],
@@ -102,7 +102,7 @@ describe('pre-release audit', () => {
     ).not.toContain('manual.artwork.rights');
   });
 
-  it('[E2E-PRE-RELEASE-PARTIAL-SUPPORT] never turns an unrun or unreadable check into a pass', () => {
+  it('never turns an unrun or unreadable check into a pass', () => {
     const failedGroup = auditPreRelease(
       CATALOG,
       [group('state-machine', 'passed'), group('database', 'failed')],
@@ -142,7 +142,7 @@ describe('pre-release audit', () => {
     ).toBe('unsupported');
   });
 
-  it('[E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED] leaves a check unsupported when its validator read only part of the project', () => {
+  it('leaves a check unsupported when its validator read only part of the project', () => {
     // The validator ran and found a real defect elsewhere, but also reported a
     // construct it could not read. A check with no finding of its own has not
     // been shown to pass: its input was incomplete.

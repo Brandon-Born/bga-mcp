@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/acceptance-map.schema.json",
+  "title": "bga-mcp acceptance-to-evidence map",
+  "description": "Maps each literal acceptance case of a backlog item to the installed-package assertion that proves it, or records that nothing does yet. Checked by `pnpm verify:acceptance-map`.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "updatedAt", "owner", "cases"],
+  "properties": {
+    "$schema": { "const": "./acceptance-map.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "updatedAt": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+    "owner": { "type": "string", "pattern": "^BGA-[0-9]+$" },
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "case", "boundary"],
+        "properties": {
+          "item": {
+            "type": "string",
+            "pattern": "^BGA-[0-9]+$",
+            "description": "The backlog item whose acceptance criterion this case comes from."
+          },
+          "case": {
+            "type": "string",
+            "minLength": 10,
+            "description": "The acceptance criterion, in the words the backlog uses."
+          },
+          "boundary": {
+            "enum": ["packaged", "repository"],
+            "description": "packaged: proven through the installed server by a tests/e2e assertion. repository: proven by a gate over the repository itself, such as fixture integrity."
+          },
+          "scenarios": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$" }
+          },
+          "missing": {
+            "type": "string",
+            "minLength": 10,
+            "description": "Why nothing proves this case yet. The gate counts these; it does not accept them as evidence."
+          }
+        },
+        "oneOf": [{ "required": ["scenarios"] }, { "required": ["missing"] }]
+      }
+    }
+  }
+}

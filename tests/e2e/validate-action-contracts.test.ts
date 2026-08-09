@@ -32,13 +32,14 @@ interface ContractResult {
 }
 
 let server: PackagedServer<
-  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame'
+  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame' | 'hybridgame'
 >;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let stateClassRoot: string;
 let modernCleanRoot: string;
+let hybridRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
@@ -65,12 +66,14 @@ beforeAll(async () => {
     moderngame: 'modern-broken',
     stateclassgame: 'modern-state-classes',
     moderncleangame: 'modern',
+    hybridgame: 'hybrid',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
   stateClassRoot = server.projects.stateclassgame;
   modernCleanRoot = server.projects.moderncleangame;
+  hybridRoot = server.projects.hybridgame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['modules/js']);
   expectedBroken = (
     await readFixtureExpectations<{
@@ -270,5 +273,22 @@ describe('packaged validate_action_contracts', () => {
     // client is expected to send.
     const play = structured?.trace.entryPoints.find((entry) => entry.action === 'actPlayToken');
     expect(play?.argumentNames).toEqual(['tokenId']);
+  });
+  it('[E2E-VALIDATE-ACTIONS-HYBRID] reads a part-migrated project through the public boundary', async () => {
+    const response = await withServer(
+      ['--project-root', hybridRoot],
+      async (client) => await callValidate(client, { projectRoot: hybridRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    // Nothing in the hybrid fixture is a defect: its metadata, client and one
+    // state are still in the older form while its game logic and another state
+    // have moved, and every capability must read that as one project.
+    expect(response.structured?.layout).toBe('hybrid');
+    expect(response.structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
   });
 });

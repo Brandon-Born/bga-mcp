@@ -1,7 +1,14 @@
 import { createHash } from 'node:crypto';
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import { extname, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { buildProjectModel, type ProjectModel } from '../src/project/model.js';
+import { auditDatabaseUsage } from '../src/rules/database.js';
+import { validateActionContracts } from '../src/rules/action-contracts.js';
+import { validateNotifications } from '../src/rules/notifications.js';
+import { validateStateMachine } from '../src/rules/state-machine.js';
+import type { DiagnosticResult } from '../src/diagnostics.js';
 
 const projectsRoot = fileURLToPath(new URL('./fixtures/projects/', import.meta.url));
 const bannedAssetExtensions = new Set([
@@ -40,6 +47,55 @@ async function hashes(directory: string): Promise<Record<string, string>> {
       .digest('hex');
   }
   return result;
+}
+
+interface FixtureRun {
+  readonly model: ProjectModel;
+  readonly results: Readonly<Record<string, DiagnosticResult>>;
+}
+
+/**
+ * Runs the product against a fixture.
+ *
+ * A fixture that only agrees with its own description proves nothing: the
+ * declared model and findings have to be what the readers and rules actually
+ * produce from those files, which is what this builds.
+ */
+async function run(directory: string, paths: readonly string[]): Promise<FixtureRun> {
+  const read = async (path: string): Promise<string> =>
+    await readFile(resolve(directory, path), 'utf8');
+  const files = await Promise.all(
+    paths.map(async (path) => ({ path, bytes: (await stat(resolve(directory, path))).size })),
+  );
+
+  const model = await buildProjectModel(
+    { root: directory, files, truncated: false, skippedLinks: [] },
+    { read },
+  );
+  const php = await Promise.all(
+    paths
+      .filter((path) => path.endsWith('.php'))
+      .map(async (path) => ({ path, text: await read(path) })),
+  );
+  const client = await Promise.all(
+    paths
+      .filter((path) => /\.(?:js|ts)$/u.test(path))
+      .map(async (path) => ({ path, text: await read(path) })),
+  );
+  const schema = paths.find((path) => path.endsWith('.sql'));
+
+  return {
+    model,
+    results: {
+      stateMachine: validateStateMachine(model, php),
+      actionContracts: validateActionContracts(model, client, php).diagnostics,
+      notifications: validateNotifications(php, client).diagnostics,
+      database: auditDatabaseUsage(
+        schema === undefined ? null : { path: schema, text: await read(schema) },
+        php,
+      ).diagnostics,
+    },
+  };
 }
 
 describe('BGA project fixture corpus', () => {
@@ -132,6 +188,33 @@ describe('BGA project fixture corpus', () => {
         for (const pattern of bannedSecretPatterns) {
           expect(content).not.toMatch(pattern);
         }
+      }
+
+      // The declaration is checked against the product, not against itself: the
+      // readers and rules run over these files, and every block the fixture
+      // declares must be what they produced.
+      const { model, results } = await run(directory, actualFiles);
+      expect(model.layout, `${fixture} layout`).toBe(expected.layout);
+      expect(
+        model.diagnostics.findings.map((finding) => finding.code),
+        `${fixture} model diagnostics`,
+      ).toEqual(expected.diagnostics);
+
+      for (const [group, declared] of Object.entries({
+        stateMachine: expected.stateMachine,
+        actionContracts: expected.actionContracts,
+        notifications: expected.notifications,
+        database: expected.database,
+      })) {
+        if (declared === undefined) {
+          continue;
+        }
+        const result = results[group];
+        expect(result?.status, `${fixture} ${group} status`).toBe(declared.status);
+        expect(
+          result?.findings.map((finding) => finding.code),
+          `${fixture} ${group} findings`,
+        ).toEqual(declared.codes);
       }
 
       expect(await hashes(directory)).toEqual(before);

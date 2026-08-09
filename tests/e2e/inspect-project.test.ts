@@ -34,6 +34,8 @@ let unrecognizedRoot: string;
 let linkedRoot: string;
 let outsideRoot: string;
 let largeRoot: string;
+let emptyRoot: string;
+let partialRoot: string;
 
 async function digest(directory: string): Promise<string> {
   const hash = createHash('sha256');
@@ -121,6 +123,8 @@ beforeAll(async () => {
   linkedRoot = resolve(projects, 'linkedgame');
   outsideRoot = resolve(temporaryRoot, 'outside');
   largeRoot = resolve(projects, 'largegame');
+  emptyRoot = resolve(projects, 'emptygame');
+  partialRoot = resolve(projects, 'partialgame');
 
   await cp(resolve(fixturesRoot, 'modern'), modernRoot, { recursive: true });
   await cp(resolve(fixturesRoot, 'legacy'), legacyRoot, { recursive: true });
@@ -128,6 +132,16 @@ beforeAll(async () => {
   await rm(resolve(modernRoot, 'expected.json'));
   await rm(resolve(legacyRoot, 'expected.json'));
   await rm(resolve(hybridRoot, 'expected.json'));
+
+  await mkdir(emptyRoot, { recursive: true });
+
+  // A project with metadata and nothing else: one component identifies its
+  // form, which is a partial layout rather than an unrecognized one.
+  await mkdir(partialRoot, { recursive: true });
+  await writeFile(
+    resolve(partialRoot, 'gameinfos.inc.php'),
+    "<?php\n$gameinfos = ['game_name' => 'Partial', 'players' => [2]];\n",
+  );
 
   await mkdir(unrecognizedRoot, { recursive: true });
   await writeFile(resolve(unrecognizedRoot, 'README.md'), '# not a BGA project\n');
@@ -207,7 +221,11 @@ describe('packaged inspect_project', () => {
       layout: string;
       gameKey: string;
       detection: { components: { id: string; generation: string }[] };
-      states: { parsed: boolean; sources: string[]; definitions: { id: number; name: string }[] };
+      states: {
+        parsed: boolean;
+        sources: string[];
+        definitions: { id: number; name: string; origin: string; description: string | null }[];
+      };
       diagnostics: { status: string; findings: { code: string; severity?: string }[] };
     };
 
@@ -239,6 +257,15 @@ describe('packaged inspect_project', () => {
       'modules/php/States/PlayerTurn.php',
     ]);
     expect(structured.states.definitions.map((state) => state.id)).toEqual([2, 3]);
+    // State 2 is declared in both sources while the migration is part-way
+    // through. The class is what the framework runs, so the class is what the
+    // merged machine shows — name, description and all.
+    expect(structured.states.definitions[0]).toMatchObject({
+      id: 2,
+      name: 'PlayerTurn',
+      origin: 'class',
+      description: '${actplayer} must play a card or pass',
+    });
     // Nothing here is a defect: the only finding says the migration is part-way.
     expect(structured.diagnostics.findings.map((finding) => finding.code)).toEqual([
       'project.states.partially-migrated',
@@ -432,5 +459,49 @@ describe('packaged inspect_project', () => {
 
     expect(response.isError).toBe(true);
     expect(response.text).toContain('policy.output.too-large');
+  });
+  it('[E2E-INSPECT-PROJECT-EMPTY] reports an empty directory rather than failing on it', async () => {
+    const response = await withServer(
+      ['--project-root', emptyRoot],
+      async (client) => await callInspect(client, { projectRoot: emptyRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured as {
+      layout: string;
+      fileCount: number;
+      states: { parsed: boolean };
+      diagnostics: { status: string; findings: { code: string; severity: string }[] };
+    };
+    expect(structured.layout).toBe('unrecognized');
+    expect(structured.fileCount).toBe(0);
+    expect(structured.states.parsed).toBe(false);
+    // An empty directory is a fact about the project, reported with the reason.
+    expect(structured.diagnostics.findings.map((finding) => finding.code)).toContain(
+      'project.layout.unrecognized',
+    );
+    expect(response.text).toContain('unrecognized');
+  });
+
+  it('[E2E-INSPECT-PROJECT-PARTIAL] reports a partial layout as partial, not as recognized or unknown', async () => {
+    const response = await withServer(
+      ['--project-root', partialRoot],
+      async (client) => await callInspect(client, { projectRoot: partialRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured as {
+      layout: string;
+      detection: { certainty: string; reason: string };
+      diagnostics: { findings: { code: string; severity: string }[] };
+    };
+    expect(structured.layout).toBe('legacy');
+    expect(structured.detection.certainty).not.toBe('certain');
+    const partial = structured.diagnostics.findings.find(
+      (finding) => finding.code === 'project.layout.partial',
+    );
+    expect(partial?.severity).toBe('warning');
+    // The reason names what was found rather than claiming nothing was.
+    expect(structured.detection.reason).toContain('metadata');
   });
 });
