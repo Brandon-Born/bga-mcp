@@ -91,6 +91,7 @@ export const InspectProjectOutputSchema = z.strictObject({
   fileCount: z.number().int().nonnegative(),
   truncated: z.boolean(),
   skippedLinks: z.array(z.string()),
+  unreadablePaths: z.array(z.string()),
   diagnostics: DiagnosticResultSchema,
 });
 

@@ -6,6 +6,7 @@ function listing(paths: readonly string[], root = '/workspace/bgamcptest'): Proj
     root,
     files: paths.map((path) => ({ path, bytes: 10 })),
     skippedLinks: [],
+    unreadablePaths: [],
     truncated: false,
   };
 }

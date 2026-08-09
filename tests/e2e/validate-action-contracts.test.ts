@@ -32,7 +32,13 @@ interface ContractResult {
 }
 
 let server: PackagedServer<
-  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame' | 'hybridgame'
+  | 'cleangame'
+  | 'brokengame'
+  | 'moderngame'
+  | 'moderncleangame'
+  | 'stateclassgame'
+  | 'hybridgame'
+  | 'unreadablegame'
 >;
 let cleanRoot: string;
 let brokenRoot: string;
@@ -40,6 +46,7 @@ let modernRoot: string;
 let stateClassRoot: string;
 let modernCleanRoot: string;
 let hybridRoot: string;
+let unreadableRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
@@ -67,6 +74,7 @@ beforeAll(async () => {
     stateclassgame: 'modern-state-classes',
     moderncleangame: 'modern',
     hybridgame: 'hybrid',
+    unreadablegame: 'modern-unreadable',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
@@ -74,6 +82,7 @@ beforeAll(async () => {
   stateClassRoot = server.projects.stateclassgame;
   modernCleanRoot = server.projects.moderncleangame;
   hybridRoot = server.projects.hybridgame;
+  unreadableRoot = server.projects.unreadablegame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['modules/js']);
   expectedBroken = (
     await readFixtureExpectations<{
@@ -290,5 +299,21 @@ describe('packaged validate_action_contracts', () => {
       summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
       findings: [],
     });
+  });
+  it('[E2E-VALIDATE-ACTIONS-UNSUPPORTED-SYNTAX] reports a computed action name rather than guessing at it', async () => {
+    const response = await withServer(
+      ['--project-root', unreadableRoot],
+      async (client) => await callValidate(client, { projectRoot: unreadableRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const findings = response.structured?.diagnostics.findings ?? [];
+
+    // The result is the reader stating its own limit, and nothing else: no
+    // certain claim is derived from what it could not read.
+    expect(response.structured?.diagnostics.status).toBe('unsupported');
+    expect(findings.map((finding) => finding.code)).toEqual(['action.unsupported-syntax']);
+    expect(findings.every((finding) => finding.kind === 'unsupported-syntax')).toBe(true);
+    expect(findings[0]?.message.length).toBeGreaterThan(20);
   });
 });

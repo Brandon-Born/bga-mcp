@@ -86,6 +86,8 @@ export interface ProjectModel {
   readonly fileCount: number;
   readonly truncated: boolean;
   readonly skippedLinks: readonly string[];
+  /** Directories the process may not read, so a caller can see what is absent. */
+  readonly unreadablePaths: readonly string[];
   readonly diagnostics: DiagnosticResult;
 }
 
@@ -637,6 +639,19 @@ export async function buildProjectModel(
     );
   }
 
+  for (const path of listing.unreadablePaths) {
+    findings.push(
+      issue(
+        'project.listing.unreadable',
+        'warning',
+        `A directory inside the project could not be read: ${path}.`,
+        'The operating system refused to list it, so whatever it holds is absent from this result.',
+        path,
+        'Grant the server read access to it, or confirm it is deliberately closed.',
+      ),
+    );
+  }
+
   for (const link of listing.skippedLinks) {
     findings.push(
       issue(
@@ -672,6 +687,7 @@ export async function buildProjectModel(
     fileCount: listing.files.length,
     truncated: listing.truncated,
     skippedLinks: listing.skippedLinks,
+    unreadablePaths: listing.unreadablePaths,
     diagnostics: summarize(findings),
   };
 }

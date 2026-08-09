@@ -756,7 +756,8 @@
       "fixtures": {
         "valid": "tests/fixtures/projects/legacy",
         "failing": "tests/fixtures/projects/legacy-broken",
-        "validModern": "tests/fixtures/projects/modern"
+        "validModern": "tests/fixtures/projects/modern",
+        "failingModern": "tests/fixtures/projects/modern-broken"
       },
       "scenarios": [
         "E2E-VALIDATE-STATES-CLEAN",

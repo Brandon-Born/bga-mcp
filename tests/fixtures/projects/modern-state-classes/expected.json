@@ -1,5 +1,6 @@
 {
   "layout": "modern",
+  "represents": "The rest of the documented state-class surface: every state type including a PRIVATE state behind initialPrivate, #[PossibleAction] handlers with injected parameters, the $this->notif shortcut, and SQL-looking strings that run nothing.",
   "files": [
     "dbmodel.sql",
     "gameinfos.jsonc",

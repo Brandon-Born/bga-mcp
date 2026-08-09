@@ -14,16 +14,16 @@ Support levels use the vocabulary from [TESTING.md](TESTING.md):
 
 | Claim                     | Layout         | Support   | Fixture                               |
 | ------------------------- | -------------- | --------- | ------------------------------------- |
-| CLAIM-LAYOUT-MODERN       | modern-modules | unknown   | tests/fixtures/projects/modern        |
+| CLAIM-LAYOUT-MODERN       | modern-modules | supported | tests/fixtures/projects/modern        |
 | CLAIM-LAYOUT-LEGACY       | legacy-flat    | supported | tests/fixtures/projects/legacy        |
-| CLAIM-LAYOUT-HYBRID       | part-migrated  | unknown   | tests/fixtures/projects/hybrid        |
+| CLAIM-LAYOUT-HYBRID       | part-migrated  | supported | tests/fixtures/projects/hybrid        |
 | CLAIM-LAYOUT-UNRECOGNIZED | unrecognized   | unknown   | none — reported as unsupported syntax |
 
 BGA migrates a project one file at a time, and the documentation marks the older form of each file deprecated rather than removed. `legacy` and `modern` are therefore the two ends of a range, not two templates: detection resolves a generation for metadata, game logic, states, and client logic separately, and reports `hybrid` when they disagree. A project is `unrecognized` only when none of the four can be identified.
 
-Modern and hybrid support were reopened by the 2026-08-08 installed-package audit. Detection still works, but common documented state, action, notification, and query forms produced false findings, and the hybrid public-boundary matrix is incomplete. BGA-124 through BGA-128 own restoration of these claims.
+Modern and hybrid support were reopened by the 2026-08-08 installed-package audit, and are restored here. BGA-124 corrected the state semantics, BGA-125 the action tracing, BGA-126 the notification registration and BGA-127 the database reading; BGA-128 then proved every acceptance case of the affected items through the installed server, including every capability against the part-migrated layout and the precedence a state declared in both sources takes.
 
-BGA-124 landed the state half: the entry point comes from whichever form the project declares it in, the framework's own identifiers 1 and 99 are not judged as the project's, `StateConstants`, `GameStateBuilder` and the documented state types are read, handler redirects count as edges, and a construct the reader cannot interpret silences the rules that depend on it instead of producing a certain finding. BGA-125 landed the action half: a `#[PossibleAction]` state method is an entry point, the framework's injected parameters are not client arguments, a game-class action needs no state to list it, and a parameter attribute decides both the name the client sends and the check the framework runs. BGA-126 landed the notification half: the state-class `$this->notif->all` shortcut is read, a `notif_` method counts as a handler only where `setupPromiseNotifications` registers it, and the types the framework predefines need no handler at all. BGA-127 landed the database half: a quoted string counts as a query only where data flow puts it in one of the framework's documented database methods, so an example in a comment or a string nothing runs no longer invents a table. The complete packaged matrix is still owned by BGA-128, so the claims stay `unknown`.
+A layout being inside the compatibility contract is not the same as a capability being release-verified. No capability is: CI has not run the commit being claimed, and conformance covers one of the two advertised protocol versions. BGA-005 and BGA-017 own that.
 
 ## File generations
 

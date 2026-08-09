@@ -1,5 +1,6 @@
 {
   "layout": "hybrid",
+  "represents": "A project part-way through migration: PHP metadata and a dojo client beside modules/php/Game.php, a GameStateBuilder states.inc.php, and one state declared in both sources so class precedence is visible.",
   "files": [
     "bgamcphybrid.css",
     "bgamcphybrid.js",

@@ -1,5 +1,6 @@
 {
   "layout": "modern",
+  "represents": "A modern project with readable defects: a dangling transition, an undocumented state type, a duplicate name, a dead end, a class taking a reserved identifier, a client value its parameter attribute rejects, an unregistered notification handler, and a query assembled at run time.",
   "files": [
     "dbmodel.sql",
     "gameinfos.jsonc",

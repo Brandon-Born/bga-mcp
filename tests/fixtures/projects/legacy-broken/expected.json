@@ -1,5 +1,6 @@
 {
   "layout": "legacy",
+  "represents": "The same legacy layout with one seeded defect per rule that can fail on it, so every legacy rule has negative evidence.",
   "files": [
     "brokengame.action.php",
     "brokengame.css",

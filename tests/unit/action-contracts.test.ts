@@ -57,6 +57,7 @@ function model(definitions: readonly StateDefinition[], parsed = true): ProjectM
     fileCount: 1,
     truncated: false,
     skippedLinks: [],
+    unreadablePaths: [],
     diagnostics: {
       schemaVersion: 1,
       status: 'passed',

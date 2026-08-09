@@ -1,5 +1,6 @@
 {
   "layout": "legacy",
+  "represents": "The flat legacy layout: <game>.game.php, <game>.action.php, <game>.view.php, states.inc.php and a dojo client, with states 1, 2 and 99 in the array form the framework still reads.",
   "files": [
     "bgamcplegacy.action.php",
     "bgamcplegacy.css",

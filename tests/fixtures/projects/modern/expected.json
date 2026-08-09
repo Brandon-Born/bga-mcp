@@ -1,5 +1,6 @@
 {
   "layout": "modern",
+  "represents": "The current namespaced layout: modules/php/Game.php with autowired actions, state classes with no reserved identifiers, StateConstants, and an ES-module client.",
   "files": [
     "dbmodel.sql",
     "gameinfos.jsonc",

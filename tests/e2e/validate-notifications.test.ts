@@ -30,13 +30,20 @@ interface NotificationResult {
 }
 
 let server: PackagedServer<
-  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame' | 'hybridgame'
+  | 'cleangame'
+  | 'brokengame'
+  | 'moderngame'
+  | 'moderncleangame'
+  | 'stateclassgame'
+  | 'hybridgame'
+  | 'unreadablegame'
 >;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
 let modernCleanRoot: string;
 let hybridRoot: string;
+let unreadableRoot: string;
 let stateClassRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
@@ -64,6 +71,7 @@ beforeAll(async () => {
     moderngame: 'modern-broken',
     moderncleangame: 'modern',
     hybridgame: 'hybrid',
+    unreadablegame: 'modern-unreadable',
     stateclassgame: 'modern-state-classes',
   });
   cleanRoot = server.projects.cleangame;
@@ -71,6 +79,7 @@ beforeAll(async () => {
   modernRoot = server.projects.moderngame;
   modernCleanRoot = server.projects.moderncleangame;
   hybridRoot = server.projects.hybridgame;
+  unreadableRoot = server.projects.unreadablegame;
   stateClassRoot = server.projects.stateclassgame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['modules/js']);
   expectedBroken = (
@@ -285,5 +294,21 @@ describe('packaged validate_notifications', () => {
       summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
       findings: [],
     });
+  });
+  it('[E2E-VALIDATE-NOTIFICATIONS-UNSUPPORTED-SYNTAX] reports a computed notification type rather than guessing at it', async () => {
+    const response = await withServer(
+      ['--project-root', unreadableRoot],
+      async (client) => await callValidate(client, { projectRoot: unreadableRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const findings = response.structured?.diagnostics.findings ?? [];
+
+    // The result is the reader stating its own limit, and nothing else: no
+    // certain claim is derived from what it could not read.
+    expect(response.structured?.diagnostics.status).toBe('unsupported');
+    expect(findings.map((finding) => finding.code)).toEqual(['notification.unsupported-syntax']);
+    expect(findings.every((finding) => finding.kind === 'unsupported-syntax')).toBe(true);
+    expect(findings[0]?.message.length).toBeGreaterThan(20);
   });
 });

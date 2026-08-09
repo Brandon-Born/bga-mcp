@@ -18,7 +18,12 @@ interface Check {
   readonly certainty?: string;
   readonly implementation?: string;
   readonly sources?: readonly { readonly kind: string; readonly reference: string }[];
-  readonly fixtures?: { readonly valid: string; readonly failing?: string };
+  readonly fixtures?: {
+    readonly valid: string;
+    readonly failing?: string;
+    readonly validModern?: string;
+    readonly failingModern?: string;
+  };
   readonly scenarios?: readonly string[];
   readonly manualReason?: string;
 }
@@ -34,6 +39,8 @@ interface Sources {
   readonly implemented: Map<string, { severity: string; certainty: string }>;
   readonly documentation: string;
   readonly fixtureCodes: Set<string>;
+  /** The codes the modern failing fixture declares, checked the same way. */
+  readonly modernFixtureCodes: Set<string>;
 }
 
 const RULE_DEFINITION =
@@ -117,20 +124,23 @@ async function verify(catalog: Catalog, sources: Sources): Promise<GateReport> {
       await exists(check.fixtures?.valid ?? ''),
       `${check.id} names a missing valid fixture`,
     );
-    if (check.fixtures?.failing !== undefined) {
-      report.require(
-        await exists(check.fixtures.failing),
-        `${check.id} names a missing failing fixture`,
-      );
-      report.require(
-        sources.fixtureCodes.has(check.id),
-        `${check.id} claims a failing fixture, but that fixture does not declare the finding`,
-      );
-    } else {
-      report.require(
-        !sources.fixtureCodes.has(check.id),
-        `${check.id} is produced by the failing fixture but the catalog does not record it`,
-      );
+    for (const [key, codes] of [
+      ['failing', sources.fixtureCodes],
+      ['failingModern', sources.modernFixtureCodes],
+    ] as const) {
+      const fixture = check.fixtures?.[key];
+      if (fixture !== undefined) {
+        report.require(await exists(fixture), `${check.id} names a missing ${key} fixture`);
+        report.require(
+          codes.has(check.id),
+          `${check.id} claims a ${key} fixture, but that fixture does not declare the finding`,
+        );
+      } else {
+        report.require(
+          !codes.has(check.id),
+          `${check.id} is produced by the ${key} fixture but the catalog does not record it`,
+        );
+      }
     }
     report.require(
       (check.sources ?? []).length > 0,
@@ -177,24 +187,40 @@ async function proveGateDetectsSeededDefects(catalog: Catalog, sources: Sources)
     'catalogue documentation',
     await verify(catalog, { ...sources, documentation: '' }),
   );
+
+  expectSeededFailure(
+    'modern failing fixture',
+    await verify(catalog, {
+      ...sources,
+      modernFixtureCodes: new Set([...sources.modernFixtureCodes, 'state.name.missing']),
+    }),
+  );
 }
 
 async function main(): Promise<void> {
   const catalog = await loadJson<Catalog>('config/rule-catalog.json');
-  const expected = await loadJson<Record<string, { codes?: string[] }>>(
-    'tests/fixtures/projects/legacy-broken/expected.json',
-  );
-  const fixtureCodes = new Set(
-    ['stateMachine', 'actionContracts', 'notifications', 'database'].flatMap(
-      (key) => expected[key]?.codes ?? [],
-    ),
-  );
+  const groups = ['stateMachine', 'actionContracts', 'notifications', 'database'];
+  const declaredCodes = async (fixture: string): Promise<Set<string>> => {
+    const expected = await loadJson<Record<string, { codes?: string[] }>>(
+      `tests/fixtures/projects/${fixture}/expected.json`,
+    );
+    // An unsupported-syntax code is the reader reporting its own limit, not a
+    // catalogued rule, so it is not cross-checked against the catalog.
+    return new Set(
+      groups
+        .flatMap((key) => expected[key]?.codes ?? [])
+        .filter((code) => !code.endsWith('.unsupported-syntax')),
+    );
+  };
+  const fixtureCodes = await declaredCodes('legacy-broken');
+  const modernFixtureCodes = await declaredCodes('modern-broken');
 
   const sources: Sources = {
     schema: await loadJson<object>('config/rule-catalog.schema.json'),
     implemented: await readImplementedRules(),
     documentation: await readFile(resolve(repositoryRoot, 'docs/RULES.md'), 'utf8'),
     fixtureCodes,
+    modernFixtureCodes,
   };
 
   await proveGateDetectsSeededDefects(catalog, sources);

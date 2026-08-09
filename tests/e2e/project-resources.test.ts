@@ -24,6 +24,11 @@ let temporaryRoot: string;
 let cli: string;
 let cleanRoot: string;
 let brokenRoot: string;
+let modernRoot: string;
+let hybridRoot: string;
+let unreadableRoot: string;
+let largeRoot: string;
+let refreshRoot: string;
 
 async function digest(directory: string): Promise<string> {
   const hash = createHash('sha256');
@@ -94,10 +99,33 @@ beforeAll(async () => {
   const projects = resolve(temporaryRoot, 'projects');
   cleanRoot = resolve(projects, 'cleangame');
   brokenRoot = resolve(projects, 'brokengame');
-  await cp(resolve(fixturesRoot, 'legacy'), cleanRoot, { recursive: true });
-  await cp(resolve(fixturesRoot, 'legacy-broken'), brokenRoot, { recursive: true });
-  for (const target of [cleanRoot, brokenRoot]) {
+  modernRoot = resolve(projects, 'moderngame');
+  hybridRoot = resolve(projects, 'hybridgame');
+  unreadableRoot = resolve(projects, 'unreadablegame');
+  refreshRoot = resolve(projects, 'refreshgame');
+  largeRoot = resolve(projects, 'largegame');
+  for (const [fixture, target] of [
+    ['legacy', cleanRoot],
+    ['legacy-broken', brokenRoot],
+    ['modern', modernRoot],
+    ['hybrid', hybridRoot],
+    ['modern-unreadable', unreadableRoot],
+    ['legacy', refreshRoot],
+  ] as const) {
+    await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
     await rm(resolve(target, 'expected.json'));
+  }
+
+  // More files than the listing budget allows, so the resource has to bound
+  // its own output rather than serve whatever the project happens to hold.
+  await mkdir(largeRoot, { recursive: true });
+  await writeFile(
+    resolve(largeRoot, 'gameinfos.inc.php'),
+    "<?php\n$gameinfos = ['game_name' => 'Large', 'players' => [2]];\n",
+  );
+  await writeFile(resolve(largeRoot, 'largegame.game.php'), '<?php\nclass X {}\n');
+  for (let index = 0; index < 600; index += 1) {
+    await writeFile(resolve(largeRoot, `module-${String(index)}.php`), '<?php\n// filler\n');
   }
 }, 240_000);
 
@@ -226,5 +254,90 @@ describe('packaged project resources', () => {
         /not found|unknown|resource/iu,
       );
     });
+  });
+  it('[E2E-RESOURCE-STATES-GENERATIONS] serves one documented shape for every supported generation', async () => {
+    for (const [root, expectedLayout, first] of [
+      [cleanRoot, 'legacy', { id: 1, origin: 'array' }],
+      [modernRoot, 'modern', { id: 2, origin: 'class' }],
+      [hybridRoot, 'hybrid', { id: 2, origin: 'class' }],
+    ] as const) {
+      const states = (await withServer(
+        ['--project-root', root],
+        async (client) => await readResource(client, STATES),
+      )) as {
+        layout: string;
+        definitions: { id: number; origin: string }[];
+        initial: { ids: number[]; origin: string };
+        validation: { status: string };
+      };
+
+      expect(states.layout, expectedLayout).toBe(expectedLayout);
+      // The same fields whichever form the project declares its states in.
+      expect(states.definitions[0], expectedLayout).toMatchObject(first);
+      expect(typeof states.initial.origin, expectedLayout).toBe('string');
+      expect(states.validation.status, expectedLayout).toBe('passed');
+    }
+  });
+
+  it('[E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED] never implies an unsupported check passed', async () => {
+    const diagnostics = (await withServer(
+      ['--project-root', unreadableRoot],
+      async (client) => await readResource(client, DIAGNOSTICS),
+    )) as {
+      status: string;
+      diagnostics: {
+        status: string;
+        summary: Record<string, number>;
+        findings: { kind: string }[];
+      };
+    };
+
+    // Everything this project states about itself is unreadable, so the
+    // resource says so instead of serving a clean result.
+    expect(diagnostics.diagnostics.status).toBe('unsupported');
+    expect(diagnostics.diagnostics.summary.unsupported).toBeGreaterThan(0);
+    expect(diagnostics.diagnostics.summary.errors).toBe(0);
+    expect(
+      diagnostics.diagnostics.findings.every((finding) => finding.kind === 'unsupported-syntax'),
+    ).toBe(true);
+  });
+
+  it('[E2E-RESOURCE-SUMMARY-BOUNDED] stays within its output limit on a large project', async () => {
+    const summary = (await withServer(
+      ['--project-root', largeRoot],
+      async (client) => await readResource(client, SUMMARY),
+    )) as { fileCount: number; truncated: boolean; components: { files: string[] }[] };
+
+    expect(summary.fileCount).toBeGreaterThan(100);
+    // Either the listing was cut short or every component list is bounded; in
+    // both cases the resource stays small enough to serve.
+    expect(
+      summary.truncated || summary.components.every((component) => component.files.length <= 20),
+    ).toBe(true);
+    expect(JSON.stringify(summary).length).toBeLessThan(200_000);
+  });
+
+  it('[E2E-RESOURCE-REFRESH] serves the project as it is now, not as it was when the session opened', async () => {
+    const states = resolve(refreshRoot, 'states.inc.php');
+    const before = await readFile(states, 'utf8');
+    try {
+      const [first, second] = await withServer(['--project-root', refreshRoot], async (client) => {
+        const initial = (await readResource(client, STATES)) as {
+          definitions: { id: number; transitions: Record<string, number> }[];
+        };
+        // The same session, a changed project: a resource that cached its
+        // first read would keep serving a machine that no longer exists.
+        await writeFile(states, before.replace("'pass' => 99", "'pass' => 99, 'again' => 2"));
+        const refreshed = (await readResource(client, STATES)) as {
+          definitions: { id: number; transitions: Record<string, number> }[];
+        };
+        return [initial, refreshed];
+      });
+
+      expect(Object.keys(first.definitions[1]?.transitions ?? {})).toEqual(['pass']);
+      expect(Object.keys(second.definitions[1]?.transitions ?? {})).toEqual(['pass', 'again']);
+    } finally {
+      await writeFile(states, before);
+    }
   });
 });

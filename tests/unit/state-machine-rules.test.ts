@@ -68,6 +68,7 @@ function model(
     fileCount: definitions.length,
     truncated: false,
     skippedLinks: [],
+    unreadablePaths: [],
     diagnostics: {
       schemaVersion: 1,
       status: 'passed',

@@ -1,5 +1,6 @@
 {
   "layout": "modern",
+  "represents": "A modern project written in constructs no reader can resolve without running it \u2014 a computed state identifier, a computed redirect, a computed action name, a computed notification type, and a statement outside the documented set \u2014 so every validator must report its limit and derive nothing.",
   "files": [
     "dbmodel.sql",
     "gameinfos.jsonc",
@@ -21,5 +22,35 @@
       "unsupported": 2
     },
     "codes": ["project.states.unsupported", "project.states.unsupported"]
+  },
+  "actionContracts": {
+    "status": "unsupported",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    },
+    "codes": ["action.unsupported-syntax"]
+  },
+  "notifications": {
+    "status": "unsupported",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    },
+    "codes": ["notification.unsupported-syntax"]
+  },
+  "database": {
+    "status": "unsupported",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    },
+    "codes": ["database.unsupported-syntax"]
   }
 }

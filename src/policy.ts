@@ -70,7 +70,15 @@ export interface ProjectListing {
   readonly files: readonly ProjectFile[];
   /** Links found inside the root. They are reported, never followed. */
   readonly skippedLinks: readonly string[];
+  /** Directories the process may not read. Reported, so nothing is silently absent. */
+  readonly unreadablePaths: readonly string[];
   readonly truncated: boolean;
+}
+
+/** Whether a filesystem error is the operating system refusing access. */
+function isPermissionError(error: unknown): boolean {
+  const code = (error as { code?: string } | null)?.code;
+  return code === 'EACCES' || code === 'EPERM';
 }
 
 /** Configuration files the package ships and may read for itself. */
@@ -449,6 +457,7 @@ export class PolicyBoundary {
 
     const files: ProjectFile[] = [];
     const skippedLinks: string[] = [];
+    const unreadablePaths: string[] = [];
     let truncated = false;
 
     const walk = async (directory: string, depth: number): Promise<void> => {
@@ -459,7 +468,19 @@ export class PolicyBoundary {
         truncated = true;
         return;
       }
-      const entries = await readdir(directory, { withFileTypes: true });
+      let entries;
+      try {
+        entries = await readdir(directory, { withFileTypes: true });
+      } catch (error) {
+        // A directory the process may not read is a fact about the project,
+        // not a failure of the server. It is recorded by its project-relative
+        // path so the caller knows what was left out, and the rest is read.
+        if (!isPermissionError(error)) {
+          throw error;
+        }
+        unreadablePaths.push(relative(allowedRoot, directory).split(sep).join('/') || '.');
+        return;
+      }
       for (const entry of [...entries].sort((left, right) => left.name.localeCompare(right.name))) {
         const absolute = join(directory, entry.name);
         const portable = relative(allowedRoot, absolute).split(sep).join('/');
@@ -483,7 +504,7 @@ export class PolicyBoundary {
     };
 
     await walk(allowedRoot, 1);
-    return { root: allowedRoot, files, skippedLinks, truncated };
+    return { root: allowedRoot, files, skippedLinks, unreadablePaths, truncated };
   }
 
   /** Reads one file inside an allowed root, refusing anything above the byte budget. */

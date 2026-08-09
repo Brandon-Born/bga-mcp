@@ -1,3 +1,6 @@
+import { mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+
 import type { Client } from '@modelcontextprotocol/client';
 
 import {
@@ -44,6 +47,7 @@ let modernCleanRoot: string;
 let hybridRoot: string;
 let stateClassRoot: string;
 let unreadableRoot: string;
+let ruleCoverageRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
   {} as never;
 let expectedBroken: { status: string; summary: Record<string, number>; codes: string[] };
@@ -84,6 +88,30 @@ beforeAll(async () => {
       stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
     }>('legacy-broken')
   ).stateMachine;
+  ruleCoverageRoot = resolve(server.temporaryRoot, 'projects', 'rulecoverage');
+  await mkdir(resolve(ruleCoverageRoot), { recursive: true });
+  await writeFile(
+    resolve(ruleCoverageRoot, 'gameinfos.inc.php'),
+    "<?php\n$gameinfos = ['game_name' => 'RuleCoverage', 'players' => [2]];\n",
+  );
+  await writeFile(
+    resolve(ruleCoverageRoot, 'rulecoverage.game.php'),
+    '<?php\nclass RuleCoverage extends Table {}\n',
+  );
+  // No state 1, no state 2 and no setupNewGame, so nothing names an entry
+  // point; state 7 is declared twice, and the later entry is the one PHP keeps;
+  // state 8 has no name; state 7 allows an action no PHP source declares.
+  await writeFile(
+    resolve(ruleCoverageRoot, 'states.inc.php'),
+    `<?php
+$machinestates = [
+    7 => ['name' => 'first', 'type' => 'activeplayer', 'possibleactions' => ['actNowhere'], 'transitions' => ['next' => 8]],
+    7 => ['name' => 'second', 'type' => 'activeplayer', 'possibleactions' => ['actNowhere'], 'transitions' => ['next' => 8]],
+    8 => ['type' => 'game', 'action' => 'stSomething', 'transitions' => ['back' => 7]],
+];
+`,
+  );
+
   expectedModern = (
     await readFixtureExpectations<{
       stateMachine: { status: string; summary: Record<string, number>; codes: string[] };
@@ -293,5 +321,28 @@ describe('packaged validate_state_machine', () => {
       summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
       findings: [],
     });
+  });
+  it('[E2E-VALIDATE-STATES-RULE-COVERAGE] reports the entry point, duplicate, nameless and unbacked-action defects', async () => {
+    const response = await withServer(
+      ['--project-root', ruleCoverageRoot],
+      async (client) => await callValidate(client, { projectRoot: ruleCoverageRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const codes = response.structured?.diagnostics.findings.map((finding) => finding.code) ?? [];
+
+    // The four rules that had no failing fixture, each proven through the
+    // installed server rather than by construction in a unit test.
+    expect(codes).toContain('state.initial.missing');
+    expect(codes).toContain('state.id.duplicate');
+    expect(codes).toContain('state.name.missing');
+    expect(codes).toContain('state.possible-action.handler-missing');
+    expect(response.structured?.initialState.origin).toBe('unresolved');
+
+    const handler = response.structured?.diagnostics.findings.find(
+      (finding) => finding.code === 'state.possible-action.handler-missing',
+    );
+    // A cross-file claim stays a heuristic even when it is right.
+    expect(handler?.kind).toBe('heuristic');
   });
 });

@@ -58,7 +58,10 @@
           "E2E-AUDIT-DATABASE-MODERN-CLEAN",
           "E2E-AUDIT-DATABASE-MODERN-DEFECTS",
           "E2E-AUDIT-DATABASE-STRINGS-ONLY",
-          "E2E-AUDIT-DATABASE-HYBRID"
+          "E2E-AUDIT-DATABASE-HYBRID",
+          "E2E-AUDIT-DATABASE-UNREADABLE-STATEMENT",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -106,7 +109,11 @@
           "E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED",
           "INT-CLIENT-ROOTS-ADOPTED",
           "E2E-INSPECT-PROJECT-EMPTY",
-          "E2E-INSPECT-PROJECT-PARTIAL"
+          "E2E-INSPECT-PROJECT-PARTIAL",
+          "E2E-INSPECT-PROJECT-UNREADABLE-FILES",
+          "E2E-INSPECT-PROJECT-NESTED-ROOT",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -155,7 +162,9 @@
           "E2E-PRE-RELEASE-CATALOG-VERSION",
           "E2E-PRE-RELEASE-INVALID-INPUT",
           "E2E-PRE-RELEASE-IMMUTABLE",
-          "E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED"
+          "E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -200,7 +209,10 @@
           "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
           "E2E-VALIDATE-ACTIONS-MODERN-DEFECTS",
           "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
-          "E2E-VALIDATE-ACTIONS-HYBRID"
+          "E2E-VALIDATE-ACTIONS-HYBRID",
+          "E2E-VALIDATE-ACTIONS-UNSUPPORTED-SYNTAX",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -224,7 +236,10 @@
           "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
           "E2E-VALIDATE-NOTIFICATIONS-MODERN-DEFECTS",
           "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES",
-          "E2E-VALIDATE-NOTIFICATIONS-HYBRID"
+          "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
+          "E2E-VALIDATE-NOTIFICATIONS-UNSUPPORTED-SYNTAX",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -245,7 +260,9 @@
           "E2E-VALIDATE-PROJECT-CLEAN",
           "E2E-VALIDATE-PROJECT-INVALID-INPUT",
           "E2E-VALIDATE-PROJECT-UNLISTED-ROOT",
-          "E2E-VALIDATE-PROJECT-HYBRID"
+          "E2E-VALIDATE-PROJECT-HYBRID",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -269,7 +286,10 @@
           "E2E-VALIDATE-STATES-MODERN-CLEAN",
           "E2E-VALIDATE-STATES-MODERN-DEFECTS",
           "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
-          "E2E-VALIDATE-STATES-HYBRID"
+          "E2E-VALIDATE-STATES-HYBRID",
+          "E2E-VALIDATE-STATES-RULE-COVERAGE",
+          "E2E-TOOLS-REDACTION",
+          "E2E-TOOLS-DEFAULT-ROOT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -325,7 +345,8 @@
           "E2E-RESOURCE-DISCOVERY",
           "E2E-RESOURCE-UNCONFIGURED",
           "E2E-RESOURCE-AMBIGUOUS",
-          "E2E-RESOURCE-IMMUTABLE"
+          "E2E-RESOURCE-IMMUTABLE",
+          "E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -343,7 +364,9 @@
           "E2E-RESOURCE-DISCOVERY",
           "E2E-RESOURCE-UNCONFIGURED",
           "E2E-RESOURCE-AMBIGUOUS",
-          "E2E-RESOURCE-IMMUTABLE"
+          "E2E-RESOURCE-IMMUTABLE",
+          "E2E-RESOURCE-STATES-GENERATIONS",
+          "E2E-RESOURCE-REFRESH"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -361,7 +384,8 @@
           "E2E-RESOURCE-DISCOVERY",
           "E2E-RESOURCE-UNCONFIGURED",
           "E2E-RESOURCE-AMBIGUOUS",
-          "E2E-RESOURCE-IMMUTABLE"
+          "E2E-RESOURCE-IMMUTABLE",
+          "E2E-RESOURCE-SUMMARY-BOUNDED"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

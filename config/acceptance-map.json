@@ -37,8 +37,8 @@
     {
       "item": "BGA-008",
       "case": "Each fixture identifies the BGA behavior it represents",
-      "boundary": "packaged",
-      "missing": "The fixture README describes the corpus, but no gate checks that each fixture names the construct it stands for."
+      "boundary": "repository",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
     },
     {
       "item": "BGA-016",
@@ -62,7 +62,7 @@
       "item": "BGA-016",
       "case": "Redaction is proven for every tool that returns project content",
       "boundary": "packaged",
-      "missing": "Only inspect_project has a packaged redaction case; the four validators and the resources do not."
+      "scenarios": ["E2E-TOOLS-REDACTION"]
     },
     {
       "item": "BGA-100",
@@ -102,13 +102,13 @@
       "item": "BGA-100",
       "case": "A project whose files cannot be read reports the refusal",
       "boundary": "packaged",
-      "missing": "No packaged permission-denied project case exists."
+      "scenarios": ["E2E-INSPECT-PROJECT-UNREADABLE-FILES"]
     },
     {
       "item": "BGA-100",
       "case": "A project nested inside another configured root resolves to one project",
       "boundary": "packaged",
-      "missing": "No packaged nested-root case exists."
+      "scenarios": ["E2E-INSPECT-PROJECT-NESTED-ROOT"]
     },
     {
       "item": "BGA-102",
@@ -150,7 +150,7 @@
       "item": "BGA-103",
       "case": "The resource stays bounded for a large project",
       "boundary": "packaged",
-      "missing": "The output limit is proven for inspect_project only, not for the resources."
+      "scenarios": ["E2E-RESOURCE-SUMMARY-BOUNDED"]
     },
     {
       "item": "BGA-104",
@@ -162,7 +162,7 @@
       "item": "BGA-104",
       "case": "The states resource is proven on every supported generation",
       "boundary": "packaged",
-      "missing": "E2E-RESOURCE-STATES reads the legacy fixture only; modern and hybrid are not read through the resource."
+      "scenarios": ["E2E-RESOURCE-STATES-GENERATIONS"]
     },
     {
       "item": "BGA-105",
@@ -180,13 +180,13 @@
       "item": "BGA-105",
       "case": "Diagnostics never imply an unsupported check passed",
       "boundary": "packaged",
-      "missing": "No packaged resource case reads a project with unsupported syntax."
+      "scenarios": ["E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED"]
     },
     {
       "item": "BGA-105",
       "case": "A resource refreshes within one session when the project changes",
       "boundary": "packaged",
-      "missing": "No packaged in-session refresh case exists."
+      "scenarios": ["E2E-RESOURCE-REFRESH"]
     },
     {
       "item": "BGA-106",
@@ -204,7 +204,7 @@
       "item": "BGA-106",
       "case": "Every state rule has positive and negative public evidence",
       "boundary": "packaged",
-      "missing": "state.initial.missing, state.id.duplicate, state.name.missing and state.possible-action.handler-missing have no packaged failing case."
+      "scenarios": ["E2E-VALIDATE-STATES-CLEAN", "E2E-VALIDATE-STATES-RULE-COVERAGE"]
     },
     {
       "item": "BGA-107",
@@ -216,7 +216,7 @@
       "item": "BGA-107",
       "case": "A dynamic or malformed action call is reported rather than guessed",
       "boundary": "packaged",
-      "missing": "The unsupported action path has unit coverage only."
+      "scenarios": ["E2E-VALIDATE-ACTIONS-UNSUPPORTED-SYNTAX"]
     },
     {
       "item": "BGA-108",
@@ -228,7 +228,7 @@
       "item": "BGA-108",
       "case": "A dynamic notification name or payload is reported rather than guessed",
       "boundary": "packaged",
-      "missing": "The unsupported notification path has unit coverage only."
+      "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-UNSUPPORTED-SYNTAX"]
     },
     {
       "item": "BGA-109",
@@ -246,7 +246,7 @@
       "item": "BGA-109",
       "case": "Malformed SQL and dialect limits are explicit in a public result",
       "boundary": "packaged",
-      "missing": "No packaged case sends malformed SQL through the tool."
+      "scenarios": ["E2E-AUDIT-DATABASE-UNREADABLE-STATEMENT"]
     },
     {
       "item": "BGA-110",
@@ -263,8 +263,8 @@
     {
       "item": "BGA-110",
       "case": "Every automated rule has valid and failing fixtures, enforced for the modern layout too",
-      "boundary": "packaged",
-      "missing": "The rule-catalog gate cross-checks the legacy failing fixture only; failingModern is unchecked."
+      "boundary": "repository",
+      "scenarios": ["GATE-FIXTURE-SAFETY"]
     },
     {
       "item": "BGA-111",
@@ -312,7 +312,10 @@
       "item": "BGA-113",
       "case": "Unknown syntax is handled the same way in the action and notification validators",
       "boundary": "packaged",
-      "missing": "Only the state machine and the database audit have a packaged unsupported-syntax case."
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-UNSUPPORTED-SYNTAX",
+        "E2E-VALIDATE-NOTIFICATIONS-UNSUPPORTED-SYNTAX"
+      ]
     },
     {
       "item": "BGA-114",
@@ -345,7 +348,7 @@
       "item": "BGA-116",
       "case": "Every tool that takes projectRoot has the same default behavior",
       "boundary": "packaged",
-      "missing": "Only inspect_project has packaged default-root cases."
+      "scenarios": ["E2E-TOOLS-DEFAULT-ROOT"]
     },
     {
       "item": "BGA-117",

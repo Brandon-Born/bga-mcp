@@ -99,6 +99,11 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
           source: context.model.states.source,
           sources: context.model.states.sources,
           parsed: context.model.states.parsed,
+          // Where the framework enters the machine, and how completely it was
+          // read: both differ by generation, and both decide what the
+          // validation below is allowed to claim.
+          initial: context.model.states.initial,
+          complete: context.model.states.complete,
           definitions: context.model.states.definitions,
           unsupported: context.model.states.unsupported,
           validation: validateStateMachine(context.model, context.phpSources),

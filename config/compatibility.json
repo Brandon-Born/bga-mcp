@@ -7,13 +7,21 @@
       "id": "CLAIM-LAYOUT-MODERN",
       "dimension": "layout",
       "value": "modern-modules",
-      "support": "unknown",
-      "notes": "Support claim reopened by the 2026-08-08 installed-package audit. Layout detection works; BGA-124 restored the state half and BGA-125 the action half: documented state-class initial states, StateConstants identifiers, PRIVATE states, descriptions, zombie handling, class/id/transition redirects, #[PossibleAction] entry points, framework-injected parameters, the game-class fallback and the parameter attributes are all read, and an unreadable construct is reported rather than turned into a certain finding. BGA-126 added the notification half: the state-class shortcut is read, a notif_ method counts only where setupPromiseNotifications registers it, and the framework's predefined types need no handler. BGA-127 restricted database findings to strings that reach a documented helper. The complete packaged matrix (BGA-128) still owns the rest of this claim.",
+      "support": "supported",
+      "notes": "Reopened by the 2026-08-08 audit and restored: BGA-124 corrected the state semantics, BGA-125 the action tracing, BGA-126 the notification registration, BGA-127 the database reading, and BGA-128 proved every acceptance case of the affected items through the installed server. The layout is inside the compatibility contract; the stability of each capability is a separate question that BGA-005 and BGA-017 own.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
         "tests/fixtures/projects/modern-unreadable",
         "tests/fixtures/projects/modern-broken"
+      ],
+      "scenarios": [
+        "GATE-FIXTURE-SAFETY",
+        "E2E-INSPECT-PROJECT-MODERN",
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES",
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
       ]
     },
     {
@@ -33,9 +41,18 @@
       "id": "CLAIM-LAYOUT-HYBRID",
       "dimension": "layout",
       "value": "part-migrated",
-      "support": "unknown",
-      "notes": "Layout detection and aggregate validation have hybrid scenarios, but the original acceptance requires every capability and split-source precedence through the public boundary. BGA-124 corrected the class half and the GameStateBuilder half the hybrid fixture now uses, and BGA-125 the action half; BGA-126 the notification half; BGA-127 the database half; BGA-128 owns the rest of this claim.",
-      "fixtures": ["tests/fixtures/projects/hybrid"]
+      "support": "supported",
+      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server.",
+      "fixtures": ["tests/fixtures/projects/hybrid"],
+      "scenarios": [
+        "GATE-FIXTURE-SAFETY",
+        "E2E-INSPECT-PROJECT-HYBRID",
+        "E2E-VALIDATE-PROJECT-HYBRID",
+        "E2E-VALIDATE-STATES-HYBRID",
+        "E2E-VALIDATE-ACTIONS-HYBRID",
+        "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
+        "E2E-AUDIT-DATABASE-HYBRID"
+      ]
     },
     {
       "id": "CLAIM-LAYOUT-UNRECOGNIZED",

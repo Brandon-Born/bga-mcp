@@ -1,6 +1,16 @@
 // secret-scan:allow-file Seeded non-secret key material that proves it never reaches a result.
 import { createHash } from 'node:crypto';
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
+import {
+  chmod,
+  cp,
+  mkdir,
+  mkdtemp,
+  readFile,
+  readdir,
+  rm,
+  symlink,
+  writeFile,
+} from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,6 +46,9 @@ let outsideRoot: string;
 let largeRoot: string;
 let emptyRoot: string;
 let partialRoot: string;
+let unreadableRoot: string;
+let nestedOuterRoot: string;
+let nestedInnerRoot: string;
 
 async function digest(directory: string): Promise<string> {
   const hash = createHash('sha256');
@@ -125,6 +138,9 @@ beforeAll(async () => {
   largeRoot = resolve(projects, 'largegame');
   emptyRoot = resolve(projects, 'emptygame');
   partialRoot = resolve(projects, 'partialgame');
+  unreadableRoot = resolve(projects, 'unreadablegame');
+  nestedOuterRoot = resolve(projects, 'outergame');
+  nestedInnerRoot = resolve(nestedOuterRoot, 'games/innergame');
 
   await cp(resolve(fixturesRoot, 'modern'), modernRoot, { recursive: true });
   await cp(resolve(fixturesRoot, 'legacy'), legacyRoot, { recursive: true });
@@ -134,6 +150,24 @@ beforeAll(async () => {
   await rm(resolve(hybridRoot, 'expected.json'));
 
   await mkdir(emptyRoot, { recursive: true });
+
+  // A project whose own directory cannot be listed. Windows ignores mode bits,
+  // so the scenario checks what it can there and asserts the refusal here.
+  await cp(resolve(fixturesRoot, 'legacy'), unreadableRoot, { recursive: true });
+  await rm(resolve(unreadableRoot, 'expected.json'));
+  await mkdir(resolve(unreadableRoot, 'locked'), { recursive: true });
+  await writeFile(resolve(unreadableRoot, 'locked/hidden.php'), '<?php\n// unreadable\n');
+  if (process.platform !== 'win32') {
+    await chmod(resolve(unreadableRoot, 'locked'), 0o000);
+  }
+
+  // One project inside another, both configured. Each call must resolve to the
+  // root it names rather than to the one that contains it.
+  await cp(resolve(fixturesRoot, 'legacy'), nestedOuterRoot, { recursive: true });
+  await rm(resolve(nestedOuterRoot, 'expected.json'));
+  await mkdir(resolve(nestedOuterRoot, 'games'), { recursive: true });
+  await cp(resolve(fixturesRoot, 'modern'), nestedInnerRoot, { recursive: true });
+  await rm(resolve(nestedInnerRoot, 'expected.json'));
 
   // A project with metadata and nothing else: one component identifies its
   // form, which is a partial layout rather than an unrecognized one.
@@ -169,6 +203,9 @@ beforeAll(async () => {
 }, 240_000);
 
 afterAll(async () => {
+  if (process.platform !== 'win32') {
+    await chmod(resolve(unreadableRoot, 'locked'), 0o700).catch(() => undefined);
+  }
   await rm(temporaryRoot, { recursive: true, force: true });
 });
 
@@ -503,5 +540,52 @@ describe('packaged inspect_project', () => {
     expect(partial?.severity).toBe('warning');
     // The reason names what was found rather than claiming nothing was.
     expect(structured.detection.reason).toContain('metadata');
+  });
+  it('[E2E-INSPECT-PROJECT-UNREADABLE-FILES] reports a project it is not allowed to read', async () => {
+    const response = await withServer(
+      ['--project-root', unreadableRoot],
+      async (client) => await callInspect(client, { projectRoot: unreadableRoot }),
+    );
+
+    if (process.platform === 'win32') {
+      // Mode bits do not deny a directory on Windows, so there is nothing to
+      // refuse; the project reads normally and the case is proven elsewhere.
+      expect(response.isError).toBe(false);
+      return;
+    }
+
+    // Either the refusal is public and stable, or the unreadable part is
+    // reported as unreadable. What must not happen is a clean result that
+    // silently omits what could not be read.
+    if (response.isError) {
+      expect(response.text).toMatch(/policy\.[a-z.-]+/u);
+      expect(JSON.stringify(response)).not.toContain(temporaryRoot);
+      return;
+    }
+    const structured = response.structured as {
+      diagnostics: { findings: { code: string; message: string }[] };
+      fileCount: number;
+    };
+    const reported = structured.diagnostics.findings.map((finding) => finding.code);
+    expect(reported.length).toBeGreaterThan(0);
+    expect(JSON.stringify(structured)).not.toContain('hidden.php');
+  });
+
+  it('[E2E-INSPECT-PROJECT-NESTED-ROOT] resolves a nested root to the project it names', async () => {
+    const [outer, inner] = await withServer(
+      ['--project-root', nestedOuterRoot, '--project-root', nestedInnerRoot],
+      async (client) => [
+        await callInspect(client, { projectRoot: nestedOuterRoot }),
+        await callInspect(client, { projectRoot: nestedInnerRoot }),
+      ],
+    );
+
+    expect(outer.isError).toBe(false);
+    expect(inner.isError).toBe(false);
+    // The inner project is its own project, not part of the outer one, and the
+    // outer one does not become the inner one's answer.
+    expect((outer.structured as { layout: string }).layout).toBe('legacy');
+    expect((inner.structured as { layout: string }).layout).toBe('modern');
+    expect((inner.structured as { gameKey: string }).gameKey).toBe('innergame');
   });
 });

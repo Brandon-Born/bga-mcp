@@ -69,7 +69,7 @@ async function run(directory: string, paths: readonly string[]): Promise<Fixture
   );
 
   const model = await buildProjectModel(
-    { root: directory, files, truncated: false, skippedLinks: [] },
+    { root: directory, files, truncated: false, skippedLinks: [], unreadablePaths: [] },
     { read },
   );
   const php = await Promise.all(
@@ -119,6 +119,7 @@ describe('BGA project fixture corpus', () => {
       const before = await hashes(directory);
       const expected = JSON.parse(await readFile(resolve(directory, 'expected.json'), 'utf8')) as {
         layout: string;
+        represents: string;
         files: string[];
         diagnostics: unknown[];
         stateMachine?: { status: string; codes: string[] };
@@ -129,6 +130,10 @@ describe('BGA project fixture corpus', () => {
       const actualFiles = Object.keys(before).filter((file) => file !== 'expected.json');
 
       expect(expected.layout).toBe(layout);
+      // A fixture has to say which BGA behavior it stands for. Without that, a
+      // corpus drifts into a pile of files nobody can justify keeping.
+      expect(typeof expected.represents, `${fixture} represents`).toBe('string');
+      expect(expected.represents.length, `${fixture} represents`).toBeGreaterThan(40);
       expect(actualFiles).toEqual(expected.files);
       // A defective fixture may declare model-level findings. A clean one may
       // declare only informational ones — the hybrid fixture reports that its
@@ -166,7 +171,14 @@ describe('BGA project fixture corpus', () => {
         } else if (kind === 'unreadable') {
           expect(declared.status).toBe('unsupported');
           expect(declared.codes.length).toBeGreaterThan(0);
-          expect(declared.codes.every((code) => code.endsWith('.unsupported'))).toBe(true);
+          // Either spelling of "the reader reported its own limit": the model
+          // reports `project.states.unsupported`, the validators report
+          // `<group>.unsupported-syntax`. Neither is a claim about the project.
+          expect(
+            declared.codes.every(
+              (code) => code.endsWith('.unsupported') || code.endsWith('.unsupported-syntax'),
+            ),
+          ).toBe(true);
         } else {
           expect(declared.status).toBe('passed');
           expect(declared.codes).toEqual([]);
