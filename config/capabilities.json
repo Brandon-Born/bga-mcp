@@ -21,6 +21,22 @@
         "windows-latest / Node 22",
         "windows-latest / Node 24"
       ]
+    },
+    {
+      "id": "ci-31334309936",
+      "workflow": "CI",
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/31334309936",
+      "commit": "213deaa52e20f5f2a3295d9d9206814bca1e889c",
+      "completedAt": "2026-08-09T20:31:33Z",
+      "conclusion": "success",
+      "jobs": [
+        "ubuntu-latest / Node 22",
+        "ubuntu-latest / Node 24",
+        "macos-latest / Node 22",
+        "macos-latest / Node 24",
+        "windows-latest / Node 22",
+        "windows-latest / Node 24"
+      ]
     }
   ],
   "transports": [
@@ -35,7 +51,7 @@
         "E2E-STDIO-SHUTDOWN",
         "E2E-PACK-INSTALL-REMOVE"
       ],
-      "ciEvidence": "ci-31330457842"
+      "ciEvidence": "ci-31334309936"
     }
   ],
   "capabilities": {
@@ -65,7 +81,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "check_setup",
@@ -82,7 +98,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "inspect_project",
@@ -117,7 +133,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "read_studio_logs",
@@ -145,7 +161,7 @@
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "run_pre_release_audit",
@@ -168,7 +184,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "search_bga_docs",
@@ -197,7 +213,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "validate_action_contracts",
@@ -224,7 +240,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "validate_notifications",
@@ -251,7 +267,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "validate_project",
@@ -274,7 +290,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "validate_state_machine",
@@ -301,7 +317,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       }
     ],
     "resources": [
@@ -322,7 +338,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "bga://framework/version",
@@ -344,7 +360,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "bga://project/diagnostics",
@@ -363,7 +379,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "bga://project/states",
@@ -383,7 +399,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       },
       {
         "name": "bga://project/summary",
@@ -402,7 +418,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31330457842"
+        "ciEvidence": "ci-31334309936"
       }
     ],
     "prompts": []
