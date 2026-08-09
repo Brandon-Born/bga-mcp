@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { readFile, readdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 
 /**
  * Builds the verification evidence document from what a gate run recorded.
@@ -209,10 +209,12 @@ export function indexScenarioResults(
 ): Map<string, TestResult[]> {
   const index = new Map<string, TestResult[]>();
   for (const file of report.testResults ?? []) {
-    const path = (file.name ?? '')
-      .replace(repositoryRoot, '')
-      .replace(/^[\\/]/u, '')
-      .split('\\')
+    // `relative` rather than a string replace: on Windows the reporter and
+    // `import.meta.dirname` can disagree about the case of the drive letter,
+    // and a replace that misses leaves the path absolute — which then reads as
+    // a test living outside the tree it is plainly inside.
+    const path = relative(repositoryRoot, file.name ?? '')
+      .split(sep)
       .join('/');
     for (const assertion of file.assertionResults ?? []) {
       const title = assertion.fullName ?? assertion.title ?? '';

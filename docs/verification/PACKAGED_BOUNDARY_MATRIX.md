@@ -8,7 +8,7 @@ Recorded: 2026-08-09. Covers BGA-128, the completeness owner for the verificatio
   "capabilities": 16,
   "scenarios": 136,
   "claims": 78,
-  "tests": 445
+  "tests": 446
 }
 ```
 

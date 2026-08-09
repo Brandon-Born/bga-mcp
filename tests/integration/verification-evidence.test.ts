@@ -1,4 +1,6 @@
 // secret-scan:allow-file Seeded non-secret sample credential that proves the evidence scan works.
+import { join, resolve } from 'node:path';
+
 import {
   buildCapabilityEvidence,
   canonicalize,
@@ -216,5 +218,36 @@ describe('verification evidence', () => {
     const findings = scanText(JSON.stringify(evidence, null, 2), 'verification-evidence.json');
     expect(findings.map((finding) => finding.rule)).toContain('aws-access-key');
     expect(findings[0]?.preview).not.toContain(SEEDED_CREDENTIAL);
+  });
+});
+
+describe('retained test paths', () => {
+  it('[GATE-EVIDENCE-COVERAGE] records a path relative to the repository, in the platform spelling', () => {
+    // Regression: a string replace missed on Windows, where the reporter and
+    // the script disagreed about the case of the drive letter, and every
+    // retained path stayed absolute — which read as a test living outside the
+    // tree it is plainly inside. `relative` is what settles it, and this runs
+    // on each supported platform with that platform's separators and casing.
+    const root = resolve('/repo/project');
+    const index = indexScenarioResults(
+      {
+        testResults: [
+          {
+            name: join(root, 'tests', 'e2e', 'inspect-project.test.ts'),
+            assertionResults: [
+              {
+                title: '[E2E-INSPECT-PROJECT-MODERN] describes a modern project',
+                status: 'passed',
+              },
+            ],
+          },
+        ],
+      },
+      root,
+    );
+
+    expect(index.get('E2E-INSPECT-PROJECT-MODERN')?.[0]?.file).toBe(
+      'tests/e2e/inspect-project.test.ts',
+    );
   });
 });
