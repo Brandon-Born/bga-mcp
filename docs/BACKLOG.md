@@ -525,7 +525,7 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 
 ### BGA-125 — Correct modern action-contract tracing
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-107, BGA-119, BGA-124
 - **Deliverable:** Action tracing that models both state-class and Game.php autowiring, including framework-injected parameters and documented parameter attributes.
@@ -533,6 +533,8 @@ The review added BGA-017, BGA-018, BGA-124 through BGA-128, BGA-209 through BGA-
 - **Verification:** Packaged scenarios cover state-class-only actions, Game.php fallback actions, every documented injected-name alias, attributes with passing and failing client arguments, mixed legacy/modern action wiring, dynamic unsupported syntax, and exact client-to-server parameter comparison.
 - **Finding:** A documented `#[PossibleAction] actPlay($cardId, $active_player_id, $currentPlayerId)` produced `action.entry-point.missing`, and a valid Game.php-wide `actPass` produced `action.call.not-declared`. The parser also exposed both injected identifiers as client arguments and skipped `#[IntParam]` semantics.
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says actions need `#[PossibleAction]`, lists the injected parameter aliases, and says the framework checks Game.php for actions available in any state. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents autowired actions and parameter attributes.
+- **Evidence:** [Modern action contract verification](verification/MODERN_ACTION_CONTRACTS.md) records the correction. `parseModernActions` in [`src/project/modern.ts`](../src/project/modern.ts) reads `act…` methods from either form, honours `#[PossibleAction]` where a state class requires it, skips a non-public method, excludes every documented injected parameter in both spellings — and not `$playerId`, which the documentation says autowired actions do not support — and reads each parameter attribute's name and checks. [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) builds entry points from the action class, the game class, and the state classes, lets the legacy dispatcher win where it declares an action, exempts a game-class action from `action.call.not-declared` because the framework allows it in any state, and adds `action.argument.invalid` for a literal client value that fails its attribute's documented check. `parseClientActionCalls` reads shorthand keys and literal values, and treats the framework key list as belonging to `ajaxcall` rather than to `bgaPerformAction`, whose own documented example expects a parameter named `action`. `tests/fixtures/projects/modern-state-classes` declares its action contract as passing and `modern-broken` declares the attribute violation. Proven through the installed package by `E2E-VALIDATE-ACTIONS-STATE-CLASSES`, `E2E-VALIDATE-ACTIONS-MODERN-CLEAN`, `E2E-VALIDATE-ACTIONS-MODERN-DEFECTS`, and the unchanged legacy scenarios.
+- **Open questions:** `#[CheckAction(false)]` marks an action playable outside the player's turn; it is read as an ordinary entry point, and the documentation does not settle whether such an action should be exempt from state-related rules. `JsonParam(class: …)` is recognized by name, but the shape of the mapped object is not compared with the client's payload.
 
 ### BGA-126 — Correct modern notification sends and registrations
 

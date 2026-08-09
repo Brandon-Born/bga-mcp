@@ -43,6 +43,9 @@ describe('action contract validation against the fixture corpus', () => {
       {
         action: 'actPass',
         argumentNames: ['comment'],
+        // The literal the client writes out, kept so a parameter attribute's
+        // documented check can be compared against it.
+        argumentValues: { comment: "'no play'" },
         style: 'ajaxcall',
         source: 'bgamcplegacy.js',
       },

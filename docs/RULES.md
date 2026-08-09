@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.2.0. Updated 2026-08-08. Backlog items: BGA-110, BGA-124.
+Catalog version 1.3.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124, BGA-125.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -11,7 +11,7 @@ Every automated check names the rule that implements it, the tool that runs it, 
 - **framework-behavior** — the BGA framework will not work otherwise. These are the strongest claims.
 - **community-convention** — a widely followed practice rather than a hard requirement, reported at a lower severity.
 - **project-inference** — inferred by comparing two parts of a project. Useful, but not a documented rule, and never reported as certain.
-- **official-documentation** — cited BGA Studio documentation. The check records the sentence it rests on and the page it came from. The state-machine checks that could be traced to a sentence now claim this kind; the rest stay framework-behavior, because they are derived from how the framework runs a machine rather than stated on a page.
+- **official-documentation** — cited BGA Studio documentation. The check records the sentence it rests on and the page it came from. The state-machine and action checks that could be traced to a sentence claim this kind; the rest stay framework-behavior, because they are derived from how the framework runs a project rather than stated on a page.
 
 A check with a `failing` fixture is proven in both directions: the valid fixture must not produce it, and the failing fixture must. The gate cross-checks that against the fixture's own declared findings.
 
@@ -42,16 +42,21 @@ A rule that depends on reading the whole machine — `state.transition.target-ex
 
 Run by `validate_action_contracts`. Implemented in [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts).
 
-| Check                          | Severity    | Certainty | Source kind          | Failing fixture |
-| ------------------------------ | ----------- | --------- | -------------------- | --------------- |
-| `action.argument.mismatch`     | warning     | likely    | framework-behavior   | yes             |
-| `action.call.not-declared`     | warning     | likely    | framework-behavior   | yes             |
-| `action.declared.not-called`   | information | possible  | project-inference    | no              |
-| `action.entry-point.duplicate` | error       | certain   | framework-behavior   | no              |
-| `action.entry-point.missing`   | warning     | likely    | framework-behavior   | yes             |
-| `action.game-method.missing`   | warning     | likely    | framework-behavior   | yes             |
-| `action.name.convention`       | information | certain   | community-convention | yes             |
-| `action.trace.unavailable`     | information | certain   | framework-behavior   | no              |
+| Check                          | Severity    | Certainty | Source kind            | Failing fixture |
+| ------------------------------ | ----------- | --------- | ---------------------- | --------------- |
+| `action.argument.invalid`      | error       | certain   | official-documentation | modern only     |
+| `action.argument.mismatch`     | warning     | likely    | official-documentation | yes             |
+| `action.call.not-declared`     | warning     | likely    | official-documentation | yes             |
+| `action.declared.not-called`   | information | possible  | project-inference      | no              |
+| `action.entry-point.duplicate` | error       | certain   | framework-behavior     | no              |
+| `action.entry-point.missing`   | warning     | likely    | official-documentation | yes             |
+| `action.game-method.missing`   | warning     | likely    | framework-behavior     | yes             |
+| `action.name.convention`       | information | certain   | community-convention   | yes             |
+| `action.trace.unavailable`     | information | certain   | framework-behavior     | no              |
+
+An action reaches the server by one of three documented routes, and a real project uses more than one at a time: the legacy `<game>.action.php` dispatcher, which wins wherever it declares the action; an autowired `act…` method on the game class, which the framework checks "for actions that can be triggered at any state"; and a `#[PossibleAction]` method on a state class, which is that state's action. An action the game class declares is therefore never reported as one no state allows.
+
+The client sends what the parameter names, not what the variable is called: `#[IntParam(name: 'id')] int $cardId` expects `id`. The framework fills `$args`, `$activePlayerId`/`$active_player_id`, `$activePlayerNo`, `$currentPlayerId`/`$current_player_id`, and `$currentPlayerNo` itself, so none of them is an argument the client is missing. Where a parameter attribute declares a check and the client writes the value out as a literal, `action.argument.invalid` compares the two.
 
 ## Notifications
 

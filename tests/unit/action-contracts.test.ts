@@ -95,7 +95,12 @@ describe('client action call reading', () => {
     const outcome = parseClientActionCalls(CLIENT);
     expect(outcome.unsupported).toEqual([]);
     expect(outcome.value).toEqual([
-      { action: 'actPass', argumentNames: ['comment'], style: 'ajaxcall' },
+      {
+        action: 'actPass',
+        argumentNames: ['comment'],
+        argumentValues: { comment: "'x'" },
+        style: 'ajaxcall',
+      },
     ]);
   });
 
@@ -104,8 +109,13 @@ describe('client action call reading', () => {
       `this.bgaPerformAction('actPlay', { cardId: 3, "slot": 1 });\nthis.bgaPerformAction('actPass');`,
     );
     expect(outcome.value).toEqual([
-      { action: 'actPlay', argumentNames: ['cardId', 'slot'], style: 'performAction' },
-      { action: 'actPass', argumentNames: [], style: 'performAction' },
+      {
+        action: 'actPlay',
+        argumentNames: ['cardId', 'slot'],
+        argumentValues: { cardId: '3', slot: '1' },
+        style: 'performAction',
+      },
+      { action: 'actPass', argumentNames: [], argumentValues: {}, style: 'performAction' },
     ]);
   });
 
@@ -309,5 +319,141 @@ describe('action contract rules', () => {
     expect(JSON.stringify(first.diagnostics)).toBe(JSON.stringify(second.diagnostics));
     const codes = first.diagnostics.findings.map((finding) => finding.code);
     expect(codes).toEqual([...codes].sort());
+  });
+});
+
+describe('modern action wiring', () => {
+  const STATE_CLASS = `<?php
+namespace Bga\\Games\\demo\\States;
+
+final class PlayerTurn extends GameState
+{
+    #[PossibleAction]
+    public function actPlay(int $cardId, int $active_player_id, int $currentPlayerId): string
+    {
+        return 'next';
+    }
+
+    public function actInternal(int $secret): void {}
+}`;
+
+  const MODERN_GAME_CLASS = `<?php
+namespace Bga\\Games\\demo;
+
+final class Game extends Table
+{
+    public function actPass(): string { return 'pass'; }
+
+    public function actSpendGold(#[IntParam(min: 1)] int $gold) {}
+
+    public function actChooseAction(#[StringParam(enum: ['move', 'pass'])] string $action) {}
+
+    public function actPlayCard(#[IntParam(name: 'id')] int $cardId) {}
+}`;
+
+  const modernPhp = [
+    { path: 'modules/php/Game.php', text: MODERN_GAME_CLASS },
+    { path: 'modules/php/States/PlayerTurn.php', text: STATE_CLASS },
+  ];
+
+  function trace(clientText: string, states = [state({ possibleActions: ['actPlay'] })]) {
+    return validateActionContracts(
+      model(states),
+      [{ path: 'modules/js/Game.js', text: clientText }],
+      modernPhp,
+    );
+  }
+
+  it('treats a #[PossibleAction] state method as an entry point, and an unattributed one as not', () => {
+    // Regression: this exact signature produced action.entry-point.missing.
+    const result = trace(`this.bga.actions.performAction('actPlay', { cardId: 3 });`);
+    expect(result.diagnostics.findings.map((finding) => finding.code)).not.toContain(
+      'action.entry-point.missing',
+    );
+    expect(result.entryPoints.map((entry) => entry.action).sort()).toEqual([
+      'actChooseAction',
+      'actPass',
+      'actPlay',
+      'actPlayCard',
+      'actSpendGold',
+    ]);
+  });
+
+  it('does not treat a framework-injected parameter as a client argument', () => {
+    const result = trace(`this.bga.actions.performAction('actPlay', { cardId: 3 });`);
+    expect(result.entryPoints.find((entry) => entry.action === 'actPlay')?.argumentNames).toEqual([
+      'cardId',
+    ]);
+    expect(result.diagnostics.findings.map((finding) => finding.code)).not.toContain(
+      'action.argument.mismatch',
+    );
+  });
+
+  it('lets the game class answer for an action no state lists', () => {
+    // "the framework will check if the function exists in the Game.php file
+    // (for actions that can be triggered at any state)".
+    const result = trace(`this.bga.actions.performAction('actPass', {});`);
+    expect(result.diagnostics.findings.map((finding) => finding.code)).not.toContain(
+      'action.call.not-declared',
+    );
+  });
+
+  it('expects the name the parameter attribute declares, not the variable name', () => {
+    const named = trace(`this.bga.actions.performAction('actPlayCard', { id: 3 });`);
+    expect(named.diagnostics.findings.map((finding) => finding.code)).not.toContain(
+      'action.argument.mismatch',
+    );
+
+    const wrong = trace(`this.bga.actions.performAction('actPlayCard', { cardId: 3 });`);
+    expect(wrong.diagnostics.findings.map((finding) => finding.code)).toContain(
+      'action.argument.mismatch',
+    );
+  });
+
+  it('compares a literal argument with the check its attribute declares', () => {
+    const belowMinimum = trace(`this.bga.actions.performAction('actSpendGold', { gold: 0 });`);
+    const invalid = belowMinimum.diagnostics.findings.find(
+      (finding) => finding.code === 'action.argument.invalid',
+    );
+    expect(invalid).toMatchObject({ kind: 'issue', severity: 'error', certainty: 'certain' });
+    expect(invalid?.message).toContain('below the declared minimum of 1');
+
+    const outsideEnum = trace(
+      `this.bga.actions.performAction('actChooseAction', { action: 'sleep' });`,
+    );
+    expect(
+      outsideEnum.diagnostics.findings.find((finding) => finding.code === 'action.argument.invalid')
+        ?.message,
+    ).toContain('enum');
+
+    for (const accepted of [
+      `this.bga.actions.performAction('actSpendGold', { gold: 4 });`,
+      `this.bga.actions.performAction('actChooseAction', { action: 'move' });`,
+      // A value the client computes states nothing, so nothing is claimed.
+      `this.bga.actions.performAction('actSpendGold', { gold: this.chosen });`,
+    ]) {
+      expect(trace(accepted).diagnostics.findings.map((finding) => finding.code)).not.toContain(
+        'action.argument.invalid',
+      );
+    }
+  });
+
+  it('lets the legacy dispatcher win where a project still has one', () => {
+    // "if you also declare the function in the action.php, it will be used
+    // instead of the autowiring".
+    const result = validateActionContracts(
+      model([state({ possibleActions: ['actPass'] })]),
+      [{ path: 'modules/js/Game.js', text: `this.bga.actions.performAction('actPass', {});` }],
+      [
+        ...modernPhp,
+        {
+          path: 'fixture.action.php',
+          text: `<?php class action_fixture { public function actPass() { $c = self::getArg('comment', AT_alphanum, false); } }`,
+        },
+      ],
+    );
+    const entries = result.entryPoints.filter((entry) => entry.action === 'actPass');
+    expect(entries).toHaveLength(1);
+    expect(entries[0]?.source).toBe('fixture.action.php');
   });
 });

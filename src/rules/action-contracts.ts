@@ -1,5 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
-import { parseModernActions } from '../project/modern.js';
+import { parseModernActions, type ActionParameter } from '../project/modern.js';
 import {
   parseClientActionCalls,
   parsePhpMethodNames,
@@ -72,10 +72,19 @@ export const ACTION_CONTRACT_RULES: readonly ActionContractRule[] = [
     code: 'action.entry-point.missing',
     severity: 'warning',
     certainty: 'likely',
-    summary: 'An action the client calls has no matching entry point in the action class.',
+    summary:
+      'An action the client calls is declared by no action class, game class, or state class.',
     falsePositives: [
       'A project may dispatch every action through one generic entry point, or inherit entry points from a framework class outside the project.',
     ],
+  },
+  {
+    code: 'action.argument.invalid',
+    severity: 'error',
+    certainty: 'certain',
+    summary:
+      'A literal argument the client sends fails the check its parameter attribute declares.',
+    falsePositives: [],
   },
   {
     code: 'action.game-method.missing',
@@ -146,6 +155,37 @@ export interface ActionContractSource {
   readonly text: string;
 }
 
+/**
+ * Why a literal client value fails its parameter attribute, or null.
+ *
+ * The attributes state their own checks — "will trigger an exception if param
+ * is < 1", "will trigger an exception if the parameter doesn't match a value in
+ * the enum" — so a literal that fails one is a call that cannot work, not a
+ * matter of taste.
+ */
+function violation(parameter: ActionParameter, literal: string): string | null {
+  const quoted = /^'([\s\S]*)'$|^"([\s\S]*)"$/u.exec(literal);
+  const text = quoted === null ? literal : (quoted[1] ?? quoted[2] ?? '');
+  const { min, max, enum: choices, alphanum } = parameter.constraints;
+
+  if (choices !== undefined && quoted !== null && !choices.includes(text)) {
+    return `the attribute's enum does not list (accepted: ${choices.join(', ')})`;
+  }
+  if (alphanum === true && quoted !== null && !/^[A-Za-z0-9]*$/u.test(text)) {
+    return 'the attribute requires an alphanumeric value';
+  }
+  if (quoted === null && /^-?\d+(?:\.\d+)?$/u.test(text)) {
+    const value = Number(text);
+    if (min !== undefined && value < min) {
+      return `is below the declared minimum of ${String(min)}`;
+    }
+    if (max !== undefined && value > max) {
+      return `is above the declared maximum of ${String(max)}`;
+    }
+  }
+  return null;
+}
+
 export interface ActionContractTrace {
   readonly clientCalls: readonly (ClientActionCall & { readonly source: string })[];
   readonly entryPoints: readonly (ServerActionEntry & { readonly source: string })[];
@@ -181,11 +221,20 @@ export function validateActionContracts(
     }
   }
 
-  // Legacy projects route actions through <game>.action.php. Modern projects
-  // deleted that file: an autowired public act… method on the game class is the
-  // entry point, and its typed parameters are the contract.
+  // An action reaches the server by one of three documented routes, and a real
+  // project can use more than one at a time.
+  //
+  //  - `<game>.action.php`, the legacy dispatcher: "if you also declare the
+  //    function in the action.php, it will be used instead of the autowiring".
+  //  - An autowired `act…` method on the game class, which the framework checks
+  //    "for actions that can be triggered at any state".
+  //  - A `#[PossibleAction]` method on a state class, which is the action of
+  //    that state.
   const actionClassSources = phpSources.filter((source) => source.path.endsWith('.action.php'));
-  const entryPoints: (ServerActionEntry & { source: string })[] = [];
+  const entryPoints: (ServerActionEntry & {
+    source: string;
+    parameters?: readonly ActionParameter[];
+  })[] = [];
   for (const source of actionClassSources) {
     const outcome = parseServerActionEntries(source.text);
     for (const entry of outcome.value) {
@@ -196,16 +245,27 @@ export function validateActionContracts(
     }
   }
 
-  const autowiredSources =
-    actionClassSources.length > 0
-      ? []
-      : phpSources.filter((source) => /(?:^|\/)Game\.php$/u.test(source.path));
+  const declaredByActionClass = new Set(entryPoints.map((entry) => entry.action));
+  const gameClassSources = phpSources.filter((source) => /(?:^|\/)Game\.php$/u.test(source.path));
+  const stateClassSources = phpSources.filter((source) =>
+    /(?:^|\/)modules\/php\/States\//u.test(source.path),
+  );
+  const autowiredSources = [...gameClassSources, ...stateClassSources];
+
   for (const source of autowiredSources) {
-    const outcome = parseModernActions(source.text);
+    const outcome = parseModernActions(source.text, {
+      requireAttribute: stateClassSources.includes(source),
+      declaredIn: stateClassSources.includes(source) ? 'state-class' : 'game-class',
+    });
     for (const action of outcome.value) {
+      // The legacy dispatcher wins where both exist, so it is not a duplicate.
+      if (declaredByActionClass.has(action.action)) {
+        continue;
+      }
       entryPoints.push({
         action: action.action,
         argumentNames: [...action.argumentNames],
+        parameters: action.parameters,
         source: source.path,
       });
     }
@@ -213,6 +273,15 @@ export function validateActionContracts(
       findings.push(unsupported(construct, source.path));
     }
   }
+
+  // An action the game class declares can run from any state, so a client call
+  // to it is not "not declared" merely because the current state omits it.
+  // This is the game class only: the legacy `.action.php` dispatcher still
+  // checks the state's possible actions.
+  const gameClassPaths = new Set(gameClassSources.map((source) => source.path));
+  const frameworkWideActions = new Set(
+    entryPoints.filter((entry) => gameClassPaths.has(entry.source)).map((entry) => entry.action),
+  );
 
   const gameMethods = new Set(
     phpSources
@@ -279,8 +348,14 @@ export function validateActionContracts(
     // The rule only has an authority to compare against when some state
     // actually enumerates its possible actions. A modern project declares its
     // actions as autowired methods instead, so an empty set means "unknown",
-    // not "nothing is allowed".
-    if (statesReadable && declaredActions.size > 0 && !declaredActions.has(call.action)) {
+    // not "nothing is allowed". An action the game class declares is available
+    // in any state, so no state has to list it.
+    if (
+      statesReadable &&
+      declaredActions.size > 0 &&
+      !declaredActions.has(call.action) &&
+      !frameworkWideActions.has(call.action)
+    ) {
       findings.push(
         heuristic(
           'action.call.not-declared',
@@ -327,6 +402,26 @@ export function validateActionContracts(
             `'${argument}' is read by the entry point but absent from the client call.`,
             call.source,
             `Send '${argument}' from the client, or stop reading it.`,
+          ),
+        );
+      }
+
+      // A parameter attribute states what the framework checks before calling.
+      // Where the client writes the value out, the two can be compared here
+      // rather than at a player's expense.
+      for (const parameter of entry.parameters ?? []) {
+        const value = call.argumentValues[parameter.name] ?? null;
+        const failure = value === null ? null : violation(parameter, value);
+        if (failure === null || value === null) {
+          continue;
+        }
+        findings.push(
+          certain(
+            'action.argument.invalid',
+            `The client sends ${value} for '${parameter.name}' of '${call.action}', which ${failure}.`,
+            `#[${parameter.attribute ?? 'Param'}] on $${parameter.variable} declares the check the framework runs before calling the action.`,
+            call.source,
+            'Send a value the attribute accepts, or widen the attribute to accept this one.',
           ),
         );
       }

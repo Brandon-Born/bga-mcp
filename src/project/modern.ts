@@ -403,52 +403,201 @@ export function readInitialState(
   return { ids: [], evidence: null, unreadable: null };
 }
 
-export interface ModernAction {
-  readonly action: string;
-  /** Parameter names the autowired method declares, excluding framework ones. */
-  readonly argumentNames: readonly string[];
+/** A parameter of an action, as the client-to-server contract sees it. */
+export interface ActionParameter {
+  /** The name the client sends: the attribute's, or the variable's. */
+  readonly name: string;
+  readonly variable: string;
+  readonly type: string | null;
+  /** The attribute that declares the parameter's type and checks, if any. */
+  readonly attribute: string | null;
+  /** Checks the framework runs before calling, from the attribute. */
+  readonly constraints: {
+    readonly min?: number;
+    readonly max?: number;
+    readonly enum?: readonly string[];
+    readonly alphanum?: boolean;
+  };
 }
 
-/** Parameters the framework supplies rather than the client. */
-const FRAMEWORK_PARAMETERS = new Set(['activePlayerId', 'playerId', 'args', 'game']);
-
-const ACTION_METHOD = /(?:#\[[^\]]*\]\s*)*public\s+function\s+(act[A-Z]\w*)\s*\(([^)]*)\)/gu;
+export interface ModernAction {
+  readonly action: string;
+  /** Which form declares it, since the two differ in where they can run. */
+  readonly declaredIn: 'game-class' | 'state-class';
+  /** Parameter names the client sends, excluding the framework's own. */
+  readonly argumentNames: readonly string[];
+  readonly parameters: readonly ActionParameter[];
+}
 
 /**
- * Reads the autowired action methods a modern game class declares.
+ * Parameters the framework fills rather than the client.
  *
- * The modern framework matches a request parameter to a typed method parameter
- * of the same name, so the method signature is the server side of the contract
- * that `.action.php` used to hold.
+ * Both pages list the same set for an `act…` method, in camel and snake case.
+ * `$playerId` is deliberately absent: "unlike getArgs(), autowired actions do
+ * NOT support magic parameters int $playerId/int $player_id to refer to the
+ * current player."
  */
-export function parseModernActions(php: string): ParseOutcome<readonly ModernAction[]> {
+export const INJECTED_ACTION_PARAMETERS = [
+  'args',
+  'activePlayerId',
+  'active_player_id',
+  'activePlayerNo',
+  'active_player_no',
+  'currentPlayerId',
+  'current_player_id',
+  'currentPlayerNo',
+  'current_player_no',
+] as const;
+
+const INJECTED = new Set<string>(INJECTED_ACTION_PARAMETERS);
+
+/** The parameter attributes the framework documents, and what each declares. */
+const PARAMETER_ATTRIBUTES = new Set([
+  'BoolParam',
+  'IntParam',
+  'FloatParam',
+  'StringParam',
+  'IntArrayParam',
+  'JsonParam',
+]);
+
+const ACTION_METHOD = /\bfunction\s+(act[A-Z]\w*)\s*\(/gu;
+const ATTRIBUTE = /#\[\s*\\?(?:[A-Za-z_]\w*\\)*([A-Za-z_]\w*)\s*(\()?/u;
+
+/** Reads a named argument of an attribute, such as `min: 1` or `name: 'id'`. */
+function attributeArguments(text: string): Map<string, string> {
+  const values = new Map<string, string>();
+  const masked = maskLiterals(text);
+  const open = masked.indexOf('(');
+  const span = open === -1 ? null : matchBracket(masked, open);
+  if (span === null) {
+    return values;
+  }
+  for (const part of splitTopLevel(masked, span.start + 1, span.end)) {
+    const argument = text.slice(part.start, part.end);
+    const named = /^\s*([A-Za-z_]\w*)\s*:(?!:)([\s\S]*)$/u.exec(maskLiterals(argument));
+    if (named !== null) {
+      values.set(named[1] ?? '', argument.slice(argument.length - (named[2] ?? '').length).trim());
+    }
+  }
+  return values;
+}
+
+function readParameter(text: string): ActionParameter | null {
+  const variable = /\$([A-Za-z_]\w*)/u.exec(text)?.[1];
+  if (variable === undefined) {
+    return null;
+  }
+
+  const attributeMatch = ATTRIBUTE.exec(text);
+  const attribute =
+    attributeMatch !== null && PARAMETER_ATTRIBUTES.has(attributeMatch[1] ?? '')
+      ? (attributeMatch[1] ?? null)
+      : null;
+  const values =
+    attribute === null
+      ? new Map<string, string>()
+      : attributeArguments(text.slice(ATTRIBUTE.exec(text)?.index ?? 0));
+
+  const number = (key: string): number | null => {
+    const raw = values.get(key);
+    return raw !== undefined && /^-?\d+$/u.test(raw.trim()) ? Number(raw) : null;
+  };
+  const bound = (key: 'min' | 'max'): Record<string, number> => {
+    const value = number(key);
+    return value === null ? {} : { [key]: value };
+  };
+  const list = values.get('enum');
+  const choices =
+    list === undefined
+      ? undefined
+      : [...list.matchAll(/'([^']*)'|"([^"]*)"/gu)].map((entry) => entry[1] ?? entry[2] ?? '');
+
+  // The type sits between the attribute and the variable.
+  const declaration = text.slice(
+    attribute === null ? 0 : maskLiterals(text).indexOf(']') + 1 || 0,
+    text.indexOf(`$${variable}`),
+  );
+  const type = /(\??[\\A-Za-z_]\w*)\s*$/u.exec(declaration.trim())?.[1] ?? null;
+
+  return {
+    name: readStringLiteral(values.get('name') ?? '') ?? variable,
+    variable,
+    type,
+    attribute,
+    constraints: {
+      ...bound('min'),
+      ...bound('max'),
+      ...(choices === undefined ? {} : { enum: choices }),
+      ...(values.has('alphanum') ? { alphanum: values.get('alphanum')?.trim() === 'true' } : {}),
+    },
+  };
+}
+
+export interface ActionReadOptions {
+  /**
+   * True for a state class, where "every normal function should have a
+   * `#[PossibleAction]` attribute on top of it to indicate the front it's a
+   * normal action for the player".
+   */
+  readonly requireAttribute: boolean;
+  readonly declaredIn: ModernAction['declaredIn'];
+}
+
+/**
+ * Reads the `act…` methods that receive player actions.
+ *
+ * The framework autowires them: "The query param from the front request will be
+ * matched with the PHP variable of the same name", unless a parameter attribute
+ * renames it. So the signature is the server side of the contract that
+ * `.action.php` used to hold, and the attribute — not the variable — decides
+ * what the client is expected to send.
+ */
+export function parseModernActions(
+  php: string,
+  options: ActionReadOptions = { requireAttribute: false, declaredIn: 'game-class' },
+): ParseOutcome<readonly ModernAction[]> {
   const actions: ModernAction[] = [];
   const unsupported: string[] = [];
+  const masked = maskLiterals(php);
+  const methods = readMethods(php);
 
-  for (const match of php.matchAll(ACTION_METHOD)) {
-    const name = match[1];
-    const parameters = match[2] ?? '';
-    if (name === undefined) {
+  for (const match of masked.matchAll(ACTION_METHOD)) {
+    const name = match[1] ?? '';
+    const method = methods.find((entry) => entry.name === name);
+    if (method === undefined) {
       continue;
     }
-    const argumentNames: string[] = [];
-    for (const parameter of parameters.split(',')) {
-      const trimmed = parameter.trim();
-      if (trimmed === '') {
-        continue;
-      }
-      const variable = /\$([A-Za-z_]\w*)/u.exec(trimmed)?.[1];
-      if (variable === undefined) {
-        continue;
-      }
-      if (!/^[?\\A-Za-z]/u.test(trimmed)) {
-        unsupported.push(`action ${name} declares untyped parameter $${variable}`);
-      }
-      if (!FRAMEWORK_PARAMETERS.has(variable)) {
-        argumentNames.push(variable);
-      }
+    if (options.requireAttribute && !method.attributes.includes('PossibleAction')) {
+      continue;
     }
-    actions.push({ action: name, argumentNames: argumentNames.sort() });
+    // A method the front can reach must be public; the framework calls it from
+    // outside the class.
+    if (/\b(?:private|protected)\s+(?:static\s+)?$/u.test(masked.slice(0, match.index))) {
+      continue;
+    }
+
+    const parameters: ActionParameter[] = [];
+    const bounds = { start: 0, end: method.parameters.length };
+    for (const part of splitTopLevel(maskLiterals(method.parameters), bounds.start, bounds.end)) {
+      const text = method.parameters.slice(part.start, part.end);
+      const parameter = readParameter(text);
+      if (parameter === null) {
+        continue;
+      }
+      if (parameter.type === null && parameter.attribute === null) {
+        unsupported.push(`action ${name} declares untyped parameter $${parameter.variable}`);
+      }
+      parameters.push(parameter);
+    }
+
+    const client = parameters.filter((parameter) => !INJECTED.has(parameter.variable));
+    actions.push({
+      action: name,
+      declaredIn: options.declaredIn,
+      argumentNames: client.map((parameter) => parameter.name).sort(),
+      parameters,
+    });
   }
 
   return { value: actions, unsupported };

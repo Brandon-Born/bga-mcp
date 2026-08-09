@@ -33,12 +33,12 @@
   "actionContracts": {
     "status": "findings",
     "summary": {
-      "errors": 0,
+      "errors": 1,
       "warnings": 1,
       "information": 0,
       "unsupported": 0
     },
-    "codes": ["action.entry-point.missing"]
+    "codes": ["action.argument.invalid", "action.entry-point.missing"]
   },
   "notifications": {
     "status": "findings",

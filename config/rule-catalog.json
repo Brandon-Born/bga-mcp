@@ -1,7 +1,7 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.2.0",
+  "catalogVersion": "1.3.0",
   "updatedAt": "2026-08-08",
   "checks": [
     {
@@ -15,8 +15,9 @@
       "implementation": "src/rules/action-contracts.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+          "kind": "official-documentation",
+          "reference": "Main game logic: Game.php says \"The query param from the front request will be matched with the PHP variable of the same name\", and lists the magic parameters the framework fills instead of the client.",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
         }
       ],
       "fixtures": {
@@ -24,7 +25,39 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "action.argument.invalid",
+      "automatable": true,
+      "group": "action-contracts",
+      "tool": "validate_action_contracts",
+      "summary": "A literal argument the client sends fails the check its parameter attribute declares.",
+      "severity": "error",
+      "certainty": "certain",
+      "implementation": "src/rules/action-contracts.ts",
+      "sources": [
+        {
+          "kind": "official-documentation",
+          "reference": "Main game logic: Game.php documents the parameter attributes and the checks each runs: IntParam \"will trigger an exception if param is < 1\", StringParam \"will trigger an exception if the parameter doesn't match a value in the enum\".",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/modern",
+        "validModern": "tests/fixtures/projects/modern-state-classes",
+        "failingModern": "tests/fixtures/projects/modern-broken"
+      },
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
+        "E2E-VALIDATE-ACTIONS-MODERN-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -38,8 +71,9 @@
       "implementation": "src/rules/action-contracts.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+          "kind": "official-documentation",
+          "reference": "Your game state machine: states.inc.php says \"possibleactions\" \"defines the actions possible by the players in this game state, and ensures they cannot perform actions that are not allowed in this state\", and the state-class page adds the Game.php fallback for actions available in any state.",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -47,7 +81,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -69,7 +107,11 @@
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -91,7 +133,11 @@
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -105,8 +151,9 @@
       "implementation": "src/rules/action-contracts.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+          "kind": "official-documentation",
+          "reference": "State classes: State directory says an action needs a #[PossibleAction] attribute and that \"if you trigger an action from the front, and it's not declared in this state, the framework will check if the function exists in the Game.php file\". Main game logic: Game.php documents the autowired act\u2026 entry point.",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -115,7 +162,11 @@
         "validModern": "tests/fixtures/projects/modern",
         "failingModern": "tests/fixtures/projects/modern-broken"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -138,7 +189,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -161,7 +216,11 @@
         "failing": "tests/fixtures/projects/legacy-broken",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {
@@ -183,7 +242,11 @@
         "valid": "tests/fixtures/projects/legacy",
         "validModern": "tests/fixtures/projects/modern"
       },
-      "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS"],
+      "scenarios": [
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+      ],
       "owner": "Brandon Born"
     },
     {

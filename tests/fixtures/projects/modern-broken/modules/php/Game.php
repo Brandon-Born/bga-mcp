@@ -27,8 +27,9 @@ final class Game extends \Bga\GameFramework\Table
         return 'pass';
     }
 
-    #[IntParam(min: 1, max: 5)]
-    public function actPlay(int $cardId): string
+    // Deliberately defective on the client side: the attribute accepts 1 to 5
+    // and the client sends 9, which the framework rejects before this runs.
+    public function actPlay(#[IntParam(min: 1, max: 5)] int $cardId): string
     {
         // Names a table the schema does not declare.
         $this->DbQuery("INSERT INTO deck (deck_id) VALUES (1)");

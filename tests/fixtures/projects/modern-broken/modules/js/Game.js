@@ -6,7 +6,8 @@ export class Game {
   }
 
   onPlayClicked() {
-    this.bga.actions.performAction('actPlay', { cardId: 3 });
+    // Outside the range the server's parameter attribute accepts.
+    this.bga.actions.performAction('actPlay', { cardId: 9 });
   }
 
   onGhostClicked() {

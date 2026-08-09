@@ -14,6 +14,13 @@ export interface ClientActionCall {
   readonly action: string;
   /** Argument names sent with the call, excluding framework keys such as `lock`. */
   readonly argumentNames: readonly string[];
+  /**
+   * The literal value of each argument the call writes as one.
+   *
+   * A value assembled at run time is absent rather than guessed, so a rule can
+   * only judge what the source actually states.
+   */
+  readonly argumentValues: Readonly<Record<string, string>>;
   readonly style: 'ajaxcall' | 'performAction';
 }
 
@@ -23,20 +30,54 @@ export interface ServerActionEntry {
   readonly argumentNames: readonly string[];
 }
 
-/** Framework-owned keys a client sends that are never game arguments. */
-const FRAMEWORK_KEYS = new Set(['lock', 'action', 'module', 'class', 'nodialog']);
+/**
+ * Framework-owned keys a legacy `ajaxcall` sends that are never game arguments.
+ *
+ * They belong to that call shape only. `bgaPerformAction` takes the action name
+ * as its own argument and its options as a third one, so every key in its
+ * argument object is the game's — including one called `action`, which the
+ * documentation's own `actChooseAction(string $action)` example expects.
+ */
+const AJAX_FRAMEWORK_KEYS = new Set(['lock', 'action', 'module', 'class', 'nodialog']);
 
-function objectKeys(literal: string): string[] {
+/**
+ * The keys an object literal sends.
+ *
+ * Shorthand counts: `{ tokenId }` sends `tokenId` exactly as `{ tokenId: x }`
+ * does, and a modern client writes it that way most of the time.
+ */
+function objectKeys(literal: string, framework: ReadonlySet<string>): string[] {
   const keys: string[] = [];
   for (const match of literal.matchAll(
-    /(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*:/gu,
+    /(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*(?::|(?=[,}]))/gu,
   )) {
     const key = match[1] ?? match[2] ?? match[3];
-    if (key !== undefined && !FRAMEWORK_KEYS.has(key)) {
+    if (key !== undefined && !framework.has(key)) {
       keys.push(key);
     }
   }
   return keys;
+}
+
+/**
+ * Reads the literal values an object literal states.
+ *
+ * Only a value the source writes out is recorded: `{ gold: 0 }` states its
+ * value, `{ gold: this.chosen }` does not, and the difference is what keeps a
+ * rule about values from guessing at one.
+ */
+function objectValues(literal: string, framework: ReadonlySet<string>): Record<string, string> {
+  const values: Record<string, string> = {};
+  for (const match of literal.matchAll(
+    /(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*:\s*('[^']*'|"[^"]*"|-?\d+(?:\.\d+)?|true|false)\s*(?=[,}])/gu,
+  )) {
+    const key = match[1] ?? match[2] ?? match[3];
+    const value = match[4];
+    if (key !== undefined && value !== undefined && !framework.has(key)) {
+      values[key] = value;
+    }
+  }
+  return values;
 }
 
 /** Extracts the balanced object literal that starts at `start`, or null. */
@@ -100,7 +141,9 @@ export function parseClientActionCalls(source: string): ParseOutcome<readonly Cl
     const literalObject = objectLiteralAt(source, argumentsStart);
     calls.push({
       action,
-      argumentNames: literalObject === null ? [] : objectKeys(literalObject),
+      argumentNames: literalObject === null ? [] : objectKeys(literalObject, AJAX_FRAMEWORK_KEYS),
+      argumentValues:
+        literalObject === null ? {} : objectValues(literalObject, AJAX_FRAMEWORK_KEYS),
       style: 'ajaxcall',
     });
     if (literalObject === null) {
@@ -120,7 +163,8 @@ export function parseClientActionCalls(source: string): ParseOutcome<readonly Cl
     const literalObject = objectLiteralAt(source, argumentsStart);
     calls.push({
       action: literal,
-      argumentNames: literalObject === null ? [] : objectKeys(literalObject),
+      argumentNames: literalObject === null ? [] : objectKeys(literalObject, new Set()),
+      argumentValues: literalObject === null ? {} : objectValues(literalObject, new Set()),
       style: 'performAction',
     });
   }

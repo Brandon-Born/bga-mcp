@@ -31,10 +31,13 @@ interface ContractResult {
   };
 }
 
-let server: PackagedServer<'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame'>;
+let server: PackagedServer<
+  'cleangame' | 'brokengame' | 'moderngame' | 'moderncleangame' | 'stateclassgame'
+>;
 let cleanRoot: string;
 let brokenRoot: string;
 let modernRoot: string;
+let stateClassRoot: string;
 let modernCleanRoot: string;
 let oneSidedRoot: string;
 let expectedModern: { status: string; summary: Record<string, number>; codes: string[] } =
@@ -60,11 +63,13 @@ beforeAll(async () => {
     cleangame: 'legacy',
     brokengame: 'legacy-broken',
     moderngame: 'modern-broken',
+    stateclassgame: 'modern-state-classes',
     moderncleangame: 'modern',
   });
   cleanRoot = server.projects.cleangame;
   brokenRoot = server.projects.brokengame;
   modernRoot = server.projects.moderngame;
+  stateClassRoot = server.projects.stateclassgame;
   modernCleanRoot = server.projects.moderncleangame;
   oneSidedRoot = await deriveProject(server, modernCleanRoot, 'onesided', ['modules/js']);
   expectedBroken = (
@@ -235,5 +240,35 @@ describe('packaged validate_action_contracts', () => {
     expect(response.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
       expectedModern.codes,
     );
+  });
+  it('[E2E-VALIDATE-ACTIONS-STATE-CLASSES] traces the actions a state class declares, and the ones the game class allows anywhere', async () => {
+    const response = await withServer(
+      ['--project-root', stateClassRoot],
+      async (client) => await callValidate(client, { projectRoot: stateClassRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    const structured = response.structured;
+
+    // Regression, observed through the installed package: a documented
+    // `#[PossibleAction] actPlay(int $cardId, int $active_player_id, int
+    // $currentPlayerId)` produced action.entry-point.missing, and a game-class
+    // action no state lists produced action.call.not-declared.
+    expect(structured?.diagnostics).toMatchObject({
+      status: 'passed',
+      summary: { errors: 0, warnings: 0, information: 0, unsupported: 0 },
+      findings: [],
+    });
+    expect(structured?.trace.entryPoints.map((entry) => entry.action).sort()).toEqual([
+      'actChooseToken',
+      'actPass',
+      'actPlayToken',
+      'actSetAutopass',
+    ]);
+
+    // The framework fills the player identifiers, so they are not arguments the
+    // client is expected to send.
+    const play = structured?.trace.entryPoints.find((entry) => entry.action === 'actPlayToken');
+    expect(play?.argumentNames).toEqual(['tokenId']);
   });
 });
