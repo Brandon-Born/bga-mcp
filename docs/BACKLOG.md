@@ -134,6 +134,14 @@ BGA-329 is `implemented`. The privileged-effect check parses each production mod
 
 `TM-POLICY-COMPLETE-EFFECT-GATE` moves from `planned` to `implemented`, and `RR-POLICY-NO-TOOL-EVIDENCE` loses another of the four gaps it carried. BGA-326 and BGA-330 hold the rest.
 
+### The walk pays for what it touches — 2026-08-10
+
+BGA-330 is `implemented`. One budget counts every entry encountered rather than the files that survive, directories are read lazily so a huge one can be stopped before it is all in memory, and a listing cut short says so. Skipped links are counted always and named up to a cap, because the counts are work and the names are output.
+
+A file read is now bound to the object it opened: `O_NOFOLLOW`, type and size from the descriptor, containment tied to it by device and inode, and a read that asks for one byte past the budget so growth is detected rather than quietly truncated.
+
+`TM-POLICY-OBJECT-BOUND-READS` moves from `planned` to `implemented`, and `RR-POLICY-NO-TOOL-EVIDENCE` is down to its last gap, which BGA-326 owns. What Node cannot express is recorded rather than implied: `RR-POLICY-TRAVERSAL-OPENAT` states that without `openat` an intermediate-directory swap is caught after the fact rather than made impossible.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
@@ -1121,13 +1129,19 @@ BGA-329 is `implemented`. The privileged-effect check parses each production mod
 
 ### BGA-330 — Make filesystem traversal entry-bounded and race-safe
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-013, BGA-015
 - **Deliverable:** Directory traversal and file reads that bound all encountered work/data and bind containment/type/size decisions to the exact object read rather than a reusable pathname.
 - **Acceptance:** One cumulative budget counts files, directories, links, special entries, diagnostics, metadata bytes, and directory fanout before materialization/sort. Symlinks are never followed. Reads use no-follow/descriptor-relative or equivalent primitives, validate containment/type/size after open, stream under a byte cap, and detect replacement/growth without exposing outside-root content.
 - **Verification:** Installed-client fixtures include link storms, empty-directory storms, huge single directories, deep trees, special files, concurrent rename/symlink swaps, and file growth/replacement between checks. Each stays within operation/output budgets, reports truncation truthfully, makes no outside-root read, and cleans up. A synchronization hook/barrier forces each rename or growth exactly between check and open; stress repetition is secondary evidence, not the race oracle.
 - **Finding:** `listProjectFiles` reads and sorts a whole directory, appends every symlink, recurses every directory, and counts only regular files. With `maxEntries: 1`, an existing directory returned zero files, four skipped links, and `truncated: false`. File reads separately realpath a pathname, then later `lstat` and `readFile` it; a concurrent intermediate-directory swap or file replacement can invalidate containment/size decisions. The resource-exhaustion defect is reproduced; the TOCTOU escape is a static race finding requiring concurrent project write access.
+- **Evidence, the budget:** [`src/policy.ts`](../src/policy.ts) now spends one budget on everything it encounters — a file, a directory, a link, a socket, a FIFO — before deciding what to do with it, and reads directories lazily with `opendir` so a huge one can be stopped before all its names are in memory. What it read before the budget ran out is still returned, sorted per directory, with truncation reported beside it: a partial answer that says it is partial is useful, and one that claims to be complete is not.
+- **Evidence, bounded diagnostics:** The counts are work and the names are output, so skipped links and unreadable directories are counted always and named up to a cap. A link for every file used to turn a listing into a megabyte of diagnostics, which the output budget then refused outright — the developer learned nothing and the work was done anyway.
+- **Evidence, the read:** A file is opened once, with `O_NOFOLLOW` so the last component cannot be a link, and every decision is made about that descriptor: type, size, bytes. Containment is bound to it by identity — the resolved path is checked to be inside the root, and the object at that path must be the same device and inode as the one opened — so a name that came to mean a different file between the two steps is refused rather than read. The read is bounded by the size measured on that descriptor and deliberately asks for one byte more, so a file that grew is detected rather than silently truncated into a plausible-looking result.
+- **Verified against:** `E2E-POLICY-OBJECT-BOUND-READS` in [`tests/e2e/traversal-bounds.test.ts`](../tests/e2e/traversal-bounds.test.ts) builds projects out of the shapes that used to be free — six thousand links, six thousand empty directories — and requires the installed server to report them as truncated with a handful of files and at most a hundred named skips. A deep tree past the depth budget must say it was cut short. A file replaced by a link into another directory, a link where a state file should be, a link standing in for a whole module directory, and a file grown two megabytes between calls each have to come back without a byte of outside-root content.
+- **Note:** `implemented`, not verified: it needs a passing CI run of the commit that carries it, which BGA-005 requires and no local run can supply.
+- **Not covered:** Two things are recorded rather than claimed. Binding containment at the moment of opening would need descriptor-relative opens, and Node exposes no `openat`, so an intermediate-directory swap is caught by the identity check afterwards rather than made impossible; `RR-POLICY-TRAVERSAL-OPENAT` carries that. And the swap in the scenario is arranged between calls rather than forced inside one read, because there is no hook between the server's own stat and open to force it at — identity checking makes the outcome the same either way, which is why the arrangement is honest evidence and not a substitute oracle.
 
 ### BGA-307 — Build the live Studio E2E harness
 

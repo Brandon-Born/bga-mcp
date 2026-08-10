@@ -1,5 +1,5 @@
 import { constants as oConstants } from 'node:fs';
-import { lstat, open, readFile, readdir, realpath } from 'node:fs/promises';
+import { lstat, open, opendir, readFile, realpath, stat } from 'node:fs/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
 import { lookup as dnsLookup } from 'node:dns';
@@ -60,6 +60,16 @@ export const DEFAULT_POLICY_CONFIG: PolicyConfig = {
 
 export const DEFAULT_MAX_LISTED_FILES = 5_000;
 export const DEFAULT_MAX_LIST_DEPTH = 12;
+
+/**
+ * How many skipped links or unreadable directories a listing will name.
+ *
+ * The counts are bounded work; the names are bounded output. A project with a
+ * link for every file would otherwise turn a listing into a megabyte of
+ * diagnostics — which is how a link storm came back as `policy.output.too-large`
+ * instead of as a truncated listing.
+ */
+export const MAX_REPORTED_SKIPS = 100;
 
 export interface ProjectFile {
   /** Root-relative path with forward slashes on every platform. */
@@ -519,19 +529,45 @@ export class PolicyBoundary {
     const files: ProjectFile[] = [];
     const skippedLinks: string[] = [];
     const unreadablePaths: string[] = [];
-    let truncated = false;
+    // Held on an object: the flag is set inside the walk below, and a plain
+    // local reads to the compiler as one that never changes.
+    const state = { truncated: false };
+
+    // One budget for everything encountered, not one for the files that
+    // survive. A directory of a million links, a million empty directories, or
+    // a million sockets costs the same work as a million files and used to
+    // cost nothing against the limit — with `maxEntries: 1` an ordinary
+    // directory returned zero files, four skipped links, and `truncated:
+    // false`, which is the wrong answer twice over.
+    let encountered = 0;
+    // Read through a call: a flag the compiler cannot see being set stays
+    // narrowed to its last assignment, and the loops below would be told they
+    // are checking something that is always false.
+    const stopped = (): boolean => state.truncated;
+    const spend = (): boolean => {
+      encountered += 1;
+      if (encountered > maxEntries) {
+        state.truncated = true;
+        return false;
+      }
+      return true;
+    };
 
     const walk = async (directory: string, depth: number): Promise<void> => {
-      if (truncated) {
+      if (stopped()) {
         return;
       }
       if (depth > maxDepth) {
-        truncated = true;
+        state.truncated = true;
         return;
       }
       let entries;
       try {
-        entries = await readdir(directory, { withFileTypes: true });
+        // Read lazily rather than materializing and sorting the whole
+        // directory: the budget has to be able to stop a huge one before its
+        // names are all in memory, which a `readdir` that returns an array
+        // cannot do.
+        entries = await opendir(directory);
       } catch (error) {
         // A directory the process may not read is a fact about the project,
         // not a failure of the server. It is recorded by its project-relative
@@ -539,61 +575,157 @@ export class PolicyBoundary {
         if (!isPermissionError(error)) {
           throw error;
         }
-        unreadablePaths.push(relative(allowedRoot, directory).split(sep).join('/') || '.');
+        if (unreadablePaths.length < MAX_REPORTED_SKIPS) {
+          unreadablePaths.push(relative(allowedRoot, directory).split(sep).join('/') || '.');
+        } else {
+          state.truncated = true;
+        }
         return;
       }
-      for (const entry of [...entries].sort((left, right) => left.name.localeCompare(right.name))) {
-        const absolute = join(directory, entry.name);
-        const portable = relative(allowedRoot, absolute).split(sep).join('/');
-        if (entry.isSymbolicLink()) {
-          skippedLinks.push(portable);
-          continue;
+
+      const directories: string[] = [];
+      const found: ProjectFile[] = [];
+      try {
+        for await (const entry of entries) {
+          if (!spend()) {
+            return;
+          }
+          const absolute = join(directory, entry.name);
+          const portable = relative(allowedRoot, absolute).split(sep).join('/');
+          if (entry.isSymbolicLink()) {
+            // Counted always, named up to the reporting cap: the developer
+            // needs to know links were skipped, not to read ten thousand of
+            // their names.
+            if (skippedLinks.length < MAX_REPORTED_SKIPS) {
+              skippedLinks.push(portable);
+            } else {
+              state.truncated = true;
+            }
+            continue;
+          }
+          if (entry.isDirectory()) {
+            directories.push(absolute);
+            continue;
+          }
+          if (!entry.isFile()) {
+            // A socket, a FIFO, a device. Counted, because encountering it was
+            // work, and skipped, because it is not project content.
+            continue;
+          }
+          found.push({ path: portable, bytes: (await lstat(absolute)).size });
         }
-        if (entry.isDirectory()) {
-          await walk(absolute, depth + 1);
-          continue;
-        }
-        if (!entry.isFile()) {
-          continue;
-        }
-        if (files.length >= maxEntries) {
-          truncated = true;
+      } finally {
+        // An iteration left early keeps the directory handle open otherwise.
+        await entries.close().catch(() => undefined);
+        // What was read before the budget ran out is still a true answer about
+        // this directory, and truncation is reported beside it. Sorted here,
+        // per directory, because the order is part of the contract and the
+        // budget decides how much there is to order.
+        found.sort((left, right) => left.path.localeCompare(right.path));
+        files.push(...found);
+      }
+      for (const child of directories.sort((left, right) => left.localeCompare(right))) {
+        await walk(child, depth + 1);
+        if (stopped()) {
           return;
         }
-        files.push({ path: portable, bytes: (await lstat(absolute)).size });
       }
     };
 
     await walk(allowedRoot, 1);
-    return { root: allowedRoot, files, skippedLinks, unreadablePaths, truncated };
+    return { root: allowedRoot, files, skippedLinks, unreadablePaths, truncated: state.truncated };
   }
 
-  /** Reads one file inside an allowed root, refusing anything above the byte budget. */
+  /**
+   * Reads one file inside an allowed root, bound to the object it opened.
+   *
+   * The 2026-08-08 review found the decisions here attached to a pathname
+   * rather than to a file: the path was resolved and checked for containment,
+   * and then — separately, later — `lstat` and `readFile` were pointed at that
+   * same name again. Between those steps a name can come to mean a different
+   * file, so the checks described a file that no longer had to be the one read.
+   *
+   * Now the file is opened once, with `O_NOFOLLOW` so the last component
+   * cannot be a link, and every decision is made about that descriptor: its
+   * type, its size, and its bytes. Containment is bound to it by identity —
+   * the resolved path is checked to be inside the root, and the object at that
+   * resolved path is required to be the same device and inode as the one
+   * opened. A swap in between changes one of those two things, and a file that
+   * is not the file whose containment was checked is refused rather than read.
+   *
+   * The residual is stated rather than papered over: a swap of an intermediate
+   * *directory* between the resolution and the open is closed by the identity
+   * check, but closing it at the point of opening would need `openat`, which
+   * Node does not expose. See RR-POLICY-TRAVERSAL-OPENAT.
+   */
   async readProjectFile(
     root: string,
     relativePath: string,
-    options: { readonly maxBytes?: number } = {},
+    options: { readonly maxBytes?: number; readonly signal?: AbortSignal } = {},
   ): Promise<string> {
     const resolved = await this.resolveWithinProject(root, relativePath);
     const maxBytes = options.maxBytes ?? this.#config.maxOutputBytes;
     assertPositiveInteger('maxBytes', maxBytes, MAX_OUTPUT_BYTES_LIMIT);
 
-    const info = await lstat(resolved);
-    if (!info.isFile()) {
+    let handle;
+    try {
+      handle = await open(resolved, oConstants.O_RDONLY | oConstants.O_NOFOLLOW);
+    } catch (cause) {
       throw new PolicyViolationError(
         ERROR_CODES.policyPathNotFound,
-        'The requested project path is not a regular file.',
-        { details: { requestedPath: relativePath } },
+        'The requested project file could not be opened.',
+        { details: { requestedPath: relativePath }, cause },
       );
     }
-    if (info.size > maxBytes) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyOutputTooLarge,
-        `The file is ${String(info.size)} bytes, above the ${String(maxBytes)} byte read limit.`,
-        { details: { requestedPath: relativePath, bytes: info.size, maxBytes } },
-      );
+
+    try {
+      const info = await handle.stat();
+      if (!info.isFile()) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyPathNotFound,
+          'The requested project path is not a regular file.',
+          { details: { requestedPath: relativePath } },
+        );
+      }
+
+      // The object opened must be the object whose containment was checked.
+      // Identity rather than spelling: a rename between the two leaves a
+      // different device and inode behind, and that is the answer.
+      const atPath = await stat(resolved).catch(() => null);
+      if (atPath?.dev !== info.dev || atPath.ino !== info.ino) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyPathSymlinkEscape,
+          'The requested project file changed while it was being opened, so it was not read.',
+          { details: { requestedPath: relativePath } },
+        );
+      }
+
+      if (info.size > maxBytes) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyOutputTooLarge,
+          `The file is ${String(info.size)} bytes, above the ${String(maxBytes)} byte read limit.`,
+          { details: { requestedPath: relativePath, bytes: info.size, maxBytes } },
+        );
+      }
+
+      // Bounded by the size measured on this descriptor, so a file that grows
+      // between the check and the read cannot enlarge it. One byte over the
+      // budget is read deliberately, so growth is detected rather than
+      // silently truncated into a plausible-looking result.
+      const buffer = Buffer.alloc(Math.min(info.size, maxBytes) + 1);
+      options.signal?.throwIfAborted();
+      const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
+      if (bytesRead > maxBytes) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyOutputTooLarge,
+          `The file grew past the ${String(maxBytes)} byte read limit while it was being read.`,
+          { details: { requestedPath: relativePath, maxBytes } },
+        );
+      }
+      return buffer.subarray(0, bytesRead).toString('utf8');
+    } finally {
+      await handle.close();
     }
-    return await readFile(resolved, 'utf8');
   }
 
   /**

@@ -584,7 +584,7 @@
       "title": "Containment, type, and size checks are bound to the exact opened object and all encountered entries consume one budget",
       "boundary": "TB-LOCAL-FILESYSTEM",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-330",
       "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
     },
@@ -1119,7 +1119,7 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove cancellation or race-safe bounded traversal. BGA-326 and BGA-330 own those remaining gaps.",
+      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove cancellation. BGA-326 owns that remaining gap.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },
@@ -1179,6 +1179,12 @@
       "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
       "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason.",
       "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-POLICY-TRAVERSAL-OPENAT",
+      "description": "Containment is bound to the opened object by device and inode identity, which refuses a file that is not the one whose path was checked. Binding it at the moment of opening would need descriptor-relative opens; Node exposes no openat, so a swap of an intermediate directory is caught after the fact rather than made impossible.",
+      "abuseCases": ["AC-SYMLINK-ESCAPE", "AC-PATH-TRAVERSAL"],
       "acceptedBy": "Brandon Born"
     }
   ]

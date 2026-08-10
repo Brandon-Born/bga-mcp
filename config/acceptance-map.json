@@ -782,6 +782,36 @@
       "case": "An allowed import in policy.ts passes and the current tree contains no runtime offender",
       "boundary": "repository",
       "scenarios": ["GATE-POLICY-COMPLETE-EFFECT-BOUNDARY"]
+    },
+    {
+      "item": "BGA-330",
+      "case": "One cumulative budget counts files, directories, links, special entries, and diagnostics before materialization",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+    },
+    {
+      "item": "BGA-330",
+      "case": "Symlinks are never followed",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+    },
+    {
+      "item": "BGA-330",
+      "case": "Reads validate containment, type, and size after open and detect replacement or growth without exposing outside-root content",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+    },
+    {
+      "item": "BGA-330",
+      "case": "Truncation is reported truthfully rather than as a complete listing",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+    },
+    {
+      "item": "BGA-330",
+      "case": "A synchronization barrier forces a rename exactly between check and open",
+      "boundary": "packaged",
+      "missing": "The swap is arranged between calls rather than forced inside one read; Node exposes no hook between the server's own stat and open, and identity checking makes the outcome the same either way. Recorded rather than claimed."
     }
   ]
 }
