@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { ACTION_CONTRACT_RULES, validateActionContracts } from '../rules/action-contracts.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
@@ -149,17 +150,18 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
           } satisfies ValidateActionContractsResult;
         });
 
-        const structuredContent = ValidateActionContractsOutputSchema.parse(result);
-        const text = summarizeActionContracts(
-          result.diagnostics,
-          result.trace.clientCalls.length,
-          result.trace.entryPoints.length,
-        );
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           VALIDATE_ACTION_CONTRACTS_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          ValidateActionContractsOutputSchema,
+          result,
+          (published) =>
+            summarizeActionContracts(
+              published.diagnostics,
+              published.trace.clientCalls.length,
+              published.trace.entryPoints.length,
+            ),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

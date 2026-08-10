@@ -62,9 +62,33 @@ describe('query reading', () => {
         tables: ['card'],
         columns: ['card.card_id', 'card.card_location'],
         interpolated: false,
-        text: "UPDATE card SET card_location = 'hand' WHERE card_id = 1",
+        // The value is masked: what a query compares is its shape, and the
+        // constant it compares against is data.
+        text: "UPDATE card SET card_location = '?' WHERE card_id = 1",
       },
     ]);
+  });
+
+  it('publishes the shape of a query without the values in it', () => {
+    const outcome = parseQueries(
+      `<?php self::DbQuery("UPDATE player SET player_secret = 'hunter2-not-a-real-password' WHERE player_name = '$name'");`,
+    );
+    const query = outcome.value[0];
+    expect(query?.text).not.toContain('hunter2-not-a-real-password');
+    // Which variable reaches the query is the whole content of the
+    // interpolation finding, so the variable survives the mask.
+    expect(query?.text).toBe("UPDATE player SET player_secret = '?' WHERE player_name = '$name'");
+    expect(query?.interpolated).toBe(true);
+    expect(query?.columns).toEqual(['player.player_name', 'player.player_secret']);
+  });
+
+  it('masks a value inside an unreadable statement before quoting it', () => {
+    const outcome = parseQueries(
+      `<?php self::DbQuery("SHOW TABLES LIKE 'hunter2-not-a-real-password'");`,
+    );
+    expect(outcome.value).toEqual([]);
+    expect(outcome.unsupported.join(' ')).not.toContain('hunter2-not-a-real-password');
+    expect(outcome.unsupported.join(' ')).toContain("SHOW TABLES LIKE '?'");
   });
 
   it('never mistakes a SQL string value or a PHP variable for a column', () => {

@@ -3,8 +3,9 @@ import { z } from 'zod';
 
 import { DiagnosticFindingSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { aggregateValidations } from '../rules/aggregate.js';
-import { auditPreRelease, type PreReleaseAudit, type RuleCatalog } from '../rules/pre-release.js';
+import { auditPreRelease, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
@@ -60,7 +61,7 @@ project a check examines leaves that check unsupported, never passed. Checks
 that cannot be automated are always reported as manual-required. Read-only, and
 no network access.`;
 
-export function summarizePreRelease(audit: PreReleaseAudit, layout: string): string {
+export function summarizePreRelease(audit: RunPreReleaseAuditResult, layout: string): string {
   const lines = [
     `Pre-release audit of a ${layout} project against rule catalog ${audit.catalogVersion}.`,
     `${String(audit.counts.passed)} passed, ${String(audit.counts.failed)} failed, ${String(audit.counts.unsupported)} unsupported, ${String(audit.counts['manual-required'])} manual-required.`,
@@ -121,19 +122,19 @@ export function registerRunPreReleaseAudit(
           return { audit, layout: context.model.layout };
         });
 
-        const structuredContent = RunPreReleaseAuditOutputSchema.parse({
-          schemaVersion: 1,
-          layout: result.layout,
-          catalogVersion: result.audit.catalogVersion,
-          counts: result.audit.counts,
-          checks: result.audit.checks,
-        });
-        const text = summarizePreRelease(result.audit, result.layout);
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           RUN_PRE_RELEASE_AUDIT_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          RunPreReleaseAuditOutputSchema,
+          {
+            schemaVersion: 1,
+            layout: result.layout,
+            catalogVersion: result.audit.catalogVersion,
+            counts: result.audit.counts,
+            checks: result.audit.checks,
+          },
+          (published) => summarizePreRelease(published, published.layout),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

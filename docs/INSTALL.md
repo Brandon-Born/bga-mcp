@@ -65,7 +65,7 @@ Two more shape the results rather than enabling anything: `--operation-timeout-m
 
 ## Reading your own Studio logs (experimental)
 
-This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. The page preflight has a known foreign-name leak (BGA-319), and successful messages need broader credential redaction (BGA-327), so the capability is not ready for general live use.
+This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-320, BGA-321, BGA-326, and BGA-328 remain open against it.
 
 You need your own Studio session cookie. Sign in to `studio.boardgamearena.com`, open developer tools, find any request to that host, and copy its entire `Cookie` request header.
 

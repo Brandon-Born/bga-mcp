@@ -346,13 +346,18 @@ export class PolicyBoundary {
   /** Redaction options that keep in-root paths readable and hide everything else. */
   get redactionOptions(): {
     readonly projectRoots: readonly string[];
+    readonly homeDirectory: string | undefined;
     readonly secretValues: readonly string[];
   } {
     // The Studio session is the one credential this process holds, so it is
     // removed from every published error and log line by value, not by shape.
     const session = process.env[STUDIO_SESSION_ENV];
+    const home = process.env.HOME ?? process.env.USERPROFILE;
     return {
       projectRoots: this.projectRoots,
+      // Whose machine this is, for the publication paths that replace known
+      // locations by value rather than anything shaped like a path.
+      homeDirectory: home === undefined || home.length === 0 ? undefined : home,
       secretValues: session === undefined || session.length === 0 ? [] : [session],
     };
   }

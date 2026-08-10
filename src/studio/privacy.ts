@@ -1,3 +1,5 @@
+import { containsCredential, redactSecrets, type RedactionOptions } from '../redaction.js';
+
 import type { StudioLogLine } from './logline.js';
 
 /**
@@ -42,6 +44,13 @@ export interface ScreeningResult {
  * A session or lock token is a credential, and an email address is personal
  * data even when it is the developer's own — neither belongs in a tool result
  * that an agent will carry into its context.
+ *
+ * These are the shapes this page carries that the shared credential rules do
+ * not name; everything a credential can look like anywhere else is recognized
+ * by {@link containsCredential} rather than listed again here. The 2026-08-08
+ * review found the cost of a private list: an own-account line carrying
+ * `Authorization: Bearer …` came back with the token on it, because four
+ * patterns were all this file knew about.
  */
 const NEVER_RETURNED: readonly RegExp[] = [
   /\b[\w.%+-]+@[\w.-]+\.[a-z]{2,}\b/iu,
@@ -50,13 +59,20 @@ const NEVER_RETURNED: readonly RegExp[] = [
   /\bPHPSESSID\b/iu,
 ];
 
-function isSensitive(line: StudioLogLine): boolean {
-  return NEVER_RETURNED.some((pattern) => pattern.test(line.raw));
+function isSensitive(line: StudioLogLine, options: RedactionOptions): boolean {
+  return (
+    NEVER_RETURNED.some((pattern) => pattern.test(line.raw)) ||
+    containsCredential(line.raw, options)
+  );
 }
 
 /** Decides one line against the developer's own accounts. */
-export function screenLine(line: StudioLogLine, ownAccounts: readonly string[]): LineDisposition {
-  if (isSensitive(line)) {
+export function screenLine(
+  line: StudioLogLine,
+  ownAccounts: readonly string[],
+  options: RedactionOptions = {},
+): LineDisposition {
+  if (isSensitive(line, options)) {
     return 'sensitive';
   }
   if (line.actorName === null) {
@@ -78,13 +94,14 @@ export function screenLine(line: StudioLogLine, ownAccounts: readonly string[]):
 export function screenStudioLog(
   lines: readonly StudioLogLine[],
   ownAccounts: readonly string[],
+  options: RedactionOptions = {},
 ): ScreeningResult {
   const kept: StudioLogLine[] = [];
   const withheld = { foreign: 0, unattributable: 0, sensitive: 0 };
   const withheldValues = new Set<string>();
 
   for (const line of lines) {
-    const disposition = screenLine(line, ownAccounts);
+    const disposition = screenLine(line, ownAccounts, options);
     if (disposition === 'own') {
       kept.push(line);
       continue;
@@ -122,8 +139,17 @@ export const WITHHELD_MARK = '[withheld]';
  *
  * It replaces rather than throws. A diagnostic that crashes tells the developer
  * nothing, and a visible `[withheld]` is a better failure than a name.
+ *
+ * Withheld values go first, then the shared secret rules. The screen above
+ * decides whole lines; these rules decide values inside a line that was kept,
+ * which is what an own-account message needs — the line is the developer's, and
+ * the player identifier or token on it still is not something to hand an agent.
  */
-export function publishStudioText(text: string, withheldValues: readonly string[]): string {
+export function publishStudioText(
+  text: string,
+  withheldValues: readonly string[],
+  options: RedactionOptions = {},
+): string {
   let published = text;
   // Longest first: a raw line contains its own actor name, and replacing the
   // name first would leave the rest of the line behind.
@@ -133,5 +159,5 @@ export function publishStudioText(text: string, withheldValues: readonly string[
     }
     published = published.split(value).join(WITHHELD_MARK);
   }
-  return published;
+  return redactSecrets(published, options);
 }

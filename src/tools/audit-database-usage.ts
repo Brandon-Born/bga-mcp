@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
@@ -138,17 +139,18 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
           } satisfies AuditDatabaseUsageResult;
         });
 
-        const structuredContent = AuditDatabaseUsageOutputSchema.parse(result);
-        const text = summarizeDatabaseAudit(
-          result.diagnostics,
-          result.schema.length,
-          result.queries.length,
-        );
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           AUDIT_DATABASE_USAGE_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          AuditDatabaseUsageOutputSchema,
+          result,
+          (published) =>
+            summarizeDatabaseAudit(
+              published.diagnostics,
+              published.schema.length,
+              published.queries.length,
+            ),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

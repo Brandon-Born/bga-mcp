@@ -2,7 +2,8 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import type { PolicyBoundary } from '../policy.js';
-import { buildSetupStatus, type SetupStatus } from '../setup/status.js';
+import { publishResult } from '../publish.js';
+import { buildSetupStatus } from '../setup/status.js';
 import { publishFailure } from './project-context.js';
 
 export const CHECK_SETUP_TOOL = 'check_setup';
@@ -22,6 +23,8 @@ export const CheckSetupOutputSchema = z.strictObject({
   ),
 });
 
+export type CheckSetupResult = z.infer<typeof CheckSetupOutputSchema>;
+
 const DESCRIPTION = `Report what this server can currently do, and what it needs.
 
 Says which project roots are available, whether network access and Studio log
@@ -34,7 +37,7 @@ it, rather than omitted. Credentials are never reported — only whether one was
 found and where from. Read-only, and no network access.`;
 
 /** Renders the report as the short text a human reads first. */
-export function summarizeSetup(status: SetupStatus): string {
+export function summarizeSetup(status: CheckSetupResult): string {
   const lines = status.findings.map((entry) => {
     const mark = entry.status === 'ok' ? 'ok' : entry.status === 'unavailable' ? 'off' : 'todo';
     return entry.nextAction === undefined
@@ -77,10 +80,13 @@ export function registerCheckSetup(server: McpServer, policy: PolicyBoundary): v
           CHECK_SETUP_TOOL,
           async () => await buildSetupStatus(policy),
         );
-        const parsed = CheckSetupOutputSchema.parse(structuredContent);
-        const text = summarizeSetup(structuredContent);
-        policy.assertOutputWithinLimit(CHECK_SETUP_TOOL, `${JSON.stringify(parsed)}${text}`);
-        return { content: [{ type: 'text', text }], structuredContent: parsed };
+        return publishResult(
+          policy,
+          CHECK_SETUP_TOOL,
+          CheckSetupOutputSchema,
+          structuredContent,
+          summarizeSetup,
+        );
       } catch (error) {
         return publishFailure(policy, error);
       }

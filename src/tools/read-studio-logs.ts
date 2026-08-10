@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { htmlToText } from '../docs/excerpt.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { parseStudioLog } from '../studio/logline.js';
 import { publishStudioText, screenStudioLog, withheldAny } from '../studio/privacy.js';
 import { SetupAsker } from '../setup/ask.js';
@@ -162,9 +163,10 @@ export function registerReadStudioLogs(
           const parsed = parseStudioLog(htmlToText(page.body));
           const forTable =
             tableId === undefined ? parsed : parsed.filter((line) => line.tableId === tableId);
-          const screened = screenStudioLog(forTable, ownAccounts);
+          const screened = screenStudioLog(forTable, ownAccounts, policy.redactionOptions);
           withheldValues = screened.withheldValues;
-          const publish = (text: string): string => publishStudioText(text, withheldValues);
+          const publish = (text: string): string =>
+            publishStudioText(text, withheldValues, policy.redactionOptions);
 
           return {
             schemaVersion: 1 as const,
@@ -187,10 +189,23 @@ export function registerReadStudioLogs(
           };
         });
 
-        const parsed = ReadStudioLogsOutputSchema.parse(structuredContent);
-        const text = publishStudioText(summarizeStudioLogs(parsed), withheldValues);
-        policy.assertOutputWithinLimit(READ_STUDIO_LOGS_TOOL, `${JSON.stringify(parsed)}${text}`);
-        return { content: [{ type: 'text', text }], structuredContent: parsed };
+        return publishResult(
+          policy,
+          READ_STUDIO_LOGS_TOOL,
+          ReadStudioLogsOutputSchema,
+          structuredContent,
+          (published) =>
+            publishStudioText(
+              summarizeStudioLogs(published),
+              withheldValues,
+              policy.redactionOptions,
+            ),
+          // A Studio log line is a web server's request log: `/game/game/act.html`
+          // is a URL, not a location on this machine, and treating it as one
+          // would return a column of placeholders instead of the log. The
+          // machine's own locations are still replaced, by value.
+          { paths: 'known-locations' },
+        );
       } catch (error) {
         return publishFailure(policy, error);
       }

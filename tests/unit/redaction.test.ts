@@ -2,6 +2,7 @@
 import { resolve, sep } from 'node:path';
 
 import {
+  containsCredential,
   REDACTED_CONNECTION,
   REDACTED_CREDENTIAL,
   REDACTED_EMAIL,
@@ -56,12 +57,62 @@ describe('redaction', () => {
     );
     expect(redactText(SEEDED.awsKey)).toBe(REDACTED_CREDENTIAL);
     expect(redactText(SEEDED.githubToken)).toBe(REDACTED_CREDENTIAL);
-    expect(redactText(SEEDED.bearer)).toBe(`Authorization: ${REDACTED_CREDENTIAL}`);
+    // The whole header, name included: the scheme after `Authorization:` is
+    // the caller's choice, so a rule that keeps the name has to know every
+    // scheme to know where the value starts.
+    expect(redactText(SEEDED.bearer)).toBe(REDACTED_CREDENTIAL);
+    expect(redactText('Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9')).toBe(REDACTED_CREDENTIAL);
+    expect(redactText('Cookie: TournoiEnLigneid=8fa1c0de9b7a4e2f; other=1')).toBe(
+      REDACTED_CREDENTIAL,
+    );
     expect(redactText(SEEDED.password)).toBe(REDACTED_CREDENTIAL);
     expect(redactText(SEEDED.session)).toBe(REDACTED_SESSION);
     expect(redactText(SEEDED.connectionString)).toBe(
       `sftp://${REDACTED_CONNECTION}@1.studio.boardgamearena.com`,
     );
+  });
+
+  it('[UNIT-REDACTION-CREDENTIALS] separates what may be edited from what may not be published', () => {
+    // A credential has no useful reading once leaked, so a line carrying one is
+    // withheld whole; player data is removed from a line that still says
+    // something worth reading.
+    for (const secret of [
+      SEEDED.privateKey,
+      SEEDED.awsKey,
+      SEEDED.githubToken,
+      SEEDED.connectionString,
+      SEEDED.session,
+      SEEDED.password,
+      SEEDED.bearer,
+    ]) {
+      expect(containsCredential(`context ${secret} trailing`)).toBe(true);
+    }
+    expect(containsCredential(SEEDED.player)).toBe(false);
+    expect(containsCredential(SEEDED.email)).toBe(false);
+    expect(containsCredential('SELECT card_id FROM card')).toBe(false);
+    // The configured value itself, which no pattern could recognise.
+    expect(
+      containsCredential('cookie-value-abcdefgh', { secretValues: ['cookie-value-abcdefgh'] }),
+    ).toBe(true);
+  });
+
+  it('[UNIT-REDACTION-PATHS] leaves a URL path alone when the text is not filesystem text', () => {
+    const line = `GET /cinco/cinco/playCard.html from ${projectRoot}/modules/php/Game.php`;
+    // The default reads anything path-shaped as a location on this machine.
+    expect(redactText(line, options)).toContain(REDACTED_PATH);
+
+    const published = redactText(line, { ...options, paths: 'known-locations' });
+    // A request path is a URL, and a log full of placeholders is not a log.
+    expect(published).toContain('/cinco/cinco/playCard.html');
+    // The machine's own locations are still replaced, by value.
+    expect(published).toContain('<project-root>/modules/php/Game.php');
+    expect(published).not.toContain(projectRoot);
+    expect(
+      redactText(`read ${resolve(sep, 'home', 'developer')}/notes.md`, {
+        homeDirectory: resolve(sep, 'home', 'developer'),
+        paths: 'known-locations',
+      }),
+    ).toBe(`read ${REDACTED_PATH}/notes.md`);
   });
 
   it('[UNIT-REDACTION-PLAYER-DATA] removes player identifiers and email addresses', () => {

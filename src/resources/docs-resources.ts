@@ -6,6 +6,7 @@ import { DOCUMENTATION_TOPICS, topicFor, topicNames } from '../docs/topics.js';
 import { readFrameworkVersions } from '../docs/versions.js';
 import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishJson } from '../publish.js';
 
 export const DOCS_TOPIC_TEMPLATE = 'bga://docs/{topic}';
 export const FRAMEWORK_VERSION_URI = 'bga://framework/version';
@@ -31,8 +32,7 @@ async function readJson(
 ): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
   try {
     const value = await policy.runWithTimeout(label, async () => await build());
-    const text = `${JSON.stringify(value, null, 2)}\n`;
-    policy.assertOutputWithinLimit(label, text);
+    const text = publishJson(policy, label, value);
     return { contents: [{ uri: uri.href, mimeType: 'application/json', text }] };
   } catch (error) {
     return fail(policy, error);

@@ -2,6 +2,7 @@ import type { McpServer } from '@modelcontextprotocol/server';
 
 import { toPublicError } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishJson } from '../publish.js';
 import { aggregateStatus, aggregateValidations } from '../rules/aggregate.js';
 import { validateStateMachine } from '../rules/state-machine.js';
 import { createValidatorRunners } from '../rules/validators.js';
@@ -47,8 +48,7 @@ async function readJson(
 ): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
   try {
     const value = await policy.runWithTimeout(label, async () => await build());
-    const text = `${JSON.stringify(value, null, 2)}\n`;
-    policy.assertOutputWithinLimit(label, text);
+    const text = publishJson(policy, label, value);
     return { contents: [{ uri: uri.href, mimeType: 'application/json', text }] };
   } catch (error) {
     return fail(policy, error);

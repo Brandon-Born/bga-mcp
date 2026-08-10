@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-09",
+  "updatedAt": "2026-08-10",
   "owner": "BGA-128",
   "cases": [
     {
@@ -656,6 +656,36 @@
       "case": "Own-account content is returned only by read_studio_logs when explicitly enabled and configured",
       "boundary": "packaged",
       "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA", "E2E-STUDIO-LOGS-DISABLED"]
+    },
+    {
+      "item": "BGA-327",
+      "case": "Every public result is schema-preserving, data-minimized, and passed through context-aware redaction",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
+    },
+    {
+      "item": "BGA-327",
+      "case": "Database diagnostics report the location and shape needed to fix a query without returning secret-bearing SQL literals",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
+    },
+    {
+      "item": "BGA-327",
+      "case": "Own-account Studio messages still withhold any recognized credential or personal-data form",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SUCCESS-REDACTION"]
+    },
+    {
+      "item": "BGA-327",
+      "case": "Text summaries cannot reintroduce values removed from structured content",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
+    },
+    {
+      "item": "BGA-327",
+      "case": "Ordinary project metadata and notification payloads remain usable unless they match a defined secret rule",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
     }
   ]
 }

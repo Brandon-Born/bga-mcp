@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { STATE_MACHINE_RULES, validateStateMachine } from '../rules/state-machine.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
@@ -128,13 +129,14 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
           } satisfies ValidateStateMachineResult;
         });
 
-        const structuredContent = ValidateStateMachineOutputSchema.parse(result);
-        const text = summarizeValidation(result.diagnostics, result.stateCount, result.layout);
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           VALIDATE_STATE_MACHINE_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          ValidateStateMachineOutputSchema,
+          result,
+          (published) =>
+            summarizeValidation(published.diagnostics, published.stateCount, published.layout),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

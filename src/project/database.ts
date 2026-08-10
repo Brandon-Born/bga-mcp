@@ -21,7 +21,53 @@ export interface QueryReference {
   readonly columns: readonly string[];
   /** True when a PHP variable is interpolated into the query text. */
   readonly interpolated: boolean;
+  /** The query with its values masked. See {@link maskSqlValues}. */
   readonly text: string;
+}
+
+/**
+ * Masks the values in a query, keeping the shape that makes it fixable.
+ *
+ * A query is analysed for its structure and reported so a developer can find
+ * it. Its values are neither: they are data that happened to be typed into
+ * source, and one of them was a password in the project the 2026-08-08 review
+ * ran against. The documentation puts them in exactly one place — the framework
+ * escape helper "makes sure that no SQL injection will be done through the
+ * string used, as long as the SQL statement uses single quotes around the
+ * string. This is important!" — so a quoted run is where a value is, and
+ * replacing its contents costs the reader nothing they were using.
+ *
+ * Interpolations survive the mask. `WHERE name='$name'` keeps `$name`, because
+ * which variable reaches the query is the whole content of the interpolation
+ * finding, and a variable name is not a value.
+ *
+ * Both quotings are read: SQL inside a double-quoted PHP string carries plain
+ * `'…'`, and inside a single-quoted one the same literal arrives escaped as
+ * `\'…\'`.
+ *
+ * Source: [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
+ */
+export function maskSqlValues(text: string): string {
+  const interpolation = /\{\s*\$[^}]*\}|\$[A-Za-z_][\w]*(?:\s*->\s*[A-Za-z_][\w]*)*/gu;
+  const maskContents = (contents: string): string => {
+    let masked = '';
+    let index = 0;
+    for (const found of contents.matchAll(interpolation)) {
+      masked += (found.index > index ? '?' : '') + found[0];
+      index = found.index + found[0].length;
+    }
+    return masked + (index < contents.length || masked === '' ? '?' : '');
+  };
+
+  return text.replace(
+    /\\'[\s\S]*?\\'|\\"[\s\S]*?\\"|'[^']*'|"[^"]*"/gu,
+    (literal: string): string => {
+      const escaped = literal.startsWith('\\');
+      const quote = escaped ? literal.slice(0, 2) : literal.slice(0, 1);
+      const contents = literal.slice(quote.length, literal.length - quote.length);
+      return `${quote}${maskContents(contents)}${quote}`;
+    },
+  );
 }
 
 const CREATE_TABLE = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[`"]?([A-Za-z_][\w]*)[`"]?\s*\(/giu;
@@ -249,6 +295,16 @@ function assignments(php: string, masked: string): { name: string; end: number; 
 }
 
 /**
+ * A short quotation of source, masked before it is cut.
+ *
+ * Cutting first would leave half a literal — and half a password is still a
+ * published password.
+ */
+function snippet(source: string, length = 60): string {
+  return maskSqlValues(source).replace(/\s+/gu, ' ').trim().slice(0, length);
+}
+
+/**
  * Resolves the SQL an argument carries, or says why it could not.
  *
  * A string is only a query when data flow puts it in a helper call, so the
@@ -271,7 +327,7 @@ function resolveQueryText(
   const variable = /^\s*\$([A-Za-z_]\w*)\s*$/u.exec(argument);
   if (variable === null) {
     return {
-      unreadable: `a query argument this reader cannot follow: ${argument.trim().slice(0, 60)}`,
+      unreadable: `a query argument this reader cannot follow: ${snippet(argument)}`,
     };
   }
 
@@ -285,7 +341,7 @@ function resolveQueryText(
   const assignedLiteral = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(assigned.value);
   if (assignedLiteral === null) {
     return {
-      unreadable: `a query assembled into $${name}: ${assigned.value.replace(/\s+/gu, ' ').trim().slice(0, 60)}`,
+      unreadable: `a query assembled into $${name}: ${snippet(assigned.value)}`,
     };
   }
   return { text: assignedLiteral[2] ?? '' };
@@ -325,7 +381,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
     const text = resolved.text;
     if (!SQL_START.test(text)) {
       unsupported.push(
-        `${helper} runs a statement this reader does not recognize: ${text.replace(/\s+/gu, ' ').trim().slice(0, 60)}`,
+        `${helper} runs a statement this reader does not recognize: ${snippet(text)}`,
       );
       continue;
     }
@@ -367,7 +423,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       }
     } else if (tables.length > 1) {
       unsupported.push(
-        `columns of a multi-table query could not be attributed: ${text.slice(0, 40)}`,
+        `columns of a multi-table query could not be attributed: ${snippet(text, 40)}`,
       );
     }
 
@@ -375,7 +431,9 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       tables,
       columns: [...columns].sort(),
       interpolated: INTERPOLATION.test(text),
-      text: text.replace(/\s+/gu, ' ').trim(),
+      // Masked here rather than at the tool: the analysis above is the only
+      // reader that needs the values, and it has already finished with them.
+      text: maskSqlValues(text.replace(/\s+/gu, ' ').trim()),
     });
   }
 

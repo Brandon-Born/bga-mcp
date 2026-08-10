@@ -7,6 +7,7 @@ import { readSearchResponse, searchParams } from '../docs/search.js';
 import { topicForQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { publishFailure } from './project-context.js';
 
 export const SEARCH_BGA_DOCS_TOOL = 'search_bga_docs';
@@ -416,10 +417,13 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           };
         });
 
-        const parsed = SearchBgaDocsOutputSchema.parse(structuredContent);
-        const text = summarizeSearch(parsed);
-        policy.assertOutputWithinLimit(SEARCH_BGA_DOCS_TOOL, `${JSON.stringify(parsed)}${text}`);
-        return { content: [{ type: 'text', text }], structuredContent: parsed };
+        return publishResult(
+          policy,
+          SEARCH_BGA_DOCS_TOOL,
+          SearchBgaDocsOutputSchema,
+          structuredContent,
+          summarizeSearch,
+        );
       } catch (error) {
         return publishFailure(policy, error);
       }

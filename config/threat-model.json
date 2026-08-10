@@ -685,7 +685,7 @@
       "title": "Successful text and structured results are minimized and redact exact configured secrets and known credential forms",
       "boundary": "TB-OUTPUT",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "surfaces": ["SURFACE-TOOL-RESULT"],
       "backlog": "BGA-327",
       "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
@@ -1066,7 +1066,7 @@
       "title": "Successful Studio results minimize messages and redact exact configured secrets and known credential forms",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "surfaces": ["SURFACE-TOOL-RESULT"],
       "backlog": "BGA-327",
       "scenarios": ["E2E-STUDIO-SUCCESS-REDACTION"]

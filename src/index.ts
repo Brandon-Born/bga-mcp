@@ -45,11 +45,14 @@ export {
   REDACTED_PLAYER,
   REDACTED_PRIVATE_KEY,
   REDACTED_SESSION,
+  containsCredential,
   redactPath,
+  redactSecrets,
   redactText,
   redactValue,
   type RedactionOptions,
 } from './redaction.js';
+export { publishJson, publishResult, type OutputShape, type PublishOptions } from './publish.js';
 export {
   DIAGNOSTIC_CONTRACT_VERSION,
   DIAGNOSTIC_SCHEMA_ID,
@@ -170,6 +173,7 @@ export {
   type DatabaseSource,
 } from './rules/database.js';
 export {
+  maskSqlValues,
   parseQueries,
   parseSchema,
   type QueryReference,

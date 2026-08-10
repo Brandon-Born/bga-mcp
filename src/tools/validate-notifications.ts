@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
@@ -142,17 +143,18 @@ export function registerValidateNotifications(server: McpServer, policy: PolicyB
           } satisfies ValidateNotificationsResult;
         });
 
-        const structuredContent = ValidateNotificationsOutputSchema.parse(result);
-        const text = summarizeNotifications(
-          result.diagnostics,
-          result.trace.sent.length,
-          result.trace.handlers.length,
-        );
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           VALIDATE_NOTIFICATIONS_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          ValidateNotificationsOutputSchema,
+          result,
+          (published) =>
+            summarizeNotifications(
+              published.diagnostics,
+              published.trace.sent.length,
+              published.trace.handlers.length,
+            ),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import type { ProjectModel } from '../project/model.js';
+import { publishResult } from '../publish.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
 
 export const INSPECT_PROJECT_TOOL = 'inspect_project';
@@ -108,7 +108,7 @@ logic, states, and client logic is read in whichever form the project has it in.
 Read-only: it never writes to the project and never uses the network.`;
 
 /** Renders the model as the short text an agent or a human reads first. */
-export function summarize(model: ProjectModel): string {
+export function summarize(model: InspectProjectResult): string {
   const lines: string[] = [];
   const name = model.metadata.gameName ?? model.gameKey ?? 'unnamed project';
   lines.push(
@@ -172,13 +172,13 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
           return (await loadProjectContext(policy, root)).model;
         });
 
-        const structuredContent = InspectProjectOutputSchema.parse(model);
-        const text = summarize(model);
-        policy.assertOutputWithinLimit(
+        return publishResult(
+          policy,
           INSPECT_PROJECT_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          InspectProjectOutputSchema,
+          model,
+          summarize,
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }

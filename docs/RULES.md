@@ -94,6 +94,8 @@ A quoted string becomes a query only where data flow puts it in one of the frame
 
 Anything else — an example in a comment, a message in an exception, a string assigned and never run, a query concatenated from a value only the running game has — is not a query. Where such an argument reaches a helper, it is reported as one located unsupported construct, and no table or column is reconstructed from it.
 
+A reported query carries its shape, not its values. `escapeStringForDB` "makes sure that no SQL injection will be done through the string used, as long as the SQL statement uses single quotes around the string", so a quoted run is where a value sits, and `WHERE card_location = 'hand'` is published as `WHERE card_location = '?'` — in the query text, in the findings that quote it, and in the messages that report an unreadable statement. An interpolation survives the mask, because which variable reaches a query is the whole content of `database.query.interpolated`. What a developer needs to fix a query is which table, which column, and where; what the value was is data, and one of those values was a password in the project the 2026-08-08 review ran against.
+
 ## Manual-only checks
 
 These are part of a BGA pre-release review and cannot be automated. `run_pre_release_audit` reports them as manual-required; it never counts them as passed.

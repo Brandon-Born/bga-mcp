@@ -3,12 +3,12 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
+import { publishResult } from '../publish.js';
 import {
   DEFAULT_MAX_FINDINGS,
   RULE_GROUPS,
   aggregateStatus,
   aggregateValidations,
-  type AggregateResult,
 } from '../rules/aggregate.js';
 import { createValidatorRunners } from '../rules/validators.js';
 import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
@@ -83,7 +83,10 @@ can never leave the result looking clean. When the result is bounded, the least
 severe findings are dropped first and the number omitted is reported.
 Read-only, and no network access.`;
 
-export function summarizeProjectValidation(status: string, aggregate: AggregateResult): string {
+export function summarizeProjectValidation(
+  status: string,
+  aggregate: ValidateProjectResult,
+): string {
   const { summary } = aggregate.diagnostics;
   const lines = [
     `Project validation: status ${status}.`,
@@ -156,14 +159,17 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
           };
         });
 
+        // The aggregate carries every finding; the published result carries the
+        // bounded view of them the schema declares.
         const { aggregate, ...published } = result;
-        const structuredContent = ValidateProjectOutputSchema.parse(published);
-        const text = summarizeProjectValidation(published.status, aggregate);
-        policy.assertOutputWithinLimit(
+        void aggregate;
+        return publishResult(
+          policy,
           VALIDATE_PROJECT_TOOL,
-          `${JSON.stringify(structuredContent)}${text}`,
+          ValidateProjectOutputSchema,
+          published,
+          (result_) => summarizeProjectValidation(result_.status, result_),
         );
-        return { content: [{ type: 'text', text }], structuredContent };
       } catch (error) {
         return publishFailure(policy, error);
       }
