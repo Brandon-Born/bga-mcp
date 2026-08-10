@@ -150,6 +150,12 @@ The network half is proven from the far end: the stub records a closed socket ra
 
 The filesystem half is not proven, and the tests say so rather than implying otherwise: the two cases that pass with the threading removed are labelled regression tests, and `E2E-POLICY-CANCELLATION` stays reserved for the work that can prove it. Counting the installed server's own syscalls needs a module loader hook — patching `fs.promises` does not reach a named import that the built server already bound, which was measured rather than assumed.
 
+### The documentation filter says what it is — 2026-08-10
+
+BGA-324 stays open, and stops overclaiming. The request filter recognizes pastes by shape — a path, control characters, an over-long query, source syntax — and it cannot tell where ordinary-looking text came from. The tool description said the opposite, near enough that a reader would trust it with project content, and it now says the limit plainly instead. `RR-DOC-QUERY-PROVENANCE` records what a shape filter cannot do.
+
+What is left in the item is a decision rather than a defect: an explicit user-origin channel, or a grammar narrow enough to enforce the promise. Either changes what a developer can search for, and the maintained retrieval evaluation is what measures that cost, so it is the owner's call rather than an implementation detail.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
@@ -1059,6 +1065,7 @@ The filesystem half is not proven, and the tests say so rather than implying oth
 - **Deliverable:** A request-origin/consent design or deliberately narrow query grammar that can enforce the documented promise about what may leave the machine, plus an honest residual-risk statement for what cannot be inferred from text.
 - **Acceptance:** The server never claims it can determine whether arbitrary text originated in a project file by scanning for a short marker list. A model-generated request cannot silently transmit local source, identifiers, paths, game names, or secrets. Any explicit user-origin channel, allowlisted semantics, confirmation boundary, and remaining inference limit are machine-enforced and documented.
 - **Verification:** Packaged adversarial inputs include plausible SQL, PHP without current markers, metadata values, state/action names, game-specific prose, encoded/whitespace variants, and ordinary BGA questions that must remain usable. Each prohibited request makes zero network attempts; approved requests prove their explicit origin/consent path.
+- **Progress, 2026-08-10:** The half that needed no product decision landed: nothing claims provenance detection any more. The tool's own description and its `query` argument now say that the filter reads shape rather than origin, that ordinary-looking text is sent as an ordinary question, and that a query is something which leaves the machine. `TM-DOC-REQUEST-CONTENT` says what it does rather than what it was hoped to do, and `RR-DOC-QUERY-PROVENANCE` records the limit that remains. The item stays open for the part that is a decision rather than a defect — an explicit user-origin channel or a deliberately narrow grammar — because either one changes what a developer is able to search for, and the maintained retrieval evaluation is the measure of that cost.
 - **Finding:** `requestContentViolation('SELECT unreleased_secret FROM internal_table')` returns no violation. The current implementation checks length, paths, controls, and eight syntax markers, which can catch obvious pastes but cannot establish provenance. This contradicts BGA-207's absolute “never project file content” acceptance as written.
 
 ### BGA-325 — Bound every serialized MCP result, including failures

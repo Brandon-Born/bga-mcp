@@ -837,7 +837,7 @@
     },
     {
       "id": "TM-DOC-REQUEST-CONTENT",
-      "title": "Documentation requests originate from the explicit tool argument and obvious pasted paths or known source markers are refused",
+      "title": "A request carries the client query only after recognizable pastes — paths, control characters, over-long text, source syntax — are refused where the request is built",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
@@ -1185,6 +1185,12 @@
       "id": "RR-POLICY-TRAVERSAL-OPENAT",
       "description": "Containment is bound to the opened object by device and inode identity, which refuses a file that is not the one whose path was checked. Binding it at the moment of opening would need descriptor-relative opens; Node exposes no openat, so a swap of an intermediate directory is caught after the fact rather than made impossible.",
       "abuseCases": ["AC-SYMLINK-ESCAPE", "AC-PATH-TRAVERSAL"],
+      "acceptedBy": "Brandon Born"
+    },
+    {
+      "id": "RR-DOC-QUERY-PROVENANCE",
+      "description": "The request filter reads the shape of a query, not its origin. Text that reads as an ordinary question is sent as one, so a model that paraphrases project content into a question can still put it in a request. Enforcing origin needs an explicit user-supplied channel or a deliberately narrow grammar, which BGA-324 owns; until then the limit is stated in the tool description rather than implied away.",
+      "abuseCases": ["AC-SOURCE-EXFILTRATION", "AC-DOC-REQUEST-LEAK", "AC-DOC-TRACKING"],
       "acceptedBy": "Brandon Born"
     }
   ]
