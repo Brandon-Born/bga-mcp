@@ -867,7 +867,7 @@
       "title": "Timeouts, redirects, and non-success responses destroy or boundedly drain every body and socket before settlement",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-326",
       "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE"]
     },

@@ -109,15 +109,16 @@ export function registerRunPreReleaseAudit(
     async ({ projectRoot }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async () => {
+        const result = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async (signal) => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
+            signal,
           });
 
           const runners = createValidatorRunners(policy, root, context);
 
-          const aggregate = await aggregateValidations(runners, { maxFindings: 5_000 });
+          const aggregate = await aggregateValidations(runners, { maxFindings: 5_000, signal });
           const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics);
           return { audit, layout: context.model.layout };
         });

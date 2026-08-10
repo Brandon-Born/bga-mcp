@@ -105,8 +105,8 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
     async ({ projectRoot }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_STATE_MACHINE_TOOL, async () => {
-          const context = await loadProjectContext(policy, root, { withPhpSources: true });
+        const result = await policy.runWithTimeout(VALIDATE_STATE_MACHINE_TOOL, async (signal) => {
+          const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
           const diagnostics = validateStateMachine(context.model, context.phpSources);
           return {
             schemaVersion: 1,

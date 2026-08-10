@@ -101,8 +101,8 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
     async ({ projectRoot }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async () => {
-          const context = await loadProjectContext(policy, root, { withPhpSources: true });
+        const result = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async (signal) => {
+          const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
           const schemaPath = context.model.components
             .find((component) => component.id === 'database')
             ?.files.find((file) => file.endsWith('.sql'));

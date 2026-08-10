@@ -112,43 +112,47 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
     async ({ projectRoot }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_ACTION_CONTRACTS_TOOL, async () => {
-          const context = await loadProjectContext(policy, root, {
-            withPhpSources: true,
-            withClientSources: true,
-          });
-          const trace = validateActionContracts(
-            context.model,
-            context.clientSources,
-            context.phpSources,
-          );
-          return {
-            schemaVersion: 1,
-            layout: context.model.layout,
-            clientSourcesRead: context.clientSources.length,
-            phpSourcesRead: context.phpSources.length,
-            trace: {
-              clientCalls: trace.clientCalls.map((call) => ({
-                action: call.action,
-                argumentNames: [...call.argumentNames],
-                style: call.style,
-                source: call.source,
+        const result = await policy.runWithTimeout(
+          VALIDATE_ACTION_CONTRACTS_TOOL,
+          async (signal) => {
+            const context = await loadProjectContext(policy, root, {
+              withPhpSources: true,
+              withClientSources: true,
+              signal,
+            });
+            const trace = validateActionContracts(
+              context.model,
+              context.clientSources,
+              context.phpSources,
+            );
+            return {
+              schemaVersion: 1,
+              layout: context.model.layout,
+              clientSourcesRead: context.clientSources.length,
+              phpSourcesRead: context.phpSources.length,
+              trace: {
+                clientCalls: trace.clientCalls.map((call) => ({
+                  action: call.action,
+                  argumentNames: [...call.argumentNames],
+                  style: call.style,
+                  source: call.source,
+                })),
+                entryPoints: trace.entryPoints.map((entry) => ({
+                  action: entry.action,
+                  argumentNames: [...entry.argumentNames],
+                  source: entry.source,
+                })),
+                declaredActions: [...trace.declaredActions],
+                gameMethods: [...trace.gameMethods],
+              },
+              rules: ACTION_CONTRACT_RULES.map((rule) => ({
+                ...rule,
+                falsePositives: [...rule.falsePositives],
               })),
-              entryPoints: trace.entryPoints.map((entry) => ({
-                action: entry.action,
-                argumentNames: [...entry.argumentNames],
-                source: entry.source,
-              })),
-              declaredActions: [...trace.declaredActions],
-              gameMethods: [...trace.gameMethods],
-            },
-            rules: ACTION_CONTRACT_RULES.map((rule) => ({
-              ...rule,
-              falsePositives: [...rule.falsePositives],
-            })),
-            diagnostics: trace.diagnostics,
-          } satisfies ValidateActionContractsResult;
-        });
+              diagnostics: trace.diagnostics,
+            } satisfies ValidateActionContractsResult;
+          },
+        );
 
         return publishResult(
           policy,

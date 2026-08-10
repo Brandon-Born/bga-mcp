@@ -58,6 +58,15 @@ export const DEFAULT_POLICY_CONFIG: PolicyConfig = {
   studioDevAccounts: [],
 };
 
+/**
+ * How long a timed operation is given to stop after it is aborted.
+ *
+ * Bounded on purpose: work that ignores its signal must not be able to hold a
+ * caller past its deadline, and a caller that waited for it would have two
+ * deadlines rather than one.
+ */
+export const CLEANUP_WINDOW_MS = 250;
+
 export const DEFAULT_MAX_LISTED_FILES = 5_000;
 export const DEFAULT_MAX_LIST_DEPTH = 12;
 
@@ -208,6 +217,15 @@ function sessionFragments(pair: string): string[] {
     return [trimmed];
   }
   return [trimmed, trimmed.slice(0, separator).trim(), trimmed.slice(separator + 1).trim()];
+}
+
+/** A promise that settles after `ms`, used to bound a cleanup wait. */
+async function delay(ms: number): Promise<void> {
+  await new Promise<void>((settle) => {
+    const timer = setTimeout(settle, ms);
+    // Nothing should be kept alive by a wait that only bounds another wait.
+    timer.unref();
+  });
 }
 
 function normalize(path: string): string {
@@ -518,7 +536,11 @@ export class PolicyBoundary {
    */
   async listProjectFiles(
     root: string,
-    options: { readonly maxEntries?: number; readonly maxDepth?: number } = {},
+    options: {
+      readonly maxEntries?: number;
+      readonly maxDepth?: number;
+      readonly signal?: AbortSignal;
+    } = {},
   ): Promise<ProjectListing> {
     const allowedRoot = await this.resolveProjectRoot(root);
     const maxEntries = options.maxEntries ?? DEFAULT_MAX_LISTED_FILES;
@@ -587,6 +609,9 @@ export class PolicyBoundary {
       const found: ProjectFile[] = [];
       try {
         for await (const entry of entries) {
+          // Checked per entry, so an aborted walk stops within one entry
+          // rather than at the end of a directory that may hold a million.
+          options.signal?.throwIfAborted();
           if (!spend()) {
             return;
           }
@@ -625,6 +650,7 @@ export class PolicyBoundary {
         files.push(...found);
       }
       for (const child of directories.sort((left, right) => left.localeCompare(right))) {
+        options.signal?.throwIfAborted();
         await walk(child, depth + 1);
         if (stopped()) {
           return;
@@ -998,12 +1024,15 @@ export class PolicyBoundary {
           const location = response.headers.location ?? null;
           const lastModified = response.headers['last-modified'] ?? null;
           if (status >= 300 && status < 400 && location !== null) {
-            response.resume();
+            // Destroyed rather than drained: a body nobody will read is bytes
+            // and time this server would spend on someone else's decision, and
+            // `resume()` spends both until the far end is finished talking.
+            response.destroy();
             resolveRequest({ status, body: '', location, lastModified: null });
             return;
           }
           if (status < 200 || status >= 300) {
-            response.resume();
+            response.destroy();
             rejectRequest(
               new PolicyViolationError(
                 ERROR_CODES.policyDocFetchFailed,
@@ -1360,8 +1389,27 @@ export class PolicyBoundary {
       }, timeoutMs);
     });
 
+    const running = operation(controller.signal);
+    // Observed either way: when the deadline wins the race, an unobserved
+    // rejection from the abandoned work would become an unhandled rejection.
+    const settled = running.then(
+      () => undefined,
+      () => undefined,
+    );
+
     try {
-      return await Promise.race([operation(controller.signal), expiry]);
+      return await Promise.race([running, expiry]);
+    } catch (error) {
+      if (controller.signal.aborted) {
+        // A deadline that only wins a race leaves the work running: the
+        // 2026-08-08 review measured twenty-eight filesystem operations
+        // completing after the timeout had been reported, and a five hundred
+        // file scan that shutdown rather than cancellation eventually stopped.
+        // So the failure is not published until the aborted work has actually
+        // stopped, or until the cleanup window says it will not.
+        await Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);
+      }
+      throw error;
     } finally {
       clearTimeout(timer);
     }

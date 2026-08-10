@@ -101,7 +101,12 @@ export interface GroupRunner {
  */
 export async function aggregateValidations(
   runners: readonly GroupRunner[],
-  options: { readonly groups?: readonly RuleGroup[]; readonly maxFindings?: number } = {},
+  options: {
+    readonly groups?: readonly RuleGroup[];
+    readonly maxFindings?: number;
+    /** The deadline's signal, checked between groups so an expired run stops. */
+    readonly signal?: AbortSignal;
+  } = {},
 ): Promise<AggregateResult> {
   const requested = new Set<RuleGroup>(options.groups ?? RULE_GROUPS);
   const limit = options.maxFindings ?? DEFAULT_MAX_FINDINGS;
@@ -110,6 +115,10 @@ export async function aggregateValidations(
   const collected: DiagnosticFinding[] = [];
 
   for (const group of RULE_GROUPS) {
+    // Between groups rather than inside a rule: a validator is a bounded pass
+    // over sources already in memory, and the honest place to stop is where
+    // one finishes.
+    options.signal?.throwIfAborted();
     const runner = runners.find((candidate) => candidate.id === group);
     if (!requested.has(group) || runner === undefined) {
       groups.push({

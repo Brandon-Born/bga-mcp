@@ -66,16 +66,27 @@ export async function resolveProjectRoot(
 export async function loadProjectContext(
   policy: PolicyBoundary,
   projectRoot: string,
-  options: { readonly withPhpSources?: boolean; readonly withClientSources?: boolean } = {},
+  options: {
+    readonly withPhpSources?: boolean;
+    readonly withClientSources?: boolean;
+    /** The deadline's signal, so an expired call stops reading rather than finishing. */
+    readonly signal?: AbortSignal;
+  } = {},
 ): Promise<ProjectContext> {
-  const listing = await policy.listProjectFiles(projectRoot);
+  const listing = await policy.listProjectFiles(projectRoot, {
+    ...(options.signal === undefined ? {} : { signal: options.signal }),
+  });
 
   // The model reads the game logic to resolve state identifiers and the
   // initial state, and the validators read the same files again. One cache
   // means the second read is free rather than a second trip to disk.
   const read = new Map<string, Promise<string>>();
   const readOnce = async (relativePath: string): Promise<string> => {
-    const cached = read.get(relativePath) ?? policy.readProjectFile(projectRoot, relativePath);
+    const cached =
+      read.get(relativePath) ??
+      policy.readProjectFile(projectRoot, relativePath, {
+        ...(options.signal === undefined ? {} : { signal: options.signal }),
+      });
     read.set(relativePath, cached);
     return await cached;
   };
@@ -87,6 +98,9 @@ export async function loadProjectContext(
   let budget = MAX_SOURCE_BYTES;
 
   for (const file of listing.files) {
+    // One check per file: a deadline that expires during a large read set
+    // stops here rather than at the end of it.
+    options.signal?.throwIfAborted();
     const wanted =
       (options.withPhpSources === true && file.path.endsWith('.php')) ||
       (options.withClientSources === true && /\.(?:js|ts)$/u.test(file.path));

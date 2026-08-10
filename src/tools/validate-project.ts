@@ -127,10 +127,11 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
     async ({ projectRoot, groups, maxFindings }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async () => {
+        const result = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async (signal) => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
+            signal,
           });
 
           const runners = createValidatorRunners(policy, root, context);
@@ -138,6 +139,7 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
           const aggregate = await aggregateValidations(runners, {
             ...(groups === undefined ? {} : { groups }),
             ...(maxFindings === undefined ? {} : { maxFindings }),
+            signal,
           });
 
           return {

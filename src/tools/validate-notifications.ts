@@ -110,10 +110,11 @@ export function registerValidateNotifications(server: McpServer, policy: PolicyB
     async ({ projectRoot }) => {
       try {
         const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_NOTIFICATIONS_TOOL, async () => {
+        const result = await policy.runWithTimeout(VALIDATE_NOTIFICATIONS_TOOL, async (signal) => {
           const context = await loadProjectContext(policy, root, {
             withPhpSources: true,
             withClientSources: true,
+            signal,
           });
           const trace = validateNotifications(context.phpSources, context.clientSources);
           return {

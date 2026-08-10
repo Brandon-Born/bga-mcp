@@ -32,10 +32,10 @@ async function readJson(
   policy: PolicyBoundary,
   uri: URL,
   label: string,
-  build: () => Promise<unknown>,
+  build: (signal: AbortSignal) => Promise<unknown>,
 ): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
   try {
-    const value = await policy.runWithTimeout(label, async () => await build());
+    const value = await policy.runWithTimeout(label, async (signal) => await build(signal));
     return publishJson(policy, uri, label, value);
   } catch (error) {
     // A resource cannot return a structured error the way a tool can, so the
@@ -63,9 +63,9 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
       mimeType: 'application/json',
     },
     async (uri) =>
-      await readJson(policy, uri, 'project-summary', async () => {
+      await readJson(policy, uri, 'project-summary', async (signal) => {
         const root = await soleProjectRoot(policy);
-        const context = await loadProjectContext(policy, root);
+        const context = await loadProjectContext(policy, root, { signal });
         return context.model;
       }),
   );
@@ -80,9 +80,9 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
       mimeType: 'application/json',
     },
     async (uri) =>
-      await readJson(policy, uri, 'project-states', async () => {
+      await readJson(policy, uri, 'project-states', async (signal) => {
         const root = await soleProjectRoot(policy);
-        const context = await loadProjectContext(policy, root, { withPhpSources: true });
+        const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
         return {
           schemaVersion: 1,
           layout: context.model.layout,
@@ -111,16 +111,17 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
       mimeType: 'application/json',
     },
     async (uri) =>
-      await readJson(policy, uri, 'project-diagnostics', async () => {
+      await readJson(policy, uri, 'project-diagnostics', async (signal) => {
         const root = await soleProjectRoot(policy);
         const context = await loadProjectContext(policy, root, {
           withPhpSources: true,
           withClientSources: true,
+          signal,
         });
 
         const runners = createValidatorRunners(policy, root, context);
 
-        const aggregate = await aggregateValidations(runners);
+        const aggregate = await aggregateValidations(runners, { signal });
         return {
           schemaVersion: 1,
           layout: context.model.layout,
