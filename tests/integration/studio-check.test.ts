@@ -57,41 +57,55 @@ describe('studio setup check', () => {
     expect(report.lines.at(-1)?.fix).toContain('--studio-dev-account');
   });
 
-  it.skipIf(process.platform === 'win32')(
-    '[INT-STUDIO-CHECK-GUIDANCE] reads the session from a protected file without naming it',
-    async () => {
+  it('[INT-STUDIO-CHECK-GUIDANCE] reads the session from a protected file without naming it', async () => {
+    if (process.platform === 'win32') {
+      // No file provider here, so the case is about the refusal: it says
+      // why, names the supported route, and never names the file.
       const file = join(scratch, 'session.txt');
-      await writeFile(file, 'PHPSESSID=from-a-file\n', { mode: 0o600 });
-      await chmod(file, 0o600);
-
+      await writeFile(file, 'PHPSESSID=from-a-file\n');
       const policy = await createPolicyBoundary({
         networkEnabled: true,
         experimentalStudioLogs: true,
         studioSessionFile: file,
         studioDevAccounts: ['mytest0'],
       });
-      // Trailing whitespace from an editor must not become part of the cookie.
-      expect(await policy.studioSession()).toBe('PHPSESSID=from-a-file');
-
+      expect(await policy.studioSession()).toBeNull();
+      expect(policy.studioSessionRefusal).toContain('not supported on Windows');
       const report = await checkStudioSetup(policy, null);
-      expect(report.ok).toBe(true);
-      // The report says which provider, never which file: this line used to
-      // print the absolute path of the operator's credential, and the test of
-      // the day required it to.
-      expect(report.lines.some((entry) => entry.text.includes(file))).toBe(false);
-      expect(report.lines.some((entry) => entry.text.includes('the configured file'))).toBe(true);
       expect(formatStudioCheck(report)).not.toContain(file);
-      expect(formatStudioCheck(report)).toContain('treat the first real result as the test');
+      return;
+    }
+    const file = join(scratch, 'session.txt');
+    await writeFile(file, 'PHPSESSID=from-a-file\n', { mode: 0o600 });
+    await chmod(file, 0o600);
 
-      const missingFile = await createPolicyBoundary({
-        networkEnabled: true,
-        experimentalStudioLogs: true,
-        studioSessionFile: join(scratch, 'absent.txt'),
-      });
-      expect(await missingFile.studioSession()).toBeNull();
-      expect(missingFile.studioSessionRefusal).toContain('could not be opened');
-    },
-  );
+    const policy = await createPolicyBoundary({
+      networkEnabled: true,
+      experimentalStudioLogs: true,
+      studioSessionFile: file,
+      studioDevAccounts: ['mytest0'],
+    });
+    // Trailing whitespace from an editor must not become part of the cookie.
+    expect(await policy.studioSession()).toBe('PHPSESSID=from-a-file');
+
+    const report = await checkStudioSetup(policy, null);
+    expect(report.ok).toBe(true);
+    // The report says which provider, never which file: this line used to
+    // print the absolute path of the operator's credential, and the test of
+    // the day required it to.
+    expect(report.lines.some((entry) => entry.text.includes(file))).toBe(false);
+    expect(report.lines.some((entry) => entry.text.includes('the configured file'))).toBe(true);
+    expect(formatStudioCheck(report)).not.toContain(file);
+    expect(formatStudioCheck(report)).toContain('treat the first real result as the test');
+
+    const missingFile = await createPolicyBoundary({
+      networkEnabled: true,
+      experimentalStudioLogs: true,
+      studioSessionFile: join(scratch, 'absent.txt'),
+    });
+    expect(await missingFile.studioSession()).toBeNull();
+    expect(missingFile.studioSessionRefusal).toContain('could not be opened');
+  });
 
   it('[INT-STUDIO-CHECK-GUIDANCE] renders a report a person can act on', () => {
     const text = formatStudioCheck({
