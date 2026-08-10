@@ -16,7 +16,7 @@ import {
 } from './docs/catalog.js';
 import { ERROR_CODES, PolicyViolationError } from './errors.js';
 import { MINIMUM_OUTPUT_BYTES } from './publish.js';
-import { redactPath } from './redaction.js';
+import { MIN_REDACTED_SECRET_LENGTH, redactPath } from './redaction.js';
 
 export const DEFAULT_OPERATION_TIMEOUT_MS = 10_000;
 export const MAX_OPERATION_TIMEOUT_MS = 600_000;
@@ -172,6 +172,24 @@ function assertPositiveInteger(name: string, value: number, maximum: number): vo
   }
 }
 
+/**
+ * The parts of one `name=value` cookie pair that could be published alone.
+ *
+ * A pair, its name, and its value are three different strings that all reveal
+ * the same credential, so all three are registered.
+ */
+function sessionFragments(pair: string): string[] {
+  const trimmed = pair.trim();
+  if (trimmed.length === 0) {
+    return [];
+  }
+  const separator = trimmed.indexOf('=');
+  if (separator < 0) {
+    return [trimmed];
+  }
+  return [trimmed, trimmed.slice(0, separator).trim(), trimmed.slice(separator + 1).trim()];
+}
+
 function normalize(path: string): string {
   const resolved = resolve(path);
   return resolved.length > 1 && resolved.endsWith(sep) ? resolved.slice(0, -sep.length) : resolved;
@@ -200,6 +218,12 @@ export class PolicyBoundary {
   #clientRootsFetched = false;
   /** The reviewed documentation catalog, read once and kept for the process. */
   #catalog: DocumentationCatalog | undefined;
+  /**
+   * Every session value this process has resolved, in every spelling it could
+   * be published in. Added to, never removed from: a credential that was once
+   * sent stays worth removing from output for the life of the process.
+   */
+  readonly #sessionSecrets = new Set<string>();
 
   private constructor(config: PolicyConfig, resolvedRoots: readonly string[]) {
     this.#config = config;
@@ -258,7 +282,13 @@ export class PolicyBoundary {
       }
     }
 
-    return new PolicyBoundary(config, resolvedRoots);
+    const boundary = new PolicyBoundary(config, resolvedRoots);
+    // Resolved once here so the credential is registered for redaction before
+    // this server can publish anything at all, rather than at whichever call
+    // happens to need it first. A file that appears later is still read then;
+    // this is registration, not a cache.
+    await boundary.studioSession();
+    return boundary;
   }
 
   get config(): PolicyConfig {
@@ -361,15 +391,18 @@ export class PolicyBoundary {
     readonly secretValues: readonly string[];
   } {
     // The Studio session is the one credential this process holds, so it is
-    // removed from every published error and log line by value, not by shape.
-    const session = process.env[STUDIO_SESSION_ENV];
+    // removed from every published error, result, and log line by value rather
+    // than by shape. Every provider registers here — reading the environment
+    // alone is exactly the defect the 2026-08-08 review found, and it left a
+    // file-sourced session unprotected while it was being sent.
+    this.#normalizeSession(process.env[STUDIO_SESSION_ENV]);
     const home = process.env.HOME ?? process.env.USERPROFILE;
     return {
       projectRoots: this.projectRoots,
       // Whose machine this is, for the publication paths that replace known
       // locations by value rather than anything shaped like a path.
       homeDirectory: home === undefined || home.length === 0 ? undefined : home,
-      secretValues: session === undefined || session.length === 0 ? [] : [session],
+      secretValues: [...this.#sessionSecrets],
     };
   }
 
@@ -992,19 +1025,55 @@ export class PolicyBoundary {
    * argument. The file exists because pasting a cookie into an MCP client's
    * launcher configuration means it lives in that file, in that client's
    * backups, and often in a repository.
+   *
+   * ## Precedence
+   *
+   * `--studio-session-file` wins over `BGA_STUDIO_SESSION`, and a configured
+   * file that is missing, empty, or unreadable means no session rather than a
+   * quiet fall back to the environment. Explicit configuration that fails
+   * should say so; silently sending a different credential than the one the
+   * operator named is the worse answer.
+   *
+   * ## Registration
+   *
+   * The value is normalized in one place and registered for redaction in the
+   * same step that returns it, so the value actually sent and the value
+   * protected cannot differ. The 2026-08-08 review found them differing: a
+   * file-sourced session was resolved and sent while the redaction list, which
+   * read only the environment, stayed empty.
    */
   async studioSession(): Promise<string | null> {
     const file = this.#config.studioSessionFile;
     if (file !== undefined) {
       try {
-        const contents = (await readFile(file, 'utf8')).trim();
-        return contents.length === 0 ? null : contents;
+        return this.#normalizeSession(await readFile(file, 'utf8'));
       } catch {
         return null;
       }
     }
-    const value = process.env[STUDIO_SESSION_ENV];
-    return value === undefined || value.trim().length === 0 ? null : value.trim();
+    return this.#normalizeSession(process.env[STUDIO_SESSION_ENV]);
+  }
+
+  /**
+   * Normalizes a session and registers it before any caller can hold it.
+   *
+   * A session is a whole `Cookie` request header, so it is registered as the
+   * header, as each `name=value` pair, and as each name and value on its own.
+   * Anything that publishes a fragment of a credential has published a
+   * credential, and a diagnostic that names the cookie it used says which
+   * credential the operator holds.
+   */
+  #normalizeSession(raw: string | undefined): string | null {
+    const value = raw?.trim() ?? '';
+    if (value.length === 0) {
+      return null;
+    }
+    for (const part of [value, ...value.split(';').flatMap((pair) => sessionFragments(pair))]) {
+      if (part.length >= MIN_REDACTED_SECRET_LENGTH) {
+        this.#sessionSecrets.add(part);
+      }
+    }
+    return value;
   }
 
   /** The reviewed sources, for callers that need a source's own rules. */

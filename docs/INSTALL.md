@@ -65,12 +65,12 @@ Two more shape the results rather than enabling anything: `--operation-timeout-m
 
 ## Reading your own Studio logs (experimental)
 
-This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-320, BGA-321, BGA-326, and BGA-328 remain open against it.
+This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-320, BGA-326, and BGA-328 remain open against it.
 
 You need your own Studio session cookie. Sign in to `studio.boardgamearena.com`, open developer tools, find any request to that host, and copy its entire `Cookie` request header.
 
 > [!WARNING]
-> The 2026-08-08 live review found that `--studio-session-file` is not included in value-based redaction and is not bounded to a protected regular file (BGA-321 and BGA-328). Do not launch the server with that option or paste a cookie into a prompt, launcher configuration, shell command, or repository. The environment provider has existing exact-value error-redaction evidence, but no supported general live recipe is published while BGA-312's blockers remain open.
+> Value-based redaction now covers whichever provider the session came from (BGA-321), but `--studio-session-file` is still read without a type, size, owner, or mode check, and the preflight still prints its path (BGA-328). Do not launch the server with that option or paste a cookie into a prompt, launcher configuration, shell command, or repository. The environment provider has existing exact-value error-redaction evidence, but no supported general live recipe is published while BGA-312's blockers remain open.
 
 The CLI preflight already accepts a project name, but do not use its page-fetching mode until BGA-319 removes foreign actor names and BGA-328 removes credential-file paths from diagnostics. The MCP tool itself still rejects the real alphabetic project identifier (BGA-320).
 

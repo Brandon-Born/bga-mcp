@@ -710,6 +710,24 @@
       "case": "Transport framing is measured separately because it is not part of this limit",
       "boundary": "packaged",
       "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
+    },
+    {
+      "item": "BGA-321",
+      "case": "Environment and explicit-file providers have stated precedence and normalize once, and the value sent is the value registered for redaction",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
+    },
+    {
+      "item": "BGA-321",
+      "case": "The session value and cookie names never appear in tool content, thrown errors, stdout or stderr, launcher logs, or evidence",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
+    },
+    {
+      "item": "BGA-321",
+      "case": "No credential becomes a tool argument",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
     }
   ]
 }

@@ -1096,7 +1096,7 @@
       "title": "The exact normalized Studio session selected from a file provider is registered before any output is published",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "surfaces": [
         "SURFACE-TOOL-RESULT",
         "SURFACE-TOOL-FAILURE",

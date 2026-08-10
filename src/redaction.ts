@@ -51,6 +51,15 @@ interface Rule {
   readonly replace: (...groups: (string | undefined)[]) => string;
 }
 
+/**
+ * The shortest exact value worth removing by value.
+ *
+ * Below this a "secret" is more likely to be an ordinary word, and replacing
+ * every occurrence of one would damage the text it appears in without
+ * protecting anything.
+ */
+export const MIN_REDACTED_SECRET_LENGTH = 8;
+
 /** A quoted or unquoted right-hand side, so a quoted secret cannot leak past its first space. */
 const ASSIGNED_VALUE = `(?:"[^"]*"|'[^']*'|[^\\s,;"']+)`;
 
@@ -240,7 +249,7 @@ function applyRules(
   let result = value;
   // Literal secrets go first: an opaque value has no shape to match later.
   for (const secret of options.secretValues ?? []) {
-    if (secret.length >= 8) {
+    if (secret.length >= MIN_REDACTED_SECRET_LENGTH) {
       result = result.split(secret).join('[redacted-secret]');
     }
   }
