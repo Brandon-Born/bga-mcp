@@ -37,6 +37,22 @@
         "windows-latest / Node 22",
         "windows-latest / Node 24"
       ]
+    },
+    {
+      "id": "ci-31439224886",
+      "workflow": "CI",
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/31439224886",
+      "commit": "41b6e724a10240ccb614aae16ec9d7b2c865090e",
+      "completedAt": "2026-08-10T22:43:43Z",
+      "conclusion": "success",
+      "jobs": [
+        "ubuntu-latest / Node 22",
+        "ubuntu-latest / Node 24",
+        "macos-latest / Node 22",
+        "macos-latest / Node 24",
+        "windows-latest / Node 22",
+        "windows-latest / Node 24"
+      ]
     }
   ],
   "transports": [
@@ -51,7 +67,7 @@
         "E2E-STDIO-SHUTDOWN",
         "E2E-PACK-INSTALL-REMOVE"
       ],
-      "ciEvidence": "ci-31334309936"
+      "ciEvidence": "ci-31439224886"
     }
   ],
   "capabilities": {
@@ -59,7 +75,7 @@
       {
         "name": "audit_database_usage",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -82,7 +98,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "check_setup",
@@ -100,12 +116,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "inspect_project",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -136,7 +152,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "read_studio_logs",
@@ -169,12 +185,12 @@
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -193,7 +209,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "search_bga_docs",
@@ -223,12 +239,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -251,12 +267,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "validate_notifications",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -279,12 +295,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "validate_project",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -303,12 +319,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "validate_state_machine",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -331,7 +347,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       }
     ],
     "resources": [
@@ -353,7 +369,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "bga://framework/version",
@@ -375,12 +391,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -395,12 +411,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "bga://project/states",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -416,12 +432,12 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       },
       {
         "name": "bga://project/summary",
         "owner": "Brandon Born",
-        "stability": "implemented",
+        "stability": "verified",
         "supportedLayouts": ["legacy-flat"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
@@ -436,7 +452,7 @@
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
-        "ciEvidence": "ci-31334309936"
+        "ciEvidence": "ci-31439224886"
       }
     ],
     "prompts": []

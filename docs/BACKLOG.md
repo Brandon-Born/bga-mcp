@@ -114,6 +114,12 @@ BGA-321 is `implemented`. A session is normalized once and registered for redact
 
 `TM-STUDIO-FILE-SESSION-REDACTION` moves from `planned` to `implemented`, and fourteen of the model's eighteen output surfaces are protected. `AC-STUDIO-FILE-SESSION-LOG` can still reach `SURFACE-CLI-STDOUT`, which is BGA-328's, together with the unbounded read of the file itself.
 
+### The demoted capabilities are verified again — 2026-08-10
+
+[CI run 31439224886](https://github.com/Brandon-Born/bga-mcp/actions/runs/31439224886) passed the six-job matrix on `41b6e72`, which carries BGA-327, BGA-325, and BGA-321. With `AC-SECRET-IN-OUTPUT` no longer able to publish through `SURFACE-TOOL-RESULT`, the composition that demoted ten capabilities on 2026-08-09 no longer reaches them, and the gate accepts them as `verified` again: `audit_database_usage`, `inspect_project`, `run_pre_release_audit`, `validate_action_contracts`, `validate_notifications`, `validate_project`, `validate_state_machine`, and the three `bga://project/*` resources.
+
+Nothing else moved. `check_setup` and the documentation capabilities keep the `implemented` status they had before the demotion, for their own reasons rather than for this one, and `read_studio_logs` stays `experimental` with BGA-320, BGA-322, BGA-326, and BGA-328 open against it.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
