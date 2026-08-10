@@ -1,8 +1,13 @@
 import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { SUPPORTED_PROTOCOL_VERSIONS } from '../../src/metadata.js';
+import {
+  findEffectBypasses,
+  PURE_BUILTINS,
+  RESTRICTED_GLOBALS,
+} from '../../scripts/lib/effect-boundary.js';
 import { listFiles } from '../../scripts/lib/scenarios.js';
 
 const repositoryRoot = fileURLToPath(new URL('../../', import.meta.url));
@@ -45,6 +50,107 @@ describe('repository safety gates', () => {
     expect(await readFile(resolve(repositoryRoot, 'src/policy.ts'), 'utf8')).toContain(
       "from 'node:fs/promises'",
     );
+  });
+
+  it('[GATE-POLICY-COMPLETE-EFFECT-BOUNDARY] refuses every spelling of a privileged reach', () => {
+    // The check has to detect what the 2026-08-08 probe got past, so each of
+    // those forms is seeded here and required to be found. A gate proven only
+    // against the tree it guards proves that the tree is clean, not that the
+    // gate works.
+    const seeded: [string, string][] = [
+      ['a prefix-less specifier', "import { readFile } from 'fs/promises';"],
+      ['double quotes', 'import dns from "node:dns";'],
+      ['a module the old list never named', "import http2 from 'node:http2';"],
+      ['a re-export', "export * from 'node:child_process';"],
+      ['a dynamic import', "const fs = await import('node:fs');"],
+      ['require', "const net = require('node:net');"],
+      ['import equals', "import net = require('node:net');"],
+      ['a subpath', "import { setTimeout } from 'node:timers/promises';"],
+      ['a builtin nobody listed', "import { open } from 'node:inspector';"],
+      ['the global fetch', 'const answer = await fetch("https://example.com");'],
+      ['fetch through globalThis', 'const answer = await globalThis.fetch("https://example.com");'],
+      ['a worker', "const worker = new Worker('./work.js');"],
+      ['a raw binding', "const binding = process.binding('fs');"],
+    ];
+
+    for (const [what, text] of seeded) {
+      expect(
+        findEffectBypasses({ path: 'seeded.ts', text }),
+        `${what} was not detected`,
+      ).not.toEqual([]);
+    }
+
+    // And it has to accept what production code legitimately does, or the only
+    // way to pass it would be to write worse code.
+    const allowed = [
+      "import { relative, resolve } from 'node:path';",
+      "import { fileURLToPath } from 'node:url';",
+      "import type { Readable } from 'node:stream';",
+      "import { z } from 'zod';",
+      "import { publishResult } from './publish.js';",
+      'const handler = { fetch: (input: string) => input };',
+      'process.exitCode = 1;',
+    ];
+    for (const text of allowed) {
+      expect(findEffectBypasses({ path: 'allowed.ts', text }), text).toEqual([]);
+    }
+  });
+
+  it('[GATE-POLICY-COMPLETE-EFFECT-BOUNDARY] finds no privileged reach outside the policy boundary', async () => {
+    const sources = await listFiles(resolve(repositoryRoot, 'src'));
+    const offenders: string[] = [];
+
+    for (const file of sources) {
+      if (file.endsWith('policy.ts')) {
+        continue;
+      }
+      offenders.push(
+        ...findEffectBypasses({
+          path: relative(repositoryRoot, file),
+          text: await readFile(file, 'utf8'),
+        }),
+      );
+    }
+
+    expect(offenders).toEqual([]);
+    // The boundary itself still holds what everything else may not, so this is
+    // a statement about where the effects are rather than about their absence.
+    expect(
+      findEffectBypasses({
+        path: 'src/policy.ts',
+        text: await readFile(resolve(repositoryRoot, 'src/policy.ts'), 'utf8'),
+      }).length,
+    ).toBeGreaterThan(0);
+  });
+
+  it('[GATE-POLICY-COMPLETE-EFFECT-BOUNDARY] keeps the editor rule and the gate saying the same thing', async () => {
+    // Two mechanisms enforce one rule: ESLint is the feedback a developer gets
+    // while typing, and the gate above is what fails the build. They are
+    // checked against each other here, because a fast rule that has quietly
+    // become laxer than the slow one is worse than no fast rule at all.
+    const configuration = await readFile(resolve(repositoryRoot, 'eslint.config.js'), 'utf8');
+
+    for (const builtin of PURE_BUILTINS) {
+      expect(configuration, `${builtin} is allowed by the gate but not by lint`).toContain(
+        `'${builtin}'`,
+      );
+    }
+    for (const global of RESTRICTED_GLOBALS) {
+      // `navigator` is refused by the gate and not by lint: ESLint's own
+      // recommended environment already treats it as a browser global that
+      // production code here has no reason to name.
+      if (global === 'navigator') {
+        continue;
+      }
+      expect(configuration, `${global} is refused by the gate but not by lint`).toContain(
+        `'${global}'`,
+      );
+    }
+    expect(configuration).toContain("'no-restricted-globals'");
+    expect(configuration).toContain("'no-restricted-properties'");
+    // The allowlist is an allowlist in both: a bare `node:*` group with
+    // negations, rather than a list of the modules somebody thought of.
+    expect(configuration).toContain("'node:*'");
   });
 
   it('[GATE-DEPENDENCY-PINNING] pins every dependency and package manager exactly', async () => {

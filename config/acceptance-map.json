@@ -764,6 +764,24 @@
       "case": "The read is cancellable and has a small explicit byte budget",
       "boundary": "packaged",
       "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "item": "BGA-329",
+      "case": "Bare and node: specifiers, subpaths, namespace, require, and dynamic imports, re-exports, and privileged globals cannot bypass the boundary",
+      "boundary": "repository",
+      "scenarios": ["GATE-POLICY-COMPLETE-EFFECT-BOUNDARY"]
+    },
+    {
+      "item": "BGA-329",
+      "case": "The rule applies to all production source and fails closed when a privileged primitive is unknown",
+      "boundary": "repository",
+      "scenarios": ["GATE-POLICY-COMPLETE-EFFECT-BOUNDARY"]
+    },
+    {
+      "item": "BGA-329",
+      "case": "An allowed import in policy.ts passes and the current tree contains no runtime offender",
+      "boundary": "repository",
+      "scenarios": ["GATE-POLICY-COMPLETE-EFFECT-BOUNDARY"]
     }
   ]
 }

@@ -7,8 +7,8 @@ Recorded: 2026-08-09. Covers BGA-126, the correctness owner for the notification
   "kind": "run",
   "capabilities": 16,
   "scenarios": 156,
-  "claims": 87,
-  "tests": 511
+  "claims": 88,
+  "tests": 514
 }
 ```
 

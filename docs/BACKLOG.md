@@ -128,6 +128,12 @@ BGA-328 is `implemented`. The session file is opened `O_NOFOLLOW | O_NONBLOCK` a
 
 The gate that proves this rule had to be fixed too. Its seeded defect claimed `verified` for a capability on a boundary that happened to have an open surface; with BGA-321 and BGA-328 closing the last of them, the seed stopped failing and the gate stopped being able to demonstrate its own rule. It now opens a surface as part of the seed, so it demonstrates the rule on the day the rule matters rather than only while something is outstanding.
 
+### The effect boundary is a rule about syntax now, not about spelling — 2026-08-10
+
+BGA-329 is `implemented`. The privileged-effect check parses each production module and refuses every form that can name one: a bare specifier, a `node:` specifier, a subpath, a re-export, `import()`, `require()`, `import x = require()`, and the globals that reach the network without importing anything. The builtin list is an allowlist of twelve pure modules, so it fails closed on a module nobody has considered. ESLint expresses the same rule for immediate feedback, and a third case compares the two so the fast one cannot quietly become the laxer one.
+
+`TM-POLICY-COMPLETE-EFFECT-GATE` moves from `planned` to `implemented`, and `RR-POLICY-NO-TOOL-EVIDENCE` loses another of the four gaps it carried. BGA-326 and BGA-330 hold the rest.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
@@ -1100,13 +1106,18 @@ The gate that proves this rule had to be fixed too. Its seeded defect claimed `v
 
 ### BGA-329 — Make the privileged-effect boundary non-bypassable
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-013, BGA-015
 - **Deliverable:** An allowlist/AST architecture check that makes `src/policy.ts` the only production module able to reach filesystem, network, subprocess, or equivalent privileged globals through any import spelling or loading form.
 - **Acceptance:** Bare and `node:` specifiers, subpaths, aliases, namespace/require/dynamic imports, re-exports, repository-owned wrappers, `fetch`, WebSocket, worker/process primitives, and newly added effectful core modules cannot bypass the boundary. The rule applies to all production source and fails closed when a privileged primitive is unknown; dependency-wide effect analysis is not implied.
 - **Verification:** Seeded source snippets for `fs/promises`, `node:dns`, `node:http2`, dynamic imports, alternate quote styles, re-exports, and global `fetch` each fail both lint and the repository gate. An allowed import in `policy.ts` passes; the current tree contains no runtime offender.
 - **Finding:** ESLint blocks eight exact `node:` paths outside `policy.ts`; the repository test mirrors them with a single-quote `from` regex. Read-only lint probes reported no restricted-import error for `fs/promises`, `node:dns`, `node:http2`, or global `fetch`. No active production bypass was found, so this is a control-integrity defect rather than evidence of current exfiltration.
+- **Evidence:** [`scripts/lib/effect-boundary.ts`](../scripts/lib/effect-boundary.ts) reads the syntax rather than the text. Every form that can name a module is a node in the tree — a static import, a re-export, `import()`, `require()`, and `import x = require()` — so quoting style, whitespace, and line breaks stop mattering once the parser has done the work. Privileged globals are found the same way, with an identifier that is the _name_ of a property or parameter distinguished from a use of the global itself. A type-only import is not a reach: it is erased before anything runs, and refusing it would push readable code into `any` for no protection.
+- **Evidence, failing closed:** The builtin list is an allowlist of twelve pure modules, so a builtin nobody has thought about is refused rather than permitted. A `node:` specifier is judged as a builtin even when this Node release has never heard of it, which is what makes a future effectful module refused on the day it appears rather than on the day somebody notices. What this deliberately does not do is analyse dependencies: a package from npm can do as it likes, that is the supply-chain risk the model records separately, and pretending this check covered it would be worse than saying it does not.
+- **Evidence, two mechanisms:** ESLint now expresses the same allowlist — a `node:*` group with negations, the prefix-less spellings, restricted globals, and restricted `process` members — so a developer sees the refusal while typing. The gate is what fails the build. A third case compares the two, because a fast rule that has quietly become laxer than the slow one is worse than no fast rule at all.
+- **Verified against:** `GATE-POLICY-COMPLETE-EFFECT-BOUNDARY` in [`tests/integration/repository-gates.test.ts`](../tests/integration/repository-gates.test.ts) seeds each form the 2026-08-08 probe got past — `fs/promises`, double quotes, `node:http2`, a re-export, a dynamic import, `require`, `import equals`, a subpath, an unlisted builtin, bare `fetch`, `globalThis.fetch`, a `Worker`, and `process.binding` — and requires every one to be detected. It then requires the forms production code legitimately uses to pass, runs over the whole of `src` and finds nothing, and separately requires `src/policy.ts` to still contain what everything else may not, so this is a statement about where the effects are rather than about their absence.
+- **Note:** `implemented`, not verified: it needs a passing CI run of the commit that carries it, which BGA-005 requires and no local run can supply.
 
 ### BGA-330 — Make filesystem traversal entry-bounded and race-safe
 
