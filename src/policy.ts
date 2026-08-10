@@ -1,4 +1,5 @@
-import { lstat, readFile, readdir, realpath } from 'node:fs/promises';
+import { constants as oConstants } from 'node:fs';
+import { lstat, open, readFile, readdir, realpath } from 'node:fs/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
 import { lookup as dnsLookup } from 'node:dns';
@@ -121,6 +122,15 @@ export interface DocumentationResponse {
 /** The documented Studio host. Not configurable: it is the only one allowed. */
 export const STUDIO_HOST = 'studio.boardgamearena.com';
 
+/**
+ * The most a Studio session file may hold.
+ *
+ * A `Cookie` request header for one host is a few hundred bytes. Anything much
+ * larger is a different file, and reading it into memory to find that out is
+ * how a credential provider becomes a way to read arbitrary files.
+ */
+export const MAX_SESSION_FILE_BYTES = 4_096;
+
 /** Environment variable carrying the developer's own Studio session cookie. */
 export const STUDIO_SESSION_ENV = 'BGA_STUDIO_SESSION';
 
@@ -224,6 +234,8 @@ export class PolicyBoundary {
    * sent stays worth removing from output for the life of the process.
    */
   readonly #sessionSecrets = new Set<string>();
+  /** Why a configured session file was refused, so a diagnostic can say so without its path. */
+  #sessionRefusal: string | null = null;
 
   private constructor(config: PolicyConfig, resolvedRoots: readonly string[]) {
     this.#config = config;
@@ -1042,16 +1054,123 @@ export class PolicyBoundary {
    * file-sourced session was resolved and sent while the redaction list, which
    * read only the environment, stayed empty.
    */
-  async studioSession(): Promise<string | null> {
+  async studioSession(options: { readonly signal?: AbortSignal } = {}): Promise<string | null> {
     const file = this.#config.studioSessionFile;
     if (file !== undefined) {
-      try {
-        return this.#normalizeSession(await readFile(file, 'utf8'));
-      } catch {
-        return null;
-      }
+      const read = await this.#readSessionFile(file, options.signal);
+      this.#sessionRefusal = read.refusedBecause;
+      return read.session === null ? null : this.#normalizeSession(read.session);
     }
+    this.#sessionRefusal = null;
     return this.#normalizeSession(process.env[STUDIO_SESSION_ENV]);
+  }
+
+  /**
+   * Why a configured session file was refused, when one was.
+   *
+   * A reason without the path: a developer who set the mode wrong needs to know
+   * that, and nobody needs the location of their credential repeated back to
+   * them in a terminal an agent may be reading.
+   */
+  get studioSessionRefusal(): string | null {
+    return this.#sessionRefusal;
+  }
+
+  /**
+   * Reads a session file, refusing anything that is not a small regular file
+   * only its owner can read.
+   *
+   * The 2026-08-08 review found an unbounded `readFile` on whatever path was
+   * configured: a directory, a device, a FIFO that never answers, a symlink
+   * into somebody else's file, or a file every account on the machine can
+   * read were all the same to it. This holds a credential, so the checks are
+   * the ones a credential deserves, and every one of them is made against the
+   * object actually opened rather than against the name used to open it.
+   *
+   * The open is `O_NOFOLLOW` so a link is refused by the kernel rather than by
+   * a check that a rename could outrun, and `O_NONBLOCK` so a FIFO with no
+   * writer returns instead of hanging the server before it can refuse it.
+   *
+   * Windows has neither flag and no ACL reading this project is willing to
+   * shell out for, so the file provider is refused there as unsupported and
+   * the environment variable is the supported route. Saying that plainly is
+   * better than a check that looks like one and is not.
+   */
+  async #readSessionFile(
+    file: string,
+    signal?: AbortSignal,
+  ): Promise<{ readonly session: string | null; readonly refusedBecause: string | null }> {
+    if (process.platform === 'win32') {
+      return {
+        session: null,
+        refusedBecause:
+          'The --studio-session-file provider is not supported on Windows, because this server cannot check who else may read the file. Use the BGA_STUDIO_SESSION environment variable instead.',
+      };
+    }
+
+    let handle;
+    try {
+      handle = await open(
+        file,
+        oConstants.O_RDONLY | oConstants.O_NOFOLLOW | oConstants.O_NONBLOCK,
+      );
+    } catch (cause) {
+      const code = (cause as { code?: string } | null)?.code;
+      return {
+        session: null,
+        refusedBecause:
+          code === 'ELOOP'
+            ? 'The configured Studio session file is a symbolic link, which is not followed.'
+            : 'The configured Studio session file could not be opened. Check that it exists and that this account may read it.',
+      };
+    }
+
+    try {
+      const stats = await handle.stat();
+      if (!stats.isFile()) {
+        return {
+          session: null,
+          refusedBecause:
+            'The configured Studio session path is not a regular file. A directory, socket, device, or FIFO is refused.',
+        };
+      }
+      if ((stats.mode & 0o077) !== 0) {
+        return {
+          session: null,
+          refusedBecause: `The configured Studio session file is readable by other accounts on this machine. Restrict it to its owner with chmod 600.`,
+        };
+      }
+      if (typeof process.getuid === 'function' && stats.uid !== process.getuid()) {
+        return {
+          session: null,
+          refusedBecause:
+            'The configured Studio session file belongs to another account. Use one owned by the account running this server.',
+        };
+      }
+      if (stats.size === 0) {
+        return { session: null, refusedBecause: 'The configured Studio session file is empty.' };
+      }
+      if (stats.size > MAX_SESSION_FILE_BYTES) {
+        return {
+          session: null,
+          refusedBecause: `The configured Studio session file is larger than ${String(MAX_SESSION_FILE_BYTES)} bytes, which is far more than a Cookie header. Check that it holds the header and nothing else.`,
+        };
+      }
+
+      // Bounded by the size just measured on this descriptor, so a file that
+      // grows between the check and the read cannot enlarge it.
+      const buffer = Buffer.alloc(Math.min(stats.size, MAX_SESSION_FILE_BYTES));
+      signal?.throwIfAborted();
+      const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
+      return { session: buffer.subarray(0, bytesRead).toString('utf8'), refusedBecause: null };
+    } catch {
+      return {
+        session: null,
+        refusedBecause: 'The configured Studio session file could not be read.',
+      };
+    } finally {
+      await handle.close();
+    }
   }
 
   /**

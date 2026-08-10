@@ -181,7 +181,8 @@
           "UNIT-STUDIO-PUBLISH-SCREEN",
           "E2E-STUDIO-ALL-OUTPUTS-OWN-DATA",
           "E2E-STUDIO-SUCCESS-REDACTION",
-          "E2E-STUDIO-FILE-SESSION-REDACTION"
+          "E2E-STUDIO-FILE-SESSION-REDACTION",
+          "E2E-STUDIO-SESSION-FILE-SAFE"
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ",

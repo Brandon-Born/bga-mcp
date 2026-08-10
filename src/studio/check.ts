@@ -68,7 +68,9 @@ export async function checkStudioSetup(
     lines.push(
       line(
         false,
-        'No Studio session was found.',
+        // Why, when there is a why: a developer whose file has the wrong mode
+        // cannot act on "no session was found".
+        policy.studioSessionRefusal ?? 'No Studio session was found.',
         `Set ${STUDIO_SESSION_ENV}, or use --studio-session-file. Sign in to https://${STUDIO_HOST}, open developer tools, and copy the entire Cookie header from any request to that host.`,
       ),
     );
@@ -77,9 +79,12 @@ export async function checkStudioSetup(
   lines.push(
     line(
       true,
+      // Which provider, never which file. The operator knows where they put
+      // it; an agent reading this terminal does not need to learn where a
+      // credential lives on their machine.
       config.studioSessionFile === undefined
         ? `A session was found in ${STUDIO_SESSION_ENV}.`
-        : `A session was found in ${config.studioSessionFile}.`,
+        : 'A session was found in the configured file.',
     ),
   );
 

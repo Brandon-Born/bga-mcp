@@ -1086,7 +1086,7 @@
       "title": "The server refuses the Studio file-session provider until it can establish a bounded regular protected file on the current platform",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "surfaces": ["SURFACE-CLI-STDOUT"],
       "backlog": "BGA-328",
       "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]

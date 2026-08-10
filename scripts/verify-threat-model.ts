@@ -381,10 +381,25 @@ function proveGateDetectsSeededDefects(
   );
 
   // Nothing may call itself verified across a surface that is still open.
+  //
+  // The seed opens a surface as well as claiming the capability, rather than
+  // relying on one being open today. A rule that could only be demonstrated
+  // while some item happened to be outstanding would stop being demonstrable
+  // on the day that item landed — which is the day it matters most, and which
+  // is exactly what happened when BGA-321 and BGA-328 closed the last open
+  // surface on the boundary this seed used.
+  const openedSurface: ThreatModel = {
+    ...model,
+    mitigations: model.mitigations.map((mitigation) =>
+      mitigation.boundary === 'TB-STUDIO-READ'
+        ? { ...mitigation, status: 'planned' as const, backlog: mitigation.backlog ?? 'BGA-312' }
+        : mitigation,
+    ),
+  };
   expectFailureAbout(
     'verified across an open surface',
     verify(
-      model,
+      openedSurface,
       {
         ...manifest,
         capabilities: {

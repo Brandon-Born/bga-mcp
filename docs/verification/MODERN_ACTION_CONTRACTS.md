@@ -6,8 +6,8 @@ Recorded: 2026-08-09. Covers BGA-125, the correctness owner for the action findi
 {
   "kind": "run",
   "capabilities": 16,
-  "scenarios": 155,
-  "claims": 86,
+  "scenarios": 156,
+  "claims": 87,
   "tests": 511
 }
 ```

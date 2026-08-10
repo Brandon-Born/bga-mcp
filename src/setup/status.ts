@@ -101,7 +101,9 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
         finding(
           'studio.session.missing',
           'action-needed',
-          'Studio log reading is enabled but no session was found.',
+          // The reason names what to fix without naming where the credential
+          // lives; a path would be the one thing here worth not saying.
+          policy.studioSessionRefusal ?? 'Studio log reading is enabled but no session was found.',
           'Sign in to https://studio.boardgamearena.com, copy the whole Cookie request header from any request to that host, and put it in BGA_STUDIO_SESSION or a file named by --studio-session-file.',
         ),
       );

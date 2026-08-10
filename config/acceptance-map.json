@@ -728,6 +728,42 @@
       "case": "No credential becomes a tool argument",
       "boundary": "packaged",
       "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
+    },
+    {
+      "item": "BGA-328",
+      "case": "The provider refuses directories, devices, sockets, FIFOs, disallowed links, and oversized or empty content before an unbounded read",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "item": "BGA-328",
+      "case": "On Windows it refuses the file provider as unsupported",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "item": "BGA-328",
+      "case": "On POSIX it enforces mode 0600",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "item": "BGA-328",
+      "case": "On POSIX it enforces the expected owner",
+      "boundary": "packaged",
+      "missing": "Proving a refusal for the wrong owner needs a file owned by a second account, which the packaged harness cannot create; the check is implemented and unproven."
+    },
+    {
+      "item": "BGA-328",
+      "case": "Setup output says only that a configured file is present or missing, and ordinary path redaction applies everywhere",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+    },
+    {
+      "item": "BGA-328",
+      "case": "The read is cancellable and has a small explicit byte budget",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
     }
   ]
 }
