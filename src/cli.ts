@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
-import { serveStdio } from '@modelcontextprotocol/server/stdio';
+import { StdioServerTransport, serveStdio } from '@modelcontextprotocol/server/stdio';
 
 import { CliUsageError, HELP_TEXT, parseCliArguments } from './config.js';
 import { BgaMcpError } from './errors.js';
 import { formatErrorLog, formatMessageLog } from './logging.js';
 import { SERVER_VERSION } from './metadata.js';
+import { boundOutgoingPayloads } from './publish.js';
 import { createServerWithPolicy } from './server.js';
 import { checkStudioSetup, formatStudioCheck } from './studio/check.js';
 
@@ -53,6 +54,10 @@ export async function runCli(arguments_: readonly string[]): Promise<number> {
 
   const redaction = prepared.policy.redactionOptions;
   const handle = serveStdio(prepared.create, {
+    // The server's own transport, so the output budget can be applied once
+    // more on the way out — including to payloads the protocol library
+    // produced before any handler of ours ran.
+    transport: boundOutgoingPayloads(new StdioServerTransport(), prepared.policy),
     onerror(error) {
       process.stderr.write(formatMessageLog('protocol error', error.message, redaction));
     },

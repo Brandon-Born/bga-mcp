@@ -78,6 +78,41 @@ export class PolicyViolationError extends BgaMcpError {
 const UNEXPECTED_MESSAGE = 'The server failed unexpectedly. No further detail is safe to report.';
 
 /**
+ * How much of a value a diagnostic detail may carry.
+ *
+ * Details are where a refusal reflects what it refused, which is what makes one
+ * actionable: a caller that passed the wrong source identifier needs to see
+ * which. It is also the one place a caller controls the length of a result, and
+ * on 2026-08-08 a 12,000-character argument came back whole inside a refusal.
+ * Enough to recognise a value is enough; the rest is the caller's own input
+ * being read back to them.
+ */
+const MAX_DETAIL_CHARS = 120;
+const MAX_DETAIL_ENTRIES = 20;
+export const TRUNCATION_MARK = '…[truncated]';
+
+/** Bounds what a detail can carry, wherever it sits in the structure. */
+function boundDetail(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return value.length <= MAX_DETAIL_CHARS
+      ? value
+      : `${value.slice(0, MAX_DETAIL_CHARS)}${TRUNCATION_MARK}`;
+  }
+  if (Array.isArray(value)) {
+    const kept = value.slice(0, MAX_DETAIL_ENTRIES).map((entry) => boundDetail(entry));
+    return value.length > MAX_DETAIL_ENTRIES ? [...kept, TRUNCATION_MARK] : kept;
+  }
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>)
+        .slice(0, MAX_DETAIL_ENTRIES)
+        .map(([key, entry]) => [key, boundDetail(entry)]),
+    );
+  }
+  return value;
+}
+
+/**
  * Converts any thrown value into the stable public error contract.
  *
  * Known errors keep their code, message, and structured details. Anything else
@@ -86,7 +121,7 @@ const UNEXPECTED_MESSAGE = 'The server failed unexpectedly. No further detail is
  */
 export function toPublicError(error: unknown, options: RedactionOptions = {}): PublicError {
   if (error instanceof BgaMcpError) {
-    const details = redactValue(error.details, options) as Record<string, unknown>;
+    const details = boundDetail(redactValue(error.details, options)) as Record<string, unknown>;
     return {
       schemaVersion: ERROR_CONTRACT_VERSION,
       code: error.code,

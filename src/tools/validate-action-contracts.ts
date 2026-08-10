@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { ACTION_CONTRACT_RULES, validateActionContracts } from '../rules/action-contracts.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_ACTION_CONTRACTS_TOOL = 'validate_action_contracts';
 

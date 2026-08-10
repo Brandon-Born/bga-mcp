@@ -4,11 +4,10 @@ import { z } from 'zod';
 import { htmlToText } from '../docs/excerpt.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { parseStudioLog } from '../studio/logline.js';
 import { publishStudioText, screenStudioLog, withheldAny } from '../studio/privacy.js';
 import { SetupAsker } from '../setup/ask.js';
-import { publishFailure } from './project-context.js';
 
 export const READ_STUDIO_LOGS_TOOL = 'read_studio_logs';
 

@@ -1,6 +1,7 @@
 import { resolve } from 'node:path';
 
 import { DEFAULT_POLICY_CONFIG, type PolicyConfig } from './policy.js';
+import { MINIMUM_OUTPUT_BYTES } from './publish.js';
 
 /** Server configuration is exactly the policy configuration: nothing bypasses it. */
 export type ServerConfig = PolicyConfig;
@@ -25,7 +26,8 @@ Options:
   --project-root <path>          Allow a local BGA project root (repeatable)
   --allow-remote-project <id>    Allowlist a BGA Studio project for mutations (repeatable)
   --operation-timeout-ms <n>     Deadline for a single operation (default ${String(DEFAULT_POLICY_CONFIG.operationTimeoutMs)})
-  --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)})
+  --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)},
+                                 minimum ${String(MINIMUM_OUTPUT_BYTES)}, which is the smallest failure the server can send)
   --allow-network                Permit network access for capabilities that need it
   --experimental-studio-logs     Enable the experimental Studio log reader (see docs)
   --studio-dev-account <name>    A Studio dev account you own (repeatable). Only log

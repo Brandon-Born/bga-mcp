@@ -7,6 +7,7 @@ import {
   MAX_OUTPUT_BYTES_LIMIT,
   createPolicyBoundary,
 } from '../../src/policy.js';
+import { MINIMUM_OUTPUT_BYTES } from '../../src/publish.js';
 
 async function expectViolation(operation: () => Promise<unknown>, code: string): Promise<void> {
   await expect(operation()).rejects.toMatchObject({ name: 'PolicyViolationError', code });
@@ -128,18 +129,34 @@ describe('policy boundary defaults', () => {
   });
 
   it('[INT-POLICY-OUTPUT-LIMIT] rejects a result larger than the configured budget', async () => {
-    const policy = await createPolicyBoundary({ maxOutputBytes: 16 });
+    const policy = await createPolicyBoundary({ maxOutputBytes: MINIMUM_OUTPUT_BYTES });
     expect(policy.assertOutputWithinLimit('summary', 'small')).toBe('small');
-    expect(() => policy.assertOutputWithinLimit('summary', 'x'.repeat(17))).toThrow(
-      /above the 16 byte limit/u,
-    );
+    expect(() =>
+      policy.assertOutputWithinLimit('summary', 'x'.repeat(MINIMUM_OUTPUT_BYTES + 1)),
+    ).toThrow(new RegExp(`above the ${String(MINIMUM_OUTPUT_BYTES)} byte limit`, 'u'));
     try {
-      policy.assertOutputWithinLimit('summary', '€'.repeat(17));
+      // Multibyte, so the budget is bytes rather than characters.
+      policy.assertOutputWithinLimit('summary', '€'.repeat(MINIMUM_OUTPUT_BYTES));
     } catch (error) {
       expect(error).toMatchObject({
         code: ERROR_CODES.policyOutputTooLarge,
-        details: { operation: 'summary', bytes: 51, maxOutputBytes: 16 },
+        details: {
+          operation: 'summary',
+          bytes: MINIMUM_OUTPUT_BYTES * 3,
+          maxOutputBytes: MINIMUM_OUTPUT_BYTES,
+        },
       });
     }
+  });
+
+  it('[INT-POLICY-OUTPUT-LIMIT] refuses a budget too small to hold its own failure', async () => {
+    // Below this, every call would be refused and the refusal refused in turn.
+    await expectViolation(
+      async () => await createPolicyBoundary({ maxOutputBytes: MINIMUM_OUTPUT_BYTES - 1 }),
+      ERROR_CODES.configInvalid,
+    );
+    await expect(
+      createPolicyBoundary({ maxOutputBytes: MINIMUM_OUTPUT_BYTES }),
+    ).resolves.toBeTruthy();
   });
 });

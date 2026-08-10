@@ -1,4 +1,4 @@
-import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
+import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { buildProjectModel, type ProjectModel } from '../project/model.js';
 import type { PhpSource } from '../rules/state-machine.js';
@@ -106,17 +106,4 @@ export async function loadProjectContext(
   }
 
   return { model, phpSources, clientSources };
-}
-
-/** Renders any failure as the stable public error text a client receives. */
-export function publishFailure(
-  policy: PolicyBoundary,
-  error: unknown,
-): { isError: true; content: { type: 'text'; text: string }[] } {
-  const published = toPublicError(error, policy.redactionOptions);
-  const details = published.details === undefined ? '' : ` ${JSON.stringify(published.details)}`;
-  return {
-    isError: true,
-    content: [{ type: 'text', text: `${published.code}: ${published.message}${details}` }],
-  };
 }

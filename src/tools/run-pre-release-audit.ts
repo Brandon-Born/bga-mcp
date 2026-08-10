@@ -3,11 +3,11 @@ import { z } from 'zod';
 
 import { DiagnosticFindingSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { aggregateValidations } from '../rules/aggregate.js';
 import { auditPreRelease, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const RUN_PRE_RELEASE_AUDIT_TOOL = 'run_pre_release_audit';
 

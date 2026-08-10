@@ -61,7 +61,7 @@ Everything below is off unless you turn it on. The defaults are local, read-only
 | `--experimental-studio-logs` | `read_studio_logs`                                | Reads a Studio page BGA does not document or version, so it can break without warning. See [reading your own Studio logs](#reading-your-own-studio-logs-experimental).                                                                                        |
 | `--allow-mutations`          | Nothing yet                                       | Reserved for Studio synchronization, which is not built.                                                                                                                                                                                                      |
 
-Two more shape the results rather than enabling anything: `--operation-timeout-ms` and `--max-output-bytes`.
+Two more shape the results rather than enabling anything: `--operation-timeout-ms` and `--max-output-bytes`. The output budget bounds one result payload, successful or not; its minimum is the smallest failure the server can send, and the server refuses to start below it rather than accept a setting under which nothing could be answered.
 
 ## Reading your own Studio logs (experimental)
 

@@ -15,6 +15,7 @@ import {
   type DocumentationSource,
 } from './docs/catalog.js';
 import { ERROR_CODES, PolicyViolationError } from './errors.js';
+import { MINIMUM_OUTPUT_BYTES } from './publish.js';
 import { redactPath } from './redaction.js';
 
 export const DEFAULT_OPERATION_TIMEOUT_MS = 10_000;
@@ -216,6 +217,16 @@ export class PolicyBoundary {
       MAX_OPERATION_TIMEOUT_MS,
     );
     assertPositiveInteger('maxOutputBytes', config.maxOutputBytes, MAX_OUTPUT_BYTES_LIMIT);
+    if (config.maxOutputBytes < MINIMUM_OUTPUT_BYTES) {
+      // A budget under this cannot hold the shortest failure this server can
+      // produce, so every call would be refused and every refusal refused in
+      // turn. Failing at startup says that once, instead of at every call.
+      throw new PolicyViolationError(
+        ERROR_CODES.configInvalid,
+        `maxOutputBytes must be at least ${String(MINIMUM_OUTPUT_BYTES)}, which is the smallest failure this server can publish.`,
+        { details: { setting: 'maxOutputBytes', minimum: MINIMUM_OUTPUT_BYTES } },
+      );
+    }
 
     for (const remote of config.remoteProjects) {
       if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/u.test(remote)) {

@@ -2,9 +2,8 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { buildSetupStatus } from '../setup/status.js';
-import { publishFailure } from './project-context.js';
 
 export const CHECK_SETUP_TOOL = 'check_setup';
 

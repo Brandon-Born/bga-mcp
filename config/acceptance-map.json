@@ -686,6 +686,30 @@
       "case": "Ordinary project metadata and notification payloads remain usable unless they match a defined secret rule",
       "boundary": "packaged",
       "scenarios": ["E2E-SUCCESS-OUTPUT-REDACTION"]
+    },
+    {
+      "item": "BGA-325",
+      "case": "Startup rejects a configured budget smaller than the constant minimal error payload",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
+    },
+    {
+      "item": "BGA-325",
+      "case": "No result payload, validation failure, policy error, unexpected error, setup report, or structured content exceeds a valid configured limit",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
+    },
+    {
+      "item": "BGA-325",
+      "case": "Reflected input is length-capped before formatting, and the constant replacement failure never includes the rejected value",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
+    },
+    {
+      "item": "BGA-325",
+      "case": "Transport framing is measured separately because it is not part of this limit",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
     }
   ]
 }

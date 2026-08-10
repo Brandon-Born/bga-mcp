@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_NOTIFICATIONS_TOOL = 'validate_notifications';
 

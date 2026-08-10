@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { publishFailure, publishResult } from '../publish.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const INSPECT_PROJECT_TOOL = 'inspect_project';
 

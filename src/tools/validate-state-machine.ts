@@ -3,9 +3,9 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import { STATE_MACHINE_RULES, validateStateMachine } from '../rules/state-machine.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_STATE_MACHINE_TOOL = 'validate_state_machine';
 

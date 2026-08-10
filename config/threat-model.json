@@ -635,7 +635,7 @@
       "title": "Every final result payload, including failures, is bounded under a feasible configured minimum",
       "boundary": "TB-OUTPUT",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-325",
       "scenarios": ["E2E-POLICY-FINAL-OUTPUT-LIMIT"]
     },
@@ -1119,7 +1119,7 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove final failure budgets, cancellation, a complete privileged-effect gate, or race-safe bounded traversal. BGA-325, BGA-326, BGA-329, and BGA-330 own those remaining gaps.",
+      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove cancellation, a complete privileged-effect gate, or race-safe bounded traversal. BGA-326, BGA-329, and BGA-330 own those remaining gaps.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },

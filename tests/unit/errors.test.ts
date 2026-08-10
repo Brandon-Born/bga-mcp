@@ -10,6 +10,7 @@ import {
   getPublicErrorJsonSchema,
   parsePublicError,
   toPublicError,
+  TRUNCATION_MARK,
 } from '../../src/errors.js';
 import { REDACTED_CREDENTIAL, REDACTED_PATH } from '../../src/redaction.js';
 
@@ -49,6 +50,30 @@ describe('public error contract', () => {
       token: REDACTED_CREDENTIAL,
     });
     expect(parsePublicError(published)).toEqual(published);
+  });
+
+  it('bounds what a detail can reflect back', () => {
+    // Details are the one part of a refusal whose length a caller chooses, and
+    // on 2026-08-08 a 12,000-character argument came back whole inside one.
+    const long = 'Z'.repeat(12_000);
+    const published = toPublicError(
+      new BgaMcpError(ERROR_CODES.policyDocSourceNotAllowed, 'That source is not allowed.', {
+        details: {
+          sourceId: long,
+          tried: Array.from({ length: 50 }, () => long),
+          nested: { deep: long },
+        },
+      }),
+    );
+
+    const serialized = JSON.stringify(published.details);
+    expect(serialized).not.toContain('Z'.repeat(200));
+    expect(serialized).toContain(TRUNCATION_MARK);
+    // Bounded wherever it sits: a value, an array of values, a nested one.
+    expect((published.details?.tried as unknown[]).length).toBeLessThan(50);
+    expect(serialized.length).toBeLessThan(4_000);
+    // Enough of the value survives to recognise which one was refused.
+    expect(published.details?.sourceId).toContain('ZZZ');
   });
 
   it('omits empty details and preserves the error hierarchy', () => {

@@ -7,8 +7,7 @@ import { readSearchResponse, searchParams } from '../docs/search.js';
 import { topicForQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
-import { publishFailure } from './project-context.js';
+import { publishFailure, publishResult } from '../publish.js';
 
 export const SEARCH_BGA_DOCS_TOOL = 'search_bga_docs';
 

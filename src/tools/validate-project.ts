@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishResult } from '../publish.js';
+import { publishFailure, publishResult } from '../publish.js';
 import {
   DEFAULT_MAX_FINDINGS,
   RULE_GROUPS,
@@ -11,7 +11,7 @@ import {
   aggregateValidations,
 } from '../rules/aggregate.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, publishFailure, resolveProjectRoot } from './project-context.js';
+import { loadProjectContext, resolveProjectRoot } from './project-context.js';
 
 export const VALIDATE_PROJECT_TOOL = 'validate_project';
 

@@ -4,25 +4,14 @@ import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, retrieveDocumentation } from '../docs/retrieve.js';
 import { DOCUMENTATION_TOPICS, topicFor, topicNames } from '../docs/topics.js';
 import { readFrameworkVersions } from '../docs/versions.js';
-import { BgaMcpError, ERROR_CODES, toPublicError } from '../errors.js';
+import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishJson } from '../publish.js';
+import { publishJson, publishResourceFailure } from '../publish.js';
 
 export const DOCS_TOPIC_TEMPLATE = 'bga://docs/{topic}';
 export const FRAMEWORK_VERSION_URI = 'bga://framework/version';
 
 const MAX_EXCERPT_CHARS = 2_000;
-
-/**
- * Resources cannot return a structured error the way a tool can, so a failure
- * is raised as a protocol error carrying the same stable code and redacted
- * message a tool would have published.
- */
-function fail(policy: PolicyBoundary, error: unknown): never {
-  const published = toPublicError(error, policy.redactionOptions);
-  const details = published.details === undefined ? '' : ` ${JSON.stringify(published.details)}`;
-  throw new Error(`${published.code}: ${published.message}${details}`);
-}
 
 async function readJson(
   policy: PolicyBoundary,
@@ -32,10 +21,12 @@ async function readJson(
 ): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
   try {
     const value = await policy.runWithTimeout(label, async () => await build());
-    const text = publishJson(policy, label, value);
-    return { contents: [{ uri: uri.href, mimeType: 'application/json', text }] };
+    return publishJson(policy, uri, label, value);
   } catch (error) {
-    return fail(policy, error);
+    // A resource cannot return a structured error the way a tool can, so the
+    // failure leaves as a protocol error carrying the same stable code, the
+    // same redaction, and the same budget a tool result would have had.
+    return publishResourceFailure(policy, error);
   }
 }
 

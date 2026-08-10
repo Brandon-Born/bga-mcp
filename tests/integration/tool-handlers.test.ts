@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { Client, InMemoryTransport } from '@modelcontextprotocol/client';
 
 import { DEFAULT_SERVER_CONFIG } from '../../src/config.js';
+import { MINIMUM_OUTPUT_BYTES } from '../../src/publish.js';
 import { createServerWithPolicy } from '../../src/server.js';
 
 const projectsRoot = fileURLToPath(new URL('../fixtures/projects/', import.meta.url));
@@ -186,7 +187,7 @@ describe('tool handlers over a real client connection', () => {
     const prepared = await createServerWithPolicy({
       ...DEFAULT_SERVER_CONFIG,
       projectRoots: [legacyRoot],
-      maxOutputBytes: 128,
+      maxOutputBytes: MINIMUM_OUTPUT_BYTES,
     });
     const server = prepared.create();
     const client = new Client({ name: 'budget-test', version: '1.0.0' });
