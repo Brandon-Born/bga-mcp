@@ -1,4 +1,4 @@
-import { parseStudioLog, parseStudioLogLine } from '../../src/studio/logline.js';
+import { isStudioLogLine, parseStudioLog, parseStudioLogLine } from '../../src/studio/logline.js';
 import {
   publishStudioText,
   screenLine,
@@ -13,6 +13,9 @@ const LOG = [
   '20/06 21:50:56 [notice] [T403] [4/mytest0] OK-0 169 d141 c8 e0 I9 A158 V0 T0',
   "20/06 21:50:57 [info] [T403] [5/mytest1] 0.26 SELECT player_tokenColor FROM player WHERE player_id ='5'",
   '20/06 21:51:02 [info] [T998] [77/RealPlayer] /cinco/cinco/playCard.html?id=77',
+  // Log-shaped, but its actor cannot be read: withheld as unattributable.
+  '20/06 21:51:03 [info] [T998] a line whose actor bracket is missing entirely',
+  // Not log-shaped at all. Page furniture, not a withheld log line.
   'something that is not a log line at all',
 ].join('\n');
 
@@ -31,12 +34,18 @@ describe('studio log lines', () => {
     expect(line.message).toContain('SELECT player_tokenColor');
   });
 
-  it('[UNIT-STUDIO-LOG-PARSE] keeps a line it cannot read, with no actor', () => {
-    const line = parseStudioLogLine('PHP Fatal error: something exploded');
-    // Unparseable is not discarded, because the screening rule must still see
-    // it — and it has no actor, which is what makes it unattributable.
-    expect(line.actorName).toBeNull();
-    expect(line.raw).toContain('PHP Fatal error');
+  it('[UNIT-STUDIO-LOG-PARSE] keeps a log line it cannot attribute, and ignores what is not one', () => {
+    const unattributable = parseStudioLogLine('20/06 21:51:03 [info] [T998] no actor bracket here');
+    // Log-shaped and unreadable is not discarded, because the screening rule
+    // must still see it — and it has no actor, which is what withholds it.
+    expect(unattributable.actorName).toBeNull();
+
+    // Text that is not log-shaped is not a log line. The page carrying the log
+    // is a management interface, and counting its furniture as unreadable log
+    // entries reported "53 unattributable" on a live run against a project
+    // whose log was empty.
+    expect(isStudioLogLine('PHP Fatal error: something exploded')).toBe(false);
+    expect(isStudioLogLine('20/06 21:51:03 [info] [T998] no actor bracket here')).toBe(true);
     expect(parseStudioLog(LOG)).toHaveLength(5);
   });
 });

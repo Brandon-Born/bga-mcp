@@ -164,6 +164,18 @@ BGA-320 is `implemented`. `/studiogame?game=mcpverification` is the project and 
 
 BGA-322 stays `ready`, with its precondition re-checked: the readonly-source control on the dedicated project is still unchecked. What that item still needs is a second developer account to prove the denial, and a harness precondition that records the state before every live run — neither of which a browser observation can stand in for.
 
+### The live run that answered the Studio question — 2026-08-10
+
+The owner supplied a session through a protected file and the packed artifact was driven against the real Studio, through a real MCP client, on the dedicated project. The session reached the server as a path, never as a value: it was not read, printed, or copied into any transcript, and the run's own check confirmed no component of it appears in the result, the structured content, or stderr.
+
+What worked: the file provider resolved and authenticated, the project identifier resolved, and the tool was discovered and called through the installed package. What the run then established is that the capability cannot work as designed.
+
+`/studiogame?game=<project>` answers with **3,113,458 bytes that are 99% `<script>`**. It contains no line matching the documented log shape, no project data, and no "doesn't exist" sentence — and it is the same shell, to within the length of the name, for a project that exists and one that does not. The log a developer reads in a browser is rendered there by the page's own scripts. It is not in the HTML this tool fetches, and no budget, parser, or project state changes that.
+
+Three defects surfaced on the way and are fixed: the page exceeded the documentation byte ceiling and then a raised one, so the Studio read has its own measured budget; a withheld value as short as one digit was replacing every digit in the report, so withheld values now carry the same length floor as every other by-value redaction; and page furniture was being counted as unreadable log lines, so only text that begins like a log line is treated as one. The tool now refuses with a plain statement of the limit rather than returning "0 log line(s)", which was a claim about the developer's project when the truth was a claim about the reader.
+
+BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would need a browser or an undocumented data endpoint, and the roadmap has already ruled both out for test tables and player perspectives for the same reason. Withdrawing the capability is the owner's call, and the recommendation is recorded in BGA-306.
+
 ## Phase 0 — Foundation
 
 ### BGA-001 — Capture representative developer workflows
@@ -985,10 +997,12 @@ BGA-322 stays `ready`, with its precondition re-checked: the readonly-source con
 - **Acceptance:** Output is structured, bounded, source-identifiable, and redacts credentials, sessions, player information, and unrelated project data.
 - **Verification:** Live E2E creates an allowed unique diagnostic marker, retrieves only the expected entry, exercises filters/no-results/errors, and proves redaction and project isolation.
 - **Reason:** Written for a supported capability with a documented mechanism, and no such mechanism exists. What was actually built is narrower on every axis — experimental, own-data-only, read-only, off by default — so it carries a new identifier rather than quietly reusing this one's acceptance criteria. See BGA-312.
+- **Live confirmation, 2026-08-10:** The narrower thing does not work either, and now there is evidence rather than an expectation. The page it reads is a JavaScript application that serves none of the log in its HTML. BGA-312 records the measurement and the recommendation to withdraw.
 
 ### BGA-312 — Implement experimental own-account Studio log reading
 
-- **Status:** implemented
+- **Status:** blocked
+- **Blocked by:** The page this capability reads does not carry what it reads. See the live finding of 2026-08-10 below.
 - **Priority:** P3
 - **Depends on:** BGA-015, BGA-016
 - **Deliverable:** `read_studio_logs`, an experimental, read-only tool returning the developer's own Studio request and SQL log lines for one game, off unless explicitly enabled.
@@ -1001,6 +1015,10 @@ BGA-322 stays `ready`, with its precondition re-checked: the readonly-source con
 - **Adversarial findings, 2026-08-08:** The live project link is `/studiogame?game=mcpverification`, while `game=15414` (the numeric Play ID) says the project does not exist and the MCP rejects the valid project name before the handler (BGA-320). A session loaded from `--studio-session-file` is sent to Studio but omitted from value redaction (BGA-321). Own-account messages containing credential shapes outside four local regexes are returned raw (BGA-327). File loading is unbounded and accepts arbitrary file types while preflight publishes the absolute path (BGA-328).
 - **Progress, 2026-08-10:** BGA-327 replaced the four local regexes with the shared credential rules: an own-account line carrying anything they recognize is withheld whole, and a line that is kept is passed through the same value redaction as every other successful result. BGA-321 then registered every provider's session for that redaction, so a page echoing the developer's own cookie back at them no longer returns it. BGA-322 and BGA-326 remain open against this capability.
 - **Inherited policy blockers:** Studio HTTPS reads shared the mapped-address bypass in BGA-323, which is corrected and proven for this path by `E2E-STUDIO-READ-ADDRESS-NORMALIZATION`. They still share the ignored-cancellation/response-lifecycle defect in BGA-326, so a successful live result cannot count as verification while that guard remains open.
+- **Live finding, 2026-08-10:** The packed artifact was driven against the real Studio, through a real MCP client, on the dedicated project, with the session supplied as a file path and never as a value. The provider authenticated and the identifier resolved; then `/studiogame?game=<project>` answered with 3,113,458 bytes that are 99% `<script>`, carrying no line matching the documented log shape, no project data, and no not-found sentence — and answering with the same shell, to within the length of the name, for a project that exists and one that does not. The log a developer sees in a browser is rendered there by the page's own scripts. Fetching and parsing HTML cannot read it: not with a larger budget, not with a better parser, and not for a project that has been played.
+- **Recommendation:** Withdraw the capability, or replace its mechanism. Reading these logs would need a browser or an undocumented data endpoint, and [the roadmap](ROADMAP.md) already rules both out for test tables, player perspectives, and saved states on exactly this reasoning — "each is an authenticated web page with no documented interface". Keeping an advertised tool that cannot succeed is the thing this project's evidence rules exist to prevent. The decision is the owner's; nothing has been removed.
+- **Fixed on the way, 2026-08-10:** The Studio read has its own measured byte budget, because the page exceeded the documentation ceiling and then a raised one. A withheld value must now be at least as long as any other by-value redaction, because a one-digit value was replacing every digit in the report — the live result read `[withheld] log line(s) ... limited to meatmugdev[withheld]`. Only text that begins like a log line is treated as one, because page furniture was being counted as unreadable log lines and reported as `53 unattributable`. And the tool refuses with a statement of the limit rather than returning `0 log line(s)`, which was a claim about the developer's project when the truth was a claim about the reader.
+- **Not covered:** The live half of every remaining Studio acceptance case — an own-account marker created, retrieved, and cleaned up — cannot be met while the mechanism cannot read a log at all. It is recorded as unproven rather than pending.
 
 ### BGA-319 — Stop Studio preflight from publishing foreign actor names
 

@@ -12,6 +12,12 @@
  * about. A line whose actor cannot be read is `unknown`, and unknown is treated
  * as not-yours everywhere downstream.
  *
+ * Only text that begins like a log line is one. The page carrying the log is a
+ * signed-in management interface three megabytes wide, and treating each of its
+ * lines as an unreadable log entry is how a live run on 2026-08-10 reported
+ * "53 unattributable" for a project whose log was empty — a count that reads as
+ * "53 things were hidden from you" and meant "53 lines of page furniture".
+ *
  * Pure functions, no I/O.
  */
 
@@ -54,10 +60,32 @@ export function parseStudioLogLine(raw: string): StudioLogLine {
   };
 }
 
+/**
+ * Whether Studio answered "this project is not one you can read".
+ *
+ * Matched without apostrophes on purpose. Studio answers a missing or
+ * inaccessible project with a 200 and a sentence, and the sentence contains two
+ * of them — a live run on 2026-08-10 sailed past a straight-quote pattern and
+ * reported a successful empty log for a project name that does not exist, which
+ * is the very confusion this check exists to prevent.
+ */
+export function saysProjectMissing(pageText: string): boolean {
+  const flattened = pageText.replace(/['\u2018\u2019\u02bc`\u00b4]/gu, '');
+  return /the project doesnt exist or you dont have access to it/iu.test(flattened);
+}
+
+/** The timestamp every documented log line opens with, and page text does not. */
+const LOG_LINE_START = /^\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2}\s/u;
+
+/** True when a line is a log line at all, whether or not its actor can be read. */
+export function isStudioLogLine(line: string): boolean {
+  return LOG_LINE_START.test(line.trim());
+}
+
 export function parseStudioLog(text: string): readonly StudioLogLine[] {
   return text
     .split(/\r?\n/u)
     .map((line) => line.trim())
-    .filter((line) => line.length > 0)
+    .filter((line) => isStudioLogLine(line))
     .map((line) => parseStudioLogLine(line));
 }

@@ -5,7 +5,7 @@ import { htmlToText } from '../docs/excerpt.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
-import { parseStudioLog } from '../studio/logline.js';
+import { parseStudioLog, saysProjectMissing } from '../studio/logline.js';
 import { publishStudioText, screenStudioLog, withheldAny } from '../studio/privacy.js';
 import { SetupAsker } from '../setup/ask.js';
 
@@ -185,7 +185,7 @@ export function registerReadStudioLogs(
           });
 
           const text = htmlToText(page.body);
-          if (/The project doesn't exist or you don't have access to it/iu.test(text)) {
+          if (saysProjectMissing(text)) {
             // Studio answers 200 with this sentence for a project that is not
             // yours or not there, including for a numeric Play ID. Returning an
             // empty log would say the project is quiet; this says it is absent.
@@ -196,6 +196,18 @@ export function registerReadStudioLogs(
           }
 
           const parsed = parseStudioLog(text);
+          if (parsed.length === 0) {
+            // Observed live on 2026-08-10: `/studiogame?game=…` answers with a
+            // 3.1 MB document that is 99% `<script>`, and it is byte-identical
+            // in shape for a project that exists and one that does not. The log
+            // a developer sees in a browser is rendered there, not served here.
+            // Returning "0 log lines" would say the log is empty, which is a
+            // claim about their project rather than about this reader.
+            throw new BgaMcpError(
+              ERROR_CODES.policyStudioNotAllowed,
+              'The Studio page was retrieved but carries no log lines: it is a JavaScript application whose log panel is rendered in the browser rather than served in the HTML this tool can read. This is a limit of the capability, not a statement about your project — see the experimental status of read_studio_logs.',
+            );
+          }
           const forTable =
             tableId === undefined ? parsed : parsed.filter((line) => line.tableId === tableId);
           const screened = screenStudioLog(forTable, ownAccounts, policy.redactionOptions);

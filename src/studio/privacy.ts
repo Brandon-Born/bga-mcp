@@ -1,4 +1,9 @@
-import { containsCredential, redactSecrets, type RedactionOptions } from '../redaction.js';
+import {
+  containsCredential,
+  MIN_REDACTED_SECRET_LENGTH,
+  redactSecrets,
+  type RedactionOptions,
+} from '../redaction.js';
 
 import type { StudioLogLine } from './logline.js';
 
@@ -107,12 +112,14 @@ export function screenStudioLog(
       continue;
     }
     withheld[disposition] += 1;
-    withheldValues.add(line.raw);
-    if (line.actorName !== null) {
-      withheldValues.add(line.actorName);
-    }
-    if (line.message.length > 0) {
-      withheldValues.add(line.message);
+    // Long enough to be worth removing by value. A live run on 2026-08-10
+    // returned "[withheld] log line(s) ... limited to meatmugdev[withheld]",
+    // because a withheld line's message was a single digit and every digit in
+    // the report went with it. A fragment that short identifies nobody.
+    for (const value of [line.raw, line.actorName ?? '', line.message]) {
+      if (value.length >= MIN_REDACTED_SECRET_LENGTH) {
+        withheldValues.add(value);
+      }
     }
   }
 

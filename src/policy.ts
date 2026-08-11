@@ -113,6 +113,24 @@ export const MAX_DOCUMENTATION_REDIRECTS = 3;
 /** Ceiling on a retrieved page, independent of the output budget. */
 export const MAX_DOCUMENTATION_BYTES = 524_288;
 
+/**
+ * Ceiling on a Studio page, which is a different kind of document.
+ *
+ * A wiki article is prose. A Studio game page is a signed-in application page
+ * carrying the whole management interface around the log, and it is far larger
+ * than a documentation ceiling allows. This number is measured rather than
+ * guessed, twice over: a live run on 2026-08-10 refused the page at 524,288
+ * bytes, refused it again at 2,097,152, and then measured it at 3,113,458 —
+ * for a project with no gameplay and therefore no log lines at all.
+ *
+ * So the headroom is deliberate: a project that has actually been played
+ * carries its log on the same page, and the part that grows is the part this
+ * capability is for. It is still a bound, and a project busy enough to exceed
+ * it is refused rather than half-read, because a truncated HTML prefix cannot
+ * be parsed into log lines anyone should trust.
+ */
+export const MAX_STUDIO_PAGE_BYTES = 8_388_608;
+
 export interface DocumentationRequest {
   /** A source identifier from the reviewed catalog. */
   readonly sourceId: string;
@@ -965,6 +983,8 @@ export class PolicyBoundary {
     maxBytes: number,
     signal: AbortSignal | undefined,
     headers: Readonly<Record<string, string>>,
+    /** What to call the page in a refusal, so a Studio failure does not read as a documentation one. */
+    what = 'documentation page',
   ): Promise<{
     readonly status: number;
     readonly body: string;
@@ -1049,7 +1069,7 @@ export class PolicyBoundary {
             (bytes, limit) =>
               new PolicyViolationError(
                 ERROR_CODES.policyOutputTooLarge,
-                `The documentation page is larger than the ${String(limit)} byte limit.`,
+                `The ${what} is larger than the ${String(limit)} byte limit.`,
                 { details: { url: url.href, bytes, maxBytes: limit } },
               ),
           ).then(
@@ -1145,13 +1165,19 @@ export class PolicyBoundary {
       );
     }
 
-    const maxBytes = Math.min(options.maxBytes ?? MAX_DOCUMENTATION_BYTES, MAX_DOCUMENTATION_BYTES);
-    const result = await this.#sendGuardedRequest(url, maxBytes, options.signal, {
-      'user-agent': 'bga-mcp (+https://github.com/Brandon-Born/bga-mcp)',
-      accept: 'text/html',
-      'accept-encoding': 'identity',
-      cookie: session,
-    });
+    const maxBytes = Math.min(options.maxBytes ?? MAX_STUDIO_PAGE_BYTES, MAX_STUDIO_PAGE_BYTES);
+    const result = await this.#sendGuardedRequest(
+      url,
+      maxBytes,
+      options.signal,
+      {
+        'user-agent': 'bga-mcp (+https://github.com/Brandon-Born/bga-mcp)',
+        accept: 'text/html',
+        'accept-encoding': 'identity',
+        cookie: session,
+      },
+      'Studio page',
+    );
     if (result.location !== null) {
       // A redirect from Studio usually means the session expired and the page
       // is bouncing to a login. Following it would post a stale cookie around.

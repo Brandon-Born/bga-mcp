@@ -1,6 +1,6 @@
 import { STUDIO_HOST, STUDIO_SESSION_ENV, type PolicyBoundary } from '../policy.js';
 import { htmlToText } from '../docs/excerpt.js';
-import { parseStudioLog } from './logline.js';
+import { parseStudioLog, saysProjectMissing } from './logline.js';
 import { publishStudioText, screenStudioLog } from './privacy.js';
 
 /**
@@ -121,14 +121,19 @@ export async function checkStudioSetup(
       line(
         false,
         `Could not retrieve the Studio page: ${message}`,
-        'A redirect usually means the session has expired; sign in again and copy a fresh Cookie header.',
+        // Named by what actually failed: telling somebody their session expired
+        // when the page was simply too large sends them to refresh a cookie
+        // that was working.
+        /redirect/iu.test(message)
+          ? 'A redirect usually means the session has expired; sign in again and copy a fresh Cookie header.'
+          : 'Check that the project name matches the one in Manage Games, and that the session in your configured file is current.',
       ),
     );
     return { lines, ok: false };
   }
 
   const pageText = htmlToText(body);
-  if (/The project doesn't exist or you don't have access to it/iu.test(pageText)) {
+  if (saysProjectMissing(pageText)) {
     // What Studio answers, with a 200, for a project that is not there or not
     // this account's — including for a numeric Play ID, which is a different
     // identifier rather than this one.
@@ -156,8 +161,14 @@ export async function checkStudioSetup(
     lines.push(
       line(
         false,
-        'The page was retrieved but contains no recognisable log lines.',
-        'The log panel is probably loaded separately by the page rather than served in its HTML, which this tool cannot follow. Please report this with the game id: it is the known open question about this capability.',
+        'The page was retrieved, and it carries no log lines at all.',
+        // What a project with no gameplay looks like, which a live run on
+        // 2026-08-10 confirmed: the page came back whole, three megabytes of
+        // it, with nothing matching the documented log shape. The
+        // documentation says the log appears on this page, so the likely
+        // answer is that nothing has been played yet rather than that the tool
+        // is looking in the wrong place.
+        'Observed live on 2026-08-10: this page is a JavaScript application, 99% script by weight, and identical in shape for a project that exists and one that does not. The log you see in a browser is rendered there rather than served in the HTML. Reading it would need something this tool is not — see the experimental status of read_studio_logs.',
       ),
     );
     return { lines, ok: false };

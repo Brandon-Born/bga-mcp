@@ -44,7 +44,7 @@ Available behind explicit network permission, implemented but not verified:
 Also available:
 
 - `check_setup` — reports local, documentation, and experimental Studio setup state. The 2026 protocol-era roots/input flow remains BGA-318.
-- `read_studio_logs` — experimental, off by default, and not live-verified. A dedicated private project exists and its identifier, file sessions, successful-result redaction, and session-file handling are settled (BGA-320, BGA-321, BGA-327, BGA-328). What blocks a live-verified read is BGA-322's second-account ACL proof, BGA-326's cancellation evidence, and a live authenticated run. Output privacy (BGA-319) and address normalization (BGA-323) are corrected: nothing belonging to another developer or a player reaches any output surface, proven through the installed package.
+- `read_studio_logs` — experimental, off by default, and now **blocked** rather than merely unverified. A live run on 2026-08-10 established that the Studio page it reads serves 99% script and none of the log: the panel a developer sees is rendered in their browser, so fetching HTML cannot read it at any budget. The tool refuses with that limit stated. Its credential handling, identifier, and output privacy are settled (BGA-320, BGA-321, BGA-327, BGA-328); its mechanism is not. See BGA-312. Output privacy (BGA-319) and address normalization (BGA-323) are corrected: nothing belonging to another developer or a player reaches any output surface, proven through the installed package.
 
 Later releases may add authenticated Studio operations:
 

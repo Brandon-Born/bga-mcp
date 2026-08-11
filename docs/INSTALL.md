@@ -65,7 +65,7 @@ Two more shape the results rather than enabling anything: `--operation-timeout-m
 
 ## Reading your own Studio logs (experimental)
 
-This one reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-322 and BGA-326 remain open against it.
+**This one does not currently work, and the reason is now measured rather than suspected.** A live run on 2026-08-10 found that the Studio page serves a JavaScript application and none of the log text: the panel you see in a browser is rendered there. The tool retrieves the page, finds no log lines, and says so. Nothing below will produce a log until the capability gets a different mechanism (BGA-312). It reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-322 and BGA-326 remain open against it.
 
 You need your own Studio session cookie. Sign in to `studio.boardgamearena.com`, open developer tools, find any request to that host, and copy its entire `Cookie` request header.
 

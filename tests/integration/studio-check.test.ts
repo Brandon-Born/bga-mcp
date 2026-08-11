@@ -135,22 +135,25 @@ describe('studio setup check against a page', () => {
   }
 
   it('[INT-STUDIO-CHECK-PAGE] says so when the page carries no log lines at all', async () => {
-    const report = await checkStudioSetup(await ready(), '1234', () =>
+    const report = await checkStudioSetup(await ready(), 'mcpverification', () =>
       Promise.resolve({
         url: 'https://studio.boardgamearena.com/studiogame',
         body: '<html><body><div id="logs"></div></body></html>',
       }),
     );
 
-    // This is the open question about the capability, and the check answers it
-    // instead of the developer running curl by hand.
+    // A live run on 2026-08-10 answered the open question this check used to
+    // guess at: the page is a JavaScript application and the log is rendered in
+    // the browser. The check states that rather than sending the developer to
+    // refresh a session that was working.
     expect(report.ok).toBe(false);
-    expect(report.lines.at(-1)?.text).toContain('no recognisable log lines');
-    expect(report.lines.at(-1)?.fix).toContain('loaded separately');
+    expect(report.lines.at(-1)?.text).toContain('no log lines at all');
+    expect(report.lines.at(-1)?.fix).toContain('rendered');
+    expect(report.lines.at(-1)?.fix).not.toContain('session has expired');
   });
 
   it('[INT-STUDIO-CHECK-OWN-DATA] says none matched without naming whose lines they are', async () => {
-    const report = await checkStudioSetup(await ready(), '1234', () =>
+    const report = await checkStudioSetup(await ready(), 'mcpverification', () =>
       Promise.resolve({
         url: 'https://studio.boardgamearena.com/studiogame',
         body: `<pre>${OTHER_LINE}</pre>`,
@@ -172,7 +175,7 @@ describe('studio setup check against a page', () => {
   });
 
   it('[INT-STUDIO-CHECK-OWN-DATA] counts your own lines and withholds the rest', async () => {
-    const report = await checkStudioSetup(await ready(), '1234', () =>
+    const report = await checkStudioSetup(await ready(), 'mcpverification', () =>
       Promise.resolve({
         url: 'https://studio.boardgamearena.com/studiogame',
         body: `<pre>${OWN_LINE}\n${OTHER_LINE}\nPHP Fatal error: something exploded</pre>`,
@@ -189,7 +192,7 @@ describe('studio setup check against a page', () => {
   });
 
   it('[INT-STUDIO-CHECK-PAGE] reports what would be returned and what would be withheld', async () => {
-    const report = await checkStudioSetup(await ready(), '1234', () =>
+    const report = await checkStudioSetup(await ready(), 'mcpverification', () =>
       Promise.resolve({
         url: 'https://studio.boardgamearena.com/studiogame',
         body: `<pre>${OWN_LINE}\n${OTHER_LINE}</pre>`,
@@ -202,7 +205,7 @@ describe('studio setup check against a page', () => {
   });
 
   it('[INT-STUDIO-CHECK-PAGE] explains a failed retrieval as an expired session', async () => {
-    const report = await checkStudioSetup(await ready(), '1234', () =>
+    const report = await checkStudioSetup(await ready(), 'mcpverification', () =>
       Promise.reject(new Error('Studio redirected the request')),
     );
 
