@@ -127,14 +127,30 @@ export async function checkStudioSetup(
     return { lines, ok: false };
   }
 
-  const parsed = parseStudioLog(htmlToText(body));
+  const pageText = htmlToText(body);
+  if (/The project doesn't exist or you don't have access to it/iu.test(pageText)) {
+    // What Studio answers, with a 200, for a project that is not there or not
+    // this account's — including for a numeric Play ID, which is a different
+    // identifier rather than this one.
+    lines.push(
+      line(
+        false,
+        'Studio says that project does not exist, or is not one this account may read.',
+        'Use the project name from Manage Games — the `game` parameter of the studiogame URL, for example mcpverification — rather than the numeric Play ID from the game page.',
+      ),
+    );
+    return { lines, ok: false };
+  }
+
+  const parsed = parseStudioLog(pageText);
   // Screened before anything is said about the page, so every sentence below is
   // built from the screened view. `publish` is the same guarantee applied a
   // second time at the boundary, because this report reaches a terminal, a
   // launcher log, and whatever CI keeps of them — surfaces the MCP result's own
   // screening never covered.
-  const screened = screenStudioLog(parsed, config.studioDevAccounts);
-  const publish = (text: string): string => publishStudioText(text, screened.withheldValues);
+  const screened = screenStudioLog(parsed, config.studioDevAccounts, policy.redactionOptions);
+  const publish = (text: string): string =>
+    publishStudioText(text, screened.withheldValues, policy.redactionOptions);
   const withActors = parsed.filter((entry) => entry.actorName !== null);
   if (withActors.length === 0) {
     lines.push(

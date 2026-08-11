@@ -14,11 +14,36 @@ export const READ_STUDIO_LOGS_TOOL = 'read_studio_logs';
 const MAX_LINES = 200;
 const DEFAULT_LINES = 50;
 
+/**
+ * The Studio project identifier, as Studio itself defines it.
+ *
+ * Not a number. The 2026-08-08 review found this schema demanding digits and
+ * refusing the real thing, and a live run on 2026-08-10 confirmed both halves:
+ * `/studiogame?game=mcpverification` is the project, and `/studiogame?game=15414`
+ * — that project's numeric Play ID — answers "The project doesn't exist or you
+ * don't have access to it".
+ *
+ * The shape comes from Studio's own creation form rather than from a guess:
+ * "your project name should be written in CamelCase, without numbers, spaces or
+ * special characters (example: RaceForTheGalaxy). Max length of 32 characters."
+ * Digits are accepted after the first character anyway, because that note says
+ * *should* and an older project is not this server's to refuse; what is refused
+ * is everything that could not be a project name at all — spaces, punctuation,
+ * query delimiters, traversal — and a purely numeric value, which the live run
+ * proved is a different identifier rather than this one.
+ */
+const STUDIO_PROJECT_NAME = /^[A-Za-z][A-Za-z0-9]{0,31}$/u;
+
 export const ReadStudioLogsInputSchema = z.strictObject({
   gameId: z
     .string()
-    .regex(/^[0-9]+$/u, 'gameId must be the numeric Studio game identifier')
-    .describe('Your Studio game identifier, as it appears in the studiogame URL.'),
+    .regex(
+      STUDIO_PROJECT_NAME,
+      'gameId must be the Studio project name shown in Manage Games, for example mcpverification — not the numeric Play ID from the game URL',
+    )
+    .describe(
+      'Your Studio project identifier: the name in Manage Games, which is the `game` parameter of your /studiogame URL. Letters, then letters or digits, up to 32 characters. Not the numeric Play ID.',
+    ),
   maxLines: z
     .number()
     .int()
@@ -159,7 +184,18 @@ export function registerReadStudioLogs(
             params: { game: gameId },
           });
 
-          const parsed = parseStudioLog(htmlToText(page.body));
+          const text = htmlToText(page.body);
+          if (/The project doesn't exist or you don't have access to it/iu.test(text)) {
+            // Studio answers 200 with this sentence for a project that is not
+            // yours or not there, including for a numeric Play ID. Returning an
+            // empty log would say the project is quiet; this says it is absent.
+            throw new BgaMcpError(
+              ERROR_CODES.policyStudioNotAllowed,
+              'Studio says that project does not exist, or is not one this account may read. Check the name in Manage Games — it is the `game` parameter of the studiogame URL, not the numeric Play ID.',
+            );
+          }
+
+          const parsed = parseStudioLog(text);
           const forTable =
             tableId === undefined ? parsed : parsed.filter((line) => line.tableId === tableId);
           const screened = screenStudioLog(forTable, ownAccounts, policy.redactionOptions);

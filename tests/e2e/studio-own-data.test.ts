@@ -35,9 +35,9 @@ const stubModule = new URL('./doc-network-stub.ts', import.meta.url).href;
 
 const OWN_ACCOUNT = 'mytest0';
 const SESSION = 'PHPSESSID=not-a-real-session';
-// Numeric because that is all `read_studio_logs` currently accepts; BGA-320
-// owns the Studio project name, and nothing here depends on which it is.
-const GAME = '1234567';
+// The Studio project name, which is what the `game` parameter carries; a live
+// run on 2026-08-10 settled that (BGA-320). Nothing here depends on which.
+const GAME = 'mcpverification';
 
 /** The one line that is the developer's own, and the only thing that may come back. */
 const OWN_LINE =

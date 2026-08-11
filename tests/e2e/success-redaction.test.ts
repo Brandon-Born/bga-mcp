@@ -64,7 +64,7 @@ const KEPT = {
 } as const;
 
 const OWN_ACCOUNT = 'mytest0';
-const GAME = '1234567';
+const GAME = 'mcpverification';
 
 const STUDIO_LINES = [
   // Ordinary, and the developer's own: it comes back.

@@ -129,7 +129,7 @@ describe('local capabilities are read-only and network-off', () => {
                 name === 'search_bga_docs'
                   ? { query: 'state classes' }
                   : name === 'read_studio_logs'
-                    ? { gameId: '1234' }
+                    ? { gameId: 'mcpverification' }
                     : name === 'check_setup'
                       ? {}
                       : { projectRoot },

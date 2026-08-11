@@ -162,7 +162,8 @@ describe('packaged address guard', () => {
   it('[E2E-STUDIO-READ-ADDRESS-NORMALIZATION] refuses a non-public Studio answer the same way', async () => {
     const response = await withAnswers(
       [[{ address: '::ffff:7f00:1', family: 6 }]],
-      async (client) => await callTool(client, 'read_studio_logs', { gameId: '1234567' }, 20_000),
+      async (client) =>
+        await callTool(client, 'read_studio_logs', { gameId: 'mcpverification' }, 20_000),
       ['--experimental-studio-logs', '--studio-dev-account', 'testdev'],
       { BGA_STUDIO_SESSION: 'PHPSESSID=not-a-real-session' },
     );

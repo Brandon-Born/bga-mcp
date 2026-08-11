@@ -46,11 +46,11 @@ describe('experimental Studio log reading', () => {
     };
 
     clearSession();
-    const missing = await callTool(config, { gameId: '1234' });
+    const missing = await callTool(config, { gameId: 'mcpverification' });
     expect(missing).toContain('policy.studio.no-session');
     expect(missing).toContain(STUDIO_SESSION_ENV);
 
-    const rejected = await callTool(config, { gameId: '1234', session: SESSION });
+    const rejected = await callTool(config, { gameId: 'mcpverification', session: SESSION });
     expect(rejected.toLowerCase()).toMatch(/invalid|unrecognized|schema|expected/u);
   });
 
@@ -66,7 +66,7 @@ describe('experimental Studio log reading', () => {
         experimentalStudioLogs: false,
         studioDevAccounts: ['mytest0'],
       },
-      { gameId: '1234' },
+      { gameId: 'mcpverification' },
     );
     expect(disabled).toContain('policy.studio.disabled');
     expect(disabled).toContain('--experimental-studio-logs');
@@ -119,8 +119,8 @@ describe('studio log summary', () => {
   it('[INT-STUDIO-SUMMARY] says what it withheld without showing any of it', () => {
     const text = summarizeStudioLogs({
       schemaVersion: 1,
-      gameId: '1234',
-      url: 'https://studio.boardgamearena.com/studiogame?game=1234',
+      gameId: 'mcpverification',
+      url: 'https://studio.boardgamearena.com/studiogame?game=mcpverification',
       retrievedAt: '2026-08-07T00:00:00.000Z',
       lines: [
         {
@@ -137,7 +137,7 @@ describe('studio log summary', () => {
       notice: 'n',
     });
 
-    expect(text).toContain('1 log line(s) for game 1234');
+    expect(text).toContain('1 log line(s) for game mcpverification');
     expect(text).toContain('Withheld: 2 foreign, 1 unattributable.');
     // Counting is not showing: nothing about the withheld lines appears.
     expect(text).not.toContain('sensitive');

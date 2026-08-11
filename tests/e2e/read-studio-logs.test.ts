@@ -72,7 +72,7 @@ describe('packaged read_studio_logs', () => {
       const listed = await client.listTools();
       return {
         tool: listed.tools.find((entry) => entry.name === 'read_studio_logs'),
-        response: await read(client, { gameId: '1234' }),
+        response: await read(client, { gameId: 'mcpverification' }),
       };
     });
 
@@ -89,7 +89,7 @@ describe('packaged read_studio_logs', () => {
     const response = await withServer(
       ['--allow-network', '--experimental-studio-logs', '--studio-dev-account', 'mytest0'],
       { BGA_STUDIO_SESSION: '' },
-      async (client) => await read(client, { gameId: '1234' }),
+      async (client) => await read(client, { gameId: 'mcpverification' }),
     );
 
     expect(response).toContain('policy.studio.no-session');
@@ -106,11 +106,18 @@ describe('packaged read_studio_logs', () => {
         for (const argument of [
           {},
           { gameId: '' },
-          { gameId: 'not-a-number' },
-          { gameId: '1234', maxLines: 0 },
-          { gameId: '1234', maxLines: 5000 },
+          { gameId: 'not a project name' },
+          // The numeric Play ID from the game URL. A live run on 2026-08-10
+          // confirmed Studio does not know it as a project: the same page
+          // answers "The project doesn't exist or you don't have access to it".
+          { gameId: '15414' },
+          { gameId: 'name-with-hyphens' },
+          { gameId: 'mcpverification&other=1' },
+          { gameId: '../escape' },
+          { gameId: 'mcpverification', maxLines: 0 },
+          { gameId: 'mcpverification', maxLines: 5000 },
           // A session is not part of the contract, so it cannot be smuggled in.
-          { gameId: '1234', session: 'PHPSESSID=abc' },
+          { gameId: 'mcpverification', session: 'PHPSESSID=abc' },
         ]) {
           const failure = await read(client, argument).catch((error: unknown) => error);
           const text = failure instanceof Error ? failure.message : failure;

@@ -812,6 +812,36 @@
       "case": "A synchronization barrier forces a rename exactly between check and open",
       "boundary": "packaged",
       "missing": "The swap is arranged between calls rather than forced inside one read; Node exposes no hook between the server's own stat and open, and identity checking makes the outcome the same either way. Recorded rather than claimed."
+    },
+    {
+      "item": "BGA-320",
+      "case": "The public gameId property accepts the Studio project identifier copied from Manage Games and rejects empty or whitespace input",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-WRONG-PROJECT", "E2E-STUDIO-LOGS-INVALID-INPUT"]
+    },
+    {
+      "item": "BGA-320",
+      "case": "The value is confined to the single game query parameter and cannot alter scheme, host, path, or add parameters",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-LOGS-INVALID-INPUT"]
+    },
+    {
+      "item": "BGA-320",
+      "case": "Character and length restrictions come from official documentation or observed Studio validation rather than guesses",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-LOGS-INVALID-INPUT"]
+    },
+    {
+      "item": "BGA-320",
+      "case": "A missing project or the observed wrong Play ID produces an actionable not-found result rather than empty output or an unrelated policy error",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-WRONG-PROJECT"]
+    },
+    {
+      "item": "BGA-320",
+      "case": "A live scenario creates an own-account marker, retrieves only that marker, and cleans up",
+      "boundary": "packaged",
+      "missing": "Needs a live authenticated run, which requires the operator's own Studio session; the 2026-08-10 browser run confirmed the identifiers and the wrong-project answer but did not drive the MCP tool against the live page."
     }
   ]
 }
