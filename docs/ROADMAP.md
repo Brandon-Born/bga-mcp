@@ -78,7 +78,7 @@ Own-account log reading went the other way. The owner accepted that trade on 202
 ## Phase 4: Public release
 
 - Publish installation instructions for major MCP clients.
-- Add a versioned tool compatibility policy.
+- Enforce the versioned package, tool, schema, MCP, and BGA compatibility policy against retained installed-package contracts.
 - Complete security review and threat model.
 - Publish packages and signed release artifacts.
 - Establish a process for tracking BGA framework changes.
@@ -86,7 +86,7 @@ Own-account log reading went the other way. The owner accepted that trade on 202
 
 Exit criterion: a new developer can install, configure, verify, and remove the server using documented steps, and the release has no public capability missing current end-to-end evidence.
 
-The first public release is intentionally local-only. A capability counts as public when the installed MCP server advertises it, even if its description says experimental or requires an opt-in flag. Documentation-network and Studio capabilities therefore stay out of first-release discovery until their existing backlog owners are verified; they are not release blockers and they are not waived. BGA-412 through BGA-415 define the remaining installed-boundary evidence, frozen capability inventory, and final publication steps, and the serial queue in the backlog permits only one release item to be implemented at a time.
+The first public release is intentionally local-only. A capability counts as public when the installed MCP server advertises it, even if its description says experimental or requires an opt-in flag. Documentation-network and Studio capabilities therefore stay out of first-release discovery until their existing backlog owners are verified; they are not release blockers and they are not waived. BGA-402 now retains and gates the first stable contract; BGA-403 through BGA-415 define the remaining candidate, signing, evidence, documentation, security, and publication steps, and the serial queue in the backlog permits only one release item to be implemented at a time.
 
 ## Explicit non-goals for the first release
 

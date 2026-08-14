@@ -1,0 +1,343 @@
+{
+  "$schema": "../public-contract.schema.json",
+  "schemaVersion": 1,
+  "contractVersion": 1,
+  "packageVersion": "1.0.0",
+  "status": "candidate",
+  "policyDigest": "sha256:fd1812eedf37c6e6e01e8376f25154c41f207213f9fb5cf8663c595abe9fa0e5",
+  "release": {
+    "id": "first-local-only",
+    "serverName": "bga-mcp",
+    "entrypoint": "dist/release-cli.js",
+    "bin": { "bga-mcp": "dist/cli.js" },
+    "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+    "typesDigest": "sha256:10cab6e0fe59d469b4260a3465b363bd1e17b5d7a6f1b5e40ffa1756531b38b3",
+    "protocolVersions": ["2025-11-25"],
+    "transports": ["stdio"]
+  },
+  "tools": [
+    {
+      "name": "audit_database_usage",
+      "metadataDigest": "sha256:0a7e7082cd5d6ca75bd41eb814a2b3bc2481710837e029f551e7e7e3e4f1e1fd",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:0327829ba24247957ff603c3c4679a99e1697e360461ffdae0bf5769651f57c0",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "inspect_project",
+      "metadataDigest": "sha256:36ad50fc603a5f915ac804c8c16f97b33def365ac321f5f0ca7dd131ad777004",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:fb93f261c2b7cb2e31be448349d79e300f9bc9c5e9d6fdf847d5cf08a5d5bd75",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "run_pre_release_audit",
+      "metadataDigest": "sha256:d8b4c4a6060912652d6b6150cf1405d631cabdb2b1a039e7320d5bc8b200cc54",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:f1d249231ec0b1189cce07cb3ab5b312b556bdc3a119fd1f1c83cd25f5857d13",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "validate_action_contracts",
+      "metadataDigest": "sha256:7cb1517e4ed4ce2fab8e18d45e94f12ca6bc73006f53a03041876d1dcaa50bee",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:90322da6c2d38eb00fcf64ffdc0452b21f00d1e6268215abd012e0cdc4a3df2a",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "validate_notifications",
+      "metadataDigest": "sha256:c065e70bf7cdd92b86a11be93f8c3a05f5e1f4b4a5148cbf76086386c0caabee",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:62cff02d4eab26ff4049b5eb38c9b88e63d9bbdbe6d568e2df0b85e3de6f3299",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "validate_project",
+      "metadataDigest": "sha256:e600cfc7e40d090460699fc94081ffbdcb8282f3abf3893d9e5b930a6110cb15",
+      "inputSchemaDigest": "sha256:502e6f4e0b1c181e5d55a9c2bd2d21e4787efc22c85676f4f5a46cfbf9e9eea2",
+      "outputSchemaDigest": "sha256:6e0e51d7e4720d501518e4248668f47dabb17168d5b6ceed2835a1fdc8c8accc",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "name": "validate_state_machine",
+      "metadataDigest": "sha256:d19ffe9d9bef26a6efc7d509a18634e7ef90699dccd0bc41d2b1383f81555074",
+      "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
+      "outputSchemaDigest": "sha256:de1617a414ed6951b75a41c24bfaf34f995fdb01bcab31604f27b8f585b8e4f0",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "bga://project/diagnostics",
+      "descriptorDigest": "sha256:1eef753fef6db291d3fe09b2aa53e34f43644c028120baf13dba6e0aaee92788",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "uri": "bga://project/states",
+      "descriptorDigest": "sha256:2d60850074a51674f1cfa8343ca4b21a31def9138eb85339b64613343cf3951a",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    },
+    {
+      "uri": "bga://project/summary",
+      "descriptorDigest": "sha256:8abf3f9c8db34dc6933e6fdc299acf756bb1e61b50b51b7ac90e678c57b98a8d",
+      "manifest": {
+        "stability": "verified",
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
+        "environments": ["local"],
+        "protocolVersions": ["2025-11-25"],
+        "liveStudioRequired": false,
+        "boundary": "TB-LOCAL-FILESYSTEM"
+      }
+    }
+  ],
+  "resourceTemplates": [],
+  "prompts": [],
+  "schemas": [
+    {
+      "path": "config/capabilities.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:1dca06d9fea968c22fd302529bb31587896e522d7d1dab6fd2274dcb2b28c0f5"
+    },
+    {
+      "path": "config/compatibility.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:2d3b05167cf03714ea02a21d68ba58ac0e78f0ab001067c9da5c8cd329c9f23f"
+    },
+    {
+      "path": "config/diagnostics.schema.json",
+      "compatibility": "schema-version",
+      "contractVersion": 1,
+      "digest": "sha256:502f80d5909491092c155428ed5b176d0889d1bf85ff188d2cae44423ec936c0"
+    },
+    {
+      "path": "config/doc-evaluation.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:6c7aa85d3580c784ec2f988ca48a01af28a4236aef93907d09fe430bbeb3bb7a"
+    },
+    {
+      "path": "config/doc-sources.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:f49f64fb0a9458e904f9bfd25070c78c1a19478bd3cf649635e22b5c94571e62"
+    },
+    {
+      "path": "config/public-contract.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:179a29662d5bba3859e72a4b948eca43ffb591b08be8f8deb01a781e8288ae31"
+    },
+    {
+      "path": "config/release.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:12183d4c80c5d3da8475ffe4a3b02d2c2c3eda2f5280afa6e22fc272a5b4dc6b"
+    },
+    {
+      "path": "config/rule-catalog.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:fce8cf8113db964c68adc2e25e9756b93b0305e6b3cf83ff863b2db67f57292c"
+    },
+    {
+      "path": "config/version-policy.schema.json",
+      "compatibility": "package-major",
+      "contractVersion": null,
+      "digest": "sha256:966207bd0d55244c903e00cfe095eec2ab062ddfabcc6eb0b985870edc30251f"
+    },
+    {
+      "path": "runtime:public-error",
+      "compatibility": "schema-version",
+      "contractVersion": 1,
+      "digest": "sha256:22ee865ca1671bcd18b6173d25d6624ab974033ac00c2e1cf48f58c858bdefad"
+    }
+  ],
+  "compatibility": [
+    {
+      "id": "CLAIM-CLIENT-EDITORS",
+      "dimension": "client",
+      "value": "editor and agent clients",
+      "support": "unknown"
+    },
+    {
+      "id": "CLAIM-CLIENT-SDK",
+      "dimension": "client",
+      "value": "@modelcontextprotocol/client 2.0.0",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-ENVIRONMENT-LOCAL",
+      "dimension": "environment",
+      "value": "local",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-FILEGEN-LEGACY",
+      "dimension": "file-generation",
+      "value": "inc-php-metadata",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-FILEGEN-MODERN",
+      "dimension": "file-generation",
+      "value": "json-metadata",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-LAYOUT-HYBRID",
+      "dimension": "layout",
+      "value": "part-migrated",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-LAYOUT-LEGACY",
+      "dimension": "layout",
+      "value": "legacy-flat",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-LAYOUT-MODERN",
+      "dimension": "layout",
+      "value": "modern-modules",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-LAYOUT-UNRECOGNIZED",
+      "dimension": "layout",
+      "value": "unrecognized",
+      "support": "unknown"
+    },
+    {
+      "id": "CLAIM-PLATFORM-LINUX",
+      "dimension": "platform",
+      "value": "ubuntu-latest",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-PLATFORM-MACOS",
+      "dimension": "platform",
+      "value": "macos-latest",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-PLATFORM-WINDOWS",
+      "dimension": "platform",
+      "value": "windows-latest",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-PROTOCOL-2025-11-25",
+      "dimension": "protocol",
+      "value": "2025-11-25",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-PROTOCOL-2026-07-28",
+      "dimension": "protocol",
+      "value": "2026-07-28",
+      "support": "unknown"
+    },
+    {
+      "id": "CLAIM-PROTOCOL-OTHER",
+      "dimension": "protocol",
+      "value": "any-other-version",
+      "support": "unsupported"
+    },
+    {
+      "id": "CLAIM-RUNTIME-NODE-20",
+      "dimension": "runtime",
+      "value": "20",
+      "support": "unsupported"
+    },
+    {
+      "id": "CLAIM-RUNTIME-NODE-22",
+      "dimension": "runtime",
+      "value": "22",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-RUNTIME-NODE-24",
+      "dimension": "runtime",
+      "value": "24",
+      "support": "supported"
+    },
+    {
+      "id": "CLAIM-TRANSPORT-HTTP",
+      "dimension": "transport",
+      "value": "streamable-http",
+      "support": "unsupported"
+    },
+    {
+      "id": "CLAIM-TRANSPORT-STDIO",
+      "dimension": "transport",
+      "value": "stdio",
+      "support": "supported"
+    }
+  ],
+  "deprecations": []
+}

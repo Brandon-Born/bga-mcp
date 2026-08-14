@@ -1312,12 +1312,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-402 — Define versioning and compatibility policy
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-006, BGA-009, BGA-414
 - **Deliverable:** Policies for package versions, tool/schema changes, manifest changes, MCP versions, deprecations, and BGA compatibility.
-- **Acceptance:** Breaking-change criteria and support windows are explicit; public schemas cannot change silently.
-- **Verification:** Compatibility tests prove supported previous contracts still pass or that a declared major/deprecation boundary is enforced.
+- **Acceptance:** Breaking change criteria and package, protocol, deprecation, and BGA support windows are explicit and machine checked. The installed release tool, resource, manifest, export, and public schema contract cannot change silently. A supported previous contract remains callable or its removal requires the declared major and deprecation boundary.
+- **Verification:** [`GATE-VERSION-POLICY`](../tests/unit/version-policy.test.ts) seeds silent schema drift, an additive patch, a too-early removal, a major removal without deprecation, and a same-version versioned-schema rewrite; each is refused, while an additive minor and a removal after a declared 90-day/next-major boundary pass. [`E2E-CONTRACT-COMPATIBILITY`](../tests/e2e/version-policy.test.ts) installs the shared tarball, connects through the real MCP client, compares exact release discovery and shipped contracts with the retained `1.0.0` candidate, then calls all seven tools and reads all three resources using the retained contract.
+- **Policy:** [`config/version-policy.json`](../config/version-policy.json) defines SemVer levels, a 90-day and one-minor deprecation floor, 180 days of feasible critical-security fixes for the previous major, and no silent withdrawal of MCP or BGA support. [`config/contracts/1.0.0.json`](../config/contracts/1.0.0.json) fingerprints the BGA-414 package surface. Published snapshots are append-only; `0.0.0-development` remains unpublished and the first stable contract is `1.0.0`.
+- **Sources:** [Semantic Versioning 2.0.0](https://semver.org/) says incompatible public API changes increment the major and deprecation increments the minor. [MCP Versioning](https://modelcontextprotocol.io/docs/learn/versioning) says peers “MUST agree on a single version” for a session. The [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) says `states.inc.php` is “deprecated” while documenting its replacement, and the [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says an old file can be safely deleted only after its replacement is ready. Those sources justify separate package, protocol, and per-construct BGA lifecycles rather than treating one new form as removal of every old one.
+- **Evidence, 2026-08-14:** Full local `pnpm check` passes with 75 test files and 570 tests; all 168 required scenarios pass, and the acceptance map records 149 of 151 cases proven with the two existing live Studio cases explicitly missing. Exact-commit CI has not yet run, so this item remains `implemented`, not `verified`.
 
 ### BGA-403 — Build the reproducible release-candidate pipeline
 

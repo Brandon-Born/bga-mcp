@@ -916,6 +916,24 @@
       "missing": "Needs a live authenticated run, which requires the operator's own Studio session; the 2026-08-10 browser run confirmed the identifiers and the wrong-project answer but did not drive the MCP tool against the live page."
     },
     {
+      "item": "BGA-402",
+      "case": "Breaking change criteria and package, protocol, deprecation, and BGA support windows are explicit and machine checked",
+      "boundary": "repository",
+      "scenarios": ["GATE-VERSION-POLICY"]
+    },
+    {
+      "item": "BGA-402",
+      "case": "The installed release tool, resource, manifest, export, and public schema contract cannot change silently",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CONTRACT-COMPATIBILITY"]
+    },
+    {
+      "item": "BGA-402",
+      "case": "A supported previous contract remains callable or its removal requires the declared major and deprecation boundary",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CONTRACT-COMPATIBILITY"]
+    },
+    {
       "item": "BGA-414",
       "case": "Every capability discoverable from the installed release artifact is explicitly included and verified in the frozen inventory",
       "boundary": "packaged",

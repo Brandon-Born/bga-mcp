@@ -28,5 +28,10 @@
     "security-review",
     "verification-evidence"
   ],
-  "requiredScenarios": ["E2E-RELEASE-LOCAL-ONLY", "GATE-RELEASE-INVENTORY"]
+  "requiredScenarios": [
+    "E2E-CONTRACT-COMPATIBILITY",
+    "E2E-RELEASE-LOCAL-ONLY",
+    "GATE-RELEASE-INVENTORY",
+    "GATE-VERSION-POLICY"
+  ]
 }

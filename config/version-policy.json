@@ -1,0 +1,63 @@
+{
+  "$schema": "./version-policy.schema.json",
+  "schemaVersion": 1,
+  "package": {
+    "scheme": "semver-2.0.0",
+    "developmentVersion": "0.0.0-development",
+    "firstStableVersion": "1.0.0",
+    "prereleaseIdentifier": "rc",
+    "prereleaseDistTag": "next",
+    "stableDistTag": "latest",
+    "previousMajorSecurityFixDays": 180
+  },
+  "contract": {
+    "current": "config/contracts/1.0.0.json",
+    "removalsRequireDeprecation": true,
+    "minimumDeprecationMinorReleases": 1,
+    "minimumDeprecationDays": 90
+  },
+  "changeLevels": {
+    "patch": [
+      "A behavior fix that preserves every retained public contract field and schema digest",
+      "A documentation clarification that does not change a capability contract or support claim",
+      "A dependency or internal refactor that preserves installed observable behavior"
+    ],
+    "minor": [
+      "A new tool resource prompt protocol or supported BGA compatibility claim with complete evidence",
+      "A public metadata clarification or other additive change that leaves every previous contract usable",
+      "A deprecation announcement that retains the deprecated surface for the complete support window"
+    ],
+    "major": [
+      "Removal rename or replacement of a public tool resource prompt transport protocol export or schema",
+      "Any existing tool input or output schema change or narrowing of a supported compatibility claim",
+      "A change to an existing versioned schema requires both a new schema contract version and a package major"
+    ]
+  },
+  "support": {
+    "packageMajors": "The current stable major receives fixes. After a successor major is published, the previous major receives feasible critical security fixes for 180 days; older majors remain installable but unsupported.",
+    "mcpProtocols": "A protocol revision remains supported for the package major that claims it. Removal requires a prior minor deprecation, at least 90 days, a verified successor, and the next package major.",
+    "bgaCompatibility": "A supported BGA layout or file generation remains supported for the package major that claims it. Upstream drift freezes an affected release claim for investigation; it is not silently downgraded. Removal requires official-source evidence, prior deprecation, at least 90 days, and the next package major."
+  },
+  "sources": [
+    {
+      "id": "SEMVER-2",
+      "url": "https://semver.org/",
+      "basis": "Defines major minor and patch compatibility meaning and requires a minor release when public API is deprecated."
+    },
+    {
+      "id": "MCP-VERSIONING",
+      "url": "https://modelcontextprotocol.io/docs/learn/versioning",
+      "basis": "Defines date based incompatible protocol revisions and requires client and server to agree on one version for a session."
+    },
+    {
+      "id": "BGA-FILE-REFERENCE",
+      "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "basis": "Documents current and deprecated project files and states that production database changes require migration."
+    },
+    {
+      "id": "BGA-MIGRATION",
+      "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "basis": "Documents incremental migration from legacy files and explicitly retains old forms until each replacement is complete."
+    }
+  ]
+}

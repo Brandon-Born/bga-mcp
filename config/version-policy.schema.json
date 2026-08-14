@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/version-policy.schema.json",
+  "title": "bga-mcp version and compatibility policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "package",
+    "contract",
+    "changeLevels",
+    "support",
+    "sources"
+  ],
+  "properties": {
+    "$schema": { "const": "./version-policy.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scheme",
+        "developmentVersion",
+        "firstStableVersion",
+        "prereleaseIdentifier",
+        "prereleaseDistTag",
+        "stableDistTag",
+        "previousMajorSecurityFixDays"
+      ],
+      "properties": {
+        "scheme": { "const": "semver-2.0.0" },
+        "developmentVersion": { "const": "0.0.0-development" },
+        "firstStableVersion": { "const": "1.0.0" },
+        "prereleaseIdentifier": { "const": "rc" },
+        "prereleaseDistTag": { "const": "next" },
+        "stableDistTag": { "const": "latest" },
+        "previousMajorSecurityFixDays": { "type": "integer", "minimum": 180 }
+      }
+    },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "current",
+        "removalsRequireDeprecation",
+        "minimumDeprecationMinorReleases",
+        "minimumDeprecationDays"
+      ],
+      "properties": {
+        "current": {
+          "type": "string",
+          "pattern": "^config/contracts/[1-9][0-9]*\\.[0-9]+\\.[0-9]+\\.json$"
+        },
+        "removalsRequireDeprecation": { "const": true },
+        "minimumDeprecationMinorReleases": { "type": "integer", "minimum": 1 },
+        "minimumDeprecationDays": { "type": "integer", "minimum": 90 }
+      }
+    },
+    "changeLevels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["patch", "minor", "major"],
+      "properties": {
+        "patch": { "$ref": "#/$defs/nonemptyStrings" },
+        "minor": { "$ref": "#/$defs/nonemptyStrings" },
+        "major": { "$ref": "#/$defs/nonemptyStrings" }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packageMajors", "mcpProtocols", "bgaCompatibility"],
+      "properties": {
+        "packageMajors": { "type": "string", "minLength": 1 },
+        "mcpProtocols": { "type": "string", "minLength": 1 },
+        "bgaCompatibility": { "type": "string", "minLength": 1 }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "url", "basis"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z][A-Z0-9-]+$" },
+          "url": { "type": "string", "pattern": "^https://" },
+          "basis": { "type": "string", "minLength": 20 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonemptyStrings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 10 }
+    }
+  }
+}
