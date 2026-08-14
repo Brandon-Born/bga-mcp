@@ -5,7 +5,11 @@ import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const AUDIT_DATABASE_USAGE_TOOL = 'audit_database_usage';
 
@@ -83,7 +87,11 @@ export function summarizeDatabaseAudit(
   return lines.join('\n');
 }
 
-export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoundary): void {
+export function registerAuditDatabaseUsage(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     AUDIT_DATABASE_USAGE_TOOL,
     {
@@ -98,12 +106,23 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async (signal) => {
-          const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
-          const schemaPath = context.model.components
+        const outcome = await policy.runWithTimeout(AUDIT_DATABASE_USAGE_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          if (isProjectRootInputRequired(resolution)) {
+            return resolution;
+          }
+          const root = resolution;
+          const project = await loadProjectContext(policy, root, { withPhpSources: true, signal });
+          const schemaPath = project.model.components
             .find((component) => component.id === 'database')
             ?.files.find((file) => file.endsWith('.sql'));
           const schemaSource =
@@ -111,15 +130,15 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
               ? null
               : {
                   path: schemaPath,
-                  text: await policy.readProjectFile(root, schemaPath),
+                  text: await policy.readProjectFile(root, schemaPath, { signal }),
                 };
 
-          const audit = auditDatabaseUsage(schemaSource, context.phpSources);
+          const audit = auditDatabaseUsage(schemaSource, project.phpSources, signal);
           return {
             schemaVersion: 1,
-            layout: context.model.layout,
+            layout: project.model.layout,
             schemaSource: schemaPath ?? null,
-            phpSourcesRead: context.phpSources.length,
+            phpSourcesRead: project.phpSources.length,
             schema: audit.tables.map((table) => ({
               name: table.name,
               columns: [...table.columns],
@@ -138,6 +157,10 @@ export function registerAuditDatabaseUsage(server: McpServer, policy: PolicyBoun
             diagnostics: audit.diagnostics,
           } satisfies AuditDatabaseUsageResult;
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         return publishResult(
           policy,

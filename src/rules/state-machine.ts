@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import type { ProjectModel } from '../project/model.js';
 import type { StateDefinition } from '../project/parse.js';
 import { certainFinding, heuristicFinding, summarizeFindings } from './uncertainty.js';
@@ -192,18 +193,33 @@ function heuristic(
   return heuristicFinding(rule(code), { code, message, evidence, uri, suggestion });
 }
 
-function declaresMethod(sources: readonly PhpSource[], method: string): boolean {
+function declaresMethod(
+  sources: readonly PhpSource[],
+  method: string,
+  signal?: AbortSignal,
+): boolean {
   const pattern = new RegExp(`function\\s+${method}\\s*\\(`, 'u');
-  return sources.some((source) => pattern.test(source.text));
+  for (const source of sources) {
+    cancellationCheckpoint(signal);
+    if (pattern.test(source.text)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /** Every state an entry point leads to, by transition or by handler redirect. */
-function reachable(states: readonly StateDefinition[], from: readonly number[]): Set<number> {
+function reachable(
+  states: readonly StateDefinition[],
+  from: readonly number[],
+  signal?: AbortSignal,
+): Set<number> {
   const byId = new Map(states.map((state) => [state.id, state]));
   const seen = new Set<number>();
   const queue = [...from];
 
   while (queue.length > 0) {
+    cancellationCheckpoint(signal);
     const current = queue.shift();
     if (current === undefined || seen.has(current)) {
       continue;
@@ -214,6 +230,7 @@ function reachable(states: readonly StateDefinition[], from: readonly number[]):
       ...Object.values(state?.transitions ?? {}),
       ...(state?.redirects ?? []),
     ]) {
+      cancellationCheckpoint(signal);
       if (!seen.has(target)) {
         queue.push(target);
       }
@@ -248,6 +265,7 @@ function outgoing(state: StateDefinition): number[] {
 export function validateStateMachine(
   model: ProjectModel,
   sources: readonly PhpSource[],
+  signal?: AbortSignal,
 ): DiagnosticResult {
   const findings: DiagnosticFinding[] = [];
   const source = model.states.source;
@@ -255,6 +273,7 @@ export function validateStateMachine(
 
   // Anything the reader could not interpret stays visible in this result.
   for (const finding of model.diagnostics.findings) {
+    cancellationCheckpoint(signal);
     if (finding.kind === 'unsupported-syntax' && finding.code.startsWith('project.states.')) {
       findings.push(finding);
     }
@@ -272,7 +291,7 @@ export function validateStateMachine(
         ),
       );
     }
-    return summarizeFindings(findings);
+    return summarizeFindings(findings, signal);
   }
 
   const states = model.states.definitions;
@@ -293,6 +312,7 @@ export function validateStateMachine(
   }
 
   for (const id of model.states.duplicateIds) {
+    cancellationCheckpoint(signal);
     findings.push(
       certain(
         'state.id.duplicate',
@@ -306,6 +326,7 @@ export function validateStateMachine(
 
   const seenNames = new Map<string, number>();
   for (const state of states) {
+    cancellationCheckpoint(signal);
     // A class that takes a reserved identifier is the one thing worth saying
     // about a reserved state, because the mistake is the project's.
     if (state.origin === 'class' && RESERVED.has(state.id)) {
@@ -387,7 +408,9 @@ export function validateStateMachine(
 
   if (complete.declarations) {
     for (const state of states) {
+      cancellationCheckpoint(signal);
       for (const [name, target] of Object.entries(state.transitions)) {
+        cancellationCheckpoint(signal);
         if (!declared.has(target)) {
           findings.push(
             certain(
@@ -407,8 +430,9 @@ export function validateStateMachine(
   // only when every state and every edge was read, and only from an entry
   // point that is known rather than assumed.
   if (complete.declarations && complete.edges && initial.ids.length > 0) {
-    const reachableIds = reachable(states, initial.ids);
+    const reachableIds = reachable(states, initial.ids, signal);
     for (const state of states) {
+      cancellationCheckpoint(signal);
       if (authored(state) && !reachableIds.has(state.id)) {
         findings.push(
           certain(
@@ -426,6 +450,7 @@ export function validateStateMachine(
   // Cross-file handler checks. These are heuristics by construction.
   const searchable = sources.length > 0;
   for (const state of states) {
+    cancellationCheckpoint(signal);
     const checks: { method: string | null; code: string; label: string }[] = [
       { method: state.action, code: 'state.action.handler-missing', label: 'action' },
       { method: state.args, code: 'state.args.handler-missing', label: 'args' },
@@ -437,10 +462,11 @@ export function validateStateMachine(
     ];
 
     for (const check of checks) {
+      cancellationCheckpoint(signal);
       if (check.method === null || check.method === '' || !searchable) {
         continue;
       }
-      if (declaresMethod(sources, check.method)) {
+      if (declaresMethod(sources, check.method, signal)) {
         continue;
       }
       findings.push(
@@ -455,5 +481,6 @@ export function validateStateMachine(
     }
   }
 
-  return summarizeFindings(findings);
+  cancellationCheckpoint(signal);
+  return summarizeFindings(findings, signal);
 }

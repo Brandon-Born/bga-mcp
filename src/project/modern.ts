@@ -16,6 +16,7 @@ import {
   splitTopLevel,
   type PhpSource,
 } from './php.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 /**
  * Readers for the modern BGA framework.
@@ -76,16 +77,19 @@ interface StateDraft extends StateDefinition {
 function constructorArguments(
   text: string,
   masked: string,
+  signal?: AbortSignal,
 ): { name: string | null; value: string }[] | null {
+  cancellationCheckpoint(signal);
   const call = CONSTRUCT_CALL.exec(masked);
   if (call === null) {
     return null;
   }
-  const span = matchBracket(masked, call.index + call[0].length - 1);
+  const span = matchBracket(masked, call.index + call[0].length - 1, signal);
   if (span === null) {
     return null;
   }
-  return splitTopLevel(masked, span.start + 1, span.end).map((part) => {
+  return splitTopLevel(masked, span.start + 1, span.end, ',', signal).map((part) => {
+    cancellationCheckpoint(signal);
     const raw = text.slice(part.start, part.end);
     const named = NAMED_ARGUMENT.exec(masked.slice(part.start, part.end));
     return named === null
@@ -99,22 +103,26 @@ function readTransitions(
   expression: string,
   constants: ReadonlyMap<string, number>,
   selfClass: string,
+  signal?: AbortSignal,
 ): { transitions: Record<string, number>; unreadable: string[] } {
   const transitions: Record<string, number> = {};
   const unreadable: string[] = [];
-  const masked = maskLiterals(expression);
+  const masked = maskLiterals(expression, signal);
   const open = masked.search(/[[(]/u);
-  const span = open === -1 ? null : matchBracket(masked, open);
+  const span = open === -1 ? null : matchBracket(masked, open, signal);
   if (span === null) {
     return { transitions, unreadable: [`transition map ${expression.trim()}`] };
   }
 
-  for (const part of splitTopLevel(masked, span.start + 1, span.end)) {
+  for (const part of splitTopLevel(masked, span.start + 1, span.end, ',', signal)) {
+    cancellationCheckpoint(signal);
     const entry = expression.slice(part.start, part.end);
-    const arrow = maskLiterals(entry).indexOf('=>');
-    const key = arrow === -1 ? null : readStringLiteral(entry.slice(0, arrow));
+    const arrow = maskLiterals(entry, signal).indexOf('=>');
+    const key = arrow === -1 ? null : readStringLiteral(entry.slice(0, arrow), signal);
     const target =
-      arrow === -1 ? null : resolveIntExpression(entry.slice(arrow + 2), constants, selfClass);
+      arrow === -1
+        ? null
+        : resolveIntExpression(entry.slice(arrow + 2), constants, selfClass, signal);
     if (key === null || target === null) {
       unreadable.push(`transition entry ${entry.trim()}`);
       continue;
@@ -134,8 +142,9 @@ function readClass(
   source: ModernStateSource,
   constants: ReadonlyMap<string, number>,
   unsupported: UnreadableConstruct[],
+  signal?: AbortSignal,
 ): StateDraft | null {
-  const masked = maskLiterals(source.text);
+  const masked = maskLiterals(source.text, signal);
   const declaration = STATE_CLASS.exec(masked);
   if (declaration === null || (declaration[2] ?? '').split('\\').at(-1) !== 'GameState') {
     return null;
@@ -145,7 +154,7 @@ function readClass(
     unsupported.push({ path: source.path, construct, scope });
   };
 
-  const parsed = constructorArguments(source.text, masked);
+  const parsed = constructorArguments(source.text, masked, signal);
   if (parsed === null) {
     report(`state class ${className} without a literal parent::__construct call`, 'declaration');
     return null;
@@ -161,6 +170,7 @@ function readClass(
 
   const named = new Map<string, string>();
   for (const argument of parsed) {
+    cancellationCheckpoint(signal);
     if (argument.name === null) {
       continue;
     }
@@ -172,7 +182,7 @@ function readClass(
   }
 
   const rawId = named.get('id');
-  const id = rawId === undefined ? null : resolveIntExpression(rawId, constants, className);
+  const id = rawId === undefined ? null : resolveIntExpression(rawId, constants, className, signal);
   if (id === null) {
     report(
       `state class ${className} with a non-literal id: ${rawId ?? '(no id argument)'}`,
@@ -192,22 +202,28 @@ function readClass(
     if (raw === undefined) {
       return null;
     }
-    const text = readStringLiteral(raw);
+    const text = readStringLiteral(raw, signal);
     if (text === null) {
       report(`state class ${className} with a computed ${argument}: ${raw}`, 'detail');
     }
     return text;
   };
 
-  const transitions = readTransitions(named.get('transitions') ?? '[]', constants, className);
+  const transitions = readTransitions(
+    named.get('transitions') ?? '[]',
+    constants,
+    className,
+    signal,
+  );
   for (const construct of transitions.unreadable) {
+    cancellationCheckpoint(signal);
     report(`state class ${className} with an unreadable ${construct}`, 'edge');
   }
 
-  const methods = readMethods(source.text);
+  const methods = readMethods(source.text, signal);
   const returned = methods
     .filter((method) => redirects(method.name))
-    .flatMap((method) => returnExpressions(method.body));
+    .flatMap((method) => returnExpressions(method.body, signal));
   const declares = (name: string): string | null =>
     methods.some((method) => method.name === name) ? name : null;
 
@@ -252,16 +268,18 @@ function resolveRedirect(
   draft: StateDraft,
   constants: ReadonlyMap<string, number>,
   classIds: ReadonlyMap<string, number>,
+  signal?: AbortSignal,
 ): number | null {
+  cancellationCheckpoint(signal);
   const className = CLASS_CONSTANT.exec(expression.trim())?.[1];
   if (className !== undefined) {
     return classIds.get(className) ?? null;
   }
-  const transition = readStringLiteral(expression);
+  const transition = readStringLiteral(expression, signal);
   if (transition !== null) {
     return draft.transitions[transition] ?? null;
   }
-  return resolveIntExpression(expression, constants, draft.className);
+  return resolveIntExpression(expression, constants, draft.className, signal);
 }
 
 /**
@@ -276,13 +294,16 @@ function resolveRedirect(
 export function parseModernStates(
   sources: readonly ModernStateSource[],
   supporting: readonly PhpSource[] = [],
+  signal?: AbortSignal,
 ): ModernStatesOutcome {
-  const constants = collectIntConstants([...sources, ...supporting]);
+  cancellationCheckpoint(signal);
+  const constants = collectIntConstants([...sources, ...supporting], signal);
   const unsupported: UnreadableConstruct[] = [];
   const drafts: StateDraft[] = [];
 
   for (const source of sources) {
-    const draft = readClass(source, constants, unsupported);
+    cancellationCheckpoint(signal);
+    const draft = readClass(source, constants, unsupported, signal);
     if (draft !== null) {
       drafts.push(draft);
     }
@@ -292,6 +313,7 @@ export function parseModernStates(
   const states: StateDefinition[] = [];
 
   for (const draft of drafts) {
+    cancellationCheckpoint(signal);
     const targets = new Set<number>();
     let edgesResolved = draft.edgesResolved;
 
@@ -303,7 +325,8 @@ export function parseModernStates(
     ];
 
     for (const edge of edges) {
-      const target = resolveRedirect(edge.expression, draft, constants, classIds);
+      cancellationCheckpoint(signal);
+      const target = resolveRedirect(edge.expression, draft, constants, classIds, signal);
       if (target === null) {
         unsupported.push({
           path: draft.path,
@@ -333,8 +356,10 @@ export function parseModernStates(
     });
   }
 
+  const ordered = states.sort((left, right) => left.id - right.id);
+  cancellationCheckpoint(signal);
   return {
-    value: states.sort((left, right) => left.id - right.id),
+    value: ordered,
     unsupported,
     classIds,
   };
@@ -361,23 +386,27 @@ export function readInitialState(
   sources: readonly PhpSource[],
   states: readonly StateDefinition[],
   classIds: ReadonlyMap<string, number>,
+  signal?: AbortSignal,
 ): InitialStateOutcome {
-  const constants = collectIntConstants(sources);
+  cancellationCheckpoint(signal);
+  const constants = collectIntConstants(sources, signal);
   const declared = new Set(states.map((state) => state.id));
 
   for (const source of sources) {
-    const setup = readMethods(source.text).find((method) => method.name === 'setupNewGame');
-    const expressions = setup === undefined ? [] : returnExpressions(setup.body);
+    cancellationCheckpoint(signal);
+    const setup = readMethods(source.text, signal).find((method) => method.name === 'setupNewGame');
+    const expressions = setup === undefined ? [] : returnExpressions(setup.body, signal);
     if (setup === undefined || expressions.length === 0) {
       continue;
     }
 
     const ids: number[] = [];
     for (const expression of expressions) {
+      cancellationCheckpoint(signal);
       const className = CLASS_CONSTANT.exec(expression.trim())?.[1];
       const target =
         className === undefined
-          ? resolveIntExpression(expression, constants)
+          ? resolveIntExpression(expression, constants, undefined, signal)
           : (classIds.get(className) ?? null);
       if (target === null || !declared.has(target)) {
         return {
@@ -400,6 +429,7 @@ export function readInitialState(
     };
   }
 
+  cancellationCheckpoint(signal);
   return { ids: [], evidence: null, unreadable: null };
 }
 
@@ -465,17 +495,18 @@ const ACTION_METHOD = /\bfunction\s+(act[A-Z]\w*)\s*\(/gu;
 const ATTRIBUTE = /#\[\s*\\?(?:[A-Za-z_]\w*\\)*([A-Za-z_]\w*)\s*(\()?/u;
 
 /** Reads a named argument of an attribute, such as `min: 1` or `name: 'id'`. */
-function attributeArguments(text: string): Map<string, string> {
+function attributeArguments(text: string, signal?: AbortSignal): Map<string, string> {
   const values = new Map<string, string>();
-  const masked = maskLiterals(text);
+  const masked = maskLiterals(text, signal);
   const open = masked.indexOf('(');
-  const span = open === -1 ? null : matchBracket(masked, open);
+  const span = open === -1 ? null : matchBracket(masked, open, signal);
   if (span === null) {
     return values;
   }
-  for (const part of splitTopLevel(masked, span.start + 1, span.end)) {
+  for (const part of splitTopLevel(masked, span.start + 1, span.end, ',', signal)) {
+    cancellationCheckpoint(signal);
     const argument = text.slice(part.start, part.end);
-    const named = /^\s*([A-Za-z_]\w*)\s*:(?!:)([\s\S]*)$/u.exec(maskLiterals(argument));
+    const named = /^\s*([A-Za-z_]\w*)\s*:(?!:)([\s\S]*)$/u.exec(maskLiterals(argument, signal));
     if (named !== null) {
       values.set(named[1] ?? '', argument.slice(argument.length - (named[2] ?? '').length).trim());
     }
@@ -483,7 +514,8 @@ function attributeArguments(text: string): Map<string, string> {
   return values;
 }
 
-function readParameter(text: string): ActionParameter | null {
+function readParameter(text: string, signal?: AbortSignal): ActionParameter | null {
+  cancellationCheckpoint(signal);
   const variable = /\$([A-Za-z_]\w*)/u.exec(text)?.[1];
   if (variable === undefined) {
     return null;
@@ -497,7 +529,7 @@ function readParameter(text: string): ActionParameter | null {
   const values =
     attribute === null
       ? new Map<string, string>()
-      : attributeArguments(text.slice(ATTRIBUTE.exec(text)?.index ?? 0));
+      : attributeArguments(text.slice(ATTRIBUTE.exec(text)?.index ?? 0), signal);
 
   const number = (key: string): number | null => {
     const raw = values.get(key);
@@ -515,13 +547,13 @@ function readParameter(text: string): ActionParameter | null {
 
   // The type sits between the attribute and the variable.
   const declaration = text.slice(
-    attribute === null ? 0 : maskLiterals(text).indexOf(']') + 1 || 0,
+    attribute === null ? 0 : maskLiterals(text, signal).indexOf(']') + 1 || 0,
     text.indexOf(`$${variable}`),
   );
   const type = /(\??[\\A-Za-z_]\w*)\s*$/u.exec(declaration.trim())?.[1] ?? null;
 
   return {
-    name: readStringLiteral(values.get('name') ?? '') ?? variable,
+    name: readStringLiteral(values.get('name') ?? '', signal) ?? variable,
     variable,
     type,
     attribute,
@@ -542,6 +574,8 @@ export interface ActionReadOptions {
    */
   readonly requireAttribute: boolean;
   readonly declaredIn: ModernAction['declaredIn'];
+  /** Stops large textual scans when the enclosing MCP request expires. */
+  readonly signal?: AbortSignal;
 }
 
 /**
@@ -557,12 +591,14 @@ export function parseModernActions(
   php: string,
   options: ActionReadOptions = { requireAttribute: false, declaredIn: 'game-class' },
 ): ParseOutcome<readonly ModernAction[]> {
+  cancellationCheckpoint(options.signal);
   const actions: ModernAction[] = [];
   const unsupported: string[] = [];
-  const masked = maskLiterals(php);
-  const methods = readMethods(php);
+  const masked = maskLiterals(php, options.signal);
+  const methods = readMethods(php, options.signal);
 
   for (const match of masked.matchAll(ACTION_METHOD)) {
+    cancellationCheckpoint(options.signal);
     const name = match[1] ?? '';
     const method = methods.find((entry) => entry.name === name);
     if (method === undefined) {
@@ -579,9 +615,16 @@ export function parseModernActions(
 
     const parameters: ActionParameter[] = [];
     const bounds = { start: 0, end: method.parameters.length };
-    for (const part of splitTopLevel(maskLiterals(method.parameters), bounds.start, bounds.end)) {
+    for (const part of splitTopLevel(
+      maskLiterals(method.parameters, options.signal),
+      bounds.start,
+      bounds.end,
+      ',',
+      options.signal,
+    )) {
+      cancellationCheckpoint(options.signal);
       const text = method.parameters.slice(part.start, part.end);
-      const parameter = readParameter(text);
+      const parameter = readParameter(text, options.signal);
       if (parameter === null) {
         continue;
       }
@@ -600,5 +643,6 @@ export function parseModernActions(
     });
   }
 
+  cancellationCheckpoint(options.signal);
   return { value: actions, unsupported };
 }

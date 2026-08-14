@@ -24,6 +24,7 @@
  */
 
 import { htmlToText } from './excerpt.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 export interface FrameworkVersion {
   /** The software the line names: `PHP`, `SQL`, `Dojo Toolkit`, `Font Awesome`. */
@@ -101,8 +102,8 @@ const MAX_SOFTWARE_WORDS = 4;
 const MAX_VERSIONS = 12;
 
 /** Collapses one element's markup into the single line a reader sees. */
-function lineOf(html: string): string {
-  return htmlToText(html).split('\n').join(' ').replace(/\s+/gu, ' ').trim();
+function lineOf(html: string, signal?: AbortSignal): string {
+  return htmlToText(html, signal).split('\n').join(' ').replace(/\s+/gu, ' ').trim();
 }
 
 /**
@@ -113,8 +114,9 @@ function lineOf(html: string): string {
  * removed before reading and kept in the evidence line, so the reading is
  * narrow and what the page said is still checkable.
  */
-function readableLine(html: string): string {
-  return lineOf(html.replace(SAMPLE_ASIDE, ' ').replace(SAMPLE_ELEMENT, ' '))
+function readableLine(html: string, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
+  return lineOf(html.replace(SAMPLE_ASIDE, ' ').replace(SAMPLE_ELEMENT, ' '), signal)
     .replace(URL_TEXT, ' ')
     .replace(/\(\s*\)/gu, ' ')
     .replace(/\s+/gu, ' ')
@@ -161,9 +163,9 @@ function detailOf(segment: string, version: string): string | null {
  * list contains one — and a line that cannot be attributed to software is
  * dropped rather than reported under a name this code made up.
  */
-function readItem(itemHtml: string): readonly FrameworkVersion[] {
-  const statedAs = lineOf(itemHtml);
-  const line = readableLine(itemHtml);
+function readItem(itemHtml: string, signal?: AbortSignal): readonly FrameworkVersion[] {
+  const statedAs = lineOf(itemHtml, signal);
+  const line = readableLine(itemHtml, signal);
 
   const labelled = /^([^:]{1,40}):\s*(.+)$/u.exec(line);
   const label = labelled?.[1] === undefined ? null : softwareName(labelled[1]);
@@ -172,6 +174,7 @@ function readItem(itemHtml: string): readonly FrameworkVersion[] {
   const readings: FrameworkVersion[] = [];
   let software = label;
   for (const segment of body.split(SEGMENT_SEPARATOR)) {
+    cancellationCheckpoint(signal);
     const match = VERSION_TOKEN.exec(segment);
     const version = match?.[1];
     if (version === undefined || match === null) {
@@ -194,9 +197,13 @@ function readItem(itemHtml: string): readonly FrameworkVersion[] {
 }
 
 /** Software the page states more than one version for, in the order first read. */
-function conflictsIn(versions: readonly FrameworkVersion[]): readonly FrameworkVersionConflict[] {
+function conflictsIn(
+  versions: readonly FrameworkVersion[],
+  signal?: AbortSignal,
+): readonly FrameworkVersionConflict[] {
   const bySoftware = new Map<string, string[]>();
   for (const entry of versions) {
+    cancellationCheckpoint(signal);
     const seen = bySoftware.get(entry.software) ?? [];
     if (!seen.includes(entry.version)) {
       bySoftware.set(entry.software, [...seen, entry.version]);
@@ -210,22 +217,30 @@ function conflictsIn(versions: readonly FrameworkVersion[]): readonly FrameworkV
 /** Every rendered heading on the page, with the span of text that follows it. */
 function sectionsAfterHeadings(
   html: string,
+  signal?: AbortSignal,
 ): readonly { readonly heading: string; readonly body: string }[] {
+  cancellationCheckpoint(signal);
   const headings: { text: string; start: number; end: number }[] = [];
   for (const match of html.matchAll(HEADING_ELEMENT)) {
+    cancellationCheckpoint(signal);
     headings.push({
-      text: lineOf(match[2] ?? ''),
+      text: lineOf(match[2] ?? '', signal),
       start: match.index,
       end: match.index + match[0].length,
     });
   }
-  return headings.map((heading, index) => ({
-    heading: heading.text,
-    // A section ends at the next heading of any level. The subsection that
-    // follows this one on the Studio page lists PHP extensions with a date in
-    // its prose, and a date must never become a version.
-    body: html.slice(heading.end, headings[index + 1]?.start ?? html.length),
-  }));
+  const sections = headings.map((heading, index) => {
+    cancellationCheckpoint(signal);
+    return {
+      heading: heading.text,
+      // A section ends at the next heading of any level. The subsection that
+      // follows this one on the Studio page lists PHP extensions with a date in
+      // its prose, and a date must never become a version.
+      body: html.slice(heading.end, headings[index + 1]?.start ?? html.length),
+    };
+  });
+  cancellationCheckpoint(signal);
+  return sections;
 }
 
 /**
@@ -236,10 +251,11 @@ function sectionsAfterHeadings(
  * under it is not evidence that the page has no versions — it may be a
  * duplicate heading in navigation — so the search continues past it.
  */
-export function readFrameworkVersions(html: string): FrameworkVersionReading {
-  const candidates = sectionsAfterHeadings(html).filter((section) =>
-    SECTION_HEADING.test(section.heading),
-  );
+export function readFrameworkVersions(html: string, signal?: AbortSignal): FrameworkVersionReading {
+  const candidates = sectionsAfterHeadings(html, signal).filter((section) => {
+    cancellationCheckpoint(signal);
+    return SECTION_HEADING.test(section.heading);
+  });
   if (candidates.length === 0) {
     return {
       status: 'unknown',
@@ -251,14 +267,17 @@ export function readFrameworkVersions(html: string): FrameworkVersionReading {
   }
 
   for (const candidate of candidates) {
+    cancellationCheckpoint(signal);
     const versions: FrameworkVersion[] = [];
     for (const item of candidate.body.matchAll(LIST_ITEM)) {
+      cancellationCheckpoint(signal);
       if (isNavigationItem(item[1] ?? '', item[2] ?? '')) {
         // A table of contents is a list of numbered links. Read as content,
         // its section numbers look exactly like release numbers.
         continue;
       }
-      for (const reading of readItem(item[2] ?? '')) {
+      for (const reading of readItem(item[2] ?? '', signal)) {
+        cancellationCheckpoint(signal);
         if (versions.length >= MAX_VERSIONS) {
           break;
         }
@@ -271,7 +290,7 @@ export function readFrameworkVersions(html: string): FrameworkVersionReading {
         reason: null,
         heading: candidate.heading,
         versions,
-        conflicts: conflictsIn(versions),
+        conflicts: conflictsIn(versions, signal),
       };
     }
   }

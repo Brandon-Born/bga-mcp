@@ -1,5 +1,6 @@
 import { STUDIO_HOST, STUDIO_SESSION_ENV, type PolicyBoundary } from '../policy.js';
 import { htmlToText } from '../docs/excerpt.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import { parseStudioLog, saysProjectMissing } from './logline.js';
 import { publishStudioText, screenStudioLog } from './privacy.js';
 
@@ -37,9 +38,17 @@ export async function checkStudioSetup(
   gameId: string | null,
   // Injectable so the interesting half — what the page turned out to contain —
   // can be exercised without a live account.
-  fetchPage: (id: string) => Promise<{ url: string; body: string }> = async (id) =>
-    await policy.fetchStudioPage({ path: 'studiogame', params: { game: id } }),
+  fetchPage: (id: string, signal?: AbortSignal) => Promise<{ url: string; body: string }> = async (
+    id,
+    signal,
+  ) =>
+    await policy.fetchStudioPage(
+      { path: 'studiogame', params: { game: id } },
+      signal === undefined ? {} : { signal },
+    ),
+  signal?: AbortSignal,
 ): Promise<StudioCheckReport> {
+  cancellationCheckpoint(signal);
   const lines: CheckLine[] = [];
   const { config } = policy;
 
@@ -63,7 +72,8 @@ export async function checkStudioSetup(
   }
   lines.push(line(true, 'The experimental Studio log reader is enabled.'));
 
-  const session = await policy.studioSession();
+  const session = await policy.studioSession(signal === undefined ? {} : { signal });
+  cancellationCheckpoint(signal);
   if (session === null) {
     lines.push(
       line(
@@ -112,10 +122,14 @@ export async function checkStudioSetup(
 
   let body: string;
   try {
-    const page = await fetchPage(gameId);
+    const page = await fetchPage(gameId, signal);
+    cancellationCheckpoint(signal);
     body = page.body;
     lines.push(line(true, `Retrieved ${page.url}.`));
   } catch (error) {
+    // A deadline is the outcome of the enclosing operation, not a failed
+    // Studio setup check that may continue formatting after expiry.
+    cancellationCheckpoint(signal);
     const message = error instanceof Error ? error.message : String(error);
     lines.push(
       line(
@@ -132,8 +146,8 @@ export async function checkStudioSetup(
     return { lines, ok: false };
   }
 
-  const pageText = htmlToText(body);
-  if (saysProjectMissing(pageText)) {
+  const pageText = htmlToText(body, signal);
+  if (saysProjectMissing(pageText, signal)) {
     // What Studio answers, with a 200, for a project that is not there or not
     // this account's — including for a numeric Play ID, which is a different
     // identifier rather than this one.
@@ -147,16 +161,27 @@ export async function checkStudioSetup(
     return { lines, ok: false };
   }
 
-  const parsed = parseStudioLog(pageText);
+  const parsed = parseStudioLog(pageText, signal);
   // Screened before anything is said about the page, so every sentence below is
   // built from the screened view. `publish` is the same guarantee applied a
   // second time at the boundary, because this report reaches a terminal, a
   // launcher log, and whatever CI keeps of them — surfaces the MCP result's own
   // screening never covered.
-  const screened = screenStudioLog(parsed, config.studioDevAccounts, policy.redactionOptions);
+  const screened = screenStudioLog(
+    parsed,
+    config.studioDevAccounts,
+    policy.redactionOptions,
+    signal,
+  );
   const publish = (text: string): string =>
-    publishStudioText(text, screened.withheldValues, policy.redactionOptions);
-  const withActors = parsed.filter((entry) => entry.actorName !== null);
+    publishStudioText(text, screened.withheldValues, policy.redactionOptions, signal);
+  const withActors = [];
+  for (const entry of parsed) {
+    cancellationCheckpoint(signal);
+    if (entry.actorName !== null) {
+      withActors.push(entry);
+    }
+  }
   if (withActors.length === 0) {
     lines.push(
       line(

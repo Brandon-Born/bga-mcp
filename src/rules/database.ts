@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import {
   parseQueries,
   parseSchema,
@@ -148,18 +149,21 @@ export interface DatabaseAudit {
 export function auditDatabaseUsage(
   schemaSource: DatabaseSource | null,
   phpSources: readonly DatabaseSource[],
+  signal?: AbortSignal,
 ): DatabaseAudit {
   const findings: DiagnosticFinding[] = [];
 
   const schema =
-    schemaSource === null ? { value: [], unsupported: [] } : parseSchema(schemaSource.text);
+    schemaSource === null ? { value: [], unsupported: [] } : parseSchema(schemaSource.text, signal);
   for (const construct of schema.unsupported) {
+    cancellationCheckpoint(signal);
     findings.push(unsupported(construct, schemaSource?.path ?? 'dbmodel.sql', 'sql'));
   }
 
   const tables = schema.value;
   const tablesByName = new Map<string, TableDefinition>();
   for (const table of tables) {
+    cancellationCheckpoint(signal);
     if (tablesByName.has(table.name)) {
       findings.push(
         certain(
@@ -175,6 +179,7 @@ export function auditDatabaseUsage(
 
     const seen = new Set<string>();
     for (const column of table.columns) {
+      cancellationCheckpoint(signal);
       if (seen.has(column)) {
         findings.push(
           certain(
@@ -192,11 +197,14 @@ export function auditDatabaseUsage(
 
   const queries: (QueryReference & { source: string })[] = [];
   for (const source of phpSources) {
-    const outcome = parseQueries(source.text);
+    cancellationCheckpoint(signal);
+    const outcome = parseQueries(source.text, signal);
     for (const query of outcome.value) {
+      cancellationCheckpoint(signal);
       queries.push({ ...query, source: source.path });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path, 'php'));
     }
   }
@@ -215,12 +223,15 @@ export function auditDatabaseUsage(
         'Confirm the project declares its schema in dbmodel.sql and queries it from readable PHP.',
       ),
     );
-    return { tables, queries, diagnostics: summarizeFindings(findings) };
+    cancellationCheckpoint(signal);
+    return { tables, queries, diagnostics: summarizeFindings(findings, signal) };
   }
 
   const usedColumns = new Set<string>();
   for (const query of queries) {
+    cancellationCheckpoint(signal);
     for (const table of query.tables) {
+      cancellationCheckpoint(signal);
       if (!tablesByName.has(table) && !FRAMEWORK_TABLES.has(table)) {
         findings.push(
           certain(
@@ -235,6 +246,7 @@ export function auditDatabaseUsage(
     }
 
     for (const reference of query.columns) {
+      cancellationCheckpoint(signal);
       const [tableName, columnName] = reference.split('.');
       if (tableName === undefined || columnName === undefined) {
         continue;
@@ -271,7 +283,9 @@ export function auditDatabaseUsage(
   const selectsEverything = queries.some((query) => /\bSELECT\s+\*/iu.test(query.text));
   if (!selectsEverything) {
     for (const table of tables) {
+      cancellationCheckpoint(signal);
       for (const column of table.columns) {
+        cancellationCheckpoint(signal);
         if (!usedColumns.has(`${table.name}.${column}`)) {
           findings.push(
             heuristic(
@@ -287,5 +301,6 @@ export function auditDatabaseUsage(
     }
   }
 
-  return { tables, queries, diagnostics: summarizeFindings(findings) };
+  cancellationCheckpoint(signal);
+  return { tables, queries, diagnostics: summarizeFindings(findings, signal) };
 }

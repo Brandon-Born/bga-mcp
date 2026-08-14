@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-10",
+  "updatedAt": "2026-08-13",
   "owner": "BGA-128",
   "cases": [
     {
@@ -658,6 +658,36 @@
       "scenarios": ["E2E-STUDIO-ALL-OUTPUTS-OWN-DATA", "E2E-STUDIO-LOGS-DISABLED"]
     },
     {
+      "item": "BGA-318",
+      "case": "A 2026 capability missing a project root returns an in-band roots request, validates the supplied root through the policy boundary, and resumes without a relaunch",
+      "boundary": "packaged",
+      "scenarios": ["E2E-MODERN-INPUT-REQUIRED-ROOTS"]
+    },
+    {
+      "item": "BGA-318",
+      "case": "One, many, changed, empty, invalid, and unsupported modern roots outcomes are explicit and session-bounded",
+      "boundary": "packaged",
+      "scenarios": ["E2E-MODERN-INPUT-REQUIRED-ROOTS", "E2E-MODERN-INPUT-REQUIRED-OUTCOMES"]
+    },
+    {
+      "item": "BGA-318",
+      "case": "No server-push roots/list or legacy elicitation is attempted on the 2026 era, and guidance never claims an advertising client offered nothing merely because the server did not ask",
+      "boundary": "packaged",
+      "scenarios": ["E2E-MODERN-INPUT-REQUIRED-OUTCOMES", "E2E-MODERN-INPUT-REQUIRED-SETUP"]
+    },
+    {
+      "item": "BGA-318",
+      "case": "The modern in-band interaction applies to project tools and resources, while the legacy roots path remains supported",
+      "boundary": "packaged",
+      "scenarios": ["E2E-MODERN-INPUT-REQUIRED-ROOTS", "E2E-LEGACY-CLIENT-ROOTS"]
+    },
+    {
+      "item": "BGA-318",
+      "case": "Modern non-secret setup input proceeds when supplied, distinguishes decline, no value, and unsupported clients, and does not ask again after a decline",
+      "boundary": "packaged",
+      "scenarios": ["E2E-MODERN-INPUT-REQUIRED-SETUP"]
+    },
+    {
       "item": "BGA-327",
       "case": "Every public result is schema-preserving, data-minimized, and passed through context-aware redaction",
       "boundary": "packaged",
@@ -730,6 +760,42 @@
       "scenarios": ["E2E-STUDIO-FILE-SESSION-REDACTION"]
     },
     {
+      "item": "BGA-326",
+      "case": "A timeout awaits instrumented listing and descriptor-read syscalls before the public operation settles",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FILESYSTEM-CANCELLATION"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Documentation and Studio callers propagate the deadline signal through DNS, redirects, response bodies, and network cleanup",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE", "E2E-STUDIO-READ-NETWORK-CANCELLATION"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Documentation and Studio parsing stops at synchronous deadline checkpoints",
+      "boundary": "packaged",
+      "missing": "Production parsing now uses monotonic cooperative deadline checkpoints and INT-POLICY-TIMEOUT forces a non-yielding JSONC scan past its deadline in-process. An installed-artifact slow-parser oracle is still missing, so this packaged case is not yet proven."
+    },
+    {
+      "item": "BGA-326",
+      "case": "Redirect, non-success, and timed-out success bodies stop under the same byte and time budget before settlement",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Freshly installed deterministic 2xx, redirect, non-success, DNS, documentation-resource, and Studio probes show no late requests or bytes while the same caller remains alive",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE", "E2E-STUDIO-READ-NETWORK-CANCELLATION"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Freshly installed deterministic filesystem probes show no late operations or output while the same caller remains alive",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FILESYSTEM-CANCELLATION"]
+    },
+    {
       "item": "BGA-328",
       "case": "The provider refuses directories, devices, sockets, FIFOs, disallowed links, and oversized or empty content before an unbounded read",
       "boundary": "packaged",
@@ -791,13 +857,13 @@
     },
     {
       "item": "BGA-330",
-      "case": "Symlinks are never followed",
+      "case": "Static symlinks are refused without publishing outside-root content",
       "boundary": "packaged",
       "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
     },
     {
       "item": "BGA-330",
-      "case": "Reads validate containment, type, and size after open and detect replacement or growth without exposing outside-root content",
+      "case": "Packaged reads and listings do not publish marker content after static links or mutations arranged between client calls",
       "boundary": "packaged",
       "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
     },
@@ -809,9 +875,15 @@
     },
     {
       "item": "BGA-330",
-      "case": "A synchronization barrier forces a rename exactly between check and open",
+      "case": "A test-only installed-artifact barrier forces an intermediate-directory or configured-directory link swap after the final pre-open check and before the real open or opendir, and no outside marker content is returned",
       "boundary": "packaged",
-      "missing": "The swap is arranged between calls rather than forced inside one read; Node exposes no hook between the server's own stat and open, and identity checking makes the outcome the same either way. Recorded rather than claimed."
+      "missing": "Direct PolicyBoundary integration barriers now force an intermediate-directory replacement after initial containment and a configured-directory replacement before traversal, and both return the stable refusal without marker content. They do not interpose on the installed package between its final lstat and actual open or opendir, so packaged stage-order evidence remains missing."
+    },
+    {
+      "item": "BGA-330",
+      "case": "A test-only installed-artifact barrier forces growth after descriptor stat and before descriptor read, and the changed file is refused without publishing appended content",
+      "boundary": "packaged",
+      "missing": "A direct PolicyBoundary integration barrier now appends marker content after the descriptor stat and proves the stable refusal without returning that marker. It does not run through an installed MCP server or record the packaged stat-to-read stage order, so the installed-artifact case remains missing."
     },
     {
       "item": "BGA-320",

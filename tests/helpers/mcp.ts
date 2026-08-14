@@ -1,4 +1,4 @@
-import { Client } from '@modelcontextprotocol/client';
+import { Client, type ClientOptions } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
 import type { StdioServerParameters } from '@modelcontextprotocol/client/stdio';
 
@@ -16,13 +16,21 @@ export async function connectStdio(
     readonly env?: NodeJS.ProcessEnv;
     readonly protocolVersion?: string;
     readonly timeoutMs?: number;
+    readonly clientOptions?: Omit<ClientOptions, 'versionNegotiation'>;
   } = {},
 ): Promise<McpConnection> {
+  const versionNegotiation =
+    options.protocolVersion !== undefined && options.protocolVersion !== '2025-11-25'
+      ? { mode: { pin: options.protocolVersion } as const }
+      : undefined;
   const client = new Client(
     { name: 'bga-mcp-test-client', version: '1.0.0' },
-    options.protocolVersion !== undefined && options.protocolVersion !== '2025-11-25'
-      ? { versionNegotiation: { mode: { pin: options.protocolVersion } } }
-      : undefined,
+    options.clientOptions === undefined && versionNegotiation === undefined
+      ? undefined
+      : {
+          ...options.clientOptions,
+          ...(versionNegotiation === undefined ? {} : { versionNegotiation }),
+        },
   );
   const serverParameters: StdioServerParameters = {
     command,

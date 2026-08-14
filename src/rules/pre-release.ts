@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import type { GroupOutcome, RuleGroup } from './aggregate.js';
 
 /** A catalogued check, as read from `config/rule-catalog.json`. */
@@ -52,15 +53,18 @@ export function auditPreRelease(
   catalog: RuleCatalog,
   groups: readonly GroupOutcome[],
   diagnostics: DiagnosticResult,
+  signal?: AbortSignal,
 ): PreReleaseAudit {
   const byGroup = new Map(groups.map((group) => [group.id, group]));
   const findingsByCode = new Map<string, DiagnosticFinding[]>();
   for (const finding of diagnostics.findings) {
+    cancellationCheckpoint(signal);
     findingsByCode.set(finding.code, [...(findingsByCode.get(finding.code) ?? []), finding]);
   }
 
   const checks: CheckResult[] = [];
   for (const check of catalog.checks) {
+    cancellationCheckpoint(signal);
     if (!check.automatable) {
       checks.push({
         id: check.id,
@@ -124,6 +128,7 @@ export function auditPreRelease(
     'manual-required': 0,
   };
   for (const check of checks) {
+    cancellationCheckpoint(signal);
     counts[check.outcome] += 1;
   }
 

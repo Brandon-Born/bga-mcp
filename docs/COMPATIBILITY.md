@@ -1,8 +1,8 @@
 # Compatibility matrix
 
-Updated: 2026-08-08. Backlog item: BGA-009.
+Updated: 2026-08-13. Backlog item: BGA-009.
 
-[`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no fixture or scenario, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
+[`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
 
 Support levels use the vocabulary from [TESTING.md](TESTING.md):
 
@@ -23,7 +23,7 @@ BGA migrates a project one file at a time, and the documentation marks the older
 
 Modern and hybrid support were reopened by the 2026-08-08 installed-package audit, and are restored here. BGA-124 corrected the state semantics, BGA-125 the action tracing, BGA-126 the notification registration and BGA-127 the database reading; BGA-128 then proved every acceptance case of the affected items through the installed server, including every capability against the part-migrated layout and the precedence a state declared in both sources takes.
 
-A layout being inside the compatibility contract is not the same as a capability being release-verified. No capability is: CI has not run the commit being claimed, and conformance covers one of the two advertised protocol versions. BGA-005 and BGA-017 own that.
+A layout being inside the compatibility contract is not the same as every capability being release-verified. The manifest now names all three supported layouts on each of the ten project tools and resources, and each supported layout claim independently lists the capabilities and packaged scenarios that prove that exact pairing. `pnpm verify:compatibility` compares those sources and seeds both an omission and an overclaim before accepting the real manifest. Retained evidence also copies layouts and environments from the manifest and rejects drift. BGA-006 and BGA-017 remain `implemented` until exact-commit CI passes this composition change; the semantic readers and compatibility claims remain supported on their existing evidence.
 
 ## File generations
 
@@ -45,6 +45,14 @@ A layout being inside the compatibility contract is not the same as a capability
 
 Every supported runtime and platform combination runs the complete gate in CI. The claimed runtimes must match both the `engines` range and the CI matrix.
 
+## Execution environment
+
+| Claim                   | Value | Support   |
+| ----------------------- | ----- | --------- |
+| CLAIM-ENVIRONMENT-LOCAL | local | supported |
+
+Every public capability is served by the user's local stdio process. Documentation and experimental Studio reads may make an explicitly enabled request across their reviewed network boundary; that does not turn them into remotely hosted capabilities. The environment claim lists every manifest capability to which it applies, and the compatibility gate rejects either an omitted local claim or an unclaimed remote environment.
+
 ## MCP protocol versions and transports
 
 | Claim                     | Value             | Support     |
@@ -55,9 +63,9 @@ Every supported runtime and platform combination runs the complete gate in CI. T
 | CLAIM-TRANSPORT-STDIO     | stdio             | supported   |
 | CLAIM-TRANSPORT-HTTP      | streamable-http   | unsupported |
 
-The running server's negotiation constants and this matrix are not yet checked compositionally against every capability claim; BGA-017 owns that missing gate. Streamable HTTP exists only as loopback test infrastructure for the official conformance CLI; see [CONFORMANCE.md](CONFORMANCE.md).
+The running server's negotiation constants, transport manifest, compatibility claim, and every capability's protocol list are checked compositionally. A seeded capability-level protocol mismatch must fail before the real matrix is accepted. Streamable HTTP exists only as loopback test infrastructure for the official conformance CLI; see [CONFORMANCE.md](CONFORMANCE.md).
 
-The installed server negotiates `2026-07-28` and supports basic discovery, but the compatibility claim is `unknown`: official stdio conformance is unavailable for that revision and its input-required roots/setup flow is missing. Public capability entries no longer claim that protocol until BGA-017 and BGA-318 pass.
+The installed server negotiates `2026-07-28`, supports discovery, and now completes project-root setup through its in-band multi-round-trip flow. The compatibility claim remains `unknown` because the pinned official conformance suite has no applicable stdio set for that revision; public capability entries do not claim the protocol until release evidence deliberately establishes the complete contract.
 
 ## Clients
 

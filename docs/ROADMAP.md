@@ -60,7 +60,7 @@ The exit criterion is not met. Every capability is `implemented`, not `verified`
 
 Exit criterion: a developer installs the server, points their client at it, and is told what to do next by the agent they are already talking to — without editing a launcher configuration file by hand.
 
-Opened on 2026-08-08 (BGA-314 through BGA-318). The 2025 push-style roots and elicitation paths are implemented. The 2026 input-required path is not: an installed-client test showed the server never asked and then blamed a client that had advertised roots. BGA-318 owns that protocol-era gap and truthful setup wording.
+Opened on 2026-08-08 (BGA-314 through BGA-318). The 2025 push-style roots and elicitation paths are implemented. BGA-318 now implements the 2026 multi-round-trip roots path through an in-band `input_required` result and era-aware setup wording; it awaits the full gate and exact-head CI before verification.
 
 ## Phase 3: Studio bridge
 
@@ -85,6 +85,8 @@ Own-account log reading went the other way. The owner accepted that trade on 202
 - Publish a test-evidence artifact that maps every public capability to a passing end-to-end scenario.
 
 Exit criterion: a new developer can install, configure, verify, and remove the server using documented steps, and the release has no public capability missing current end-to-end evidence.
+
+The first public release is intentionally local-only. A capability counts as public when the installed MCP server advertises it, even if its description says experimental or requires an opt-in flag. Documentation-network and Studio capabilities therefore stay out of first-release discovery until their existing backlog owners are verified; they are not release blockers and they are not waived. BGA-412 through BGA-415 define the remaining installed-boundary evidence, frozen capability inventory, and final publication steps, and the serial queue in the backlog permits only one release item to be implemented at a time.
 
 ## Explicit non-goals for the first release
 

@@ -1,11 +1,20 @@
-import type { McpServer } from '@modelcontextprotocol/server';
+import type {
+  InputRequiredResult,
+  McpServer,
+  ReadResourceResult,
+  ServerContext,
+} from '@modelcontextprotocol/server';
 
 import type { PolicyBoundary } from '../policy.js';
 import { publishJson, publishResourceFailure } from '../publish.js';
 import { aggregateStatus, aggregateValidations } from '../rules/aggregate.js';
 import { validateStateMachine } from '../rules/state-machine.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, resolveProjectRoot } from '../tools/project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from '../tools/project-context.js';
 
 export const PROJECT_SUMMARY_URI = 'bga://project/summary';
 export const PROJECT_STATES_URI = 'bga://project/states';
@@ -19,23 +28,39 @@ export const PROJECT_DIAGNOSTICS_URI = 'bga://project/diagnostics';
  * and the tools remain available for a project named explicitly. The rule is
  * the tools' own omitted-argument rule, so the two cannot drift apart.
  */
-async function soleProjectRoot(policy: PolicyBoundary): Promise<string> {
-  return await resolveProjectRoot(
+async function soleProjectRoot(
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern',
+  context: ServerContext,
+  signal?: AbortSignal,
+): Promise<string | InputRequiredResult> {
+  return await resolveProjectRootForRequest(
     policy,
     undefined,
+    era,
+    context,
     (roots) =>
       `This resource describes one project, but ${String(roots)} roots are configured. Use the tools with an explicit projectRoot instead.`,
+    signal,
   );
 }
 
-async function readJson(
+async function readProjectJson(
   policy: PolicyBoundary,
   uri: URL,
   label: string,
-  build: (signal: AbortSignal) => Promise<unknown>,
-): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
+  era: 'legacy' | 'modern',
+  context: ServerContext,
+  build: (root: string, signal: AbortSignal) => Promise<unknown>,
+): Promise<ReadResourceResult | InputRequiredResult> {
   try {
-    const value = await policy.runWithTimeout(label, async (signal) => await build(signal));
+    const value = await policy.runWithTimeout(label, async (signal) => {
+      const resolution = await soleProjectRoot(policy, era, context, signal);
+      return isProjectRootInputRequired(resolution) ? resolution : await build(resolution, signal);
+    });
+    if (isProjectRootInputRequired(value)) {
+      return value;
+    }
     return publishJson(policy, uri, label, value);
   } catch (error) {
     // A resource cannot return a structured error the way a tool can, so the
@@ -52,7 +77,11 @@ async function readJson(
  * context without spending a tool call. They route through the same policy
  * boundary, never write, and never use the network.
  */
-export function registerProjectResources(server: McpServer, policy: PolicyBoundary): void {
+export function registerProjectResources(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerResource(
     'project-summary',
     PROJECT_SUMMARY_URI,
@@ -62,9 +91,8 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
         'The normalized model of the configured project: layout, metadata, components, and state definitions.',
       mimeType: 'application/json',
     },
-    async (uri) =>
-      await readJson(policy, uri, 'project-summary', async (signal) => {
-        const root = await soleProjectRoot(policy);
+    async (uri, context) =>
+      await readProjectJson(policy, uri, 'project-summary', era, context, async (root, signal) => {
         const context = await loadProjectContext(policy, root, { signal });
         return context.model;
       }),
@@ -79,9 +107,8 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
         'State definitions, transitions, handlers, and the uncertainty around them, with their source locations.',
       mimeType: 'application/json',
     },
-    async (uri) =>
-      await readJson(policy, uri, 'project-states', async (signal) => {
-        const root = await soleProjectRoot(policy);
+    async (uri, context) =>
+      await readProjectJson(policy, uri, 'project-states', era, context, async (root, signal) => {
         const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
         return {
           schemaVersion: 1,
@@ -96,7 +123,7 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
           complete: context.model.states.complete,
           definitions: context.model.states.definitions,
           unsupported: context.model.states.unsupported,
-          validation: validateStateMachine(context.model, context.phpSources),
+          validation: validateStateMachine(context.model, context.phpSources, signal),
         };
       }),
   );
@@ -110,26 +137,32 @@ export function registerProjectResources(server: McpServer, policy: PolicyBounda
         'Current findings from every validator, with the per-group breakdown and any group that could not run.',
       mimeType: 'application/json',
     },
-    async (uri) =>
-      await readJson(policy, uri, 'project-diagnostics', async (signal) => {
-        const root = await soleProjectRoot(policy);
-        const context = await loadProjectContext(policy, root, {
-          withPhpSources: true,
-          withClientSources: true,
-          signal,
-        });
+    async (uri, context) =>
+      await readProjectJson(
+        policy,
+        uri,
+        'project-diagnostics',
+        era,
+        context,
+        async (root, signal) => {
+          const context = await loadProjectContext(policy, root, {
+            withPhpSources: true,
+            withClientSources: true,
+            signal,
+          });
 
-        const runners = createValidatorRunners(policy, root, context);
+          const runners = createValidatorRunners(policy, root, context, signal);
 
-        const aggregate = await aggregateValidations(runners, { signal });
-        return {
-          schemaVersion: 1,
-          layout: context.model.layout,
-          status: aggregateStatus(aggregate.groups, aggregate.diagnostics),
-          groups: aggregate.groups,
-          truncation: aggregate.truncation,
-          diagnostics: aggregate.diagnostics,
-        };
-      }),
+          const aggregate = await aggregateValidations(runners, { signal });
+          return {
+            schemaVersion: 1,
+            layout: context.model.layout,
+            status: aggregateStatus(aggregate.groups, aggregate.diagnostics),
+            groups: aggregate.groups,
+            truncation: aggregate.truncation,
+            diagnostics: aggregate.diagnostics,
+          };
+        },
+      ),
   );
 }

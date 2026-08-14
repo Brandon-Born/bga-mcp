@@ -11,7 +11,11 @@ import {
   aggregateValidations,
 } from '../rules/aggregate.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const VALIDATE_PROJECT_TOOL = 'validate_project';
 
@@ -109,7 +113,11 @@ export function summarizeProjectValidation(
   return lines.join('\n');
 }
 
-export function registerValidateProject(server: McpServer, policy: PolicyBoundary): void {
+export function registerValidateProject(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     VALIDATE_PROJECT_TOOL,
     {
@@ -124,17 +132,27 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
         openWorldHint: false,
       },
     },
-    async ({ projectRoot, groups, maxFindings }) => {
+    async ({ projectRoot, groups, maxFindings }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async (signal) => {
-          const context = await loadProjectContext(policy, root, {
+        const outcome = await policy.runWithTimeout(VALIDATE_PROJECT_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          if (isProjectRootInputRequired(resolution)) {
+            return resolution;
+          }
+          const project = await loadProjectContext(policy, resolution, {
             withPhpSources: true,
             withClientSources: true,
             signal,
           });
 
-          const runners = createValidatorRunners(policy, root, context);
+          const runners = createValidatorRunners(policy, resolution, project, signal);
 
           const aggregate = await aggregateValidations(runners, {
             ...(groups === undefined ? {} : { groups }),
@@ -144,7 +162,7 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
 
           return {
             schemaVersion: 1,
-            layout: context.model.layout,
+            layout: project.model.layout,
             status: aggregateStatus(aggregate.groups, aggregate.diagnostics),
             groups: aggregate.groups.map((group) => ({
               id: group.id,
@@ -160,6 +178,10 @@ export function registerValidateProject(server: McpServer, policy: PolicyBoundar
             aggregate,
           };
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         // The aggregate carries every finding; the published result carries the
         // bounded view of them the schema declares.

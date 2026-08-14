@@ -210,7 +210,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
     },
     async ({ query, maxResults, sourceId }) => {
       try {
-        const structuredContent = await policy.runWithTimeout(SEARCH_BGA_DOCS_TOOL, async () => {
+        const search = async (signal: AbortSignal) => {
           const limit = maxResults ?? DEFAULT_RESULTS;
           const sources = (await policy.documentationSources()).filter(
             (source) => sourceId === undefined || source.id === sourceId,
@@ -253,7 +253,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           // A matched topic knows the words that matter for its subject, which
           // the developer's question usually does not contain: "where does the
           // client logic live" never says "modules/js".
-          const topicMatch = sourceId === undefined ? topicForQuery(query) : null;
+          const topicMatch = sourceId === undefined ? topicForQuery(query, signal) : null;
           // Filtering these to the distinctive keywords was tried on
           // 2026-08-08 and measured worse, so all of them are used.
           const excerptQuery = [query, ...(topicMatch?.keywords ?? [])].join(' ');
@@ -265,7 +265,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             lastEdited: string | null,
           ): Promise<void> => {
             attempted.add(source.id);
-            const page = await policy.fetchDocumentation({ sourceId: source.id, path });
+            const page = await policy.fetchDocumentation({ sourceId: source.id, path }, { signal });
             // The page was read. Whether it turns out to match is a separate
             // question from whether this source was successfully searched.
             searched.add(source.id);
@@ -293,6 +293,8 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
                   retrievedAt: page.retrievedAt,
                   lastModified: page.lastModified,
                 }),
+              undefined,
+              signal,
             );
             if (!mentionsQuery(retrieved.title, retrieved.excerpt, query)) {
               // A page that never mentions what was asked is noise, and
@@ -322,18 +324,19 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           // wiki ranks by how often a page mentions the words, which answers
           // "where do state classes live" with whichever page says "state"
           // most rather than the page about state classes.
-          const topic = sourceId === undefined ? topicForQuery(query) : null;
-          if (topic !== null) {
-            const topicSource = sources.find((candidate) => candidate.id === topic.sourceId);
+          if (topicMatch !== null) {
+            const topicSource = sources.find((candidate) => candidate.id === topicMatch.sourceId);
             if (topicSource !== undefined) {
               // A stale topic path must not empty the result: the search below
               // still runs.
-              await addPage(topicSource, topic.path, topic.title, null).catch((error: unknown) => {
-                if (!isPageLevelFailure(error)) {
-                  throw error;
-                }
-                record(topicSource.id, 'page', error);
-              });
+              await addPage(topicSource, topicMatch.path, topicMatch.title, null).catch(
+                (error: unknown) => {
+                  if (!isPageLevelFailure(error)) {
+                    throw error;
+                  }
+                  record(topicSource.id, 'page', error);
+                },
+              );
             }
           }
 
@@ -350,13 +353,16 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
 
             try {
               attempted.add(source.id);
-              const response = await policy.fetchDocumentation({
-                sourceId: source.id,
-                path: 'api.php',
-                query,
-                params: searchParams(query, limit),
-              });
-              const answer = readSearchResponse(response.body, limit - results.length);
+              const response = await policy.fetchDocumentation(
+                {
+                  sourceId: source.id,
+                  path: 'api.php',
+                  query,
+                  params: searchParams(query, limit),
+                },
+                { signal },
+              );
+              const answer = readSearchResponse(response.body, limit - results.length, signal);
               if (answer.unreadable !== null) {
                 // A response nobody can read is a failed search, not a search
                 // that found nothing. Treating the two alike is what made an
@@ -416,7 +422,8 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             degraded: failures.length > 0,
             notice: UNTRUSTED_NOTICE,
           };
-        });
+        };
+        const structuredContent = await policy.runWithTimeout(SEARCH_BGA_DOCS_TOOL, search);
 
         return publishResult(
           policy,

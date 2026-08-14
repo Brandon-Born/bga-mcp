@@ -1,5 +1,6 @@
 import type { ParseOutcome } from './parse.js';
 import { matchBracket, maskLiterals, splitTopLevel as splitArguments } from './php.js';
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
  * Readers for a BGA project's database schema and the queries that use it.
@@ -47,12 +48,14 @@ export interface QueryReference {
  *
  * Source: [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
  */
-export function maskSqlValues(text: string): string {
+export function maskSqlValues(text: string, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
   const interpolation = /\{\s*\$[^}]*\}|\$[A-Za-z_][\w]*(?:\s*->\s*[A-Za-z_][\w]*)*/gu;
   const maskContents = (contents: string): string => {
     let masked = '';
     let index = 0;
     for (const found of contents.matchAll(interpolation)) {
+      cancellationCheckpoint(signal);
       masked += (found.index > index ? '?' : '') + found[0];
       index = found.index + found[0].length;
     }
@@ -62,6 +65,7 @@ export function maskSqlValues(text: string): string {
   return text.replace(
     /\\'[\s\S]*?\\'|\\"[\s\S]*?\\"|'[^']*'|"[^"]*"/gu,
     (literal: string): string => {
+      cancellationCheckpoint(signal);
       const escaped = literal.startsWith('\\');
       const quote = escaped ? literal.slice(0, 2) : literal.slice(0, 1);
       const contents = literal.slice(quote.length, literal.length - quote.length);
@@ -146,11 +150,13 @@ const SQL_KEYWORDS = new Set([
 ]);
 
 /** Splits a CREATE TABLE body on its top-level commas. */
-function splitColumns(body: string): string[] {
+function splitColumns(body: string, signal?: AbortSignal): string[] {
   const parts: string[] = [];
   let depth = 0;
   let current = '';
-  for (const character of body) {
+  for (let index = 0; index < body.length; index += 1) {
+    periodicCancellationCheckpoint(index, signal);
+    const character = body[index] ?? '';
     if (character === '(') {
       depth += 1;
     } else if (character === ')') {
@@ -172,9 +178,10 @@ function splitColumns(body: string): string[] {
   return parts;
 }
 
-function tableBody(source: string, openIndex: number): string {
+function tableBody(source: string, openIndex: number, signal?: AbortSignal): string {
   let depth = 0;
   for (let index = openIndex; index < source.length; index += 1) {
+    periodicCancellationCheckpoint(index - openIndex, signal);
     const character = source[index];
     if (character === '(') {
       depth += 1;
@@ -189,19 +196,25 @@ function tableBody(source: string, openIndex: number): string {
 }
 
 /** Reads the tables and columns `dbmodel.sql` declares. */
-export function parseSchema(sql: string): ParseOutcome<readonly TableDefinition[]> {
+export function parseSchema(
+  sql: string,
+  signal?: AbortSignal,
+): ParseOutcome<readonly TableDefinition[]> {
+  cancellationCheckpoint(signal);
   const tables: TableDefinition[] = [];
   const unsupported: string[] = [];
   const withoutComments = sql.replace(/--[^\n]*/gu, '').replace(/\/\*[\s\S]*?\*\//gu, '');
 
   for (const match of withoutComments.matchAll(CREATE_TABLE)) {
+    cancellationCheckpoint(signal);
     const name = match[1];
     if (name === undefined) {
       continue;
     }
-    const body = tableBody(withoutComments, match.index + match[0].length - 1);
+    const body = tableBody(withoutComments, match.index + match[0].length - 1, signal);
     const columns: string[] = [];
-    for (const entry of splitColumns(body)) {
+    for (const entry of splitColumns(body, signal)) {
+      cancellationCheckpoint(signal);
       const trimmed = entry.trim();
       if (trimmed === '') {
         continue;
@@ -221,6 +234,7 @@ export function parseSchema(sql: string): ParseOutcome<readonly TableDefinition[
   if (tables.length === 0 && /CREATE\s+TABLE/iu.test(withoutComments)) {
     unsupported.push('a CREATE TABLE statement that could not be read');
   }
+  cancellationCheckpoint(signal);
   return { value: tables, unsupported };
 }
 
@@ -267,13 +281,19 @@ function scrub(text: string): string {
 }
 
 /** The literal value assigned to each variable, by offset of the assignment. */
-function assignments(php: string, masked: string): { name: string; end: number; value: string }[] {
+function assignments(
+  php: string,
+  masked: string,
+  signal?: AbortSignal,
+): { name: string; end: number; value: string }[] {
   const found: { name: string; end: number; value: string }[] = [];
   for (const match of masked.matchAll(ASSIGNMENT)) {
+    cancellationCheckpoint(signal);
     const start = match.index + match[0].length;
     let depth = 0;
     let end = start;
     while (end < masked.length) {
+      periodicCancellationCheckpoint(end - start, signal);
       const character = masked[end] ?? '';
       if (character === '(' || character === '[') {
         depth += 1;
@@ -300,8 +320,8 @@ function assignments(php: string, masked: string): { name: string; end: number; 
  * Cutting first would leave half a literal — and half a password is still a
  * published password.
  */
-function snippet(source: string, length = 60): string {
-  return maskSqlValues(source).replace(/\s+/gu, ' ').trim().slice(0, length);
+function snippet(source: string, length = 60, signal?: AbortSignal): string {
+  return maskSqlValues(source, signal).replace(/\s+/gu, ' ').trim().slice(0, length);
 }
 
 /**
@@ -318,7 +338,9 @@ function resolveQueryText(
   callIndex: number,
   php: string,
   masked: string,
+  signal?: AbortSignal,
 ): { text: string } | { unreadable: string } {
+  cancellationCheckpoint(signal);
   const literal = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(argument);
   if (literal !== null) {
     return { text: literal[2] ?? '' };
@@ -327,12 +349,12 @@ function resolveQueryText(
   const variable = /^\s*\$([A-Za-z_]\w*)\s*$/u.exec(argument);
   if (variable === null) {
     return {
-      unreadable: `a query argument this reader cannot follow: ${snippet(argument)}`,
+      unreadable: `a query argument this reader cannot follow: ${snippet(argument, 60, signal)}`,
     };
   }
 
   const name = variable[1] ?? '';
-  const assigned = assignments(php, masked)
+  const assigned = assignments(php, masked, signal)
     .filter((entry) => entry.name === name && entry.end < callIndex)
     .at(-1);
   if (assigned === undefined) {
@@ -341,7 +363,7 @@ function resolveQueryText(
   const assignedLiteral = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(assigned.value);
   if (assignedLiteral === null) {
     return {
-      unreadable: `a query assembled into $${name}: ${snippet(assigned.value)}`,
+      unreadable: `a query assembled into $${name}: ${snippet(assigned.value, 60, signal)}`,
     };
   }
   return { text: assignedLiteral[2] ?? '' };
@@ -356,24 +378,34 @@ function resolveQueryText(
  * however much it looks like one — and treating it as one is how an
  * imaginary table becomes a certain finding about a real project.
  */
-export function parseQueries(php: string): ParseOutcome<readonly QueryReference[]> {
+export function parseQueries(
+  php: string,
+  signal?: AbortSignal,
+): ParseOutcome<readonly QueryReference[]> {
   const queries: QueryReference[] = [];
   const unsupported: string[] = [];
-  const masked = maskLiterals(php);
+  const masked = maskLiterals(php, signal);
 
   for (const call of masked.matchAll(HELPER_CALL)) {
+    cancellationCheckpoint(signal);
     const helper = call[1] ?? '';
-    const span = matchBracket(masked, call.index + call[0].length - 1);
+    const span = matchBracket(masked, call.index + call[0].length - 1, signal);
     if (span === null) {
       continue;
     }
-    const first = splitArguments(masked, span.start + 1, span.end)[0];
+    const first = splitArguments(masked, span.start + 1, span.end, ',', signal)[0];
     if (first === undefined) {
       unsupported.push(`${helper} called with no query`);
       continue;
     }
 
-    const resolved = resolveQueryText(php.slice(first.start, first.end), call.index, php, masked);
+    const resolved = resolveQueryText(
+      php.slice(first.start, first.end),
+      call.index,
+      php,
+      masked,
+      signal,
+    );
     if ('unreadable' in resolved) {
       unsupported.push(`${helper} runs ${resolved.unreadable}`);
       continue;
@@ -381,7 +413,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
     const text = resolved.text;
     if (!SQL_START.test(text)) {
       unsupported.push(
-        `${helper} runs a statement this reader does not recognize: ${snippet(text)}`,
+        `${helper} runs a statement this reader does not recognize: ${snippet(text, 60, signal)}`,
       );
       continue;
     }
@@ -395,6 +427,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
     ];
     const columns = new Set<string>();
     for (const qualified of text.matchAll(QUALIFIED_COLUMN)) {
+      cancellationCheckpoint(signal);
       const table = qualified[1];
       const column = qualified[2];
       if (table !== undefined && column !== undefined) {
@@ -410,6 +443,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       for (const identifier of withoutQualified.matchAll(
         /[`"]?\b([A-Za-z_][\w]*)\b[`"]?\s*(\()?/gu,
       )) {
+        cancellationCheckpoint(signal);
         const name = identifier[1];
         if (
           name === undefined ||
@@ -423,7 +457,7 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       }
     } else if (tables.length > 1) {
       unsupported.push(
-        `columns of a multi-table query could not be attributed: ${snippet(text, 40)}`,
+        `columns of a multi-table query could not be attributed: ${snippet(text, 40, signal)}`,
       );
     }
 
@@ -433,9 +467,10 @@ export function parseQueries(php: string): ParseOutcome<readonly QueryReference[
       interpolated: INTERPOLATION.test(text),
       // Masked here rather than at the tool: the analysis above is the only
       // reader that needs the values, and it has already finished with them.
-      text: maskSqlValues(text.replace(/\s+/gu, ' ').trim()),
+      text: maskSqlValues(text.replace(/\s+/gu, ' ').trim(), signal),
     });
   }
 
+  cancellationCheckpoint(signal);
   return { value: queries, unsupported };
 }

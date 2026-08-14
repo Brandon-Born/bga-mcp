@@ -66,6 +66,15 @@ describe('setup status', () => {
     expect(codes(status.findings)).toContain('project.roots.available');
   });
 
+  it('[INT-SETUP-STATUS] describes the modern in-band roots interaction truthfully', async () => {
+    const status = await buildSetupStatus(await createPolicyBoundary({}), { era: 'modern' });
+    const roots = status.findings.find((entry) => entry.code === 'project.roots.none');
+
+    expect(roots?.nextAction).toContain('in-band roots request');
+    expect(roots?.nextAction).toContain('projectRoot');
+    expect(roots?.nextAction).not.toContain('advertises its open folders');
+  });
+
   it('[INT-SETUP-NO-CREDENTIALS] says whether a session exists, never what it is', async () => {
     process.env[STUDIO_SESSION_ENV] = SESSION;
     const withSession = await buildSetupStatus(

@@ -41,20 +41,20 @@ export function createServer(
     { capabilities: { tools: {}, resources: {} } },
   );
   // First, because it is what a caller reaches for when something refuses.
-  registerCheckSetup(server, dependencies.policy);
-  registerInspectProject(server, dependencies.policy);
-  registerValidateStateMachine(server, dependencies.policy);
-  registerValidateActionContracts(server, dependencies.policy);
-  registerValidateNotifications(server, dependencies.policy);
-  registerAuditDatabaseUsage(server, dependencies.policy);
-  registerValidateProject(server, dependencies.policy);
+  registerCheckSetup(server, dependencies.policy, era);
+  registerInspectProject(server, dependencies.policy, era);
+  registerValidateStateMachine(server, dependencies.policy, era);
+  registerValidateActionContracts(server, dependencies.policy, era);
+  registerValidateNotifications(server, dependencies.policy, era);
+  registerAuditDatabaseUsage(server, dependencies.policy, era);
+  registerValidateProject(server, dependencies.policy, era);
   // Advertised whether or not the network is enabled: the tool exists, and
   // without --allow-network every call refuses with the same stable code.
   registerSearchBgaDocs(server, dependencies.policy);
   registerReadStudioLogs(server, dependencies.policy, asker);
-  registerProjectResources(server, dependencies.policy);
+  registerProjectResources(server, dependencies.policy, era);
   registerDocumentationResources(server, dependencies.policy);
-  registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog);
+  registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog, era);
   return server;
 }
 
@@ -97,8 +97,8 @@ export async function createServerWithPolicy(config: ServerConfig): Promise<{
  * was deprecated (SEP-2577) and the SDK throws rather than sending it: there,
  * roots arrive through the multi-round-trip input-required flow instead, which
  * a capability has to ask for in its own result. So the push-style adoption
- * below is wired only on the era that supports it, and the newer era keeps the
- * existing behaviour — an explicit root — until that flow is built.
+ * below is wired only on the era that supports it; modern handlers return that
+ * in-band request from `resolveProjectRootForRequest`.
  */
 function wireClientRoots(
   server: McpServer,
@@ -109,14 +109,17 @@ function wireClientRoots(
     return;
   }
 
-  policy.setClientRootsProvider(async () => {
+  policy.setClientRootsProvider(async (signal) => {
     // eslint-disable-next-line @typescript-eslint/no-deprecated -- deprecated on the 2026 era only, and this path is legacy-only by construction
     const capabilities = server.server.getClientCapabilities();
     if (capabilities?.roots === undefined) {
       return [];
     }
     // eslint-disable-next-line @typescript-eslint/no-deprecated -- same: roots/list is a wire request on the era this branch serves
-    const listed = await server.server.listRoots();
+    const listed = await server.server.listRoots(
+      undefined,
+      signal === undefined ? undefined : { signal },
+    );
     return listed.roots
       .map((root) => root.uri)
       .filter((uri) => uri.startsWith('file://'))

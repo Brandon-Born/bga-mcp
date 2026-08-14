@@ -3,6 +3,11 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import {
+  capabilityCompatibilityFailures,
+  type CapabilityCompatibilityManifest,
+  type CompatibilityMatrix,
+} from '../../scripts/lib/compatibility.js';
 import { connectStdio } from '../helpers/mcp.js';
 import { assertManifestMatchesRuntime, validateManifestSchema } from '../helpers/manifest.js';
 import { runCommand } from '../helpers/process.js';
@@ -64,11 +69,15 @@ describe('packaged bga-mcp server', () => {
 
       const manifest = JSON.parse(
         await readFile(resolve(packageRoot, 'config/capabilities.json'), 'utf8'),
-      ) as never;
+      ) as CapabilityCompatibilityManifest & Parameters<typeof assertManifestMatchesRuntime>[0];
       const schema = JSON.parse(
         await readFile(resolve(packageRoot, 'config/capabilities.schema.json'), 'utf8'),
       ) as object;
       validateManifestSchema(schema, manifest);
+      const compatibility = JSON.parse(
+        await readFile(resolve(packageRoot, 'config/compatibility.json'), 'utf8'),
+      ) as CompatibilityMatrix;
+      expect(capabilityCompatibilityFailures(compatibility, manifest)).toEqual([]);
 
       const diagnosticsSchema = JSON.parse(
         await readFile(resolve(packageRoot, 'config/diagnostics.schema.json'), 'utf8'),

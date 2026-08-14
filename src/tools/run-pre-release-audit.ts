@@ -7,7 +7,11 @@ import { publishFailure, publishResult } from '../publish.js';
 import { aggregateValidations } from '../rules/aggregate.js';
 import { auditPreRelease, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const RUN_PRE_RELEASE_AUDIT_TOOL = 'run_pre_release_audit';
 
@@ -91,6 +95,7 @@ export function registerRunPreReleaseAudit(
   server: McpServer,
   policy: PolicyBoundary,
   catalog: RuleCatalog,
+  era: 'legacy' | 'modern' = 'legacy',
 ): void {
   server.registerTool(
     RUN_PRE_RELEASE_AUDIT_TOOL,
@@ -106,22 +111,36 @@ export function registerRunPreReleaseAudit(
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async (signal) => {
-          const context = await loadProjectContext(policy, root, {
+        const outcome = await policy.runWithTimeout(RUN_PRE_RELEASE_AUDIT_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          if (isProjectRootInputRequired(resolution)) {
+            return resolution;
+          }
+          const project = await loadProjectContext(policy, resolution, {
             withPhpSources: true,
             withClientSources: true,
             signal,
           });
 
-          const runners = createValidatorRunners(policy, root, context);
+          const runners = createValidatorRunners(policy, resolution, project, signal);
 
           const aggregate = await aggregateValidations(runners, { maxFindings: 5_000, signal });
-          const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics);
-          return { audit, layout: context.model.layout };
+          const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics, signal);
+          return { audit, layout: project.model.layout };
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         return publishResult(
           policy,

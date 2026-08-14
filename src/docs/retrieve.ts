@@ -1,6 +1,7 @@
 import type { DocumentationSource } from './catalog.js';
 import type { DocumentationCache, SourceAuthority } from './cache.js';
 import { excerptFor, htmlToText, titleOf } from './excerpt.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 /**
  * Turns a retrieved page into an attributable, dated, untrusted result.
@@ -63,7 +64,9 @@ export async function retrieveDocumentation(
   request: { readonly url: string; readonly query: string; readonly maxExcerptChars: number },
   fetchPage: () => Promise<FetchedPage>,
   now: Date = new Date(),
+  signal?: AbortSignal,
 ): Promise<DocumentationResult> {
+  cancellationCheckpoint(signal);
   const cached = cache.read(request.url, source.retention.maxCacheDays, now);
   if (cached !== null && !cached.stale) {
     return toResult(source, cached, true);
@@ -71,18 +74,22 @@ export async function retrieveDocumentation(
 
   try {
     const page = await fetchPage();
-    const text = htmlToText(page.body);
+    cancellationCheckpoint(signal);
+    const text = htmlToText(page.body, signal);
     const stored = cache.write({
       url: page.url,
       sourceId: source.id,
       authority: source.authority,
       retrievedAt: page.retrievedAt,
       lastModified: page.lastModified,
-      title: titleOf(page.body, source.title),
-      excerpt: excerptFor(text, request.query, request.maxExcerptChars),
+      title: titleOf(page.body, source.title, signal),
+      excerpt: excerptFor(text, request.query, request.maxExcerptChars, signal),
     });
     return toResult(source, { ...stored, ageDays: 0, stale: false }, false);
   } catch (error) {
+    // A stale cache is a network fallback, not a way to turn a cancelled parse
+    // into a successful result after its MCP deadline.
+    cancellationCheckpoint(signal);
     if (cached === null) {
       throw error;
     }

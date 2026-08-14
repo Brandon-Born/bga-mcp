@@ -279,6 +279,21 @@ describe('packaged project resources', () => {
     }
   });
 
+  it('[E2E-RESOURCE-LAYOUT-MATRIX] serves every project resource on every supported layout', async () => {
+    for (const [root, expectedLayout] of [
+      [cleanRoot, 'legacy'],
+      [modernRoot, 'modern'],
+      [hybridRoot, 'hybrid'],
+    ] as const) {
+      await withServer(['--project-root', root], async (client) => {
+        for (const uri of [SUMMARY, STATES, DIAGNOSTICS]) {
+          const result = await readResource(client, uri);
+          expect(result.layout, `${uri} on ${expectedLayout}`).toBe(expectedLayout);
+        }
+      });
+    }
+  });
+
   it('[E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED] never implies an unsupported check passed', async () => {
     const diagnostics = (await withServer(
       ['--project-root', unreadableRoot],

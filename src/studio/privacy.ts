@@ -4,6 +4,7 @@ import {
   redactSecrets,
   type RedactionOptions,
 } from '../redaction.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 import type { StudioLogLine } from './logline.js';
 
@@ -76,16 +77,23 @@ export function screenLine(
   line: StudioLogLine,
   ownAccounts: readonly string[],
   options: RedactionOptions = {},
+  signal?: AbortSignal,
 ): LineDisposition {
+  cancellationCheckpoint(signal);
   if (isSensitive(line, options)) {
     return 'sensitive';
   }
   if (line.actorName === null) {
     return 'unattributable';
   }
-  const owned = ownAccounts.some(
-    (account) => account.toLowerCase() === line.actorName?.toLowerCase(),
-  );
+  let owned = false;
+  for (const account of ownAccounts) {
+    cancellationCheckpoint(signal);
+    if (account.toLowerCase() === line.actorName.toLowerCase()) {
+      owned = true;
+      break;
+    }
+  }
   return owned ? 'own' : 'foreign';
 }
 
@@ -100,13 +108,15 @@ export function screenStudioLog(
   lines: readonly StudioLogLine[],
   ownAccounts: readonly string[],
   options: RedactionOptions = {},
+  signal?: AbortSignal,
 ): ScreeningResult {
   const kept: StudioLogLine[] = [];
   const withheld = { foreign: 0, unattributable: 0, sensitive: 0 };
   const withheldValues = new Set<string>();
 
   for (const line of lines) {
-    const disposition = screenLine(line, ownAccounts, options);
+    cancellationCheckpoint(signal);
+    const disposition = screenLine(line, ownAccounts, options, signal);
     if (disposition === 'own') {
       kept.push(line);
       continue;
@@ -117,6 +127,7 @@ export function screenStudioLog(
     // because a withheld line's message was a single digit and every digit in
     // the report went with it. A fragment that short identifies nobody.
     for (const value of [line.raw, line.actorName ?? '', line.message]) {
+      cancellationCheckpoint(signal);
       if (value.length >= MIN_REDACTED_SECRET_LENGTH) {
         withheldValues.add(value);
       }
@@ -156,15 +167,18 @@ export function publishStudioText(
   text: string,
   withheldValues: readonly string[],
   options: RedactionOptions = {},
+  signal?: AbortSignal,
 ): string {
   let published = text;
   // Longest first: a raw line contains its own actor name, and replacing the
   // name first would leave the rest of the line behind.
   for (const value of [...withheldValues].sort((left, right) => right.length - left.length)) {
+    cancellationCheckpoint(signal);
     if (value.length === 0) {
       continue;
     }
     published = published.split(value).join(WITHHELD_MARK);
   }
+  cancellationCheckpoint(signal);
   return redactSecrets(published, options);
 }

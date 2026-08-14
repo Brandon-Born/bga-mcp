@@ -43,6 +43,10 @@ export interface CapabilityEvidence {
   readonly name: string;
   readonly stability: 'experimental' | 'implemented' | 'verified';
   readonly status: ResultStatus;
+  /** Project layouts this entry claims. Empty when layout is not applicable. */
+  readonly supportedLayouts: readonly string[];
+  /** Execution environments this entry claims. Empty for transports/adapters. */
+  readonly environments: readonly string[];
   /** Protocol versions the entry claims. An adapter claims none. */
   readonly protocolVersions: readonly string[];
   /**
@@ -141,6 +145,8 @@ interface ManifestEntry {
   readonly name: string;
   readonly stability: 'experimental' | 'implemented' | 'verified';
   readonly protocolVersions?: readonly string[];
+  readonly supportedLayouts?: readonly string[];
+  readonly environments?: readonly string[];
   readonly requiredScenarios: readonly string[];
   /** Identifier of the CI run in `ciRuns` that last passed for this entry. */
   readonly ciEvidence: string;
@@ -341,6 +347,8 @@ export function buildCapabilityEvidence(
       name: entry.name,
       stability: entry.stability,
       status: rollUp(scenarios),
+      supportedLayouts: [...(entry.supportedLayouts ?? [])],
+      environments: [...(entry.environments ?? [])],
       protocolVersions: [...(entry.protocolVersions ?? [])],
       ci: {
         id: entry.ciEvidence,

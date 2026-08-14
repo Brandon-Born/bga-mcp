@@ -2,12 +2,13 @@ import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
 import { htmlToText } from '../docs/excerpt.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { parseStudioLog, saysProjectMissing } from '../studio/logline.js';
 import { publishStudioText, screenStudioLog, withheldAny } from '../studio/privacy.js';
-import { SetupAsker } from '../setup/ask.js';
+import { isSetupInputRequired, SetupAsker, type AskOutcome } from '../setup/ask.js';
 
 export const READ_STUDIO_LOGS_TOOL = 'read_studio_logs';
 
@@ -148,44 +149,58 @@ export function registerReadStudioLogs(
         openWorldHint: true,
       },
     },
-    async ({ gameId, maxLines, tableId }) => {
+    async ({ gameId, maxLines, tableId }, context) => {
       // Held outside the timed body so the text published afterwards passes
       // through the same screen the structured result did.
       let withheldValues: readonly string[] = [];
       try {
-        const structuredContent = await policy.runWithTimeout(READ_STUDIO_LOGS_TOOL, async () => {
-          // The gates first: being asked for dev accounts by a capability that
-          // is switched off would be a question with no useful answer.
-          await policy.assertStudioAvailable();
+        // The gates first: being asked for dev accounts by a capability that
+        // is switched off would be a question with no useful answer. Client
+        // interaction itself is not charged to the network/filesystem budget.
+        await policy.runWithTimeout(READ_STUDIO_LOGS_TOOL, async (signal) => {
+          await policy.assertStudioAvailable({ signal });
+        });
 
-          let ownAccounts = policy.studioDevAccounts;
-          if (ownAccounts.length === 0) {
-            // Nothing could ever be returned without this, so it is worth
-            // asking rather than refusing and hoping the developer reads why.
-            const asked = await asker.askForList(
-              server,
-              'studio-dev-accounts',
-              'Which BGA Studio dev accounts do you own? Only log lines about these accounts will be returned; everything else is withheld.',
-              'accounts',
-            );
-            if (asked.kind === 'answered') {
-              policy.rememberStudioAccounts(asked.values);
-              ownAccounts = policy.studioDevAccounts;
-            }
+        let ownAccounts = policy.studioDevAccounts;
+        let askOutcome: AskOutcome['kind'] | undefined;
+        if (ownAccounts.length === 0) {
+          const asked = await asker.askForListForRequest(
+            server,
+            context,
+            'studio-dev-accounts',
+            'Which BGA Studio dev accounts do you own? Only log lines about these accounts will be returned; everything else is withheld.',
+            'accounts',
+          );
+          if (isSetupInputRequired(asked)) {
+            return asked;
           }
-          if (ownAccounts.length === 0) {
-            throw new BgaMcpError(
-              ERROR_CODES.policyStudioNotAllowed,
-              'No Studio dev accounts are known, so no log line could be returned. Start the server with --studio-dev-account <name>, or answer the question when your client asks.',
-            );
+          askOutcome = asked.kind;
+          if (asked.kind === 'answered') {
+            policy.rememberStudioAccounts(asked.values);
+            ownAccounts = policy.studioDevAccounts;
           }
-          const page = await policy.fetchStudioPage({
-            path: 'studiogame',
-            params: { game: gameId },
-          });
+        }
+        if (ownAccounts.length === 0) {
+          const reason =
+            askOutcome === 'declined'
+              ? 'You declined to supply Studio dev accounts for this session, so no log line can be returned.'
+              : askOutcome === 'no-value'
+                ? 'The Studio dev-account question returned no usable account name, so no log line can be returned.'
+                : 'No Studio dev accounts are known, so no log line could be returned. Start the server with --studio-dev-account <name>, or use a client that supports the setup question.';
+          throw new BgaMcpError(ERROR_CODES.policyStudioNotAllowed, reason);
+        }
 
-          const text = htmlToText(page.body);
-          if (saysProjectMissing(text)) {
+        const read = async (signal: AbortSignal) => {
+          const page = await policy.fetchStudioPage(
+            {
+              path: 'studiogame',
+              params: { game: gameId },
+            },
+            { signal },
+          );
+
+          const text = htmlToText(page.body, signal);
+          if (saysProjectMissing(text, signal)) {
             // Studio answers 200 with this sentence for a project that is not
             // yours or not there, including for a numeric Play ID. Returning an
             // empty log would say the project is quiet; this says it is absent.
@@ -195,7 +210,7 @@ export function registerReadStudioLogs(
             );
           }
 
-          const parsed = parseStudioLog(text);
+          const parsed = parseStudioLog(text, signal);
           if (parsed.length === 0) {
             // Observed live on 2026-08-10: `/studiogame?game=…` answers with a
             // 3.1 MB document that is 99% `<script>`, and it is byte-identical
@@ -208,12 +223,17 @@ export function registerReadStudioLogs(
               'The Studio page was retrieved but carries no log lines: it is a JavaScript application whose log panel is rendered in the browser rather than served in the HTML this tool can read. This is a limit of the capability, not a statement about your project — see the experimental status of read_studio_logs.',
             );
           }
-          const forTable =
-            tableId === undefined ? parsed : parsed.filter((line) => line.tableId === tableId);
-          const screened = screenStudioLog(forTable, ownAccounts, policy.redactionOptions);
+          const forTable = [];
+          for (const line of parsed) {
+            cancellationCheckpoint(signal);
+            if (tableId === undefined || line.tableId === tableId) {
+              forTable.push(line);
+            }
+          }
+          const screened = screenStudioLog(forTable, ownAccounts, policy.redactionOptions, signal);
           withheldValues = screened.withheldValues;
           const publish = (text: string): string =>
-            publishStudioText(text, withheldValues, policy.redactionOptions);
+            publishStudioText(text, withheldValues, policy.redactionOptions, signal);
 
           return {
             schemaVersion: 1 as const,
@@ -234,7 +254,8 @@ export function registerReadStudioLogs(
               ? `${NOTICE} Some lines were withheld because they are not about your accounts.`
               : NOTICE,
           };
-        });
+        };
+        const structuredContent = await policy.runWithTimeout(READ_STUDIO_LOGS_TOOL, read);
 
         return publishResult(
           policy,

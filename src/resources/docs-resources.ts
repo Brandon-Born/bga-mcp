@@ -17,10 +17,10 @@ async function readJson(
   policy: PolicyBoundary,
   uri: URL,
   label: string,
-  build: () => Promise<unknown>,
+  build: (signal: AbortSignal) => Promise<unknown>,
 ): Promise<{ contents: { uri: string; mimeType: string; text: string }[] }> {
   try {
-    const value = await policy.runWithTimeout(label, async () => await build());
+    const value = await policy.runWithTimeout(label, async (signal) => await build(signal));
     return publishJson(policy, uri, label, value);
   } catch (error) {
     // A resource cannot return a structured error the way a tool can, so the
@@ -41,7 +41,7 @@ async function readJson(
 export function registerDocumentationResources(server: McpServer, policy: PolicyBoundary): void {
   const cache = new DocumentationCache();
 
-  const readTopic = async (topic: string): Promise<unknown> => {
+  const readTopic = async (topic: string, signal: AbortSignal): Promise<unknown> => {
     const entry = topicFor(topic);
     if (entry === null) {
       // An unknown topic says what it could have been, rather than guessing at
@@ -62,7 +62,10 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
       );
     }
 
-    const page = await policy.fetchDocumentation({ sourceId: source.id, path: entry.path });
+    const page = await policy.fetchDocumentation(
+      { sourceId: source.id, path: entry.path },
+      { signal },
+    );
     const result = await retrieveDocumentation(
       source,
       cache,
@@ -74,6 +77,8 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
           retrievedAt: page.retrievedAt,
           lastModified: page.lastModified,
         }),
+      undefined,
+      signal,
     );
     return { schemaVersion: 1, topic: entry.topic, summary: entry.summary, ...result };
   };
@@ -99,7 +104,12 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
     async (uri, variables) => {
       const requested = variables.topic;
       const topic = Array.isArray(requested) ? (requested[0] ?? '') : (requested ?? '');
-      return await readJson(policy, uri, 'bga-docs-topic', async () => await readTopic(topic));
+      return await readJson(
+        policy,
+        uri,
+        'bga-docs-topic',
+        async (signal) => await readTopic(topic, signal),
+      );
     },
   );
 
@@ -113,7 +123,7 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
       mimeType: 'application/json',
     },
     async (uri) =>
-      await readJson(policy, uri, 'bga-framework-version', async () => {
+      await readJson(policy, uri, 'bga-framework-version', async (signal) => {
         const sources = await policy.documentationSources();
         const source = sources.find(
           (candidate) => candidate.id === 'bga-studio-framework-reference',
@@ -125,11 +135,14 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
           );
         }
 
-        const page = await policy.fetchDocumentation({ sourceId: source.id, path: 'Studio' });
+        const page = await policy.fetchDocumentation(
+          { sourceId: source.id, path: 'Studio' },
+          { signal },
+        );
         // Read from the markup, not the flattened text: the heading is what
         // bounds the section, and the same words appear in the page's own
         // table of contents.
-        const reading = readFrameworkVersions(page.body);
+        const reading = readFrameworkVersions(page.body, signal);
         return {
           schemaVersion: 1,
           // Unknown is a result, not a failure: a wrong version is worse than

@@ -5,7 +5,11 @@ import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { ACTION_CONTRACT_RULES, validateActionContracts } from '../rules/action-contracts.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const VALIDATE_ACTION_CONTRACTS_TOOL = 'validate_action_contracts';
 
@@ -94,7 +98,11 @@ export function summarizeActionContracts(
   return lines.join('\n');
 }
 
-export function registerValidateActionContracts(server: McpServer, policy: PolicyBoundary): void {
+export function registerValidateActionContracts(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     VALIDATE_ACTION_CONTRACTS_TOOL,
     {
@@ -109,27 +117,38 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(
+        const outcome = await policy.runWithTimeout(
           VALIDATE_ACTION_CONTRACTS_TOOL,
           async (signal) => {
-            const context = await loadProjectContext(policy, root, {
+            const resolution = await resolveProjectRootForRequest(
+              policy,
+              projectRoot,
+              era,
+              context,
+              undefined,
+              signal,
+            );
+            if (isProjectRootInputRequired(resolution)) {
+              return resolution;
+            }
+            const project = await loadProjectContext(policy, resolution, {
               withPhpSources: true,
               withClientSources: true,
               signal,
             });
             const trace = validateActionContracts(
-              context.model,
-              context.clientSources,
-              context.phpSources,
+              project.model,
+              project.clientSources,
+              project.phpSources,
+              signal,
             );
             return {
               schemaVersion: 1,
-              layout: context.model.layout,
-              clientSourcesRead: context.clientSources.length,
-              phpSourcesRead: context.phpSources.length,
+              layout: project.model.layout,
+              clientSourcesRead: project.clientSources.length,
+              phpSourcesRead: project.phpSources.length,
               trace: {
                 clientCalls: trace.clientCalls.map((call) => ({
                   action: call.action,
@@ -153,6 +172,10 @@ export function registerValidateActionContracts(server: McpServer, policy: Polic
             } satisfies ValidateActionContractsResult;
           },
         );
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         return publishResult(
           policy,

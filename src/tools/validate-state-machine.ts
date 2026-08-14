@@ -5,7 +5,11 @@ import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { STATE_MACHINE_RULES, validateStateMachine } from '../rules/state-machine.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const VALIDATE_STATE_MACHINE_TOOL = 'validate_state_machine';
 
@@ -87,7 +91,11 @@ export function summarizeValidation(
   return lines.join('\n');
 }
 
-export function registerValidateStateMachine(server: McpServer, policy: PolicyBoundary): void {
+export function registerValidateStateMachine(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     VALIDATE_STATE_MACHINE_TOOL,
     {
@@ -102,25 +110,38 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_STATE_MACHINE_TOOL, async (signal) => {
-          const context = await loadProjectContext(policy, root, { withPhpSources: true, signal });
-          const diagnostics = validateStateMachine(context.model, context.phpSources);
+        const outcome = await policy.runWithTimeout(VALIDATE_STATE_MACHINE_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          if (isProjectRootInputRequired(resolution)) {
+            return resolution;
+          }
+          const project = await loadProjectContext(policy, resolution, {
+            withPhpSources: true,
+            signal,
+          });
+          const diagnostics = validateStateMachine(project.model, project.phpSources, signal);
           return {
             schemaVersion: 1,
-            layout: context.model.layout,
-            statesRead: context.model.states.parsed,
-            statesSource: context.model.states.source,
-            stateCount: context.model.states.definitions.length,
-            phpSourcesRead: context.phpSources.length,
+            layout: project.model.layout,
+            statesRead: project.model.states.parsed,
+            statesSource: project.model.states.source,
+            stateCount: project.model.states.definitions.length,
+            phpSourcesRead: project.phpSources.length,
             initialState: {
-              ids: [...context.model.states.initial.ids],
-              origin: context.model.states.initial.origin,
-              evidence: context.model.states.initial.evidence,
+              ids: [...project.model.states.initial.ids],
+              origin: project.model.states.initial.origin,
+              evidence: project.model.states.initial.evidence,
             },
-            complete: { ...context.model.states.complete },
+            complete: { ...project.model.states.complete },
             rules: STATE_MACHINE_RULES.map((rule) => ({
               ...rule,
               falsePositives: [...rule.falsePositives],
@@ -128,6 +149,10 @@ export function registerValidateStateMachine(server: McpServer, policy: PolicyBo
             diagnostics,
           } satisfies ValidateStateMachineResult;
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         return publishResult(
           policy,

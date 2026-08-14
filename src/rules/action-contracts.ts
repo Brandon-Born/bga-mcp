@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import { parseModernActions, type ActionParameter } from '../project/modern.js';
 import {
   parseClientActionCalls,
@@ -207,16 +208,20 @@ export function validateActionContracts(
   model: ProjectModel,
   clientSources: readonly ActionContractSource[],
   phpSources: readonly ActionContractSource[],
+  signal?: AbortSignal,
 ): ActionContractTrace {
   const findings: DiagnosticFinding[] = [];
 
   const clientCalls: (ClientActionCall & { source: string })[] = [];
   for (const source of clientSources) {
-    const outcome = parseClientActionCalls(source.text);
+    cancellationCheckpoint(signal);
+    const outcome = parseClientActionCalls(source.text, signal);
     for (const call of outcome.value) {
+      cancellationCheckpoint(signal);
       clientCalls.push({ ...call, source: source.path });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path));
     }
   }
@@ -236,11 +241,14 @@ export function validateActionContracts(
     parameters?: readonly ActionParameter[];
   })[] = [];
   for (const source of actionClassSources) {
-    const outcome = parseServerActionEntries(source.text);
+    cancellationCheckpoint(signal);
+    const outcome = parseServerActionEntries(source.text, signal);
     for (const entry of outcome.value) {
+      cancellationCheckpoint(signal);
       entryPoints.push({ ...entry, source: source.path });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path));
     }
   }
@@ -253,11 +261,14 @@ export function validateActionContracts(
   const autowiredSources = [...gameClassSources, ...stateClassSources];
 
   for (const source of autowiredSources) {
+    cancellationCheckpoint(signal);
     const outcome = parseModernActions(source.text, {
       requireAttribute: stateClassSources.includes(source),
       declaredIn: stateClassSources.includes(source) ? 'state-class' : 'game-class',
+      ...(signal === undefined ? {} : { signal }),
     });
     for (const action of outcome.value) {
+      cancellationCheckpoint(signal);
       // The legacy dispatcher wins where both exist, so it is not a duplicate.
       if (declaredByActionClass.has(action.action)) {
         continue;
@@ -270,6 +281,7 @@ export function validateActionContracts(
       });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path));
     }
   }
@@ -286,7 +298,7 @@ export function validateActionContracts(
   const gameMethods = new Set(
     phpSources
       .filter((source) => !source.path.endsWith('.action.php'))
-      .flatMap((source) => parsePhpMethodNames(source.text)),
+      .flatMap((source) => parsePhpMethodNames(source.text, signal)),
   );
 
   const declaredActions = new Set(
@@ -318,6 +330,7 @@ export function validateActionContracts(
 
   const seenEntryPoints = new Set<string>();
   for (const entry of entryPoints) {
+    cancellationCheckpoint(signal);
     if (seenEntryPoints.has(entry.action)) {
       findings.push(
         certain(
@@ -333,6 +346,7 @@ export function validateActionContracts(
   }
 
   for (const call of clientCalls) {
+    cancellationCheckpoint(signal);
     if (!ACTION_PREFIX.test(call.action)) {
       findings.push(
         certain(
@@ -384,6 +398,7 @@ export function validateActionContracts(
       const sent = new Set(call.argumentNames);
       const read = new Set(entry.argumentNames);
       for (const argument of [...sent].filter((name) => !read.has(name)).sort()) {
+        cancellationCheckpoint(signal);
         findings.push(
           heuristic(
             'action.argument.mismatch',
@@ -395,6 +410,7 @@ export function validateActionContracts(
         );
       }
       for (const argument of [...read].filter((name) => !sent.has(name)).sort()) {
+        cancellationCheckpoint(signal);
         findings.push(
           heuristic(
             'action.argument.mismatch',
@@ -410,6 +426,7 @@ export function validateActionContracts(
       // Where the client writes the value out, the two can be compared here
       // rather than at a player's expense.
       for (const parameter of entry.parameters ?? []) {
+        cancellationCheckpoint(signal);
         const value = call.argumentValues[parameter.name] ?? null;
         const failure = value === null ? null : violation(parameter, value);
         if (failure === null || value === null) {
@@ -430,6 +447,7 @@ export function validateActionContracts(
 
   const autowired = new Set(autowiredSources.map((source) => source.path));
   for (const entry of entryPoints) {
+    cancellationCheckpoint(signal);
     if (autowired.has(entry.source)) {
       // An autowired action is its own game method; there is no second hop.
       continue;
@@ -450,6 +468,7 @@ export function validateActionContracts(
   if (statesReadable && clientReadable && declaredActions.size > 0) {
     const called = new Set(clientCalls.map((call) => call.action));
     for (const action of [...declaredActions].sort()) {
+      cancellationCheckpoint(signal);
       if (!called.has(action)) {
         findings.push(
           heuristic(
@@ -464,11 +483,12 @@ export function validateActionContracts(
     }
   }
 
+  cancellationCheckpoint(signal);
   return {
     clientCalls,
     entryPoints,
     gameMethods: [...gameMethods].sort(),
     declaredActions: [...declaredActions].sort(),
-    diagnostics: summarizeFindings(findings),
+    diagnostics: summarizeFindings(findings, signal),
   };
 }

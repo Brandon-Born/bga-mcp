@@ -12,6 +12,8 @@
  * and the rest of this module works on the masked copy and slices the original.
  */
 
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
+
 const CLOSERS: Readonly<Record<string, string>> = { '(': ')', '[': ']', '{': '}' };
 const OPEN = new Set(Object.keys(CLOSERS));
 const CLOSE = new Set(Object.values(CLOSERS));
@@ -28,11 +30,12 @@ function blank(text: string): string {
  * for structure, and any slice taken from the original text at masked offsets
  * is the real source.
  */
-export function maskLiterals(source: string): string {
+export function maskLiterals(source: string, signal?: AbortSignal): string {
   let result = '';
   let index = 0;
 
   while (index < source.length) {
+    periodicCancellationCheckpoint(index, signal);
     const character = source[index] ?? '';
     const next = source[index + 1] ?? '';
 
@@ -40,6 +43,7 @@ export function maskLiterals(source: string): string {
       const quote = character;
       let end = index + 1;
       while (end < source.length) {
+        periodicCancellationCheckpoint(end, signal);
         const inner = source[end];
         if (inner === '\\' && quote === '"') {
           end += 2;
@@ -94,6 +98,7 @@ export function maskLiterals(source: string): string {
     index += 1;
   }
 
+  cancellationCheckpoint(signal);
   return result;
 }
 
@@ -105,12 +110,18 @@ export interface BracketSpan {
 }
 
 /** Finds the bracket matching the one at `openIndex`, in masked source. */
-export function matchBracket(masked: string, openIndex: number): BracketSpan | null {
+export function matchBracket(
+  masked: string,
+  openIndex: number,
+  signal?: AbortSignal,
+): BracketSpan | null {
+  cancellationCheckpoint(signal);
   if (!OPEN.has(masked[openIndex] ?? '')) {
     return null;
   }
   let depth = 0;
   for (let index = openIndex; index < masked.length; index += 1) {
+    periodicCancellationCheckpoint(index - openIndex, signal);
     const character = masked[index] ?? '';
     if (OPEN.has(character)) {
       depth += 1;
@@ -130,11 +141,14 @@ export function splitTopLevel(
   from: number,
   to: number,
   separator = ',',
+  signal?: AbortSignal,
 ): { start: number; end: number }[] {
+  cancellationCheckpoint(signal);
   const parts: { start: number; end: number }[] = [];
   let depth = 0;
   let start = from;
   for (let index = from; index < to; index += 1) {
+    periodicCancellationCheckpoint(index - from, signal);
     const character = masked[index] ?? '';
     if (OPEN.has(character)) {
       depth += 1;
@@ -160,11 +174,12 @@ const TRANSLATION_CALL = /^(?:clienttranslate|totranslate)\s*\(([\s\S]*)\)$/u;
  * state description, so the reader unwraps it rather than treating a
  * translated description as unreadable.
  */
-export function readStringLiteral(expression: string): string | null {
+export function readStringLiteral(expression: string, signal?: AbortSignal): string | null {
+  cancellationCheckpoint(signal);
   const text = expression.trim();
   const translated = TRANSLATION_CALL.exec(text);
   if (translated !== null) {
-    return readStringLiteral(translated[1] ?? '');
+    return readStringLiteral(translated[1] ?? '', signal);
   }
   const quoted = /^'([\s\S]*)'$/u.exec(text) ?? /^"([\s\S]*)"$/u.exec(text);
   if (quoted === null) {
@@ -187,26 +202,34 @@ export interface PhpSource {
  * classes use. Class constants are keyed by their class so that two classes
  * can declare the same name.
  */
-export function collectIntConstants(sources: readonly PhpSource[]): Map<string, number> {
+export function collectIntConstants(
+  sources: readonly PhpSource[],
+  signal?: AbortSignal,
+): Map<string, number> {
+  cancellationCheckpoint(signal);
   const constants = new Map<string, number>();
 
   for (const source of sources) {
-    const masked = maskLiterals(source.text);
+    cancellationCheckpoint(signal);
+    const masked = maskLiterals(source.text, signal);
 
     for (const match of source.text.matchAll(
       /\bdefine\s*\(\s*['"]([A-Za-z_]\w*)['"]\s*,\s*(-?\d+)\s*\)/gu,
     )) {
+      cancellationCheckpoint(signal);
       constants.set(match[1] ?? '', Number(match[2]));
     }
 
     const classes = [...masked.matchAll(/\b(?:class|enum|interface|trait)\s+([A-Za-z_]\w*)/gu)];
     for (const match of masked.matchAll(/\bconst\s+([A-Za-z_]\w*)\s*=\s*(-?\d+)\s*;/gu)) {
+      cancellationCheckpoint(signal);
       const name = match[1] ?? '';
       const owner = classes.filter((entry) => entry.index < match.index).at(-1)?.[1];
       constants.set(owner === undefined ? name : `${owner}::${name}`, Number(match[2]));
     }
   }
 
+  cancellationCheckpoint(signal);
   return constants;
 }
 
@@ -221,7 +244,9 @@ export function resolveIntExpression(
   expression: string,
   constants: ReadonlyMap<string, number>,
   selfClass?: string,
+  signal?: AbortSignal,
 ): number | null {
+  cancellationCheckpoint(signal);
   const text = expression
     .trim()
     .replace(/^\(|\)$/gu, '')
@@ -252,12 +277,13 @@ export interface PhpMethod {
 const FUNCTION = /\bfunction\s+([A-Za-z_]\w*)\s*\(/gu;
 
 /** Reads the functions a PHP source declares, with their attributes and bodies. */
-export function readMethods(source: string): PhpMethod[] {
-  const masked = maskLiterals(source);
+export function readMethods(source: string, signal?: AbortSignal): PhpMethod[] {
+  const masked = maskLiterals(source, signal);
   const methods: PhpMethod[] = [];
 
   for (const match of masked.matchAll(FUNCTION)) {
-    const parameters = matchBracket(masked, match.index + match[0].length - 1);
+    cancellationCheckpoint(signal);
+    const parameters = matchBracket(masked, match.index + match[0].length - 1, signal);
     if (parameters === null) {
       continue;
     }
@@ -267,16 +293,17 @@ export function readMethods(source: string): PhpMethod[] {
     const brace = masked.indexOf('{', parameters.end);
     const semicolon = masked.indexOf(';', parameters.end);
     const hasBody = brace !== -1 && (semicolon === -1 || brace < semicolon);
-    const body = hasBody ? matchBracket(masked, brace) : null;
+    const body = hasBody ? matchBracket(masked, brace, signal) : null;
 
     methods.push({
       name: match[1] ?? '',
-      attributes: attributesBefore(masked, match.index),
+      attributes: attributesBefore(masked, match.index, signal),
       parameters: source.slice(parameters.start + 1, parameters.end),
       body: body === null ? '' : source.slice(body.start + 1, body.end),
     });
   }
 
+  cancellationCheckpoint(signal);
   return methods;
 }
 
@@ -284,7 +311,8 @@ export function readMethods(source: string): PhpMethod[] {
 const MODIFIER_WINDOW = 128;
 
 /** Reads the attribute block immediately above an offset, if any. */
-function attributesBefore(masked: string, offset: number): string {
+function attributesBefore(masked: string, offset: number, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
   const modifiers = /(?:(?:public|protected|private|static|final|abstract|readonly)\s+)*$/u.exec(
     masked.slice(Math.max(0, offset - MODIFIER_WINDOW), offset),
   );
@@ -292,7 +320,9 @@ function attributesBefore(masked: string, offset: number): string {
   let attributes = '';
 
   for (;;) {
+    cancellationCheckpoint(signal);
     while (end > 0 && /\s/u.test(masked[end - 1] ?? '')) {
+      periodicCancellationCheckpoint(offset - end, signal);
       end -= 1;
     }
     const close = end - 1;
@@ -300,7 +330,7 @@ function attributesBefore(masked: string, offset: number): string {
       return attributes;
     }
     const open = masked.lastIndexOf('#[', close);
-    if (open === -1 || matchBracket(masked, open + 1)?.end !== close) {
+    if (open === -1 || matchBracket(masked, open + 1, signal)?.end !== close) {
       return attributes;
     }
     attributes = `${masked.slice(open, close + 1)} ${attributes}`.trim();
@@ -314,15 +344,17 @@ function attributesBefore(masked: string, offset: number): string {
  * `return;` yields nothing, because the framework documents it as the way to
  * stay in the current state.
  */
-export function returnExpressions(body: string): string[] {
-  const masked = maskLiterals(body);
+export function returnExpressions(body: string, signal?: AbortSignal): string[] {
+  const masked = maskLiterals(body, signal);
   const expressions: string[] = [];
 
   for (const match of masked.matchAll(/\breturn\b/gu)) {
+    cancellationCheckpoint(signal);
     const start = match.index + match[0].length;
     let depth = 0;
     let end = start;
     while (end < masked.length) {
+      periodicCancellationCheckpoint(end - start, signal);
       const character = masked[end] ?? '';
       if (OPEN.has(character)) {
         depth += 1;
@@ -339,5 +371,6 @@ export function returnExpressions(body: string): string[] {
     }
   }
 
+  cancellationCheckpoint(signal);
   return expressions;
 }

@@ -1,4 +1,10 @@
-import type { McpServer } from '@modelcontextprotocol/server';
+import {
+  inputRequired,
+  inputResponse,
+  type InputRequiredResult,
+  type McpServer,
+  type ServerContext,
+} from '@modelcontextprotocol/server';
 
 /**
  * Asks the developer for a missing setting instead of refusing with homework.
@@ -21,7 +27,14 @@ import type { McpServer } from '@modelcontextprotocol/server';
 export type AskOutcome =
   | { readonly kind: 'answered'; readonly values: readonly string[] }
   | { readonly kind: 'declined' }
+  | { readonly kind: 'no-value' }
   | { readonly kind: 'unsupported' };
+
+export type AskForListResult = AskOutcome | InputRequiredResult;
+
+export function isSetupInputRequired(result: AskForListResult): result is InputRequiredResult {
+  return 'resultType' in result;
+}
 
 /** Remembers a decline, so a developer who says no is not asked twice. */
 export class SetupAsker {
@@ -41,12 +54,9 @@ export class SetupAsker {
   }
 
   /**
-   * Asks for a list of names.
-   *
-   * Only the 2025 era can be asked this way: on 2026-07-28 elicitation moved
-   * into the multi-round-trip input-required flow, which a capability has to
-   * return rather than await, and the SDK throws if asked to push. That era
-   * keeps the refusal until the flow is built.
+   * Sends the legacy-era, server-initiated version of the question.
+   * Modern handlers use `askForListForRequest` so they can return the request
+   * in-band instead of trying to push it over a removed request channel.
    */
   async askForList(
     server: McpServer,
@@ -98,6 +108,68 @@ export class SetupAsker {
       return { kind: 'declined' };
     }
     return { kind: 'answered', values };
+  }
+
+  /**
+   * Asks through the interaction supported by the negotiated protocol era.
+   *
+   * The modern request is returned to the client in-band. On the retry, the
+   * response is untrusted input and is parsed here before the caller can add
+   * it to a privacy allowlist. A decline is remembered for this connection,
+   * exactly like the legacy push-style question.
+   */
+  async askForListForRequest(
+    server: McpServer,
+    context: ServerContext,
+    question: string,
+    message: string,
+    field: string,
+  ): Promise<AskForListResult> {
+    if (this.#era === 'legacy') {
+      return await this.askForList(server, question, message, field);
+    }
+    if (this.#declined.has(question)) {
+      return { kind: 'declined' };
+    }
+
+    const key = `setup-${question}`;
+    const response = inputResponse(context.mcpReq.inputResponses, key);
+    if (response.kind === 'missing') {
+      const alreadyRetried =
+        context.mcpReq.inputResponses !== undefined ||
+        context.mcpReq.droppedInputResponseKeys?.includes(key) === true;
+      if (alreadyRetried) {
+        return { kind: 'no-value' };
+      }
+      return inputRequired({
+        inputRequests: {
+          [key]: inputRequired.elicit({
+            message,
+            requestedSchema: {
+              type: 'object',
+              properties: {
+                [field]: {
+                  type: 'string',
+                  description: 'Separate several with commas.',
+                },
+              },
+              required: [field],
+            },
+          }),
+        },
+      });
+    }
+    if (response.kind !== 'elicit') {
+      return { kind: 'unsupported' };
+    }
+    if (response.action !== 'accept') {
+      this.#declined.add(question);
+      return { kind: 'declined' };
+    }
+
+    const raw = response.content?.[field];
+    const values = typeof raw === 'string' ? splitList(raw) : [];
+    return values.length === 0 ? { kind: 'no-value' } : { kind: 'answered', values };
   }
 }
 

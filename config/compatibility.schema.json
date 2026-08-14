@@ -31,6 +31,7 @@
           "dimension": {
             "enum": [
               "layout",
+              "environment",
               "file-generation",
               "runtime",
               "platform",
@@ -64,6 +65,30 @@
             "items": {
               "type": "string",
               "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["reference", "scenarios"],
+              "properties": {
+                "reference": {
+                  "type": "string",
+                  "pattern": "^(?:tool|resource|prompt):.+$"
+                },
+                "scenarios": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[A-Z0-9]+(?:-[A-Z0-9]+)+$"
+                  }
+                }
+              }
             }
           }
         },
@@ -125,6 +150,30 @@
               "required": ["fixtures"],
               "properties": {
                 "fixtures": {
+                  "type": "array",
+                  "minItems": 1
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "dimension": {
+                  "enum": ["layout", "environment", "protocol"]
+                },
+                "support": {
+                  "const": "supported"
+                }
+              },
+              "required": ["dimension", "support"]
+            },
+            "then": {
+              "type": "object",
+              "required": ["capabilities"],
+              "properties": {
+                "capabilities": {
                   "type": "array",
                   "minItems": 1
                 }

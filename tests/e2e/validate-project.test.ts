@@ -47,6 +47,7 @@ interface ToolResponse {
 let temporaryRoot: string;
 let cli: string;
 let cleanRoot: string;
+let modernRoot: string;
 let hybridRoot: string;
 let brokenRoot: string;
 /** A project whose schema is too large to read, so only that group fails. */
@@ -106,18 +107,20 @@ beforeAll(async () => {
 
   const projects = resolve(temporaryRoot, 'projects');
   cleanRoot = resolve(projects, 'cleangame');
+  modernRoot = resolve(projects, 'moderngame');
   hybridRoot = resolve(projects, 'hybridgame');
   brokenRoot = resolve(projects, 'brokengame');
   unreadableSchemaRoot = resolve(projects, 'hugeschema');
   for (const [fixture, target] of [
     ['legacy', cleanRoot],
+    ['modern', modernRoot],
     ['hybrid', hybridRoot],
     ['legacy-broken', brokenRoot],
     ['legacy-broken', unreadableSchemaRoot],
   ] as const) {
     await cp(resolve(fixturesRoot, fixture), target, { recursive: true });
   }
-  for (const target of [cleanRoot, hybridRoot, brokenRoot, unreadableSchemaRoot]) {
+  for (const target of [cleanRoot, modernRoot, hybridRoot, brokenRoot, unreadableSchemaRoot]) {
     await rm(resolve(target, 'expected.json'));
   }
 
@@ -262,6 +265,19 @@ describe('packaged validate_project', () => {
     expect(response.structured?.diagnostics.findings).toEqual([]);
     expect(response.structured?.groups.every((group) => group.ran)).toBe(true);
     expect(response.text).toContain('status passed');
+  });
+
+  it('[E2E-VALIDATE-PROJECT-MODERN] runs every validator on the modern layout', async () => {
+    const response = await withServer(
+      ['--project-root', modernRoot],
+      async (client) => await call(client, 'validate_project', { projectRoot: modernRoot }),
+    );
+
+    expect(response.isError).toBe(false);
+    expect(response.structured?.layout).toBe('modern');
+    expect(response.structured?.groups.every((group) => group.ran)).toBe(true);
+    expect(response.structured?.status).toBe('passed');
+    expect(response.structured?.diagnostics.findings).toEqual([]);
   });
 
   it('[E2E-VALIDATE-PROJECT-HYBRID] passes a part-migrated project without inventing findings', async () => {

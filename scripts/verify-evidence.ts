@@ -73,24 +73,42 @@ function check(evidence: unknown, sources: Sources, validate: (value: unknown) =
   const { manifest } = sources;
   const entries = manifestEntries(manifest);
 
-  const advertised = entries.map((entry) => entry.name).sort();
-  const recorded = document.capabilities.map((entry) => entry.name).sort();
+  const key = (entry: { kind: string; name: string }): string => `${entry.kind}:${entry.name}`;
+  const advertised = entries.map(key).sort();
+  const recorded = document.capabilities.map(key).sort();
   report.require(
     JSON.stringify(advertised) === JSON.stringify(recorded),
     `Evidence does not cover every advertised capability (manifest: ${advertised.join(', ')}; evidence: ${recorded.join(', ')})`,
   );
 
-  const requiredById = new Map(entries.map((entry) => [entry.name, entry.requiredScenarios]));
+  const manifestById = new Map(entries.map((entry) => [key(entry), entry]));
   const conformanceByVersion = new Map(
     document.protocol.conformance.coverage.map((entry) => [entry.version, entry.status]),
   );
 
   for (const capability of document.capabilities) {
-    const required = [...(requiredById.get(capability.name) ?? [])].sort();
+    const source = manifestById.get(key(capability));
+    const required = [...(source?.requiredScenarios ?? [])].sort();
     const present = capability.scenarios.map((scenario) => scenario.id).sort();
     report.require(
       JSON.stringify(required) === JSON.stringify(present),
       `${capability.name} evidence does not record every required scenario (manifest: ${required.join(', ')}; evidence: ${present.join(', ')})`,
+    );
+    for (const [field, actual, expected] of [
+      ['supportedLayouts', capability.supportedLayouts, source?.supportedLayouts ?? []],
+      ['environments', capability.environments, source?.environments ?? []],
+      ['protocolVersions', capability.protocolVersions, source?.protocolVersions ?? []],
+    ] as const) {
+      const retained = [...actual].sort();
+      const declared = [...expected].sort();
+      report.require(
+        JSON.stringify(retained) === JSON.stringify(declared),
+        `${capability.name} evidence ${field} differ from the manifest (manifest: ${declared.join(', ') || 'none'}; evidence: ${retained.join(', ') || 'none'})`,
+      );
+    }
+    report.require(
+      capability.stability === source?.stability,
+      `${capability.name} evidence stability ${capability.stability} differs from manifest stability ${source?.stability ?? 'missing'}`,
     );
     for (const scenario of capability.scenarios) {
       report.require(
@@ -340,6 +358,8 @@ function soundEvidence(manifest: Manifest): Evidence {
       name: entry.name,
       stability: entry.stability,
       status: 'passed' as const,
+      supportedLayouts: [...(entry.supportedLayouts ?? [])],
+      environments: [...(entry.environments ?? [])],
       protocolVersions: [...(entry.protocolVersions ?? [])],
       ci: { id: 'ci-1', conclusion: 'success', covers: 'this-commit' as const },
       scenarios: entry.requiredScenarios.map((id) => ({
@@ -411,6 +431,48 @@ function proveGateDetectsSeededDefects(
   expectSeededFailure(
     'evidence manifest coverage',
     check({ ...sound, capabilities: sound.capabilities.slice(1) }, seeded, validate),
+  );
+  const projectPosition = sound.capabilities.findIndex(
+    (capability) => capability.supportedLayouts.length > 0,
+  );
+  if (projectPosition < 0) {
+    throw new Error('The evidence gate needs a project capability to seed compatibility drift');
+  }
+  expectSeededFailure(
+    'evidence supported-layout drift',
+    check(
+      sealEvidence({
+        ...sound,
+        capabilities: sound.capabilities.map((capability, position) =>
+          position === projectPosition
+            ? { ...capability, supportedLayouts: capability.supportedLayouts.slice(1) }
+            : capability,
+        ),
+      }),
+      seeded,
+      validate,
+    ),
+  );
+  const environmentPosition = sound.capabilities.findIndex(
+    (capability) => capability.environments.length > 0,
+  );
+  if (environmentPosition < 0) {
+    throw new Error('The evidence gate needs a capability environment to seed compatibility drift');
+  }
+  expectSeededFailure(
+    'evidence environment drift',
+    check(
+      sealEvidence({
+        ...sound,
+        capabilities: sound.capabilities.map((capability, position) =>
+          position === environmentPosition
+            ? { ...capability, environments: ['remote'] }
+            : capability,
+        ),
+      }),
+      seeded,
+      validate,
+    ),
   );
   expectSeededFailure(
     'evidence scenario coverage',

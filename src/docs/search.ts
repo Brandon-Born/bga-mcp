@@ -10,6 +10,7 @@
  */
 
 import { htmlToText } from './excerpt.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 export interface SearchHit {
   readonly title: string;
@@ -53,11 +54,17 @@ export interface SearchResponse {
  * A hit missing its title cannot be cited or fetched, so it is dropped rather
  * than shown with a gap where the source should be.
  */
-export function readSearchResponse(body: string, limit: number): SearchResponse {
+export function readSearchResponse(
+  body: string,
+  limit: number,
+  signal?: AbortSignal,
+): SearchResponse {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(sanitizeJson(body));
+    parsed = JSON.parse(sanitizeJson(body, signal));
+    cancellationCheckpoint(signal);
   } catch {
+    cancellationCheckpoint(signal);
     return { hits: [], unreadable: 'the source did not answer with JSON' };
   }
   const search = (parsed as { query?: { search?: unknown } }).query?.search;
@@ -69,6 +76,7 @@ export function readSearchResponse(body: string, limit: number): SearchResponse 
 
   const hits: SearchHit[] = [];
   for (const raw of search as readonly RawHit[]) {
+    cancellationCheckpoint(signal);
     if (typeof raw.title !== 'string' || raw.title.length === 0) {
       continue;
     }
@@ -77,7 +85,7 @@ export function readSearchResponse(body: string, limit: number): SearchResponse 
       path: pathForTitle(raw.title),
       // The snippet is wiki-authored HTML, so it is stripped like any other
       // retrieved content before it goes anywhere near a result.
-      snippet: typeof raw.snippet === 'string' ? htmlToText(raw.snippet) : '',
+      snippet: typeof raw.snippet === 'string' ? htmlToText(raw.snippet, signal) : '',
       lastEdited: typeof raw.timestamp === 'string' ? raw.timestamp : null,
     });
     if (hits.length >= limit) {
@@ -94,9 +102,11 @@ export function readSearchResponse(body: string, limit: number): SearchResponse 
  * rejects outright. Without this the whole response fails to parse and the
  * search silently returns nothing — a wrong answer that looks like no answer.
  */
-function sanitizeJson(body: string): string {
+function sanitizeJson(body: string, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
   // eslint-disable-next-line no-control-regex -- control characters are the defect
   return body.replace(/[\u0000-\u001F]/gu, (character) => {
+    cancellationCheckpoint(signal);
     const code = character.codePointAt(0) ?? 0;
     return `\\u${code.toString(16).padStart(4, '0')}`;
   });

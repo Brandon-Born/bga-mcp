@@ -47,11 +47,18 @@ function finding(
  * rather than omitted — a reader cannot ask about something they were never
  * told exists.
  */
-export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupStatus> {
+export async function buildSetupStatus(
+  policy: PolicyBoundary,
+  options: {
+    readonly signal?: AbortSignal;
+    readonly era?: 'legacy' | 'modern';
+  } = {},
+): Promise<SetupStatus> {
   const findings: SetupFinding[] = [];
   const { config } = policy;
 
-  await policy.ensureClientRoots();
+  options.signal?.throwIfAborted();
+  await policy.ensureClientRoots(options.signal === undefined ? {} : { signal: options.signal });
   const roots = policy.projectRoots;
   if (roots.length === 0) {
     findings.push(
@@ -59,7 +66,9 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
         'project.roots.none',
         'action-needed',
         'No project root is available, so every project capability will refuse.',
-        'Start the server with --project-root <absolute path>, or use a client that advertises its open folders as roots.',
+        options.era === 'modern'
+          ? 'Call a project tool or resource without projectRoot; a compatible 2026 client will then complete the in-band roots request. Otherwise restart the server with --project-root <absolute path>.'
+          : 'Start the server with --project-root <absolute path>, or use a client that advertises its open folders as roots.',
       ),
     );
   } else {
@@ -67,7 +76,7 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
       finding(
         'project.roots.available',
         'ok',
-        `${String(roots.length)} project root(s) available. Pass projectRoot explicitly when more than one is.`,
+        `${String(roots.length)} project root(s) available. Pass projectRoot explicitly when choosing among several already available roots.`,
       ),
     );
   }
@@ -95,7 +104,9 @@ export async function buildSetupStatus(policy: PolicyBoundary): Promise<SetupSta
       ),
     );
   } else {
-    const session = await policy.studioSession();
+    const session = await policy.studioSession(
+      options.signal === undefined ? {} : { signal: options.signal },
+    );
     if (session === null) {
       findings.push(
         finding(

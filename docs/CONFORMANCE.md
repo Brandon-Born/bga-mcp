@@ -33,13 +33,13 @@ The official server scenarios for this revision test the **stateless** Streamabl
 
 Making it pass would mean the proxy synthesizing an initialize handshake for the stdio child, at which point the suite would be measuring the proxy's protocol work. That is the opposite of why the proxy exists, so the revision is recorded as **not applicable** with that reason, in `conformance-results/candidate-2026-07-28/not-applicable.json` and in the verification evidence.
 
-The stdio evidence for this revision is `E2E-STDIO-MODERN-DISCOVER` and its neighbours, which negotiate `2026-07-28` with a real SDK client against the packaged artifact and exercise discovery and tool calls over it. That is genuine observed-behavior evidence, and it is weaker than official conformance; the support constant, transport manifest, capability entries, and evidence artifact therefore exclude this revision until BGA-017 and BGA-318 pass.
+The stdio evidence for this revision is `E2E-STDIO-MODERN-DISCOVER` and its neighbours, including BGA-318's MRTR roots and non-secret setup cases. They negotiate `2026-07-28` with a real SDK client against the packaged artifact and exercise discovery and tool calls over it. That is genuine observed-behavior evidence, and it is weaker than official conformance; the support constant, transport manifest, capability entries, and evidence artifact therefore continue to exclude this revision from the supported matrix.
 
-## Why BGA-011 is still `implemented`
+## BGA-011 completion condition
 
-Its deliverable is conformance for every supported protocol version **and transport**. One of the two claimed versions cannot be measured by the official suite for the transport this product ships. Calling that verified would mean deciding that a version we advertise does not need the evidence the item asks for.
+Its deliverable is conformance for every supported protocol version **and transport**. The supported public matrix contains one pair: `2025-11-25` over stdio. The frozen official requirement set runs against that installed transport through the transparent relay and covers the complete claimed matrix.
 
-It becomes `verified` when either the suite gains a stdio server mode, or its 2026-07-28 server scenarios separate transport semantics from server behaviour. Re-check when `0.2.0` leaves prerelease.
+The `2026-07-28` smoke and MRTR coverage remain useful observed behavior, but the revision is explicitly `unknown` and absent from the support constant, transport claim, and capability entries because no applicable official stdio conformance mode exists. It is not an unsupported second claim that blocks BGA-011. The item can move from `implemented` to `verified` after the current exact-head full gate and six-job CI pass this corrected scope.
 
 ## Prerelease dependency
 

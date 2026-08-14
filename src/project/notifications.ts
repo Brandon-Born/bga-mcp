@@ -1,4 +1,5 @@
 import type { ParseOutcome } from './parse.js';
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
  * Readers for the notification contract between a BGA server and its client.
@@ -68,13 +69,14 @@ const SUBSCRIBE =
   /(?:dojo\.subscribe|this\.subscribeNotif)\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))/gu;
 
 /** Splits a call's arguments at top level, respecting nesting and strings. */
-function splitArguments(source: string, openIndex: number): string[] {
+function splitArguments(source: string, openIndex: number, signal?: AbortSignal): string[] {
   const parts: string[] = [];
   let depth = 0;
   let current = '';
   let quote: string | null = null;
 
   for (let index = openIndex; index < source.length; index += 1) {
+    periodicCancellationCheckpoint(index - openIndex, signal);
     const character = source[index] ?? '';
     if (quote !== null) {
       current += character;
@@ -110,9 +112,10 @@ function splitArguments(source: string, openIndex: number): string[] {
   return parts;
 }
 
-function phpArrayKeys(literal: string): string[] {
+function phpArrayKeys(literal: string, signal?: AbortSignal): string[] {
   const keys: string[] = [];
   for (const match of literal.matchAll(/(?:'([^']+)'|"([^"]+)")\s*=>/gu)) {
+    cancellationCheckpoint(signal);
     const key = match[1] ?? match[2];
     if (key !== undefined && !FRAMEWORK_PAYLOAD_KEYS.has(key)) {
       keys.push(key);
@@ -121,7 +124,8 @@ function phpArrayKeys(literal: string): string[] {
   return [...new Set(keys)].sort();
 }
 
-function stringLiteral(argument: string): string | null {
+function stringLiteral(argument: string, signal?: AbortSignal): string | null {
+  cancellationCheckpoint(signal);
   const trimmed = argument.trim();
   const match = /^(?:'([^']*)'|"([^"]*)")$/u.exec(trimmed);
   return match === null ? null : (match[1] ?? match[2] ?? null);
@@ -133,11 +137,16 @@ function stringLiteral(argument: string): string | null {
  * Recognizes `notifyAllPlayers` and `notifyPlayer`. A notification whose name
  * or payload is assembled at runtime is reported as unsupported.
  */
-export function parseSentNotifications(source: string): ParseOutcome<readonly SentNotification[]> {
+export function parseSentNotifications(
+  source: string,
+  signal?: AbortSignal,
+): ParseOutcome<readonly SentNotification[]> {
+  cancellationCheckpoint(signal);
   const sent: SentNotification[] = [];
   const unsupported: string[] = [];
 
   for (const match of source.matchAll(NOTIFY)) {
+    cancellationCheckpoint(signal);
     const modern = match[2];
     const scope: 'all' | 'player' =
       modern === undefined
@@ -145,7 +154,7 @@ export function parseSentNotifications(source: string): ParseOutcome<readonly Se
           ? 'player'
           : 'all'
         : (modern as 'all' | 'player');
-    const parts = splitArguments(source, match.index + match[0].length - 1);
+    const parts = splitArguments(source, match.index + match[0].length - 1, signal);
     // notifyAllPlayers(name, message, args); notifyPlayer(playerId, name, message, args)
     const nameArgument = scope === 'all' ? parts[0] : parts[1];
     const payloadArgument = scope === 'all' ? parts[2] : parts[3];
@@ -153,7 +162,7 @@ export function parseSentNotifications(source: string): ParseOutcome<readonly Se
       continue;
     }
 
-    const name = stringLiteral(nameArgument);
+    const name = stringLiteral(nameArgument, signal);
     if (name === null) {
       unsupported.push(
         `notification sent with a computed name: ${nameArgument.trim().slice(0, 40)}`,
@@ -172,9 +181,10 @@ export function parseSentNotifications(source: string): ParseOutcome<readonly Se
       sent.push({ name, payloadKeys: [], scope });
       continue;
     }
-    sent.push({ name, payloadKeys: phpArrayKeys(payloadArgument), scope });
+    sent.push({ name, payloadKeys: phpArrayKeys(payloadArgument, signal), scope });
   }
 
+  cancellationCheckpoint(signal);
   return { value: sent, unsupported };
 }
 
@@ -201,7 +211,11 @@ const PROMISE_SETUP = /\b(?:bgaS|s)etupPromiseNotifications\s*\(/u;
  * what counts as one, and `ignoreNotifications` removes names from the
  * registration entirely.
  */
-export function parsePromiseRegistration(source: string): PromiseRegistration | null {
+export function parsePromiseRegistration(
+  source: string,
+  signal?: AbortSignal,
+): PromiseRegistration | null {
+  cancellationCheckpoint(signal);
   const call = PROMISE_SETUP.exec(source);
   if (call === null) {
     return null;
@@ -210,12 +224,15 @@ export function parsePromiseRegistration(source: string): PromiseRegistration | 
   const prefix = /prefix\s*:\s*'([^']*)'|prefix\s*:\s*"([^"]*)"/u.exec(options);
   const ignored = /ignoreNotifications\s*:\s*\[([^\]]*)\]/u.exec(options)?.[1] ?? '';
 
-  return {
+  const parsed = {
     prefix: prefix?.[1] ?? prefix?.[2] ?? 'notif_',
-    ignored: [...ignored.matchAll(/'([^']*)'|"([^"]*)"/gu)].map(
-      (entry) => entry[1] ?? entry[2] ?? '',
-    ),
+    ignored: [] as string[],
   };
+  for (const entry of ignored.matchAll(/'([^']*)'|"([^"]*)"/gu)) {
+    cancellationCheckpoint(signal);
+    parsed.ignored.push(entry[1] ?? entry[2] ?? '');
+  }
+  return parsed;
 }
 
 /**
@@ -229,16 +246,21 @@ export function parsePromiseRegistration(source: string): PromiseRegistration | 
  */
 export function parseNotificationHandlers(
   source: string,
-  registration: PromiseRegistration | null = parsePromiseRegistration(source),
+  registration?: PromiseRegistration | null,
+  signal?: AbortSignal,
 ): HandlerOutcome {
+  cancellationCheckpoint(signal);
+  const effectiveRegistration =
+    registration === undefined ? parsePromiseRegistration(source, signal) : registration;
   const handlers = new Map<string, NotificationHandler>();
   const unsupported: string[] = [];
   const duplicates: string[] = [];
 
   const methodMatches = [
-    ...source.matchAll(handlerMethodPattern(registration?.prefix ?? 'notif_')),
+    ...source.matchAll(handlerMethodPattern(effectiveRegistration?.prefix ?? 'notif_')),
   ];
   for (const [index, match] of methodMatches.entries()) {
+    cancellationCheckpoint(signal);
     const name = match[1];
     if (name === undefined) {
       continue;
@@ -250,6 +272,7 @@ export function parseNotificationHandlers(
     for (const read of body.matchAll(
       /\bargs\s*(?:\.\s*([A-Za-z_$][\w$]*)|\[\s*'([^']+)'\s*\])/gu,
     )) {
+      cancellationCheckpoint(signal);
       const key = read[1] ?? read[2];
       if (key !== undefined && !FRAMEWORK_PAYLOAD_KEYS.has(key)) {
         payloadKeys.add(key);
@@ -258,13 +281,14 @@ export function parseNotificationHandlers(
     handlers.set(name, {
       name,
       binding: 'method',
-      bound: registration !== null && !registration.ignored.includes(name),
+      bound: effectiveRegistration !== null && !effectiveRegistration.ignored.includes(name),
       payloadKeys: [...payloadKeys].sort(),
     });
   }
 
   const subscribed = new Set<string>();
   for (const match of source.matchAll(SUBSCRIBE)) {
+    cancellationCheckpoint(signal);
     const name = match[1] ?? match[2];
     if (name === undefined) {
       unsupported.push(
@@ -287,10 +311,11 @@ export function parseNotificationHandlers(
     });
   }
 
+  cancellationCheckpoint(signal);
   return {
     value: [...handlers.values()].sort((left, right) => left.name.localeCompare(right.name)),
     unsupported,
     duplicates: [...new Set(duplicates)].sort(),
-    registration,
+    registration: effectiveRegistration,
   };
 }

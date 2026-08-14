@@ -4,6 +4,11 @@ import { fileURLToPath } from 'node:url';
 
 import { SUPPORTED_PROTOCOL_VERSIONS } from '../../src/metadata.js';
 import {
+  capabilityCompatibilityFailures,
+  type CapabilityCompatibilityManifest,
+  type CompatibilityMatrix,
+} from '../../scripts/lib/compatibility.js';
+import {
   findEffectBypasses,
   PURE_BUILTINS,
   RESTRICTED_GLOBALS,
@@ -189,12 +194,12 @@ describe('repository safety gates', () => {
   });
 
   it('[GATE-COMPATIBILITY-MATRIX] keeps runtime behavior inside the published matrix', async () => {
-    const matrix = await loadJson<{
-      claims: { dimension: string; value: string; support: string }[];
-    }>('config/compatibility.json');
-    const manifest = await loadJson<{
-      transports: { name: string; protocolVersions: string[] }[];
-    }>('config/capabilities.json');
+    const matrix = await loadJson<CompatibilityMatrix>('config/compatibility.json');
+    const manifest = await loadJson<
+      CapabilityCompatibilityManifest & {
+        transports: { name: string; protocolVersions: string[] }[];
+      }
+    >('config/capabilities.json');
 
     const supported = (dimension: string): string[] =>
       matrix.claims
@@ -207,6 +212,38 @@ describe('repository safety gates', () => {
     expect(supported('protocol')).toEqual(
       [...new Set(manifest.transports.flatMap((entry) => entry.protocolVersions))].sort(),
     );
+    expect(capabilityCompatibilityFailures(matrix, manifest)).toEqual([]);
+
+    const withOmittedLayout = structuredClone(manifest);
+    const projectCapability = [
+      ...withOmittedLayout.capabilities.tools,
+      ...withOmittedLayout.capabilities.resources,
+    ].find((entry) => entry.supportedLayouts.includes('modern-modules')) as
+      { supportedLayouts: string[] } | undefined;
+    if (projectCapability === undefined) {
+      throw new Error('The compatibility gate needs a project capability');
+    }
+    projectCapability.supportedLayouts = projectCapability.supportedLayouts.filter(
+      (layout) => layout !== 'modern-modules',
+    );
+    expect(capabilityCompatibilityFailures(matrix, withOmittedLayout)).toContainEqual(
+      expect.stringContaining('supportedLayouts disagree'),
+    );
+
+    const withOverclaimedLayout = structuredClone(manifest);
+    const overclaimingCapability = [
+      ...withOverclaimedLayout.capabilities.tools,
+      ...withOverclaimedLayout.capabilities.resources,
+    ].find((entry) => entry.supportedLayouts.length > 0) as
+      { supportedLayouts: string[] } | undefined;
+    if (overclaimingCapability === undefined) {
+      throw new Error('The compatibility gate needs a project capability');
+    }
+    overclaimingCapability.supportedLayouts.push('unrecognized');
+    expect(capabilityCompatibilityFailures(matrix, withOverclaimedLayout)).toContainEqual(
+      expect.stringContaining('supportedLayouts disagree'),
+    );
+
     expect(matrix.claims.filter((claim) => claim.support === 'unsupported').length).toBeGreaterThan(
       0,
     );

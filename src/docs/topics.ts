@@ -10,6 +10,8 @@
  * cannot point at a page nobody checked.
  */
 
+import { cancellationCheckpoint } from '../deadline.js';
+
 export interface DocumentationTopic {
   readonly topic: string;
   readonly sourceId: string;
@@ -167,18 +169,22 @@ export function topicNames(): readonly string[] {
  * actually ask, and returning `null` rather than a weak guess is what keeps a
  * question the documentation cannot answer unanswered.
  */
-export function topicForQuery(query: string): DocumentationTopic | null {
+export function topicForQuery(query: string, signal?: AbortSignal): DocumentationTopic | null {
+  cancellationCheckpoint(signal);
   const lowered = query.toLowerCase();
   const scored = DOCUMENTATION_TOPICS.map((topic) => {
+    cancellationCheckpoint(signal);
     const haystack = [topic.topic, topic.title, topic.summary].join(' ').toLowerCase();
     let score = 0;
     for (const keyword of topic.keywords) {
+      cancellationCheckpoint(signal);
       if (lowered.includes(keyword)) {
         // A longer keyword is a stronger signal than a single common word.
         score += keyword.includes(' ') ? 3 : 2;
       }
     }
     for (const term of lowered.split(/[^a-z0-9.]+/u).filter((word) => word.length > 3)) {
+      cancellationCheckpoint(signal);
       if (haystack.includes(term)) {
         score += 1;
       }

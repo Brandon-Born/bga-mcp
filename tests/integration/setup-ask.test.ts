@@ -1,7 +1,7 @@
-import { McpServer } from '@modelcontextprotocol/server';
+import { McpServer, type ServerContext } from '@modelcontextprotocol/server';
 
 import { createPolicyBoundary } from '../../src/policy.js';
-import { SetupAsker, splitList } from '../../src/setup/ask.js';
+import { isSetupInputRequired, SetupAsker, splitList } from '../../src/setup/ask.js';
 
 interface FakeClient {
   readonly capabilities: Record<string, unknown> | undefined;
@@ -27,6 +27,18 @@ function serverWith(client: FakeClient): McpServer {
   return server;
 }
 
+function requestContext(
+  inputResponses?: Record<string, unknown>,
+  droppedInputResponseKeys?: readonly string[],
+): ServerContext {
+  return {
+    mcpReq: {
+      ...(inputResponses === undefined ? {} : { inputResponses }),
+      ...(droppedInputResponseKeys === undefined ? {} : { droppedInputResponseKeys }),
+    },
+  } as unknown as ServerContext;
+}
+
 const ELICITING = { elicitation: {} };
 
 describe('asking for a missing setting', () => {
@@ -38,8 +50,9 @@ describe('asking for a missing setting', () => {
     };
 
     const asker = new SetupAsker('legacy');
-    const outcome = await asker.askForList(
+    const outcome = await asker.askForListForRequest(
       serverWith(client),
+      requestContext(),
       'accounts',
       'Which accounts?',
       'accounts',
@@ -129,5 +142,97 @@ describe('asking for a missing setting', () => {
     expect(policy.studioDevAccounts).toEqual(['configured0', 'asked0']);
     // Configuration itself is untouched: nothing was persisted.
     expect(policy.config.studioDevAccounts).toEqual(['configured0']);
+  });
+
+  it('[INT-SETUP-ASK-UNSUPPORTED] returns the modern question in-band only once', async () => {
+    const asker = new SetupAsker('modern');
+    const server = serverWith({
+      capabilities: {},
+      reply: () => Promise.reject(new Error('unused modern request channel')),
+      asked: 0,
+    });
+
+    const required = await asker.askForListForRequest(
+      server,
+      requestContext(),
+      'accounts',
+      'Which accounts?',
+      'accounts',
+    );
+    expect(isSetupInputRequired(required)).toBe(true);
+    expect(required).toMatchObject({
+      resultType: 'input_required',
+      inputRequests: {
+        'setup-accounts': { method: 'elicitation/create' },
+      },
+    });
+
+    for (const context of [requestContext({}), requestContext(undefined, ['setup-accounts'])]) {
+      const outcome = await asker.askForListForRequest(
+        server,
+        context,
+        'accounts',
+        'Which accounts?',
+        'accounts',
+      );
+      expect(outcome).toEqual({ kind: 'no-value' });
+      expect(isSetupInputRequired(outcome)).toBe(false);
+    }
+  });
+
+  it('[INT-SETUP-ASK-ANSWERED] validates modern answers before retaining them', async () => {
+    const server = serverWith({
+      capabilities: {},
+      reply: () => Promise.reject(new Error('unused modern request channel')),
+      asked: 0,
+    });
+    const answer = async (response: unknown) =>
+      await new SetupAsker('modern').askForListForRequest(
+        server,
+        requestContext({ 'setup-accounts': response }),
+        'accounts',
+        'Which accounts?',
+        'accounts',
+      );
+
+    await expect(
+      answer({ action: 'accept', content: { accounts: ' mytest0; mytest1 ' } }),
+    ).resolves.toEqual({ kind: 'answered', values: ['mytest0', 'mytest1'] });
+    for (const response of [
+      { action: 'accept', content: { accounts: '  ' } },
+      { action: 'accept', content: { accounts: 3 } },
+      { action: 'accept' },
+    ]) {
+      await expect(answer(response)).resolves.toEqual({ kind: 'no-value' });
+    }
+    await expect(answer({ roots: [] })).resolves.toEqual({ kind: 'unsupported' });
+  });
+
+  it('[INT-SETUP-ASK-DECLINED] remembers a modern decline without consulting later input', async () => {
+    const server = serverWith({
+      capabilities: {},
+      reply: () => Promise.reject(new Error('unused modern request channel')),
+      asked: 0,
+    });
+    const asker = new SetupAsker('modern');
+    await expect(
+      asker.askForListForRequest(
+        server,
+        requestContext({ 'setup-accounts': { action: 'decline' } }),
+        'accounts',
+        'Which accounts?',
+        'accounts',
+      ),
+    ).resolves.toEqual({ kind: 'declined' });
+    await expect(
+      asker.askForListForRequest(
+        server,
+        requestContext({ 'setup-accounts': { action: 'accept', content: { accounts: 'later' } } }),
+        'accounts',
+        'Which accounts?',
+        'accounts',
+      ),
+    ).resolves.toEqual({ kind: 'declined' });
+    expect(asker.declinedAnything).toBe(true);
   });
 });

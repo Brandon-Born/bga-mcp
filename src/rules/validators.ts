@@ -18,21 +18,23 @@ export function createValidatorRunners(
   policy: PolicyBoundary,
   projectRoot: string,
   context: ProjectContext,
+  signal?: AbortSignal,
 ): GroupRunner[] {
   return [
     {
       id: 'state-machine',
-      run: () => validateStateMachine(context.model, context.phpSources),
+      run: () => validateStateMachine(context.model, context.phpSources, signal),
     },
     {
       id: 'action-contracts',
       run: () =>
-        validateActionContracts(context.model, context.clientSources, context.phpSources)
+        validateActionContracts(context.model, context.clientSources, context.phpSources, signal)
           .diagnostics,
     },
     {
       id: 'notifications',
-      run: () => validateNotifications(context.phpSources, context.clientSources).diagnostics,
+      run: () =>
+        validateNotifications(context.phpSources, context.clientSources, signal).diagnostics,
     },
     {
       id: 'database',
@@ -45,8 +47,15 @@ export function createValidatorRunners(
         const schemaSource =
           schemaPath === undefined
             ? null
-            : { path: schemaPath, text: await policy.readProjectFile(projectRoot, schemaPath) };
-        return auditDatabaseUsage(schemaSource, context.phpSources).diagnostics;
+            : {
+                path: schemaPath,
+                text: await policy.readProjectFile(
+                  projectRoot,
+                  schemaPath,
+                  signal === undefined ? {} : { signal },
+                ),
+              };
+        return auditDatabaseUsage(schemaSource, context.phpSources, signal).diagnostics;
       },
     },
   ];

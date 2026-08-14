@@ -258,7 +258,17 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["kind", "name", "stability", "status", "protocolVersions", "ci", "scenarios"],
+        "required": [
+          "kind",
+          "name",
+          "stability",
+          "status",
+          "supportedLayouts",
+          "environments",
+          "protocolVersions",
+          "ci",
+          "scenarios"
+        ],
         "properties": {
           "kind": {
             "enum": ["transport", "tool", "resource", "prompt", "adapter"]
@@ -273,6 +283,24 @@
           "status": {
             "enum": ["passed", "failed", "missing"],
             "description": "passed only when every required scenario ran and passed."
+          },
+          "supportedLayouts": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Project layouts the entry claims. Empty when layout is not applicable."
+          },
+          "environments": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Execution environments the entry claims. Empty for transports and adapters."
           },
           "scenarios": {
             "type": "array",

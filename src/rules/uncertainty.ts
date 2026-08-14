@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 /**
  * Shared handling for what a rule cannot prove.
@@ -103,8 +104,12 @@ export function unsupportedSyntaxFinding(input: UnsupportedInput): DiagnosticFin
 }
 
 /** Deterministic ordering: by code, then location, then message. */
-export function orderFindings(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
+export function orderFindings(
+  findings: readonly DiagnosticFinding[],
+  signal?: AbortSignal,
+): DiagnosticFinding[] {
+  cancellationCheckpoint(signal);
+  const ordered = [...findings].sort((left, right) => {
     const byCode = left.code.localeCompare(right.code);
     if (byCode !== 0) {
       return byCode;
@@ -112,6 +117,8 @@ export function orderFindings(findings: readonly DiagnosticFinding[]): Diagnosti
     const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
     return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
   });
+  cancellationCheckpoint(signal);
+  return ordered;
 }
 
 /**
@@ -120,9 +127,13 @@ export function orderFindings(findings: readonly DiagnosticFinding[]): Diagnosti
  * A result made entirely of unsupported syntax reports `unsupported`, never
  * `passed`: a reader that understood nothing has proven nothing.
  */
-export function summarizeFindings(findings: readonly DiagnosticFinding[]): DiagnosticResult {
+export function summarizeFindings(
+  findings: readonly DiagnosticFinding[],
+  signal?: AbortSignal,
+): DiagnosticResult {
   const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
   for (const finding of findings) {
+    cancellationCheckpoint(signal);
     if (finding.kind === 'unsupported-syntax') {
       summary.unsupported += 1;
     } else if (finding.severity === 'error') {
@@ -139,5 +150,5 @@ export function summarizeFindings(findings: readonly DiagnosticFinding[]): Diagn
       : summary.unsupported === findings.length
         ? 'unsupported'
         : 'findings';
-  return { schemaVersion: 1, status, summary, findings: orderFindings(findings) };
+  return { schemaVersion: 1, status, summary, findings: orderFindings(findings, signal) };
 }

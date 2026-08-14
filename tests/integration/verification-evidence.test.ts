@@ -44,6 +44,8 @@ const manifest: Manifest = {
       {
         name: 'inspect_project',
         stability: 'verified',
+        supportedLayouts: ['legacy-flat', 'modern-modules', 'part-migrated'],
+        environments: ['local'],
         protocolVersions: ['2025-11-25'],
         requiredScenarios: ['E2E-INSPECT-PROJECT-MODERN', 'E2E-INSPECT-PROJECT-HYBRID'],
         ciEvidence: 'ci-1',
@@ -137,6 +139,8 @@ describe('verification evidence', () => {
       ['E2E-INSPECT-PROJECT-HYBRID', 'missing'],
     ]);
     expect(tool?.status).toBe('missing');
+    expect(tool?.supportedLayouts).toEqual(['legacy-flat', 'modern-modules', 'part-migrated']);
+    expect(tool?.environments).toEqual(['local']);
     expect(evidence.scenarios).toEqual({ required: 3, passed: 2, failed: 0, missing: 1 });
 
     const transport = evidence.capabilities.find((entry) => entry.name === 'stdio');

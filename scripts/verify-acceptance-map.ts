@@ -138,6 +138,8 @@ function seededEvidence(scenario: string, file: string): Evidence {
         name: 'seed',
         stability: 'implemented',
         status: 'passed',
+        supportedLayouts: [],
+        environments: ['local'],
         protocolVersions: ['2025-11-25'],
         ci: { id: 'ci-1', conclusion: 'success', covers: 'this-commit' },
         scenarios: [

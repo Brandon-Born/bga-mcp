@@ -3,8 +3,10 @@ import {
   DEFAULT_MAX_OUTPUT_BYTES,
   DEFAULT_OPERATION_TIMEOUT_MS,
   DEFAULT_POLICY_CONFIG,
+  CLEANUP_WINDOW_MS,
   MAX_OPERATION_TIMEOUT_MS,
   MAX_OUTPUT_BYTES_LIMIT,
+  abortableAddressResolver,
   createPolicyBoundary,
 } from '../../src/policy.js';
 import { MINIMUM_OUTPUT_BYTES } from '../../src/publish.js';
@@ -12,6 +14,133 @@ import { MINIMUM_OUTPUT_BYTES } from '../../src/publish.js';
 async function expectViolation(operation: () => Promise<unknown>, code: string): Promise<void> {
   await expect(operation()).rejects.toMatchObject({ name: 'PolicyViolationError', code });
 }
+
+type ResolverCallback = (error: Error | null, addresses: string[]) => void;
+
+class ControlledResolver {
+  four: ResolverCallback | undefined;
+  six: ResolverCallback | undefined;
+  cancelled = false;
+
+  resolve4(_hostname: string, callback: ResolverCallback): void {
+    this.four = callback;
+  }
+
+  resolve6(_hostname: string, callback: ResolverCallback): void {
+    this.six = callback;
+  }
+
+  cancel(): void {
+    this.cancelled = true;
+  }
+}
+
+function resolveWith(
+  resolver: ReturnType<typeof abortableAddressResolver>,
+): Promise<{ error: Error | null; addresses: readonly { address: string; family: number }[] }> {
+  return new Promise((resolve) => {
+    resolver('docs.example', (error, addresses) => {
+      resolve({ error, addresses });
+    });
+  });
+}
+
+describe('abortable address resolution', () => {
+  it('[UNIT-DNS-CANCELLATION-SCOPED] cancels only the resolver owned by the aborted request', async () => {
+    const firstController = new AbortController();
+    const secondController = new AbortController();
+    const first = new ControlledResolver();
+    const second = new ControlledResolver();
+    let firstCallbacks = 0;
+
+    const firstResult = new Promise<{ error: Error | null }>((resolve) => {
+      abortableAddressResolver(firstController.signal, { createResolver: () => first })(
+        'docs.example',
+        (error) => {
+          firstCallbacks += 1;
+          resolve({ error });
+        },
+      );
+    });
+    const secondResult = resolveWith(
+      abortableAddressResolver(secondController.signal, { createResolver: () => second }),
+    );
+
+    const reason = new Error('first request expired');
+    firstController.abort(reason);
+    await expect(firstResult).resolves.toEqual({ error: reason });
+    expect(first.cancelled).toBe(true);
+    expect(second.cancelled).toBe(false);
+
+    second.four?.(null, ['93.184.216.34']);
+    second.six?.(Object.assign(new Error('no AAAA record'), { code: 'ENODATA' }), []);
+    await expect(secondResult).resolves.toEqual({
+      error: null,
+      addresses: [{ address: '93.184.216.34', family: 4 }],
+    });
+
+    // Native Resolver callbacks may still report ECANCELLED after `cancel()`.
+    // They must not settle the guarded lookup a second time.
+    first.four?.(Object.assign(new Error('cancelled'), { code: 'ECANCELLED' }), []);
+    first.six?.(Object.assign(new Error('cancelled'), { code: 'ECANCELLED' }), []);
+    expect(firstCallbacks).toBe(1);
+  });
+
+  it('refuses a signal that was already aborted without starting DNS', async () => {
+    const controller = new AbortController();
+    const reason = new Error('already expired');
+    controller.abort(reason);
+    let created = false;
+
+    const result = resolveWith(
+      abortableAddressResolver(controller.signal, {
+        createResolver: () => {
+          created = true;
+          return new ControlledResolver();
+        },
+      }),
+    );
+
+    await expect(result).resolves.toEqual({ error: reason, addresses: [] });
+    expect(created).toBe(false);
+  });
+
+  it('uses the system lookup path when no operation signal exists', async () => {
+    const result = resolveWith(
+      abortableAddressResolver(undefined, {
+        lookupAll: (_hostname, callback) => {
+          callback(null, [{ address: '93.184.216.34', family: 4 }]);
+        },
+      }),
+    );
+
+    await expect(result).resolves.toEqual({
+      error: null,
+      addresses: [{ address: '93.184.216.34', family: 4 }],
+    });
+  });
+
+  it('settles when both DNS families fail to start', async () => {
+    const controller = new AbortController();
+    const first = new Error('resolve4 could not start');
+    const second = new Error('resolve6 could not start');
+    const result = resolveWith(
+      abortableAddressResolver(controller.signal, {
+        createResolver: () => ({
+          resolve4: () => {
+            throw first;
+          },
+          resolve6: () => {
+            throw second;
+          },
+          cancel: () => undefined,
+        }),
+      }),
+    );
+
+    await expect(result).resolves.toEqual({ error: first, addresses: [] });
+  });
+});
 
 describe('policy boundary defaults', () => {
   it('defaults to local, read-only, network-off operation', () => {
@@ -105,18 +234,19 @@ describe('policy boundary defaults', () => {
   it('[INT-POLICY-TIMEOUT] aborts and reports an operation that outlives its deadline', async () => {
     const policy = await createPolicyBoundary({ operationTimeoutMs: 20 });
     let aborted = false;
+    const started = performance.now();
     await expectViolation(
       async () =>
         await policy.runWithTimeout('slow-scan', async (signal) => {
           signal.addEventListener('abort', () => {
             aborted = true;
           });
-          await new Promise((resolve) => setTimeout(resolve, 200));
-          return 'never returned';
+          return await new Promise<never>(() => undefined);
         }),
       ERROR_CODES.policyTimeoutExceeded,
     );
     expect(aborted).toBe(true);
+    expect(performance.now() - started).toBeLessThan(CLEANUP_WINDOW_MS + 500);
 
     await expect(
       policy.runWithTimeout('fast-scan', async () => await Promise.resolve('done')),

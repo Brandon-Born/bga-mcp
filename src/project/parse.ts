@@ -7,6 +7,7 @@ import {
   splitTopLevel,
   type PhpSource,
 } from './php.js';
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
  * Tolerant readers for the metadata and state formats BGA projects use.
@@ -45,13 +46,14 @@ export interface StateParseOutcome {
 }
 
 /** Strips comments and trailing commas so BGA's JSONC metadata can be parsed. */
-export function parseJsonc(source: string): unknown {
+export function parseJsonc(source: string, signal?: AbortSignal): unknown {
   let result = '';
   let index = 0;
   let inString = false;
   let escaped = false;
 
   while (index < source.length) {
+    periodicCancellationCheckpoint(index, signal);
     const character = source[index] ?? '';
     const next = source[index + 1] ?? '';
 
@@ -77,6 +79,7 @@ export function parseJsonc(source: string): unknown {
 
     if (character === '/' && next === '/') {
       while (index < source.length && source[index] !== '\n') {
+        periodicCancellationCheckpoint(index, signal);
         index += 1;
       }
       continue;
@@ -85,6 +88,7 @@ export function parseJsonc(source: string): unknown {
     if (character === '/' && next === '*') {
       index += 2;
       while (index < source.length && !(source[index] === '*' && source[index + 1] === '/')) {
+        periodicCancellationCheckpoint(index, signal);
         index += 1;
       }
       index += 2;
@@ -95,7 +99,10 @@ export function parseJsonc(source: string): unknown {
     index += 1;
   }
 
-  return JSON.parse(result.replace(/,(\s*[}\]])/gu, '$1')) as unknown;
+  cancellationCheckpoint(signal);
+  const parsed = JSON.parse(result.replace(/,(\s*[}\]])/gu, '$1')) as unknown;
+  cancellationCheckpoint(signal);
+  return parsed;
 }
 
 export interface GameMetadata {
@@ -104,11 +111,15 @@ export interface GameMetadata {
 }
 
 /** Reads `gameinfos.json` or `gameinfos.jsonc`. */
-export function parseModernMetadata(source: string): ParseOutcome<GameMetadata> {
+export function parseModernMetadata(
+  source: string,
+  signal?: AbortSignal,
+): ParseOutcome<GameMetadata> {
   let parsed: unknown;
   try {
-    parsed = parseJsonc(source);
+    parsed = parseJsonc(source, signal);
   } catch {
+    cancellationCheckpoint(signal);
     return { value: { gameName: null, playerCounts: [] }, unsupported: ['unparsable JSON object'] };
   }
 
@@ -135,7 +146,11 @@ export function parseModernMetadata(source: string): ParseOutcome<GameMetadata> 
 }
 
 /** Reads `gameinfos.inc.php`, which is PHP source rather than data. */
-export function parseLegacyMetadata(source: string): ParseOutcome<GameMetadata> {
+export function parseLegacyMetadata(
+  source: string,
+  signal?: AbortSignal,
+): ParseOutcome<GameMetadata> {
+  cancellationCheckpoint(signal);
   const unsupported: string[] = [];
   const name = /'game_name'\s*=>\s*'([^']*)'/u.exec(source)?.[1] ?? null;
   if (name === null) {
@@ -148,6 +163,7 @@ export function parseLegacyMetadata(source: string): ParseOutcome<GameMetadata> 
     unsupported.push("no literal 'players' list");
   }
 
+  cancellationCheckpoint(signal);
   return { value: { gameName: name, playerCounts }, unsupported };
 }
 
@@ -169,12 +185,13 @@ export const STATE_TYPES: Readonly<Record<string, string>> = {
 const STATE_TYPE_CONSTANT = /^\\?(?:[A-Za-z_]\w*\\)*StateType::([A-Za-z_]\w*)$/u;
 
 /** Reads a state type written either as a string or as a `StateType` constant. */
-export function readStateType(expression: string): string | null {
+export function readStateType(expression: string, signal?: AbortSignal): string | null {
+  cancellationCheckpoint(signal);
   const constant = STATE_TYPE_CONSTANT.exec(expression.trim())?.[1];
   if (constant !== undefined) {
     return STATE_TYPES[constant] ?? constant.toLowerCase();
   }
-  return readStringLiteral(expression);
+  return readStringLiteral(expression, signal);
 }
 
 /** Which documented form declared a state. */
@@ -248,12 +265,14 @@ function readKeyedEntries(
   masked: string,
   from: number,
   to: number,
+  signal?: AbortSignal,
 ): Map<string, string> {
   const entries = new Map<string, string>();
-  for (const part of splitTopLevel(masked, from, to)) {
+  for (const part of splitTopLevel(masked, from, to, ',', signal)) {
+    cancellationCheckpoint(signal);
     const entry = text.slice(part.start, part.end);
-    const arrow = maskLiterals(entry).indexOf('=>');
-    const key = arrow === -1 ? null : readStringLiteral(entry.slice(0, arrow));
+    const arrow = maskLiterals(entry, signal).indexOf('=>');
+    const key = arrow === -1 ? null : readStringLiteral(entry.slice(0, arrow), signal);
     if (key !== null) {
       entries.set(key, entry.slice(arrow + 2).trim());
     }
@@ -262,8 +281,16 @@ function readKeyedEntries(
 }
 
 /** Field names are matched case-insensitively; transition names never are. */
-function lowercaseKeys(entries: ReadonlyMap<string, string>): Map<string, string> {
-  return new Map([...entries].map(([key, value]) => [key.toLowerCase(), value]));
+function lowercaseKeys(
+  entries: ReadonlyMap<string, string>,
+  signal?: AbortSignal,
+): Map<string, string> {
+  const lowered = new Map<string, string>();
+  for (const [key, value] of entries) {
+    cancellationCheckpoint(signal);
+    lowered.set(key.toLowerCase(), value);
+  }
+  return lowered;
 }
 
 /** Reads the arguments of a `->name(value)` builder chain, in call order. */
@@ -272,17 +299,19 @@ function readBuilderChain(
   masked: string,
   from: number,
   to: number,
+  signal?: AbortSignal,
 ): { calls: Map<string, string>; complete: boolean } {
   const calls = new Map<string, string>();
   let index = from;
 
   for (;;) {
+    cancellationCheckpoint(signal);
     const step = CHAIN_STEP.exec(masked.slice(index, to));
     if (step === null) {
       return { calls, complete: masked.slice(index, to).trim() === '' };
     }
     const open = index + step[0].length - 1;
-    const span = matchBracket(masked, open);
+    const span = matchBracket(masked, open, signal);
     if (span === null) {
       return { calls, complete: false };
     }
@@ -294,18 +323,26 @@ function readBuilderChain(
 function readTransitionMap(
   expression: string,
   constants: ReadonlyMap<string, number>,
+  signal?: AbortSignal,
 ): { transitions: Record<string, number>; unreadable: string[] } {
   const transitions: Record<string, number> = {};
   const unreadable: string[] = [];
-  const masked = maskLiterals(expression);
+  const masked = maskLiterals(expression, signal);
   const open = masked.search(/[[(]/u);
-  const span = open === -1 ? null : matchBracket(masked, open);
+  const span = open === -1 ? null : matchBracket(masked, open, signal);
   if (span === null) {
     return { transitions, unreadable: [`transition map ${expression.trim()}`] };
   }
 
-  for (const [key, value] of readKeyedEntries(expression, masked, span.start + 1, span.end)) {
-    const target = resolveIntExpression(value, constants);
+  for (const [key, value] of readKeyedEntries(
+    expression,
+    masked,
+    span.start + 1,
+    span.end,
+    signal,
+  )) {
+    cancellationCheckpoint(signal);
+    const target = resolveIntExpression(value, constants, undefined, signal);
     if (target === null) {
       unreadable.push(`transition target ${key} => ${value}`);
       continue;
@@ -315,15 +352,15 @@ function readTransitionMap(
   return { transitions, unreadable };
 }
 
-function readStringList(expression: string): string[] {
-  const masked = maskLiterals(expression);
+function readStringList(expression: string, signal?: AbortSignal): string[] {
+  const masked = maskLiterals(expression, signal);
   const open = masked.search(/[[(]/u);
-  const span = open === -1 ? null : matchBracket(masked, open);
+  const span = open === -1 ? null : matchBracket(masked, open, signal);
   if (span === null) {
     return [];
   }
-  return splitTopLevel(masked, span.start + 1, span.end)
-    .map((part) => readStringLiteral(expression.slice(part.start, part.end)))
+  return splitTopLevel(masked, span.start + 1, span.end, ',', signal)
+    .map((part) => readStringLiteral(expression.slice(part.start, part.end), signal))
     .filter((entry): entry is string => entry !== null);
 }
 
@@ -339,8 +376,10 @@ function stateFromFields(
   fields: ReadonlyMap<string, string>,
   constants: ReadonlyMap<string, number>,
   report: (construct: string, scope: UnreadableScope) => void,
+  signal?: AbortSignal,
 ): StateDefinition {
   const read = (key: string, reader: (raw: string) => string | null): string | null => {
+    cancellationCheckpoint(signal);
     const raw = fields.get(key);
     if (raw === undefined) {
       return null;
@@ -351,16 +390,19 @@ function stateFromFields(
     }
     return value;
   };
-  const literal = (key: string): string | null => read(key, readStringLiteral);
+  const literal = (key: string): string | null =>
+    read(key, (raw) => readStringLiteral(raw, signal));
 
   for (const key of fields.keys()) {
+    cancellationCheckpoint(signal);
     if (!STATE_FIELDS.has(key)) {
       report(`unknown field '${key}' in state ${String(id)}`, 'detail');
     }
   }
 
-  const transitions = readTransitionMap(fields.get('transitions') ?? '[]', constants);
+  const transitions = readTransitionMap(fields.get('transitions') ?? '[]', constants, signal);
   for (const construct of transitions.unreadable) {
+    cancellationCheckpoint(signal);
     report(`unreadable ${construct} in state ${String(id)}`, 'edge');
   }
 
@@ -368,7 +410,7 @@ function stateFromFields(
   const initialPrivate = fields.get('initialprivate');
   let edgesResolved = transitions.unreadable.length === 0;
   if (initialPrivate !== undefined && !/^null$/iu.test(initialPrivate.trim())) {
-    const target = resolveIntExpression(initialPrivate, constants);
+    const target = resolveIntExpression(initialPrivate, constants, undefined, signal);
     if (target === null) {
       report(`unreadable initialprivate in state ${String(id)}: ${initialPrivate}`, 'edge');
       edgesResolved = false;
@@ -381,12 +423,12 @@ function stateFromFields(
     id,
     ...EMPTY_STATE,
     name: literal('name'),
-    type: read('type', readStateType),
+    type: read('type', (raw) => readStateType(raw, signal)),
     action: literal('action'),
     args: literal('args'),
     description: literal('description'),
     descriptionMyTurn: literal('descriptionmyturn'),
-    possibleActions: readStringList(fields.get('possibleactions') ?? '[]'),
+    possibleActions: readStringList(fields.get('possibleactions') ?? '[]', signal),
     transitions: transitions.transitions,
     redirects,
     edgesResolved,
@@ -405,28 +447,34 @@ function stateFromFields(
 export function parseLegacyStates(
   source: string,
   supporting: readonly PhpSource[] = [],
+  signal?: AbortSignal,
 ): StateParseOutcome {
+  cancellationCheckpoint(signal);
   const unsupported: UnreadableConstruct[] = [];
   const report = (construct: string, scope: UnreadableScope): void => {
     unsupported.push({ path: null, construct, scope });
   };
 
-  const masked = maskLiterals(source);
+  const masked = maskLiterals(source, signal);
   const start = MACHINE_STATES.exec(masked);
   if (start === null) {
     report('no literal $machinestates assignment', 'declaration');
     return { value: [], unsupported };
   }
-  const span = matchBracket(masked, start.index + start[0].length - 1);
+  const span = matchBracket(masked, start.index + start[0].length - 1, signal);
   if (span === null) {
     report('unterminated $machinestates assignment', 'declaration');
     return { value: [], unsupported };
   }
 
-  const constants = collectIntConstants([{ path: 'states.inc.php', text: source }, ...supporting]);
+  const constants = collectIntConstants(
+    [{ path: 'states.inc.php', text: source }, ...supporting],
+    signal,
+  );
   const states: StateDefinition[] = [];
 
-  for (const part of splitTopLevel(masked, span.start + 1, span.end)) {
+  for (const part of splitTopLevel(masked, span.start + 1, span.end, ',', signal)) {
+    cancellationCheckpoint(signal);
     const entry = source.slice(part.start, part.end);
     // The key is read from the masked copy, where a comment above the entry is
     // blanked. Reading it from the source would make the comment part of it.
@@ -438,14 +486,14 @@ export function parseLegacyStates(
     }
 
     const key = maskedEntry.slice(0, arrow);
-    const id = resolveIntExpression(key, constants);
+    const id = resolveIntExpression(key, constants, undefined, signal);
     if (id === null) {
       report(`non-literal state key ${key.trim()}`, 'declaration');
       continue;
     }
 
     const value = entry.slice(arrow + 2);
-    const state = readStateEntry(id, value, constants, report);
+    const state = readStateEntry(id, value, constants, report, signal);
     if (state !== null) {
       states.push(state);
     }
@@ -454,6 +502,7 @@ export function parseLegacyStates(
   if (states.length === 0 && unsupported.length === 0) {
     report('no literal state entries', 'declaration');
   }
+  cancellationCheckpoint(signal);
   return { value: states, unsupported };
 }
 
@@ -463,24 +512,25 @@ function readStateEntry(
   value: string,
   constants: ReadonlyMap<string, number>,
   report: (construct: string, scope: UnreadableScope) => void,
+  signal?: AbortSignal,
 ): StateDefinition | null {
-  const masked = maskLiterals(value);
+  const masked = maskLiterals(value, signal);
   const builder = BUILDER.exec(masked);
 
   if (builder !== null) {
     const factory = (builder[1] ?? '').toLowerCase();
-    const span = matchBracket(masked, builder.index + builder[0].length - 1);
+    const span = matchBracket(masked, builder.index + builder[0].length - 1, signal);
     if (span === null) {
       report(`unreadable GameStateBuilder call in state ${String(id)}`, 'declaration');
       return null;
     }
-    const chain = readBuilderChain(value, masked, span.end + 1, value.length);
+    const chain = readBuilderChain(value, masked, span.end + 1, value.length, signal);
     if (factory === 'create') {
       if (!chain.complete) {
         report(`unreadable GameStateBuilder chain in state ${String(id)}`, 'declaration');
         return null;
       }
-      return stateFromFields(id, chain.calls, constants, report);
+      return stateFromFields(id, chain.calls, constants, report, signal);
     }
 
     // The framework's own states. `gameSetup(2)` is documented as the line to
@@ -488,21 +538,22 @@ function readStateEntry(
     // goes; the rest of a framework state is not the project's to declare.
     const target =
       factory === 'gamesetup'
-        ? resolveIntExpression(value.slice(span.start + 1, span.end), constants)
+        ? resolveIntExpression(value.slice(span.start + 1, span.end), constants, undefined, signal)
         : null;
     return { id, ...EMPTY_STATE, origin: 'framework', redirects: target === null ? [] : [target] };
   }
 
   const array = /^\s*(?:array\s*\(|\[)/u.exec(masked);
-  const span = array === null ? null : matchBracket(masked, array[0].length - 1);
+  const span = array === null ? null : matchBracket(masked, array[0].length - 1, signal);
   if (span === null) {
     report(`unreadable declaration for state ${String(id)}: ${value.trim()}`, 'declaration');
     return null;
   }
   return stateFromFields(
     id,
-    lowercaseKeys(readKeyedEntries(value, masked, span.start + 1, span.end)),
+    lowercaseKeys(readKeyedEntries(value, masked, span.start + 1, span.end, signal), signal),
     constants,
     report,
+    signal,
   );
 }

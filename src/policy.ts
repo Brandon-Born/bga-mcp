@@ -1,11 +1,16 @@
 import { constants as oConstants } from 'node:fs';
-import { lstat, open, opendir, readFile, realpath, stat } from 'node:fs/promises';
+import { lstat, open, opendir, readFile, realpath } from 'node:fs/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
-import { lookup as dnsLookup } from 'node:dns';
+import { Resolver, lookup as dnsLookup } from 'node:dns';
 import { isAbsolute, join, relative, resolve, sep } from 'node:path';
 
-import { createGuardedLookup } from './docs/addresses.js';
+import { cancellationCheckpoint, registerDeadline } from './deadline.js';
+import {
+  createGuardedLookup,
+  type AddressResolver,
+  type ResolvedAddress,
+} from './docs/addresses.js';
 import { readBoundedUtf8 } from './docs/read.js';
 import { describeRequestContentViolation, requestContentViolation } from './docs/request.js';
 import {
@@ -23,6 +28,9 @@ export const DEFAULT_OPERATION_TIMEOUT_MS = 10_000;
 export const MAX_OPERATION_TIMEOUT_MS = 600_000;
 export const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576;
 export const MAX_OUTPUT_BYTES_LIMIT = 33_554_432;
+
+/** Maximum time an aborted operation may delay the public timeout response. */
+export const CLEANUP_WINDOW_MS = 250;
 
 export interface PolicyConfig {
   /** Local roots the server may read. Empty means every project operation is denied. */
@@ -57,15 +65,6 @@ export const DEFAULT_POLICY_CONFIG: PolicyConfig = {
   experimentalStudioLogs: false,
   studioDevAccounts: [],
 };
-
-/**
- * How long a timed operation is given to stop after it is aborted.
- *
- * Bounded on purpose: work that ignores its signal must not be able to hold a
- * caller past its deadline, and a caller that waited for it would have two
- * deadlines rather than one.
- */
-export const CLEANUP_WINDOW_MS = 250;
 
 export const DEFAULT_MAX_LISTED_FILES = 5_000;
 export const DEFAULT_MAX_LIST_DEPTH = 12;
@@ -237,13 +236,141 @@ function sessionFragments(pair: string): string[] {
   return [trimmed, trimmed.slice(0, separator).trim(), trimmed.slice(separator + 1).trim()];
 }
 
-/** A promise that settles after `ms`, used to bound a cleanup wait. */
+/** A wait that bounds cleanup without keeping the process alive by itself. */
 async function delay(ms: number): Promise<void> {
   await new Promise<void>((settle) => {
     const timer = setTimeout(settle, ms);
-    // Nothing should be kept alive by a wait that only bounds another wait.
     timer.unref();
   });
+}
+
+/** The error shape Node uses when an operation is stopped by an AbortSignal. */
+function abortError(signal: AbortSignal): Error {
+  if (signal.reason instanceof Error) {
+    return signal.reason;
+  }
+  return Object.assign(new Error('The operation was aborted.'), {
+    name: 'AbortError',
+    code: 'ABORT_ERR',
+  });
+}
+
+interface CancellableAddressResolver {
+  resolve4: (
+    hostname: string,
+    callback: (error: Error | null, addresses: string[]) => void,
+  ) => void;
+  resolve6: (
+    hostname: string,
+    callback: (error: Error | null, addresses: string[]) => void,
+  ) => void;
+  cancel: () => void;
+}
+
+interface AddressResolverDependencies {
+  readonly lookupAll: (
+    hostname: string,
+    callback: (error: Error | null, addresses: readonly ResolvedAddress[]) => void,
+  ) => void;
+  readonly createResolver: () => CancellableAddressResolver;
+}
+
+/**
+ * Resolves every A and AAAA answer with cancellation scoped to this request.
+ *
+ * `dns.lookup` has no cancellation API. A dedicated `Resolver` does: calling
+ * `cancel()` stops only the queries issued through that instance, so one timed
+ * out MCP call cannot disturb another call resolving the same host.
+ */
+export function abortableAddressResolver(
+  signal: AbortSignal | undefined,
+  dependencies: Partial<AddressResolverDependencies> = {},
+): AddressResolver {
+  const lookupAll =
+    dependencies.lookupAll ??
+    ((hostname, callback) => {
+      dnsLookup(hostname, { all: true }, (error, addresses) => {
+        callback(error, error === null ? addresses : []);
+      });
+    });
+  if (signal === undefined) {
+    // Callers without an operation deadline retain the platform resolver,
+    // including its hosts-file and system name-service behavior.
+    return (hostname, callback) => {
+      lookupAll(hostname, callback);
+    };
+  }
+
+  return (hostname, callback) => {
+    if (signal.aborted) {
+      callback(abortError(signal), []);
+      return;
+    }
+
+    const resolver = dependencies.createResolver?.() ?? new Resolver();
+    let ipv4: readonly ResolvedAddress[] = [];
+    let ipv6: readonly ResolvedAddress[] = [];
+    let firstError: Error | null = null;
+    let remaining = 2;
+    let settled = false;
+
+    const finish = (): void => {
+      if (settled || remaining > 0) {
+        return;
+      }
+      settled = true;
+      signal.removeEventListener('abort', onAbort);
+      const addresses = [...ipv4, ...ipv6];
+      callback(
+        addresses.length === 0 ? (firstError ?? new Error('DNS returned no address')) : null,
+        addresses,
+      );
+    };
+    const resolved = (family: 4 | 6, error: Error | null, addresses: readonly string[]): void => {
+      if (settled) {
+        return;
+      }
+      if (error !== null) {
+        firstError ??= error;
+      } else {
+        const answer = addresses.map((address) => ({ address, family }));
+        if (family === 4) {
+          ipv4 = answer;
+        } else {
+          ipv6 = answer;
+        }
+      }
+      remaining -= 1;
+      finish();
+    };
+    const onAbort = (): void => {
+      if (settled) {
+        return;
+      }
+      settled = true;
+      signal.removeEventListener('abort', onAbort);
+      // This Resolver belongs to this one guarded request. Its cancellation
+      // cannot affect concurrent requests, even for the same hostname.
+      resolver.cancel();
+      callback(abortError(signal), []);
+    };
+
+    signal.addEventListener('abort', onAbort, { once: true });
+    try {
+      resolver.resolve4(hostname, (error, addresses) => {
+        resolved(4, error, addresses);
+      });
+    } catch (error) {
+      resolved(4, error instanceof Error ? error : new Error(String(error)), []);
+    }
+    try {
+      resolver.resolve6(hostname, (error, addresses) => {
+        resolved(6, error, addresses);
+      });
+    } catch (error) {
+      resolved(6, error instanceof Error ? error : new Error(String(error)), []);
+    }
+  };
 }
 
 function normalize(path: string): string {
@@ -254,6 +381,28 @@ function normalize(path: string): string {
 function contains(root: string, candidate: string): boolean {
   const difference = relative(root, candidate);
   return difference === '' || (!difference.startsWith('..') && !isAbsolute(difference));
+}
+
+interface FilesystemIdentity {
+  readonly dev: number;
+  readonly ino: number;
+}
+
+/** Device and inode identify the object a pathname named at one instant. */
+function sameFilesystemObject(left: FilesystemIdentity, right: FilesystemIdentity): boolean {
+  return left.dev === right.dev && left.ino === right.ino;
+}
+
+/** A stable refusal for a pathname whose security decision went stale mid-operation. */
+function changedProjectPath(
+  requestedPath: string,
+  message: string,
+  cause?: unknown,
+): PolicyViolationError {
+  return new PolicyViolationError(ERROR_CODES.policyPathSymlinkEscape, message, {
+    details: { requestedPath },
+    ...(cause === undefined ? {} : { cause }),
+  });
 }
 
 /**
@@ -270,7 +419,7 @@ export class PolicyBoundary {
   #clientRoots: readonly string[] = [];
   /** Dev accounts supplied during the session, alongside configured ones. */
   #askedStudioAccounts: readonly string[] = [];
-  #requestClientRoots: (() => Promise<readonly string[]>) | undefined;
+  #requestClientRoots: ((signal?: AbortSignal) => Promise<readonly string[]>) | undefined;
   #clientRootsFetched = false;
   /** The reviewed documentation catalog, read once and kept for the process. */
   #catalog: DocumentationCatalog | undefined;
@@ -359,7 +508,7 @@ export class PolicyBoundary {
    * The provider is set by the server factory rather than by configuration,
    * because whether a client can offer roots is a property of the connection.
    */
-  setClientRootsProvider(provider: () => Promise<readonly string[]>): void {
+  setClientRootsProvider(provider: (signal?: AbortSignal) => Promise<readonly string[]>): void {
     this.#requestClientRoots = provider;
     this.#clientRootsFetched = false;
   }
@@ -404,32 +553,48 @@ export class PolicyBoundary {
    * that offers nothing, or a provider that fails, leaves the configured roots
    * exactly as they were.
    */
-  async ensureClientRoots(): Promise<void> {
+  async ensureClientRoots(options: { readonly signal?: AbortSignal } = {}): Promise<void> {
+    cancellationCheckpoint(options.signal);
     if (this.#requestClientRoots === undefined || this.#clientRootsFetched) {
       return;
     }
     this.#clientRootsFetched = true;
-    let offered: readonly string[];
     try {
-      offered = await this.#requestClientRoots();
-    } catch {
-      // A client that cannot answer is a client without roots, not an error.
-      return;
-    }
-
-    const adopted: string[] = [];
-    for (const candidate of offered) {
+      let offered: readonly string[];
       try {
-        const resolved = await realpath(normalize(candidate));
-        if (!adopted.includes(resolved)) {
-          adopted.push(resolved);
-        }
+        offered = await this.#requestClientRoots(options.signal);
       } catch {
-        // A root that does not exist is skipped, exactly as a configured one
-        // would be refused at startup.
+        cancellationCheckpoint(options.signal);
+        // A client that cannot answer is a client without roots, not an error.
+        return;
       }
+      cancellationCheckpoint(options.signal);
+
+      const adopted: string[] = [];
+      for (const candidate of offered) {
+        cancellationCheckpoint(options.signal);
+        try {
+          const resolved = await realpath(normalize(candidate));
+          cancellationCheckpoint(options.signal);
+          if (!adopted.includes(resolved)) {
+            adopted.push(resolved);
+          }
+        } catch {
+          cancellationCheckpoint(options.signal);
+          // A root that does not exist is skipped, exactly as a configured one
+          // would be refused at startup.
+        }
+      }
+      this.#clientRoots = adopted;
+    } catch (error) {
+      if (options.signal?.aborted === true) {
+        // A timed-out roots request did not produce a reusable answer. Let the
+        // next call on the same connection ask again instead of poisoning the
+        // session until a roots-changed notification happens to arrive.
+        this.#clientRootsFetched = false;
+      }
+      throw error;
     }
-    this.#clientRoots = adopted;
   }
 
   /** Real, existing project roots in configuration order. */
@@ -465,10 +630,15 @@ export class PolicyBoundary {
   }
 
   /** Accepts a client-supplied project root only when it is explicitly allowed. */
-  async resolveProjectRoot(candidate: string): Promise<string> {
+  async resolveProjectRoot(
+    candidate: string,
+    options: { readonly signal?: AbortSignal } = {},
+  ): Promise<string> {
+    cancellationCheckpoint(options.signal);
     // A client that advertises roots is asked before anything is refused for
     // want of one.
-    await this.ensureClientRoots();
+    await this.ensureClientRoots(options);
+    cancellationCheckpoint(options.signal);
     const allowed = this.projectRoots;
     if (allowed.length === 0) {
       throw new PolicyViolationError(
@@ -480,7 +650,9 @@ export class PolicyBoundary {
     let resolved: string;
     try {
       resolved = normalize(await realpath(candidate));
+      cancellationCheckpoint(options.signal);
     } catch (cause) {
+      cancellationCheckpoint(options.signal);
       throw new PolicyViolationError(
         ERROR_CODES.policyPathNotFound,
         'The requested project root does not exist.',
@@ -505,8 +677,13 @@ export class PolicyBoundary {
    * Traversal is rejected lexically, and the resolved location is re-checked
    * after the filesystem follows symlinks so a link cannot escape the root.
    */
-  async resolveWithinProject(root: string, relativePath: string): Promise<string> {
-    const allowedRoot = await this.resolveProjectRoot(root);
+  async resolveWithinProject(
+    root: string,
+    relativePath: string,
+    options: { readonly signal?: AbortSignal } = {},
+  ): Promise<string> {
+    cancellationCheckpoint(options.signal);
+    const allowedRoot = await this.resolveProjectRoot(root, options);
 
     const segments = relativePath.split(/[\\/]/u);
     if (
@@ -527,7 +704,9 @@ export class PolicyBoundary {
     let resolved: string;
     try {
       resolved = normalize(await realpath(candidate));
+      cancellationCheckpoint(options.signal);
     } catch (cause) {
+      cancellationCheckpoint(options.signal);
       throw new PolicyViolationError(
         ERROR_CODES.policyPathNotFound,
         'The requested project file does not exist.',
@@ -548,8 +727,9 @@ export class PolicyBoundary {
   /**
    * Lists readable files inside an allowed root.
    *
-   * Symlinks are never followed: an entry that is a link is skipped and
-   * reported, so a link cannot widen the set of files a capability can see.
+   * An entry observed as a link is skipped and reported. Directory identity
+   * and containment are checked on both sides of `opendir` before an entry is
+   * consumed, so a single swap cannot widen the content a capability sees.
    * Listing stops at the entry and depth budget rather than walking forever.
    */
   async listProjectFiles(
@@ -560,7 +740,8 @@ export class PolicyBoundary {
       readonly signal?: AbortSignal;
     } = {},
   ): Promise<ProjectListing> {
-    const allowedRoot = await this.resolveProjectRoot(root);
+    cancellationCheckpoint(options.signal);
+    const allowedRoot = await this.resolveProjectRoot(root, options);
     const maxEntries = options.maxEntries ?? DEFAULT_MAX_LISTED_FILES;
     const maxDepth = options.maxDepth ?? DEFAULT_MAX_LIST_DEPTH;
     assertPositiveInteger('maxEntries', maxEntries, DEFAULT_MAX_LISTED_FILES);
@@ -593,7 +774,27 @@ export class PolicyBoundary {
       return true;
     };
 
-    const walk = async (directory: string, depth: number): Promise<void> => {
+    const reportUnreadable = (directory: string): void => {
+      if (unreadablePaths.length < MAX_REPORTED_SKIPS) {
+        unreadablePaths.push(relative(allowedRoot, directory).split(sep).join('/') || '.');
+      } else {
+        state.truncated = true;
+      }
+    };
+    const reportLink = (path: string): void => {
+      if (skippedLinks.length < MAX_REPORTED_SKIPS) {
+        skippedLinks.push(path);
+      } else {
+        state.truncated = true;
+      }
+    };
+
+    const walk = async (
+      directory: string,
+      depth: number,
+      expectedIdentity?: FilesystemIdentity,
+    ): Promise<void> => {
+      cancellationCheckpoint(options.signal);
       if (stopped()) {
         return;
       }
@@ -601,6 +802,36 @@ export class PolicyBoundary {
         state.truncated = true;
         return;
       }
+      const requestedDirectory = relative(allowedRoot, directory).split(sep).join('/') || '.';
+      let beforeOpen;
+      try {
+        beforeOpen = await lstat(directory);
+        cancellationCheckpoint(options.signal);
+      } catch (error) {
+        cancellationCheckpoint(options.signal);
+        // A directory the process may not read is a fact about the project,
+        // not a failure of the server. It is recorded by its project-relative
+        // path so the caller knows what was left out, and the rest is read.
+        if (!isPermissionError(error)) {
+          throw error;
+        }
+        reportUnreadable(directory);
+        return;
+      }
+
+      // A child was classified before it was queued. Refuse if the name became
+      // another object before traversal reached it, and never let opendir
+      // follow a final-component link.
+      if (
+        !beforeOpen.isDirectory() ||
+        (expectedIdentity !== undefined && !sameFilesystemObject(expectedIdentity, beforeOpen))
+      ) {
+        throw changedProjectPath(
+          requestedDirectory,
+          'A project directory changed while it was being opened, so it was not read.',
+        );
+      }
+
       let entries;
       try {
         // Read lazily rather than materializing and sorting the whole
@@ -609,53 +840,92 @@ export class PolicyBoundary {
         // cannot do.
         entries = await opendir(directory);
       } catch (error) {
-        // A directory the process may not read is a fact about the project,
-        // not a failure of the server. It is recorded by its project-relative
-        // path so the caller knows what was left out, and the rest is read.
+        cancellationCheckpoint(options.signal);
         if (!isPermissionError(error)) {
           throw error;
         }
-        if (unreadablePaths.length < MAX_REPORTED_SKIPS) {
-          unreadablePaths.push(relative(allowedRoot, directory).split(sep).join('/') || '.');
-        } else {
-          state.truncated = true;
-        }
+        reportUnreadable(directory);
         return;
       }
+      // Keep the checkpoint under the close-finally below: expiry immediately
+      // after a successful opendir must not leak the newly opened handle.
 
-      const directories: string[] = [];
+      const directories: { readonly path: string; readonly identity: FilesystemIdentity }[] = [];
       const found: ProjectFile[] = [];
       try {
+        cancellationCheckpoint(options.signal);
+        // `opendir` has no public descriptor-stat operation. Re-resolve and
+        // re-stat before consuming its first entry, so a single swap around the
+        // open is caught rather than allowing an outside directory to be read.
+        let afterOpenResolved: string;
+        let afterOpen;
+        try {
+          afterOpenResolved = normalize(await realpath(directory));
+          cancellationCheckpoint(options.signal);
+          afterOpen = await lstat(directory);
+          cancellationCheckpoint(options.signal);
+        } catch (cause) {
+          throw changedProjectPath(
+            requestedDirectory,
+            'A project directory changed while it was being opened, so it was not read.',
+            cause,
+          );
+        }
+        if (
+          !contains(allowedRoot, afterOpenResolved) ||
+          !afterOpen.isDirectory() ||
+          !sameFilesystemObject(beforeOpen, afterOpen)
+        ) {
+          throw changedProjectPath(
+            requestedDirectory,
+            'A project directory changed or left its project root while it was being opened, so it was not read.',
+          );
+        }
+
         for await (const entry of entries) {
           // Checked per entry, so an aborted walk stops within one entry
           // rather than at the end of a directory that may hold a million.
-          options.signal?.throwIfAborted();
+          cancellationCheckpoint(options.signal);
           if (!spend()) {
             return;
           }
           const absolute = join(directory, entry.name);
           const portable = relative(allowedRoot, absolute).split(sep).join('/');
-          if (entry.isSymbolicLink()) {
+          let observed;
+          try {
+            // Dirent is only a snapshot. Judge the object that the name denotes
+            // now, without following its final component, before queuing or
+            // publishing metadata about it.
+            observed = await lstat(absolute);
+            cancellationCheckpoint(options.signal);
+          } catch (error) {
+            cancellationCheckpoint(options.signal);
+            if (isPermissionError(error)) {
+              reportUnreadable(absolute);
+              continue;
+            }
+            // A disappearing entry makes this a partial listing. No content was
+            // read, and claiming completeness would be the wrong answer.
+            state.truncated = true;
+            continue;
+          }
+          if (observed.isSymbolicLink()) {
             // Counted always, named up to the reporting cap: the developer
             // needs to know links were skipped, not to read ten thousand of
             // their names.
-            if (skippedLinks.length < MAX_REPORTED_SKIPS) {
-              skippedLinks.push(portable);
-            } else {
-              state.truncated = true;
-            }
+            reportLink(portable);
             continue;
           }
-          if (entry.isDirectory()) {
-            directories.push(absolute);
+          if (observed.isDirectory()) {
+            directories.push({ path: absolute, identity: observed });
             continue;
           }
-          if (!entry.isFile()) {
+          if (!observed.isFile()) {
             // A socket, a FIFO, a device. Counted, because encountering it was
             // work, and skipped, because it is not project content.
             continue;
           }
-          found.push({ path: portable, bytes: (await lstat(absolute)).size });
+          found.push({ path: portable, bytes: observed.size });
         }
       } finally {
         // An iteration left early keeps the directory handle open otherwise.
@@ -667,9 +937,9 @@ export class PolicyBoundary {
         found.sort((left, right) => left.path.localeCompare(right.path));
         files.push(...found);
       }
-      for (const child of directories.sort((left, right) => left.localeCompare(right))) {
-        options.signal?.throwIfAborted();
-        await walk(child, depth + 1);
+      for (const child of directories.sort((left, right) => left.path.localeCompare(right.path))) {
+        cancellationCheckpoint(options.signal);
+        await walk(child.path, depth + 1, child.identity);
         if (stopped()) {
           return;
         }
@@ -697,24 +967,48 @@ export class PolicyBoundary {
    * opened. A swap in between changes one of those two things, and a file that
    * is not the file whose containment was checked is refused rather than read.
    *
-   * The residual is stated rather than papered over: a swap of an intermediate
-   * *directory* between the resolution and the open is closed by the identity
-   * check, but closing it at the point of opening would need `openat`, which
-   * Node does not expose. See RR-POLICY-TRAVERSAL-OPENAT.
+   * The residual is stated rather than papered over: the before/after checks
+   * detect one swap of an intermediate directory, but an attacker able to
+   * perform repeated precisely timed swaps can still race pathname APIs.
+   * Binding containment at the point of opening needs `openat`, which Node does
+   * not expose. See RR-POLICY-TRAVERSAL-OPENAT.
    */
   async readProjectFile(
     root: string,
     relativePath: string,
     options: { readonly maxBytes?: number; readonly signal?: AbortSignal } = {},
   ): Promise<string> {
-    const resolved = await this.resolveWithinProject(root, relativePath);
+    cancellationCheckpoint(options.signal);
+    const allowedRoot = await this.resolveProjectRoot(root, options);
+    const resolved = await this.resolveWithinProject(allowedRoot, relativePath, options);
     const maxBytes = options.maxBytes ?? this.#config.maxOutputBytes;
     assertPositiveInteger('maxBytes', maxBytes, MAX_OUTPUT_BYTES_LIMIT);
+
+    let beforeOpen;
+    try {
+      beforeOpen = await lstat(resolved);
+      cancellationCheckpoint(options.signal);
+    } catch (cause) {
+      cancellationCheckpoint(options.signal);
+      throw changedProjectPath(
+        relativePath,
+        'The requested project file changed before it could be opened, so it was not read.',
+        cause,
+      );
+    }
+    if (!beforeOpen.isFile()) {
+      throw new PolicyViolationError(
+        ERROR_CODES.policyPathNotFound,
+        'The requested project path is not a regular file.',
+        { details: { requestedPath: relativePath } },
+      );
+    }
 
     let handle;
     try {
       handle = await open(resolved, oConstants.O_RDONLY | oConstants.O_NOFOLLOW);
     } catch (cause) {
+      cancellationCheckpoint(options.signal);
       throw new PolicyViolationError(
         ERROR_CODES.policyPathNotFound,
         'The requested project file could not be opened.',
@@ -723,7 +1017,11 @@ export class PolicyBoundary {
     }
 
     try {
+      // Inside the close-finally: expiry immediately after open cannot leak
+      // the descriptor whose work was abandoned.
+      cancellationCheckpoint(options.signal);
       const info = await handle.stat();
+      cancellationCheckpoint(options.signal);
       if (!info.isFile()) {
         throw new PolicyViolationError(
           ERROR_CODES.policyPathNotFound,
@@ -732,15 +1030,42 @@ export class PolicyBoundary {
         );
       }
 
-      // The object opened must be the object whose containment was checked.
-      // Identity rather than spelling: a rename between the two leaves a
-      // different device and inode behind, and that is the answer.
-      const atPath = await stat(resolved).catch(() => null);
-      if (atPath?.dev !== info.dev || atPath.ino !== info.ino) {
-        throw new PolicyViolationError(
-          ERROR_CODES.policyPathSymlinkEscape,
+      // The object opened must be the one checked immediately before the open.
+      // A replacement in that window changes its device/inode even when the
+      // replacement is another ordinary file with the same size.
+      if (!sameFilesystemObject(beforeOpen, info)) {
+        throw changedProjectPath(
+          relativePath,
           'The requested project file changed while it was being opened, so it was not read.',
-          { details: { requestedPath: relativePath } },
+        );
+      }
+
+      // Re-resolve after opening. This catches an intermediate directory that
+      // was replaced by a link after the first containment check. Compare the
+      // current pathname to the descriptor too, so the final name cannot have
+      // been replaced after open without invalidating the read.
+      let afterOpenResolved: string;
+      let atPath;
+      try {
+        afterOpenResolved = normalize(await realpath(resolved));
+        cancellationCheckpoint(options.signal);
+        atPath = await lstat(resolved);
+        cancellationCheckpoint(options.signal);
+      } catch (cause) {
+        throw changedProjectPath(
+          relativePath,
+          'The requested project file changed while it was being opened, so it was not read.',
+          cause,
+        );
+      }
+      if (
+        !contains(allowedRoot, afterOpenResolved) ||
+        !atPath.isFile() ||
+        !sameFilesystemObject(atPath, info)
+      ) {
+        throw changedProjectPath(
+          relativePath,
+          'The requested project file changed or left its project root while it was being opened, so it was not read.',
         );
       }
 
@@ -752,18 +1077,34 @@ export class PolicyBoundary {
         );
       }
 
-      // Bounded by the size measured on this descriptor, so a file that grows
-      // between the check and the read cannot enlarge it. One byte over the
-      // budget is read deliberately, so growth is detected rather than
-      // silently truncated into a plausible-looking result.
-      const buffer = Buffer.alloc(Math.min(info.size, maxBytes) + 1);
-      options.signal?.throwIfAborted();
-      const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
-      if (bytesRead > maxBytes) {
-        throw new PolicyViolationError(
-          ERROR_CODES.policyOutputTooLarge,
-          `The file grew past the ${String(maxBytes)} byte read limit while it was being read.`,
-          { details: { requestedPath: relativePath, maxBytes } },
+      // Read exactly the descriptor size plus one EOF probe. Regular-file reads
+      // may complete short, so loop until EOF or the probe byte instead of
+      // treating one short syscall as the whole file. Any count other than the
+      // statted size means the object shrank or grew while it was being read.
+      const buffer = Buffer.alloc(info.size + 1);
+      let bytesRead = 0;
+      while (bytesRead < buffer.length) {
+        cancellationCheckpoint(options.signal);
+        const chunk = await handle.read(buffer, bytesRead, buffer.length - bytesRead, bytesRead);
+        cancellationCheckpoint(options.signal);
+        if (chunk.bytesRead === 0) {
+          break;
+        }
+        bytesRead += chunk.bytesRead;
+      }
+      if (bytesRead !== info.size) {
+        throw changedProjectPath(
+          relativePath,
+          'The requested project file changed size while it was being read, so its partial content was not returned.',
+        );
+      }
+
+      const afterRead = await handle.stat();
+      cancellationCheckpoint(options.signal);
+      if (!sameFilesystemObject(info, afterRead) || afterRead.size !== info.size) {
+        throw changedProjectPath(
+          relativePath,
+          'The requested project file changed while it was being read, so its content was not returned.',
         );
       }
       return buffer.subarray(0, bytesRead).toString('utf8');
@@ -888,6 +1229,7 @@ export class PolicyBoundary {
     let current = target;
 
     for (let hop = 0; hop <= MAX_DOCUMENTATION_REDIRECTS; hop += 1) {
+      options.signal?.throwIfAborted();
       // Every hop is re-checked: a redirect off the allowlist is refused, not
       // followed, because the first response is attacker-influenced too.
       const hopSource = sourceForUrl(catalog, current);
@@ -995,11 +1337,7 @@ export class PolicyBoundary {
     // address the socket connects to, so a second DNS answer cannot be
     // substituted between the check and the connection.
     const guarded = createGuardedLookup(
-      (hostname, callback) => {
-        dnsLookup(hostname, { all: true }, (error, addresses) => {
-          callback(error, error === null ? addresses : []);
-        });
-      },
+      abortableAddressResolver(signal),
       (hostname, reason) =>
         new PolicyViolationError(
           ERROR_CODES.policyDocAddressBlocked,
@@ -1131,7 +1469,9 @@ export class PolicyBoundary {
     request: StudioPageRequest,
     options: { readonly signal?: AbortSignal; readonly maxBytes?: number } = {},
   ): Promise<StudioPageResponse> {
-    const session = await this.assertStudioAvailable();
+    const session = await this.assertStudioAvailable(
+      options.signal === undefined ? {} : { signal: options.signal },
+    );
 
     if (
       request.path.startsWith('/') ||
@@ -1202,7 +1542,8 @@ export class PolicyBoundary {
    * doing anything else — asking a developer for their dev accounts when the
    * capability is switched off would be asking for something useless.
    */
-  async assertStudioAvailable(): Promise<string> {
+  async assertStudioAvailable(options: { readonly signal?: AbortSignal } = {}): Promise<string> {
+    options.signal?.throwIfAborted();
     this.assertNetworkAllowed('studio');
     if (!this.#config.experimentalStudioLogs) {
       throw new PolicyViolationError(
@@ -1210,7 +1551,7 @@ export class PolicyBoundary {
         'Studio access is experimental and disabled. Start the server with --experimental-studio-logs to enable it.',
       );
     }
-    const session = await this.studioSession();
+    const session = await this.studioSession(options);
     if (session === null) {
       throw new PolicyViolationError(ERROR_CODES.policyStudioNoSession, missingSessionMessage());
     }
@@ -1242,6 +1583,7 @@ export class PolicyBoundary {
    * read only the environment, stayed empty.
    */
   async studioSession(options: { readonly signal?: AbortSignal } = {}): Promise<string | null> {
+    options.signal?.throwIfAborted();
     const file = this.#config.studioSessionFile;
     if (file !== undefined) {
       const read = await this.#readSessionFile(file, options.signal);
@@ -1302,6 +1644,7 @@ export class PolicyBoundary {
         oConstants.O_RDONLY | oConstants.O_NOFOLLOW | oConstants.O_NONBLOCK,
       );
     } catch (cause) {
+      cancellationCheckpoint(signal);
       const code = (cause as { code?: string } | null)?.code;
       return {
         session: null,
@@ -1313,7 +1656,9 @@ export class PolicyBoundary {
     }
 
     try {
+      cancellationCheckpoint(signal);
       const stats = await handle.stat();
+      cancellationCheckpoint(signal);
       if (!stats.isFile()) {
         return {
           session: null,
@@ -1347,16 +1692,19 @@ export class PolicyBoundary {
       // Bounded by the size just measured on this descriptor, so a file that
       // grows between the check and the read cannot enlarge it.
       const buffer = Buffer.alloc(Math.min(stats.size, MAX_SESSION_FILE_BYTES));
-      signal?.throwIfAborted();
+      cancellationCheckpoint(signal);
       const { bytesRead } = await handle.read(buffer, 0, buffer.length, 0);
+      cancellationCheckpoint(signal);
       return { session: buffer.subarray(0, bytesRead).toString('utf8'), refusedBecause: null };
     } catch {
+      cancellationCheckpoint(signal);
       return {
         session: null,
         refusedBecause: 'The configured Studio session file could not be read.',
       };
     } finally {
       await handle.close();
+      cancellationCheckpoint(signal);
     }
   }
 
@@ -1401,17 +1749,22 @@ export class PolicyBoundary {
   ): Promise<T> {
     assertPositiveInteger('operationTimeoutMs', timeoutMs, MAX_OPERATION_TIMEOUT_MS);
     const controller = new AbortController();
+    const timeoutError = new PolicyViolationError(
+      ERROR_CODES.policyTimeoutExceeded,
+      `The operation exceeded its ${String(timeoutMs)} ms deadline.`,
+      { details: { operation: label, timeoutMs } },
+    );
+    const expire = (): void => {
+      if (!controller.signal.aborted) {
+        controller.abort(timeoutError);
+      }
+    };
+    const unregisterDeadline = registerDeadline(controller.signal, timeoutMs, expire);
     let timer: NodeJS.Timeout | undefined;
     const expiry = new Promise<never>((_, reject) => {
       timer = setTimeout(() => {
-        controller.abort();
-        reject(
-          new PolicyViolationError(
-            ERROR_CODES.policyTimeoutExceeded,
-            `The operation exceeded its ${String(timeoutMs)} ms deadline.`,
-            { details: { operation: label, timeoutMs } },
-          ),
-        );
+        expire();
+        reject(timeoutError);
       }, timeoutMs);
     });
 
@@ -1431,13 +1784,16 @@ export class PolicyBoundary {
         // 2026-08-08 review measured twenty-eight filesystem operations
         // completing after the timeout had been reported, and a five hundred
         // file scan that shutdown rather than cancellation eventually stopped.
-        // So the failure is not published until the aborted work has actually
-        // stopped, or until the cleanup window says it will not.
+        // Cooperative work normally stops first. The cleanup ceiling preserves
+        // the public deadline if a missed signal or an uninterruptible native
+        // syscall does not; that residual is recorded rather than hidden by an
+        // unbounded second wait.
         await Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);
       }
       throw error;
     } finally {
       clearTimeout(timer);
+      unregisterDeadline();
     }
   }
 

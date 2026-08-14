@@ -42,8 +42,10 @@ denyAll(net, ['connect', 'createConnection'], 'net');
 denyAll(tls, ['connect'], 'tls');
 denyAll(http, ['request', 'get'], 'http');
 denyAll(https, ['request', 'get'], 'https');
-denyAll(dns, ['lookup', 'resolve', 'resolve4'], 'dns');
-denyAll(dnsPromises, ['lookup', 'resolve', 'resolve4'], 'dns/promises');
+denyAll(dns, ['lookup', 'resolve', 'resolve4', 'resolve6'], 'dns');
+denyAll(dnsPromises, ['lookup', 'resolve', 'resolve4', 'resolve6'], 'dns/promises');
+denyAll(dns.Resolver.prototype, ['resolve4', 'resolve6'], 'dns.Resolver');
+denyAll(dnsPromises.Resolver.prototype, ['resolve4', 'resolve6'], 'dns/promises.Resolver');
 denyAll(dgram, ['createSocket'], 'dgram');
 
 const originalFetch = globalThis.fetch;

@@ -1,4 +1,5 @@
 import type { ProjectListing } from '../policy.js';
+import { cancellationCheckpoint } from '../deadline.js';
 
 export type ProjectLayout = 'modern' | 'legacy' | 'hybrid' | 'unrecognized';
 
@@ -164,13 +165,17 @@ const COMPONENTS: readonly ComponentDefinition[] = [
   },
 ];
 
-function signalMap(listing: ProjectListing): Map<string, LayoutSignal> {
+function signalMap(listing: ProjectListing, signal?: AbortSignal): Map<string, LayoutSignal> {
   const signals = new Map<string, LayoutSignal>();
   for (const definition of SIGNALS) {
-    const files = listing.files
-      .map((file) => file.path)
-      .filter((path) => definition.match(path))
-      .slice(0, MAX_SIGNAL_FILES);
+    cancellationCheckpoint(signal);
+    const files: string[] = [];
+    for (const file of listing.files) {
+      cancellationCheckpoint(signal);
+      if (definition.match(file.path) && files.length < MAX_SIGNAL_FILES) {
+        files.push(file.path);
+      }
+    }
     signals.set(definition.id, {
       id: definition.id,
       description: definition.description,
@@ -195,8 +200,9 @@ function generationOf(legacy: readonly string[], modern: readonly string[]): Com
   return legacy.length > 0 ? 'legacy' : 'absent';
 }
 
-function firstMatch(listing: ProjectListing, pattern: RegExp): string | null {
+function firstMatch(listing: ProjectListing, pattern: RegExp, signal?: AbortSignal): string | null {
   for (const file of listing.files) {
+    cancellationCheckpoint(signal);
     const match = pattern.exec(file.path);
     if (match?.[1] !== undefined) {
       return match[1];
@@ -205,8 +211,9 @@ function firstMatch(listing: ProjectListing, pattern: RegExp): string | null {
   return null;
 }
 
-function templateGameKey(listing: ProjectListing): string | null {
+function templateGameKey(listing: ProjectListing, signal?: AbortSignal): string | null {
   for (const file of listing.files) {
+    cancellationCheckpoint(signal);
     const match = /^([a-z][a-z0-9]*)_\1\.tpl$/u.exec(file.path);
     if (match?.[1] !== undefined) {
       return match[1];
@@ -231,13 +238,13 @@ function directoryGameKey(listing: ProjectListing): string | null {
  * A partially migrated project usually still has one, so the directory name is
  * the last resort rather than the modern default.
  */
-function resolveGameKey(listing: ProjectListing): string | null {
+function resolveGameKey(listing: ProjectListing, signal?: AbortSignal): string | null {
   return (
-    firstMatch(listing, LEGACY_GAME_CLASS) ??
-    firstMatch(listing, LEGACY_ACTION) ??
-    firstMatch(listing, LEGACY_VIEW) ??
-    templateGameKey(listing) ??
-    firstMatch(listing, LEGACY_CLIENT) ??
+    firstMatch(listing, LEGACY_GAME_CLASS, signal) ??
+    firstMatch(listing, LEGACY_ACTION, signal) ??
+    firstMatch(listing, LEGACY_VIEW, signal) ??
+    templateGameKey(listing, signal) ??
+    firstMatch(listing, LEGACY_CLIENT, signal) ??
     directoryGameKey(listing)
   );
 }
@@ -257,12 +264,14 @@ function describe(components: readonly LayoutComponent[]): string {
  * from those verdicts. A project part-way through migration is `hybrid` and is
  * read normally; only a project where nothing resolves stays `unrecognized`.
  */
-export function detectLayout(listing: ProjectListing): LayoutDetection {
-  const signals = signalMap(listing);
+export function detectLayout(listing: ProjectListing, signal?: AbortSignal): LayoutDetection {
+  cancellationCheckpoint(signal);
+  const signals = signalMap(listing, signal);
   const ordered = [...signals.values()];
-  const gameKey = resolveGameKey(listing);
+  const gameKey = resolveGameKey(listing, signal);
 
   const components = COMPONENTS.map((definition) => {
+    cancellationCheckpoint(signal);
     const legacyFiles = files(signals, definition.legacySignal);
     const modernFiles = files(signals, definition.modernSignal);
     return {
@@ -274,7 +283,10 @@ export function detectLayout(listing: ProjectListing): LayoutDetection {
     } satisfies LayoutComponent;
   });
 
-  const resolved = components.filter((component) => component.generation !== 'absent');
+  const resolved = components.filter((component) => {
+    cancellationCheckpoint(signal);
+    return component.generation !== 'absent';
+  });
 
   if (resolved.length === 0) {
     return {

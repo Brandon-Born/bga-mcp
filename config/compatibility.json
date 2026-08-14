@@ -1,7 +1,7 @@
 {
   "$schema": "./compatibility.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-08",
+  "updatedAt": "2026-08-13",
   "claims": [
     {
       "id": "CLAIM-LAYOUT-MODERN",
@@ -17,11 +17,56 @@
       ],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
+        "E2E-AUDIT-DATABASE-MODERN-CLEAN",
         "E2E-INSPECT-PROJECT-MODERN",
-        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
-        "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
-        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES",
-        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+        "E2E-PRE-RELEASE-PARTIAL-SUPPORT",
+        "E2E-RESOURCE-LAYOUT-MATRIX",
+        "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
+        "E2E-VALIDATE-PROJECT-MODERN",
+        "E2E-VALIDATE-STATES-MODERN-CLEAN"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:audit_database_usage",
+          "scenarios": ["E2E-AUDIT-DATABASE-MODERN-CLEAN"]
+        },
+        {
+          "reference": "tool:inspect_project",
+          "scenarios": ["E2E-INSPECT-PROJECT-MODERN"]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": ["E2E-PRE-RELEASE-PARTIAL-SUPPORT"]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": ["E2E-VALIDATE-ACTIONS-MODERN-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": ["E2E-VALIDATE-PROJECT-MODERN"]
+        },
+        {
+          "reference": "tool:validate_state_machine",
+          "scenarios": ["E2E-VALIDATE-STATES-MODERN-CLEAN"]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/states",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        }
       ]
     },
     {
@@ -33,8 +78,56 @@
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
+        "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-INSPECT-PROJECT-LEGACY",
-        "E2E-VALIDATE-STATES-SEEDED-DEFECTS"
+        "E2E-PRE-RELEASE-CLEAN",
+        "E2E-RESOURCE-LAYOUT-MATRIX",
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-PROJECT-CLEAN",
+        "E2E-VALIDATE-STATES-CLEAN"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:audit_database_usage",
+          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+        },
+        {
+          "reference": "tool:inspect_project",
+          "scenarios": ["E2E-INSPECT-PROJECT-LEGACY"]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": ["E2E-PRE-RELEASE-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": ["E2E-VALIDATE-PROJECT-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_state_machine",
+          "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/states",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        }
       ]
     },
     {
@@ -46,12 +139,56 @@
       "fixtures": ["tests/fixtures/projects/hybrid"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
+        "E2E-AUDIT-DATABASE-HYBRID",
         "E2E-INSPECT-PROJECT-HYBRID",
-        "E2E-VALIDATE-PROJECT-HYBRID",
-        "E2E-VALIDATE-STATES-HYBRID",
+        "E2E-PRE-RELEASE-HYBRID",
+        "E2E-RESOURCE-LAYOUT-MATRIX",
         "E2E-VALIDATE-ACTIONS-HYBRID",
         "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
-        "E2E-AUDIT-DATABASE-HYBRID"
+        "E2E-VALIDATE-PROJECT-HYBRID",
+        "E2E-VALIDATE-STATES-HYBRID"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:audit_database_usage",
+          "scenarios": ["E2E-AUDIT-DATABASE-HYBRID"]
+        },
+        {
+          "reference": "tool:inspect_project",
+          "scenarios": ["E2E-INSPECT-PROJECT-HYBRID"]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": ["E2E-PRE-RELEASE-HYBRID"]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": ["E2E-VALIDATE-ACTIONS-HYBRID"]
+        },
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-HYBRID"]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": ["E2E-VALIDATE-PROJECT-HYBRID"]
+        },
+        {
+          "reference": "tool:validate_state_machine",
+          "scenarios": ["E2E-VALIDATE-STATES-HYBRID"]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/states",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+        }
       ]
     },
     {
@@ -60,6 +197,90 @@
       "value": "unrecognized",
       "support": "unknown",
       "notes": "A project matching neither fixture is reported as an unrecognized layout with an error finding, never as a clean result. Detection lives in BGA-100; deeper parsing of an unknown project is out of scope."
+    },
+    {
+      "id": "CLAIM-ENVIRONMENT-LOCAL",
+      "dimension": "environment",
+      "value": "local",
+      "support": "supported",
+      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted.",
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-DOCS-ADVERTISED",
+        "E2E-DOCS-TOPIC-LISTED",
+        "E2E-FRAMEWORK-VERSION-LISTED",
+        "E2E-INSPECT-PROJECT-LEGACY",
+        "E2E-LEGACY-CLIENT-ROOTS",
+        "E2E-PRE-RELEASE-CLEAN",
+        "E2E-RESOURCE-DIAGNOSTICS",
+        "E2E-RESOURCE-STATES",
+        "E2E-RESOURCE-SUMMARY",
+        "E2E-SETUP-READY",
+        "E2E-STUDIO-LOGS-DISABLED",
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-PROJECT-CLEAN",
+        "E2E-VALIDATE-STATES-CLEAN"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:audit_database_usage",
+          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+        },
+        { "reference": "tool:check_setup", "scenarios": ["E2E-SETUP-READY"] },
+        {
+          "reference": "tool:inspect_project",
+          "scenarios": ["E2E-INSPECT-PROJECT-LEGACY", "E2E-LEGACY-CLIENT-ROOTS"]
+        },
+        {
+          "reference": "tool:read_studio_logs",
+          "scenarios": ["E2E-STUDIO-LOGS-DISABLED"]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": ["E2E-PRE-RELEASE-CLEAN"]
+        },
+        {
+          "reference": "tool:search_bga_docs",
+          "scenarios": ["E2E-DOCS-ADVERTISED"]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": ["E2E-VALIDATE-PROJECT-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_state_machine",
+          "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+        },
+        {
+          "reference": "resource:bga://docs/{topic}",
+          "scenarios": ["E2E-DOCS-TOPIC-LISTED"]
+        },
+        {
+          "reference": "resource:bga://framework/version",
+          "scenarios": ["E2E-FRAMEWORK-VERSION-LISTED"]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+        },
+        {
+          "reference": "resource:bga://project/states",
+          "scenarios": ["E2E-RESOURCE-STATES"]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-RESOURCE-SUMMARY"]
+        }
+      ]
     },
     {
       "id": "CLAIM-FILEGEN-MODERN",
@@ -132,14 +353,91 @@
       "value": "2025-11-25",
       "support": "supported",
       "notes": "Legacy era. Covered by official conformance and by packaged stdio end-to-end tests.",
-      "scenarios": ["E2E-STDIO-LEGACY-INITIALIZE", "GATE-COMPATIBILITY-MATRIX"]
+      "scenarios": [
+        "E2E-AUDIT-DATABASE-CLEAN",
+        "E2E-DOCS-ADVERTISED",
+        "E2E-DOCS-TOPIC-LISTED",
+        "E2E-FRAMEWORK-VERSION-LISTED",
+        "E2E-INSPECT-PROJECT-LEGACY",
+        "E2E-PRE-RELEASE-CLEAN",
+        "E2E-RESOURCE-DIAGNOSTICS",
+        "E2E-RESOURCE-STATES",
+        "E2E-RESOURCE-SUMMARY",
+        "E2E-SETUP-READY",
+        "E2E-STDIO-LEGACY-INITIALIZE",
+        "E2E-STUDIO-LOGS-DISABLED",
+        "E2E-VALIDATE-ACTIONS-CLEAN",
+        "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+        "E2E-VALIDATE-PROJECT-CLEAN",
+        "E2E-VALIDATE-STATES-CLEAN",
+        "GATE-COMPATIBILITY-MATRIX"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:audit_database_usage",
+          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+        },
+        { "reference": "tool:check_setup", "scenarios": ["E2E-SETUP-READY"] },
+        {
+          "reference": "tool:inspect_project",
+          "scenarios": ["E2E-INSPECT-PROJECT-LEGACY"]
+        },
+        {
+          "reference": "tool:read_studio_logs",
+          "scenarios": ["E2E-STUDIO-LOGS-DISABLED"]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": ["E2E-PRE-RELEASE-CLEAN"]
+        },
+        {
+          "reference": "tool:search_bga_docs",
+          "scenarios": ["E2E-DOCS-ADVERTISED"]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": ["E2E-VALIDATE-PROJECT-CLEAN"]
+        },
+        {
+          "reference": "tool:validate_state_machine",
+          "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+        },
+        {
+          "reference": "resource:bga://docs/{topic}",
+          "scenarios": ["E2E-DOCS-TOPIC-LISTED"]
+        },
+        {
+          "reference": "resource:bga://framework/version",
+          "scenarios": ["E2E-FRAMEWORK-VERSION-LISTED"]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+        },
+        {
+          "reference": "resource:bga://project/states",
+          "scenarios": ["E2E-RESOURCE-STATES"]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-RESOURCE-SUMMARY"]
+        }
+      ]
     },
     {
       "id": "CLAIM-PROTOCOL-2026-07-28",
       "dimension": "protocol",
       "value": "2026-07-28",
       "support": "unknown",
-      "notes": "Modern-era handshake and discovery work through the packaged stdio server, but the pinned official conformance CLI offers no applicable stdio scenarios and the input-required roots/setup flow is missing. Public capabilities no longer claim this protocol version until BGA-017 and BGA-318 pass. The observed smoke is retained in the adversarial-review record rather than attached here as support evidence for an unknown claim."
+      "notes": "Modern-era handshake, discovery, and multi-round-trip roots and non-secret setup flows work through the packaged stdio server, but the pinned official conformance CLI offers no applicable stdio scenarios. Public capabilities do not claim this protocol version until release evidence deliberately establishes the complete contract; these packaged observations are retained without upgrading this unknown claim."
     },
     {
       "id": "CLAIM-PROTOCOL-OTHER",

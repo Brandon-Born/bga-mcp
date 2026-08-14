@@ -1,7 +1,7 @@
 {
   "$schema": "./threat-model.schema.json",
   "schemaVersion": 1,
-  "reviewedAt": "2026-08-09",
+  "reviewedAt": "2026-08-13",
   "assets": [
     {
       "id": "ASSET-LOCAL-SOURCE",
@@ -218,7 +218,12 @@
       "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-STUDIO-CREDENTIALS"],
       "boundary": "TB-CLIENT-INPUT",
       "impact": "Private keys or unrelated source are read and copied into the client context.",
-      "mitigations": ["TM-POLICY-ROOTS", "TM-POLICY-TRAVERSAL", "TM-POLICY-SINGLE-GATE"]
+      "mitigations": [
+        "TM-POLICY-ROOTS",
+        "TM-POLICY-TRAVERSAL",
+        "TM-POLICY-SINGLE-GATE",
+        "TM-POLICY-SINGLE-SWAP-REFUSAL"
+      ]
     },
     {
       "id": "AC-SYMLINK-ESCAPE",
@@ -227,7 +232,11 @@
       "assets": ["ASSET-LOCAL-PRIVATE"],
       "boundary": "TB-LOCAL-FILESYSTEM",
       "impact": "A crafted repository exfiltrates files the developer never configured.",
-      "mitigations": ["TM-POLICY-SYMLINK", "TM-POLICY-OBJECT-BOUND-READS"]
+      "mitigations": [
+        "TM-POLICY-SYMLINK",
+        "TM-POLICY-OBJECT-BOUND-READS",
+        "TM-POLICY-SINGLE-SWAP-REFUSAL"
+      ]
     },
     {
       "id": "AC-UNCONFIGURED-ROOT",
@@ -261,6 +270,7 @@
       "mitigations": [
         "TM-POLICY-TIMEOUT",
         "TM-POLICY-CANCELLATION",
+        "TM-POLICY-FILESYSTEM-DEADLINE-QUIESCENCE",
         "TM-POLICY-OUTPUT-LIMIT",
         "TM-POLICY-FINAL-OUTPUT-LIMIT",
         "TM-POLICY-OBJECT-BOUND-READS"
@@ -539,7 +549,11 @@
       "assets": ["ASSET-CLIENT-CONTEXT", "ASSET-STUDIO-CREDENTIALS"],
       "boundary": "TB-STUDIO-READ",
       "impact": "A special or oversized credential file, slow body, or ignored abort can hang or continue work after the public call returns.",
-      "mitigations": ["TM-STUDIO-FILE-SESSION-BLOCKED", "TM-STUDIO-READ-CANCELLATION"]
+      "mitigations": [
+        "TM-STUDIO-FILE-SESSION-BLOCKED",
+        "TM-STUDIO-READ-NETWORK-CANCELLATION",
+        "TM-STUDIO-READ-CANCELLATION"
+      ]
     }
   ],
   "mitigations": [
@@ -581,12 +595,21 @@
     },
     {
       "id": "TM-POLICY-OBJECT-BOUND-READS",
-      "title": "Containment, type, and size checks are bound to the exact opened object and all encountered entries consume one budget",
+      "title": "Descriptor-bound file reads validate type and identity, exact-size reads refuse post-stat growth, and all encountered entries consume one budget",
       "boundary": "TB-LOCAL-FILESYSTEM",
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-330",
-      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS"]
+      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS", "INT-POLICY-POST-STAT-GROWTH-REFUSAL"]
+    },
+    {
+      "id": "TM-POLICY-SINGLE-SWAP-REFUSAL",
+      "title": "A forced intermediate-directory link swap after containment or configured-directory replacement before traversal is refused without returning marker content",
+      "boundary": "TB-LOCAL-FILESYSTEM",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-330",
+      "scenarios": ["INT-POLICY-SINGLE-SWAP-REFUSAL"]
     },
     {
       "id": "TM-POLICY-SINGLE-GATE",
@@ -621,6 +644,15 @@
       "status": "planned",
       "backlog": "BGA-326",
       "scenarios": ["E2E-POLICY-CANCELLATION"]
+    },
+    {
+      "id": "TM-POLICY-FILESYSTEM-DEADLINE-QUIESCENCE",
+      "title": "The public timeout waits for instrumented listing and descriptor-read syscalls to finish, and no later filesystem operation is recorded",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-326",
+      "scenarios": ["E2E-FILESYSTEM-CANCELLATION"]
     },
     {
       "id": "TM-POLICY-OUTPUT-LIMIT",
@@ -869,7 +901,7 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-326",
-      "scenarios": ["E2E-DOCS-RESPONSE-LIFECYCLE"]
+      "scenarios": ["UNIT-DNS-CANCELLATION-SCOPED", "E2E-DOCS-RESPONSE-LIFECYCLE"]
     },
     {
       "id": "TM-DOC-SNAPSHOT-INTEGRITY",
@@ -1053,6 +1085,15 @@
       "scenarios": ["E2E-STUDIO-READ-ADDRESS-NORMALIZATION"]
     },
     {
+      "id": "TM-STUDIO-READ-NETWORK-CANCELLATION",
+      "title": "Studio page requests and response bodies stop and quiesce when the deadline expires",
+      "boundary": "TB-STUDIO-READ",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-326",
+      "scenarios": ["E2E-STUDIO-READ-NETWORK-CANCELLATION"]
+    },
+    {
       "id": "TM-STUDIO-READ-CANCELLATION",
       "title": "Studio credential reads, requests, response bodies, and parsing stop and quiesce when the deadline expires",
       "boundary": "TB-STUDIO-READ",
@@ -1119,7 +1160,7 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Packaged public-tool policy evidence now exists for selected refusal paths, but it does not prove cancellation. BGA-326 owns that remaining gap.",
+      "description": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, and quiescence for instrumented listing and descriptor-read syscalls. It does not yet prove an installed synchronous parser deadline or every native filesystem primitive; BGA-326 owns that remaining gap.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },
@@ -1183,7 +1224,7 @@
     },
     {
       "id": "RR-POLICY-TRAVERSAL-OPENAT",
-      "description": "Containment is bound to the opened object by device and inode identity, which refuses a file that is not the one whose path was checked. Binding it at the moment of opening would need descriptor-relative opens; Node exposes no openat, so a swap of an intermediate directory is caught after the fact rather than made impossible.",
+      "description": "Direct-policy integration barriers prove refusal in selected single-swap windows, but the installed-artifact barrier is still missing. Portable Node pathname checks cannot prevent repeated adversarial swaps across successive identity and containment checks because Node exposes no descriptor-relative openat; the integration evidence is not openat equivalence.",
       "abuseCases": ["AC-SYMLINK-ESCAPE", "AC-PATH-TRAVERSAL"],
       "acceptedBy": "Brandon Born"
     },

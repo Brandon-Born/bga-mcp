@@ -21,6 +21,8 @@
  * Pure functions, no I/O.
  */
 
+import { cancellationCheckpoint } from '../deadline.js';
+
 export interface StudioLogLine {
   readonly raw: string;
   readonly timestamp: string | null;
@@ -35,7 +37,8 @@ const LINE =
   /^(?<timestamp>\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2})\s+\[(?<level>[a-z]+)\]\s+\[T(?<table>[0-9]+)\]\s+\[(?<actorId>[0-9]+)\/(?<actorName>[^\]]*)\]\s*(?<message>.*)$/u;
 
 /** Parses one line, keeping the original text whatever happens. */
-export function parseStudioLogLine(raw: string): StudioLogLine {
+export function parseStudioLogLine(raw: string, signal?: AbortSignal): StudioLogLine {
+  cancellationCheckpoint(signal);
   const match = LINE.exec(raw.trim());
   if (match?.groups === undefined) {
     return {
@@ -69,8 +72,10 @@ export function parseStudioLogLine(raw: string): StudioLogLine {
  * reported a successful empty log for a project name that does not exist, which
  * is the very confusion this check exists to prevent.
  */
-export function saysProjectMissing(pageText: string): boolean {
+export function saysProjectMissing(pageText: string, signal?: AbortSignal): boolean {
+  cancellationCheckpoint(signal);
   const flattened = pageText.replace(/['\u2018\u2019\u02bc`\u00b4]/gu, '');
+  cancellationCheckpoint(signal);
   return /the project doesnt exist or you dont have access to it/iu.test(flattened);
 }
 
@@ -78,14 +83,19 @@ export function saysProjectMissing(pageText: string): boolean {
 const LOG_LINE_START = /^\d{2}\/\d{2}\s+\d{2}:\d{2}:\d{2}\s/u;
 
 /** True when a line is a log line at all, whether or not its actor can be read. */
-export function isStudioLogLine(line: string): boolean {
+export function isStudioLogLine(line: string, signal?: AbortSignal): boolean {
+  cancellationCheckpoint(signal);
   return LOG_LINE_START.test(line.trim());
 }
 
-export function parseStudioLog(text: string): readonly StudioLogLine[] {
-  return text
-    .split(/\r?\n/u)
-    .map((line) => line.trim())
-    .filter((line) => isStudioLogLine(line))
-    .map((line) => parseStudioLogLine(line));
+export function parseStudioLog(text: string, signal?: AbortSignal): readonly StudioLogLine[] {
+  const parsed: StudioLogLine[] = [];
+  for (const raw of text.split(/\r?\n/u)) {
+    cancellationCheckpoint(signal);
+    const line = raw.trim();
+    if (isStudioLogLine(line, signal)) {
+      parsed.push(parseStudioLogLine(line, signal));
+    }
+  }
+  return parsed;
 }

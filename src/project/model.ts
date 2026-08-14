@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import type { ProjectListing } from '../policy.js';
 import {
   detectLayout,
@@ -225,9 +226,10 @@ function unsupportedSyntax(
   };
 }
 
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
+function summarize(findings: readonly DiagnosticFinding[], signal?: AbortSignal): DiagnosticResult {
   const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
   for (const finding of findings) {
+    cancellationCheckpoint(signal);
     if (finding.kind === 'unsupported-syntax') {
       summary.unsupported += 1;
     } else if (finding.severity === 'error') {
@@ -252,7 +254,9 @@ async function readMetadata(
   detection: LayoutDetection,
   paths: readonly string[],
   findings: DiagnosticFinding[],
+  signal?: AbortSignal,
 ): Promise<GameMetadata & { source: string | null }> {
+  cancellationCheckpoint(signal);
   // The metadata file is chosen by its own generation, not by the shape of the
   // rest of the project: a project can move to modules/php while keeping
   // gameinfos.inc.php, and can move its metadata while keeping everything else.
@@ -282,8 +286,11 @@ async function readMetadata(
 
   const layout = source === legacySource ? 'legacy' : 'modern';
   const text = await reader.read(source);
-  const outcome = layout === 'legacy' ? parseLegacyMetadata(text) : parseModernMetadata(text);
+  cancellationCheckpoint(signal);
+  const outcome =
+    layout === 'legacy' ? parseLegacyMetadata(text, signal) : parseModernMetadata(text, signal);
   for (const construct of outcome.unsupported) {
+    cancellationCheckpoint(signal);
     findings.push(
       unsupportedSyntax(
         'project.metadata.unsupported',
@@ -308,15 +315,20 @@ async function readMetadata(
 function mergeStates(
   legacy: readonly StateDefinition[],
   modern: readonly StateDefinition[],
+  signal?: AbortSignal,
 ): readonly StateDefinition[] {
   const merged = new Map<number, StateDefinition>();
   for (const definition of legacy) {
+    cancellationCheckpoint(signal);
     merged.set(definition.id, definition);
   }
   for (const definition of modern) {
+    cancellationCheckpoint(signal);
     merged.set(definition.id, definition);
   }
-  return [...merged.values()].sort((left, right) => left.id - right.id);
+  const ordered = [...merged.values()].sort((left, right) => left.id - right.id);
+  cancellationCheckpoint(signal);
+  return ordered;
 }
 
 /**
@@ -327,18 +339,25 @@ function mergeStates(
  * state declared once in each source is a migration in progress, not a
  * duplicate, so the two sources are counted separately.
  */
-function duplicateIdentifiers(...sources: readonly (readonly StateDefinition[])[]): number[] {
+function duplicateIdentifiers(
+  sources: readonly (readonly StateDefinition[])[],
+  signal?: AbortSignal,
+): number[] {
   const duplicates = new Set<number>();
   for (const source of sources) {
+    cancellationCheckpoint(signal);
     const seen = new Set<number>();
     for (const definition of source) {
+      cancellationCheckpoint(signal);
       if (seen.has(definition.id)) {
         duplicates.add(definition.id);
       }
       seen.add(definition.id);
     }
   }
-  return [...duplicates].sort((left, right) => left - right);
+  const ordered = [...duplicates].sort((left, right) => left - right);
+  cancellationCheckpoint(signal);
+  return ordered;
 }
 
 const NO_INITIAL_STATE = {
@@ -363,9 +382,15 @@ function resolveInitialState(
   supporting: readonly PhpSource[],
   classIds: ReadonlyMap<string, number>,
   unreadable: UnreadableConstruct[],
+  signal?: AbortSignal,
 ): ProjectStates['initial'] {
-  const declared = new Set(definitions.map((state) => state.id));
-  const setup = readInitialState(supporting, definitions, classIds);
+  cancellationCheckpoint(signal);
+  const declared = new Set<number>();
+  for (const state of definitions) {
+    cancellationCheckpoint(signal);
+    declared.add(state.id);
+  }
+  const setup = readInitialState(supporting, definitions, classIds, signal);
 
   if (setup.unreadable !== null) {
     unreadable.push(setup.unreadable);
@@ -411,11 +436,14 @@ async function readStates(
   paths: readonly string[],
   supporting: readonly PhpSource[],
   findings: DiagnosticFinding[],
+  signal?: AbortSignal,
 ): Promise<ProjectStates> {
+  cancellationCheckpoint(signal);
   const legacySource = paths.find((path) => path === 'states.inc.php');
-  const modernStateFiles = paths.filter(
-    (path) => path.startsWith('modules/php/States/') && path.endsWith('.php'),
-  );
+  const modernStateFiles = paths.filter((path) => {
+    cancellationCheckpoint(signal);
+    return path.startsWith('modules/php/States/') && path.endsWith('.php');
+  });
 
   const sources: string[] = [];
   let legacyDefinitions: readonly StateDefinition[] = [];
@@ -425,7 +453,9 @@ async function readStates(
 
   if (legacySource !== undefined) {
     sources.push(legacySource);
-    const outcome = parseLegacyStates(await reader.read(legacySource), supporting);
+    const legacyText = await reader.read(legacySource);
+    cancellationCheckpoint(signal);
+    const outcome = parseLegacyStates(legacyText, supporting, signal);
     legacyDefinitions = outcome.value;
     unreadable.push(...outcome.unsupported.map((entry) => ({ ...entry, path: legacySource })));
   }
@@ -433,9 +463,14 @@ async function readStates(
   if (modernStateFiles.length > 0) {
     sources.push(...modernStateFiles);
     const classSources = await Promise.all(
-      modernStateFiles.map(async (path) => ({ path, text: await reader.read(path) })),
+      modernStateFiles.map(async (path) => {
+        cancellationCheckpoint(signal);
+        const text = await reader.read(path);
+        cancellationCheckpoint(signal);
+        return { path, text };
+      }),
     );
-    const outcome = parseModernStates(classSources, supporting);
+    const outcome = parseModernStates(classSources, supporting, signal);
     modernDefinitions = outcome.value;
     classIds = outcome.classIds;
     unreadable.push(...outcome.unsupported);
@@ -473,10 +508,11 @@ async function readStates(
     };
   }
 
-  const definitions = mergeStates(legacyDefinitions, modernDefinitions);
-  const initial = resolveInitialState(definitions, supporting, classIds, unreadable);
+  const definitions = mergeStates(legacyDefinitions, modernDefinitions, signal);
+  const initial = resolveInitialState(definitions, supporting, classIds, unreadable, signal);
 
   for (const entry of unreadable) {
+    cancellationCheckpoint(signal);
     findings.push(
       unsupportedSyntax(
         'project.states.unsupported',
@@ -516,7 +552,7 @@ async function readStates(
       declarations: !unreadable.some((entry) => entry.scope === 'declaration'),
       edges: !unreadable.some((entry) => entry.scope === 'edge'),
     },
-    duplicateIds: duplicateIdentifiers(legacyDefinitions, modernDefinitions),
+    duplicateIds: duplicateIdentifiers([legacyDefinitions, modernDefinitions], signal),
     initial,
   };
 }
@@ -536,6 +572,7 @@ async function readSupportingSources(
   reader: ProjectReader,
   components: readonly ProjectComponent[],
   findings: DiagnosticFinding[],
+  signal?: AbortSignal,
 ): Promise<PhpSource[]> {
   const paths = components
     .filter((component) => component.id === 'game-logic')
@@ -545,9 +582,12 @@ async function readSupportingSources(
 
   const sources: PhpSource[] = [];
   for (const path of paths) {
+    cancellationCheckpoint(signal);
     try {
       sources.push({ path, text: await reader.read(path) });
+      cancellationCheckpoint(signal);
     } catch {
+      cancellationCheckpoint(signal);
       findings.push(
         unsupportedSyntax(
           'project.states.unsupported',
@@ -572,13 +612,22 @@ async function readSupportingSources(
 export async function buildProjectModel(
   listing: ProjectListing,
   reader: ProjectReader,
+  options: { readonly signal?: AbortSignal } = {},
 ): Promise<ProjectModel> {
-  const detection = detectLayout(listing);
-  const paths = listing.files.map((file) => file.path);
+  cancellationCheckpoint(options.signal);
+  const detection = detectLayout(listing, options.signal);
+  const paths = listing.files.map((file) => {
+    cancellationCheckpoint(options.signal);
+    return file.path;
+  });
   const findings: DiagnosticFinding[] = [];
 
   const components = COMPONENT_RULES.map((rule) => {
-    const files = paths.filter((path) => rule.match(path, detection.gameKey));
+    cancellationCheckpoint(options.signal);
+    const files = paths.filter((path) => {
+      cancellationCheckpoint(options.signal);
+      return rule.match(path, detection.gameKey);
+    });
     return {
       id: rule.id,
       present: files.length > 0,
@@ -612,6 +661,7 @@ export async function buildProjectModel(
   }
 
   for (const component of components) {
+    cancellationCheckpoint(options.signal);
     if (component.expected && !component.present) {
       findings.push(
         issue(
@@ -640,6 +690,7 @@ export async function buildProjectModel(
   }
 
   for (const path of listing.unreadablePaths) {
+    cancellationCheckpoint(options.signal);
     findings.push(
       issue(
         'project.listing.unreadable',
@@ -653,6 +704,7 @@ export async function buildProjectModel(
   }
 
   for (const link of listing.skippedLinks) {
+    cancellationCheckpoint(options.signal);
     findings.push(
       issue(
         'project.listing.link-skipped',
@@ -665,16 +717,23 @@ export async function buildProjectModel(
     );
   }
 
-  const metadata = await readMetadata(reader, detection, paths, findings);
+  const metadata = await readMetadata(reader, detection, paths, findings, options.signal);
   const hasStateSource = paths.some(
     (path) =>
       path === 'states.inc.php' ||
       (path.startsWith('modules/php/States/') && path.endsWith('.php')),
   );
   const supporting = hasStateSource
-    ? await readSupportingSources(reader, components, findings)
+    ? await readSupportingSources(reader, components, findings, options.signal)
     : [];
-  const states = await readStates(reader, detection.layout, paths, supporting, findings);
+  const states = await readStates(
+    reader,
+    detection.layout,
+    paths,
+    supporting,
+    findings,
+    options.signal,
+  );
 
   return {
     schemaVersion: MODEL_SCHEMA_VERSION,
@@ -688,6 +747,6 @@ export async function buildProjectModel(
     truncated: listing.truncated,
     skippedLinks: listing.skippedLinks,
     unreadablePaths: listing.unreadablePaths,
-    diagnostics: summarize(findings),
+    diagnostics: summarize(findings, options.signal),
   };
 }

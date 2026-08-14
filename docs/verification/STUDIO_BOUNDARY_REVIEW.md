@@ -156,6 +156,14 @@ possible:
   messages can retain credential shapes. BGA-323, BGA-326, and BGA-327 own the
   corresponding read-boundary controls.
 
+The 2026-08-13 cancellation correction closes the Studio network portion of
+that historical finding. `TM-STUDIO-READ-NETWORK-CANCELLATION` is implemented:
+the installed-artifact probe observes the stalled Studio body stop while the
+same MCP client remains alive and responsive. The broader
+`TM-STUDIO-READ-CANCELLATION` remains planned because no deterministic probe
+yet forces synchronous parsing past a deadline, and the terminal preflight is
+still outside `runWithTimeout`.
+
 No browser storage or credential value was inspected or printed by the
 reviewer. A freshly packed and installed MCP discovered the tool. The real
 project name failed schema validation without a request; the observed numeric

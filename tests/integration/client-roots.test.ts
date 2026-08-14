@@ -1,12 +1,31 @@
 import { mkdtemp, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+import type { ServerContext } from '@modelcontextprotocol/server';
 
 import { createPolicyBoundary } from '../../src/policy.js';
+import {
+  isProjectRootInputRequired,
+  resolveProjectRootForRequest,
+} from '../../src/tools/project-context.js';
 
 let scratch: string;
 let projectA: string;
 let projectB: string;
+
+function requestContext(
+  inputResponses?: Record<string, unknown>,
+  droppedInputResponseKeys?: readonly string[],
+): ServerContext {
+  return {
+    mcpReq: {
+      ...(inputResponses === undefined ? {} : { inputResponses }),
+      ...(droppedInputResponseKeys === undefined ? {} : { droppedInputResponseKeys }),
+    },
+  } as unknown as ServerContext;
+}
 
 beforeAll(async () => {
   scratch = await realpath(await mkdtemp(join(tmpdir(), 'bga-mcp-roots-')));
@@ -82,6 +101,22 @@ describe('project roots offered by the client', () => {
     policy.invalidateClientRoots();
     await policy.ensureClientRoots();
     expect(calls).toBe(2);
+
+    const controller = new AbortController();
+    const timeout = new Error('roots request timed out');
+    let retries = 0;
+    policy.setClientRootsProvider((signal) => {
+      retries += 1;
+      if (retries === 1) {
+        controller.abort(timeout);
+        signal?.throwIfAborted();
+      }
+      return Promise.resolve([projectB]);
+    });
+    await expect(policy.ensureClientRoots({ signal: controller.signal })).rejects.toBe(timeout);
+    await policy.ensureClientRoots();
+    expect(retries).toBe(2);
+    expect(policy.projectRoots).toEqual([projectB]);
   });
 
   it('[INT-CLIENT-ROOTS-ADOPTED] treats a client that cannot answer as one without roots', async () => {
@@ -98,5 +133,104 @@ describe('project roots offered by the client', () => {
     await policy.resolveProjectRoot(projectA).catch((error: unknown) => {
       expect((error as Error).message).toContain('client offered none');
     });
+  });
+
+  it('[INT-CLIENT-ROOTS-ADOPTED] models a missing modern roots response in-band', async () => {
+    const policy = await createPolicyBoundary({});
+    const required = await resolveProjectRootForRequest(
+      policy,
+      undefined,
+      'modern',
+      requestContext(),
+    );
+    expect(isProjectRootInputRequired(required)).toBe(true);
+    expect(required).toEqual({
+      resultType: 'input_required',
+      inputRequests: { 'project-roots': { method: 'roots/list' } },
+    });
+    expect(isProjectRootInputRequired(projectA)).toBe(false);
+
+    for (const context of [requestContext({}), requestContext(undefined, ['project-roots'])]) {
+      await expect(
+        resolveProjectRootForRequest(policy, undefined, 'modern', context),
+      ).rejects.toMatchObject({ code: 'policy.root.unconfigured' });
+    }
+    await expect(
+      resolveProjectRootForRequest(
+        policy,
+        undefined,
+        'modern',
+        requestContext({ 'project-roots': { action: 'decline' } }),
+      ),
+    ).rejects.toMatchObject({ code: 'policy.root.unconfigured' });
+
+    const notDropped = await resolveProjectRootForRequest(
+      policy,
+      undefined,
+      'modern',
+      requestContext(undefined, []),
+    );
+    expect(isProjectRootInputRequired(notDropped)).toBe(true);
+  });
+
+  it('[INT-CLIENT-ROOTS-ADOPTED] validates every modern root outcome before adoption', async () => {
+    const resolveResponse = async (
+      roots: readonly string[],
+      ambiguous?: (count: number) => string,
+      signal?: AbortSignal,
+    ) => {
+      const policy = await createPolicyBoundary({});
+      return await resolveProjectRootForRequest(
+        policy,
+        undefined,
+        'modern',
+        requestContext({
+          'project-roots': { roots: roots.map((uri) => ({ uri })) },
+        }),
+        ambiguous,
+        signal,
+      );
+    };
+
+    await expect(
+      resolveResponse([pathToFileURL(projectA).href], undefined, new AbortController().signal),
+    ).resolves.toBe(projectA);
+    await expect(resolveResponse(['not a URL'])).rejects.toMatchObject({
+      code: 'policy.root.unconfigured',
+    });
+    await expect(resolveResponse(['https://example.test/game'])).rejects.toMatchObject({
+      code: 'policy.root.unconfigured',
+    });
+    await expect(resolveResponse([])).rejects.toThrow('supplied no project roots');
+    await expect(resolveResponse([pathToFileURL(resolve(scratch, 'gone')).href])).rejects.toThrow(
+      'None of the project roots',
+    );
+    await expect(
+      resolveResponse([pathToFileURL(projectA).href, pathToFileURL(projectB).href]),
+    ).rejects.toMatchObject({
+      code: 'resource.project.ambiguous',
+      details: { configuredRoots: 2 },
+    });
+    await expect(
+      resolveResponse(
+        [pathToFileURL(projectA).href, pathToFileURL(projectB).href],
+        (count) => `choose one of ${String(count)}`,
+      ),
+    ).rejects.toThrow('choose one of 2');
+  });
+
+  it('[INT-CLIENT-ROOTS-ADOPTED] preserves explicit, legacy, and configured-root shortcuts', async () => {
+    const empty = await createPolicyBoundary({});
+    await expect(
+      resolveProjectRootForRequest(empty, projectA, 'modern', requestContext()),
+    ).resolves.toBe(projectA);
+    await expect(
+      resolveProjectRootForRequest(empty, undefined, 'legacy', requestContext()),
+    ).rejects.toMatchObject({ code: 'policy.root.unconfigured' });
+
+    const configured = await createPolicyBoundary({ projectRoots: [projectA] });
+    await expect(
+      resolveProjectRootForRequest(configured, undefined, 'modern', requestContext()),
+    ).resolves.toBe(projectA);
   });
 });

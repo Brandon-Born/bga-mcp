@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import { toPublicError, type ErrorCode } from '../errors.js';
 
 /** The validators `validate_project` can run. */
@@ -34,8 +35,9 @@ export interface AggregateResult {
 
 const EMPTY_SUMMARY = { errors: 0, warnings: 0, information: 0, unsupported: 0 } as const;
 
-function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
-  return [...findings].sort((left, right) => {
+function order(findings: readonly DiagnosticFinding[], signal?: AbortSignal): DiagnosticFinding[] {
+  cancellationCheckpoint(signal);
+  const ordered = [...findings].sort((left, right) => {
     const byCode = left.code.localeCompare(right.code);
     if (byCode !== 0) {
       return byCode;
@@ -43,6 +45,8 @@ function order(findings: readonly DiagnosticFinding[]): DiagnosticFinding[] {
     const byLocation = (left.locations[0]?.uri ?? '').localeCompare(right.locations[0]?.uri ?? '');
     return byLocation === 0 ? left.message.localeCompare(right.message) : byLocation;
   });
+  cancellationCheckpoint(signal);
+  return ordered;
 }
 
 /** Errors first, then warnings, then information, then unsupported. */
@@ -59,9 +63,10 @@ function rank(finding: DiagnosticFinding): number {
   return SEVERITY_RANK[finding.severity] ?? 2;
 }
 
-function summarize(findings: readonly DiagnosticFinding[]): DiagnosticResult {
+function summarize(findings: readonly DiagnosticFinding[], signal?: AbortSignal): DiagnosticResult {
   const summary = { errors: 0, warnings: 0, information: 0, unsupported: 0 };
   for (const finding of findings) {
+    cancellationCheckpoint(signal);
     if (finding.kind === 'unsupported-syntax') {
       summary.unsupported += 1;
     } else if (finding.severity === 'error') {
@@ -118,7 +123,7 @@ export async function aggregateValidations(
     // Between groups rather than inside a rule: a validator is a bounded pass
     // over sources already in memory, and the honest place to stop is where
     // one finishes.
-    options.signal?.throwIfAborted();
+    cancellationCheckpoint(options.signal);
     const runner = runners.find((candidate) => candidate.id === group);
     if (!requested.has(group) || runner === undefined) {
       groups.push({
@@ -134,6 +139,7 @@ export async function aggregateValidations(
 
     try {
       const result = await runner.run();
+      cancellationCheckpoint(options.signal);
       collected.push(...result.findings);
       groups.push({
         id: group,
@@ -144,6 +150,10 @@ export async function aggregateValidations(
         findingCount: result.findings.length,
       });
     } catch (error) {
+      // Cancellation belongs to the whole MCP operation, not to one validator.
+      // Do not turn a deadline into an ordinary `failed` group and continue
+      // spending time in the remaining groups.
+      cancellationCheckpoint(options.signal);
       const published = toPublicError(error);
       groups.push({
         id: group,
@@ -159,7 +169,7 @@ export async function aggregateValidations(
 
   // Drop the least severe findings first, so a bounded result keeps what
   // matters most rather than whatever happened to be sorted first.
-  const ordered = order(collected);
+  const ordered = order(collected, options.signal);
   const kept =
     ordered.length <= limit
       ? ordered
@@ -167,7 +177,7 @@ export async function aggregateValidations(
 
   return {
     groups,
-    diagnostics: summarize(order(kept)),
+    diagnostics: summarize(order(kept, options.signal), options.signal),
     truncation: { limit, omitted: ordered.length - kept.length },
   };
 }

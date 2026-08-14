@@ -4,7 +4,11 @@ import { z } from 'zod';
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const INSPECT_PROJECT_TOOL = 'inspect_project';
 
@@ -150,7 +154,11 @@ export function summarize(model: InspectProjectResult): string {
  * under the configured deadline, the result is checked against the output
  * budget, and any failure is published through the public error contract.
  */
-export function registerInspectProject(server: McpServer, policy: PolicyBoundary): void {
+export function registerInspectProject(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     INSPECT_PROJECT_TOOL,
     {
@@ -165,12 +173,25 @@ export function registerInspectProject(server: McpServer, policy: PolicyBoundary
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const model = await policy.runWithTimeout(INSPECT_PROJECT_TOOL, async (signal) => {
-          return (await loadProjectContext(policy, root, { signal })).model;
+        const outcome = await policy.runWithTimeout(INSPECT_PROJECT_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          return isProjectRootInputRequired(resolution)
+            ? resolution
+            : (await loadProjectContext(policy, resolution, { signal })).model;
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const model = outcome;
 
         return publishResult(
           policy,

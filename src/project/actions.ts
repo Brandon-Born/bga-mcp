@@ -1,4 +1,5 @@
 import type { ParseOutcome } from './parse.js';
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
  * Readers for the action contract that spans a BGA project's client and server.
@@ -46,11 +47,16 @@ const AJAX_FRAMEWORK_KEYS = new Set(['lock', 'action', 'module', 'class', 'nodia
  * Shorthand counts: `{ tokenId }` sends `tokenId` exactly as `{ tokenId: x }`
  * does, and a modern client writes it that way most of the time.
  */
-function objectKeys(literal: string, framework: ReadonlySet<string>): string[] {
+function objectKeys(
+  literal: string,
+  framework: ReadonlySet<string>,
+  signal?: AbortSignal,
+): string[] {
   const keys: string[] = [];
   for (const match of literal.matchAll(
     /(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*(?::|(?=[,}]))/gu,
   )) {
+    cancellationCheckpoint(signal);
     const key = match[1] ?? match[2] ?? match[3];
     if (key !== undefined && !framework.has(key)) {
       keys.push(key);
@@ -66,11 +72,16 @@ function objectKeys(literal: string, framework: ReadonlySet<string>): string[] {
  * value, `{ gold: this.chosen }` does not, and the difference is what keeps a
  * rule about values from guessing at one.
  */
-function objectValues(literal: string, framework: ReadonlySet<string>): Record<string, string> {
+function objectValues(
+  literal: string,
+  framework: ReadonlySet<string>,
+  signal?: AbortSignal,
+): Record<string, string> {
   const values: Record<string, string> = {};
   for (const match of literal.matchAll(
     /(?:^|[,{])\s*(?:'([^']+)'|"([^"]+)"|([A-Za-z_$][\w$]*))\s*:\s*('[^']*'|"[^"]*"|-?\d+(?:\.\d+)?|true|false)\s*(?=[,}])/gu,
   )) {
+    cancellationCheckpoint(signal);
     const key = match[1] ?? match[2] ?? match[3];
     const value = match[4];
     if (key !== undefined && value !== undefined && !framework.has(key)) {
@@ -81,12 +92,14 @@ function objectValues(literal: string, framework: ReadonlySet<string>): Record<s
 }
 
 /** Extracts the balanced object literal that starts at `start`, or null. */
-function objectLiteralAt(source: string, start: number): string | null {
+function objectLiteralAt(source: string, start: number, signal?: AbortSignal): string | null {
+  cancellationCheckpoint(signal);
   if (source[start] !== '{') {
     return null;
   }
   let depth = 0;
   for (let index = start; index < source.length; index += 1) {
+    periodicCancellationCheckpoint(index - start, signal);
     const character = source[index];
     if (character === '{') {
       depth += 1;
@@ -100,9 +113,10 @@ function objectLiteralAt(source: string, start: number): string | null {
   return null;
 }
 
-function nextNonSpace(source: string, from: number): number {
+function nextNonSpace(source: string, from: number, signal?: AbortSignal): number {
   let index = from;
   while (index < source.length && /\s/u.test(source[index] ?? '')) {
+    periodicCancellationCheckpoint(index - from, signal);
     index += 1;
   }
   return index;
@@ -122,11 +136,16 @@ const AJAX_URL = /^\/[^/]+\/[^/]+\/([A-Za-z_][\w]*)\.html$/u;
  * Recognizes legacy `ajaxcall` URLs and modern `bgaPerformAction` names. A call
  * whose action is not a literal is reported as unsupported.
  */
-export function parseClientActionCalls(source: string): ParseOutcome<readonly ClientActionCall[]> {
+export function parseClientActionCalls(
+  source: string,
+  signal?: AbortSignal,
+): ParseOutcome<readonly ClientActionCall[]> {
+  cancellationCheckpoint(signal);
   const calls: ClientActionCall[] = [];
   const unsupported: string[] = [];
 
   for (const match of source.matchAll(AJAXCALL)) {
+    cancellationCheckpoint(signal);
     const literal = match[1] ?? match[2];
     if (literal === undefined) {
       unsupported.push(`ajaxcall with a computed URL: ${(match[3] ?? '').trim().slice(0, 40)}`);
@@ -137,13 +156,14 @@ export function parseClientActionCalls(source: string): ParseOutcome<readonly Cl
       unsupported.push(`ajaxcall URL that does not name an action: ${literal}`);
       continue;
     }
-    const argumentsStart = nextNonSpace(source, match.index + match[0].length);
-    const literalObject = objectLiteralAt(source, argumentsStart);
+    const argumentsStart = nextNonSpace(source, match.index + match[0].length, signal);
+    const literalObject = objectLiteralAt(source, argumentsStart, signal);
     calls.push({
       action,
-      argumentNames: literalObject === null ? [] : objectKeys(literalObject, AJAX_FRAMEWORK_KEYS),
+      argumentNames:
+        literalObject === null ? [] : objectKeys(literalObject, AJAX_FRAMEWORK_KEYS, signal),
       argumentValues:
-        literalObject === null ? {} : objectValues(literalObject, AJAX_FRAMEWORK_KEYS),
+        literalObject === null ? {} : objectValues(literalObject, AJAX_FRAMEWORK_KEYS, signal),
       style: 'ajaxcall',
     });
     if (literalObject === null) {
@@ -152,6 +172,7 @@ export function parseClientActionCalls(source: string): ParseOutcome<readonly Cl
   }
 
   for (const match of source.matchAll(PERFORM_ACTION)) {
+    cancellationCheckpoint(signal);
     const literal = match[1] ?? match[2];
     if (literal === undefined) {
       unsupported.push(
@@ -159,16 +180,17 @@ export function parseClientActionCalls(source: string): ParseOutcome<readonly Cl
       );
       continue;
     }
-    const argumentsStart = nextNonSpace(source, match.index + match[0].length);
-    const literalObject = objectLiteralAt(source, argumentsStart);
+    const argumentsStart = nextNonSpace(source, match.index + match[0].length, signal);
+    const literalObject = objectLiteralAt(source, argumentsStart, signal);
     calls.push({
       action: literal,
-      argumentNames: literalObject === null ? [] : objectKeys(literalObject, new Set()),
-      argumentValues: literalObject === null ? {} : objectValues(literalObject, new Set()),
+      argumentNames: literalObject === null ? [] : objectKeys(literalObject, new Set(), signal),
+      argumentValues: literalObject === null ? {} : objectValues(literalObject, new Set(), signal),
       style: 'performAction',
     });
   }
 
+  cancellationCheckpoint(signal);
   return { value: calls, unsupported };
 }
 
@@ -186,12 +208,15 @@ const REQUEST_ARG = /\$(?:_POST|_GET|args)\s*\[\s*(?:'([^']+)'|"([^"]+)")\s*\]/g
  */
 export function parseServerActionEntries(
   source: string,
+  signal?: AbortSignal,
 ): ParseOutcome<readonly ServerActionEntry[]> {
+  cancellationCheckpoint(signal);
   const entries: ServerActionEntry[] = [];
   const unsupported: string[] = [];
   const matches = [...source.matchAll(PHP_FUNCTION)];
 
   for (const [index, match] of matches.entries()) {
+    cancellationCheckpoint(signal);
     const name = match[1];
     if (name === undefined || name === '__construct') {
       continue;
@@ -202,12 +227,14 @@ export function parseServerActionEntries(
 
     const argumentNames = new Set<string>();
     for (const argument of body.matchAll(GET_ARG)) {
+      cancellationCheckpoint(signal);
       const argumentName = argument[1] ?? argument[2];
       if (argumentName !== undefined) {
         argumentNames.add(argumentName);
       }
     }
     for (const argument of body.matchAll(REQUEST_ARG)) {
+      cancellationCheckpoint(signal);
       const argumentName = argument[1] ?? argument[2];
       if (argumentName !== undefined) {
         argumentNames.add(argumentName);
@@ -220,12 +247,21 @@ export function parseServerActionEntries(
     entries.push({ action: name, argumentNames: [...argumentNames].sort() });
   }
 
+  cancellationCheckpoint(signal);
   return { value: entries, unsupported };
 }
 
 /** Names of the methods a PHP source declares. */
-export function parsePhpMethodNames(source: string): readonly string[] {
-  return [...source.matchAll(PHP_FUNCTION)]
-    .map((match) => match[1])
-    .filter((name): name is string => name !== undefined);
+export function parsePhpMethodNames(source: string, signal?: AbortSignal): readonly string[] {
+  cancellationCheckpoint(signal);
+  const names: string[] = [];
+  for (const match of source.matchAll(PHP_FUNCTION)) {
+    cancellationCheckpoint(signal);
+    const name = match[1];
+    if (name !== undefined) {
+      names.push(name);
+    }
+  }
+  cancellationCheckpoint(signal);
+  return names;
 }

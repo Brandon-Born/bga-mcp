@@ -8,6 +8,8 @@
  * Pure functions, no I/O.
  */
 
+import { cancellationCheckpoint } from '../deadline.js';
+
 const BLOCK_ELEMENTS =
   /<\/(?:p|div|section|article|h[1-6]|li|tr|td|th|pre|blockquote|table|ul|ol)>/giu;
 
@@ -32,24 +34,33 @@ const ENTITIES: Readonly<Record<string, string>> = {
 };
 
 /** Collapses HTML into readable text, dropping anything a reader never sees. */
-export function htmlToText(html: string): string {
+export function htmlToText(html: string, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
   const withoutInvisible = html.replace(INVISIBLE_CONTENT, ' ');
+  cancellationCheckpoint(signal);
   const withBreaks = withoutInvisible.replace(BLOCK_ELEMENTS, '\n').replace(/<br\s*\/?>/giu, '\n');
+  cancellationCheckpoint(signal);
   const withoutTags = withBreaks.replace(/<[^>]+>/gu, ' ');
   const decoded = withoutTags
     .replace(/&#(\d+);/gu, (_match, code: string) => String.fromCodePoint(Number(code)))
     .replace(/&[a-z]+;|&#39;/giu, (entity) => ENTITIES[entity.toLowerCase()] ?? entity);
-  return decoded
-    .split('\n')
-    .map((line) => line.replace(/[^\S\n]+/gu, ' ').trim())
-    .filter((line) => line.length > 0)
-    .join('\n');
+  cancellationCheckpoint(signal);
+  const lines: string[] = [];
+  for (const line of decoded.split('\n')) {
+    cancellationCheckpoint(signal);
+    const normalized = line.replace(/[^\S\n]+/gu, ' ').trim();
+    if (normalized.length > 0) {
+      lines.push(normalized);
+    }
+  }
+  return lines.join('\n');
 }
 
 /** Reads the document title, when the page has one. */
-export function titleOf(html: string, fallback: string): string {
+export function titleOf(html: string, fallback: string, signal?: AbortSignal): string {
+  cancellationCheckpoint(signal);
   const match = /<title[^>]*>([\s\S]*?)<\/title>/iu.exec(html);
-  const title = match?.[1] === undefined ? '' : htmlToText(match[1]).trim();
+  const title = match?.[1] === undefined ? '' : htmlToText(match[1], signal).trim();
   return title.length > 0 ? title : fallback;
 }
 
@@ -60,7 +71,13 @@ export function titleOf(html: string, fallback: string): string {
  * excerpt is never a sentence cut in half, and the beginning of the page is the
  * fallback because that is where a wiki page states what it is about.
  */
-export function excerptFor(text: string, query: string, maxChars: number): string {
+export function excerptFor(
+  text: string,
+  query: string,
+  maxChars: number,
+  signal?: AbortSignal,
+): string {
+  cancellationCheckpoint(signal);
   const lines = text.split('\n');
   const terms = query
     .toLowerCase()
@@ -70,6 +87,7 @@ export function excerptFor(text: string, query: string, maxChars: number): strin
   let start = 0;
   if (terms.length > 0) {
     const scored = lines.map((line, index) => {
+      cancellationCheckpoint(signal);
       const lowered = line.toLowerCase();
       // Weighted by term length, so a distinctive term like `dbmodel.sql` or
       // `modules/js` outranks a common one like `files`. Counting matches
@@ -94,6 +112,7 @@ export function excerptFor(text: string, query: string, maxChars: number): strin
   const collected: string[] = [];
   let length = 0;
   for (const line of lines.slice(start)) {
+    cancellationCheckpoint(signal);
     if (length + line.length + 1 > maxChars) {
       break;
     }

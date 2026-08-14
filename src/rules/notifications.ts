@@ -1,4 +1,5 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
+import { cancellationCheckpoint } from '../deadline.js';
 import {
   PREDEFINED_NOTIFICATIONS,
   parseNotificationHandlers,
@@ -134,16 +135,20 @@ export interface NotificationTrace {
 export function validateNotifications(
   serverSources: readonly NotificationSource[],
   clientSources: readonly NotificationSource[],
+  signal?: AbortSignal,
 ): NotificationTrace {
   const findings: DiagnosticFinding[] = [];
 
   const sent: (SentNotification & { source: string })[] = [];
   for (const source of serverSources) {
-    const outcome = parseSentNotifications(source.text);
+    cancellationCheckpoint(signal);
+    const outcome = parseSentNotifications(source.text, signal);
     for (const notification of outcome.value) {
+      cancellationCheckpoint(signal);
       sent.push({ ...notification, source: source.path });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path, 'php'));
     }
   }
@@ -153,19 +158,26 @@ export function validateNotifications(
   // for across the whole client before any file is read for handlers.
   const registration =
     clientSources
-      .map((source) => parsePromiseRegistration(source.text))
+      .map((source) => {
+        cancellationCheckpoint(signal);
+        return parsePromiseRegistration(source.text, signal);
+      })
       .find((entry) => entry !== null) ?? null;
 
   const handlers: (NotificationHandler & { source: string })[] = [];
   for (const source of clientSources) {
-    const outcome = parseNotificationHandlers(source.text, registration);
+    cancellationCheckpoint(signal);
+    const outcome = parseNotificationHandlers(source.text, registration, signal);
     for (const handler of outcome.value) {
+      cancellationCheckpoint(signal);
       handlers.push({ ...handler, source: source.path });
     }
     for (const construct of outcome.unsupported) {
+      cancellationCheckpoint(signal);
       findings.push(unsupported(construct, source.path, 'javascript'));
     }
     for (const name of outcome.duplicates) {
+      cancellationCheckpoint(signal);
       findings.push(
         certain(
           'notification.subscription.duplicate',
@@ -217,6 +229,7 @@ export function validateNotifications(
 
   if (bothSidesReadable) {
     for (const notification of sent) {
+      cancellationCheckpoint(signal);
       // A predefined type is handled by the framework itself: `message` "shows
       // on players log and have no other effect", and the documentation shows
       // it sent with nothing on the client side.
@@ -239,6 +252,7 @@ export function validateNotifications(
     }
 
     for (const handler of boundHandlers) {
+      cancellationCheckpoint(signal);
       if (!sentByName.has(handler.name)) {
         findings.push(
           heuristic(
@@ -254,6 +268,7 @@ export function validateNotifications(
   }
 
   for (const notification of sent) {
+    cancellationCheckpoint(signal);
     const handler = handlerByName.get(notification.name);
     if (handler === undefined || handler.payloadKeys.length === 0) {
       continue;
@@ -261,6 +276,7 @@ export function validateNotifications(
     const sentKeys = new Set(notification.payloadKeys);
     const readKeys = new Set(handler.payloadKeys);
     for (const key of [...readKeys].filter((name) => !sentKeys.has(name)).sort()) {
+      cancellationCheckpoint(signal);
       findings.push(
         heuristic(
           'notification.payload.mismatch',
@@ -272,6 +288,7 @@ export function validateNotifications(
       );
     }
     for (const key of [...sentKeys].filter((name) => !readKeys.has(name)).sort()) {
+      cancellationCheckpoint(signal);
       findings.push(
         heuristic(
           'notification.payload.mismatch',
@@ -284,5 +301,6 @@ export function validateNotifications(
     }
   }
 
-  return { sent, handlers, diagnostics: summarizeFindings(findings) };
+  cancellationCheckpoint(signal);
+  return { sent, handlers, diagnostics: summarizeFindings(findings, signal) };
 }

@@ -70,6 +70,10 @@ Installed/live and source probes disproved the breadth of three original control
 
 The current verifier gates the named historical preconditions but does not automatically incorporate later planned controls into release status. BGA-018 owns that compositional self-invalidation gap. Documentation capabilities therefore remain `implemented`, not verified.
 
+### Cancellation addendum — 2026-08-13
+
+The response-lifecycle part of the third finding is now corrected and `TM-DOC-RESPONSE-LIFECYCLE` is implemented. Documentation tool and resource handlers propagate the operation signal through a per-request cancellable DNS resolver, redirect hops, HTTPS requests, and bounded body reads. `E2E-DOCS-RESPONSE-LIFECYCLE` observes stalled 2xx, redirected, non-success, DNS, and resource paths for 350 ms after the public call settles while the same installed MCP process and client remain alive; it requires no additional requests or bytes and then calls `check_setup` successfully. BGA-326 also has installed evidence for delayed listing and descriptor-read syscalls and repository-level monotonic parser checkpoints. It remains implemented rather than verified because every native filesystem primitive and an installed slow-parser case are not yet covered.
+
 ## Residual risk
 
 Two things the review could not resolve, both now recorded:

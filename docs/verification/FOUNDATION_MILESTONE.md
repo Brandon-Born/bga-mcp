@@ -43,5 +43,5 @@ corepack pnpm dlx node@24 node_modules/vitest/vitest.mjs run tests/integration t
 ## Explicit remaining verification boundaries
 
 - BGA-005 is verified: [CI run 31098519365](https://github.com/Brandon-Born/bga-mcp/actions/runs/31098519365) proves the clean matrix and the [controlled failure proof](CI_FAILURE_PROOF.md) proves every required check blocks completion.
-- The pinned official conformance CLI accepts only URL targets and currently lists server scenarios only through `2025-11-25`. It cannot test the advertised stdio transport or `2026-07-28`; packaged E2E covers those boundaries, but BGA-011 remains `implemented` under the stricter backlog definition. See [CONFORMANCE.md](../CONFORMANCE.md).
+- The pinned official conformance CLI accepts URL targets, so a transparent HTTP-to-stdio relay drives the installed binary without implementing its protocol. The supported public contract is `2025-11-25` over stdio and its frozen official requirement set is covered. BGA-318 adds packaged MRTR evidence for `2026-07-28`, but that revision remains an unknown observation because no applicable official stdio conformance mode exists. BGA-011 awaits current exact-head CI for the corrected supported scope. See [CONFORMANCE.md](../CONFORMANCE.md).
 - No Studio adapter or Studio-backed public function exists in this milestone, so live Studio E2E is not applicable.

@@ -7,10 +7,10 @@ This record describes a run, so it states which one. `pnpm verify:evidence` comp
 ```verification-record
 {
   "kind": "run",
-  "capabilities": 16,
-  "scenarios": 157,
-  "claims": 90,
-  "tests": 526
+  "capabilities": 17,
+  "scenarios": 164,
+  "claims": 94,
+  "tests": 561
 }
 ```
 

@@ -3,27 +3,18 @@ import { resolve } from 'node:path';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
 
+import {
+  capabilityCompatibilityFailures,
+  type CapabilityCompatibilityManifest,
+  type CompatibilityDimension,
+  type CompatibilityMatrix,
+} from './lib/compatibility.js';
 import { GateReport, expectSeededFailure, reportOrExit } from './lib/gate.js';
 
 const repositoryRoot = resolve(import.meta.dirname, '..');
 
-interface Claim {
-  readonly id: string;
-  readonly dimension:
-    'layout' | 'file-generation' | 'runtime' | 'platform' | 'protocol' | 'transport' | 'client';
-  readonly value: string;
-  readonly support: 'supported' | 'unsupported' | 'unknown';
-  readonly notes: string;
-  readonly fixtures?: readonly string[];
-  readonly scenarios?: readonly string[];
-}
-
-interface Matrix {
-  readonly claims: readonly Claim[];
-}
-
 interface Sources {
-  readonly manifest: {
+  readonly manifest: CapabilityCompatibilityManifest & {
     readonly transports: readonly {
       readonly name: string;
       readonly protocolVersions: readonly string[];
@@ -58,7 +49,7 @@ async function loadJson<T>(path: string): Promise<T> {
   return JSON.parse(await readFile(resolve(repositoryRoot, path), 'utf8')) as T;
 }
 
-function supportedValues(matrix: Matrix, dimension: Claim['dimension']): string[] {
+function supportedValues(matrix: CompatibilityMatrix, dimension: CompatibilityDimension): string[] {
   return matrix.claims
     .filter((claim) => claim.dimension === dimension && claim.support === 'supported')
     .map((claim) => claim.value);
@@ -73,7 +64,7 @@ async function fixtureExists(fixture: string): Promise<boolean> {
   }
 }
 
-async function verify(matrix: Matrix, sources: Sources): Promise<GateReport> {
+async function verify(matrix: CompatibilityMatrix, sources: Sources): Promise<GateReport> {
   const report = new GateReport();
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   const validate = ajv.compile(sources.schema);
@@ -102,6 +93,10 @@ async function verify(matrix: Matrix, sources: Sources): Promise<GateReport> {
       identifiers.has(match[0]),
       `docs/COMPATIBILITY.md references unknown ${match[0]}`,
     );
+  }
+
+  for (const failure of capabilityCompatibilityFailures(matrix, sources.manifest)) {
+    report.require(false, failure);
   }
 
   // A runtime behavior claim may never exceed the published matrix.
@@ -159,7 +154,10 @@ async function verify(matrix: Matrix, sources: Sources): Promise<GateReport> {
 }
 
 /** Seeds a missing fixture, an undocumented claim, and a claim beyond runtime behavior. */
-async function proveGateDetectsSeededDefects(matrix: Matrix, sources: Sources): Promise<void> {
+async function proveGateDetectsSeededDefects(
+  matrix: CompatibilityMatrix,
+  sources: Sources,
+): Promise<void> {
   const withMissingFixture = structuredClone(matrix) as unknown as {
     claims: { id: string; fixtures?: string[] }[];
   };
@@ -167,7 +165,7 @@ async function proveGateDetectsSeededDefects(matrix: Matrix, sources: Sources): 
   fixtureClaim?.fixtures?.push('tests/fixtures/projects/does-not-exist');
   expectSeededFailure(
     'compatibility fixture',
-    await verify(withMissingFixture as unknown as Matrix, sources),
+    await verify(withMissingFixture as unknown as CompatibilityMatrix, sources),
   );
 
   const undocumented = structuredClone(matrix) as unknown as { claims: { id: string }[] };
@@ -177,7 +175,7 @@ async function proveGateDetectsSeededDefects(matrix: Matrix, sources: Sources): 
   }
   expectSeededFailure(
     'compatibility documentation',
-    await verify(undocumented as unknown as Matrix, sources),
+    await verify(undocumented as unknown as CompatibilityMatrix, sources),
   );
 
   const overclaimed = structuredClone(matrix) as unknown as {
@@ -200,12 +198,207 @@ async function proveGateDetectsSeededDefects(matrix: Matrix, sources: Sources): 
   });
   expectSeededFailure(
     'compatibility runtime claim',
-    await verify(overclaimed as unknown as Matrix, sources),
+    await verify(overclaimed as unknown as CompatibilityMatrix, sources),
+  );
+
+  const withUnknownCapability = structuredClone(matrix) as unknown as {
+    claims: { capabilities?: { reference: string; scenarios: string[] }[] }[];
+  };
+  const applicableClaim = withUnknownCapability.claims.find(
+    (claim) => claim.capabilities !== undefined,
+  );
+  const mappedScenario = applicableClaim?.capabilities?.[0]?.scenarios[0];
+  if (mappedScenario === undefined) {
+    throw new Error('The seeded compatibility check needs a mapped capability scenario');
+  }
+  applicableClaim?.capabilities?.push({
+    reference: 'tool:not_in_the_manifest',
+    scenarios: [mappedScenario],
+  });
+  expectSeededFailure(
+    'compatibility capability reference',
+    await verify(withUnknownCapability as unknown as CompatibilityMatrix, sources),
+  );
+
+  const withMissingMappedScenario = structuredClone(sources.manifest) as {
+    capabilities: Record<
+      'tools' | 'resources' | 'prompts',
+      {
+        name: string;
+        supportedLayouts: string[];
+        environments: string[];
+        protocolVersions: string[];
+        requiredScenarios: string[];
+      }[]
+    >;
+  } & Sources['manifest'];
+  const mappedReference = applicableClaim?.capabilities?.[0]?.reference;
+  if (mappedReference === undefined) {
+    throw new Error('The seeded compatibility check needs a mapped capability');
+  }
+  const separator = mappedReference.indexOf(':');
+  const kind = mappedReference.slice(0, separator);
+  const name = mappedReference.slice(separator + 1);
+  const collection =
+    kind === 'tool'
+      ? withMissingMappedScenario.capabilities.tools
+      : kind === 'resource'
+        ? withMissingMappedScenario.capabilities.resources
+        : withMissingMappedScenario.capabilities.prompts;
+  const mappedCapability = collection.find((capability) => capability.name === name);
+  if (mappedCapability === undefined) {
+    throw new Error(`The seeded compatibility check cannot resolve ${mappedReference}`);
+  }
+  mappedCapability.requiredScenarios = mappedCapability.requiredScenarios.filter(
+    (scenario) => scenario !== mappedScenario,
+  );
+  expectSeededFailure(
+    'compatibility mapped scenario',
+    await verify(matrix, { ...sources, manifest: withMissingMappedScenario }),
+  );
+
+  const seedManifest = (
+    mutate: (capability: {
+      supportedLayouts: string[];
+      environments: string[];
+      protocolVersions: string[];
+    }) => void,
+  ): Sources => {
+    const manifest = structuredClone(sources.manifest) as {
+      capabilities: Record<
+        'tools' | 'resources' | 'prompts',
+        {
+          supportedLayouts: string[];
+          environments: string[];
+          protocolVersions: string[];
+        }[]
+      >;
+    } & Sources['manifest'];
+    const capability = [...manifest.capabilities.tools, ...manifest.capabilities.resources].find(
+      (entry) => entry.supportedLayouts.length > 0,
+    );
+    if (capability === undefined) {
+      throw new Error('The seeded compatibility check needs a project capability');
+    }
+    mutate(capability);
+    return { ...sources, manifest };
+  };
+
+  expectSeededFailure(
+    'capability supported-layout omission',
+    await verify(
+      matrix,
+      seedManifest((capability) => {
+        capability.supportedLayouts = capability.supportedLayouts.filter(
+          (layout) => layout !== 'modern-modules',
+        );
+      }),
+    ),
+  );
+  expectSeededFailure(
+    'capability supported-layout overclaim',
+    await verify(
+      matrix,
+      seedManifest((capability) => {
+        capability.supportedLayouts.push('unrecognized');
+      }),
+    ),
+  );
+  expectSeededFailure(
+    'capability environment mismatch',
+    await verify(
+      matrix,
+      seedManifest((capability) => {
+        capability.environments = ['remote'];
+      }),
+    ),
+  );
+  expectSeededFailure(
+    'capability protocol mismatch',
+    await verify(
+      matrix,
+      seedManifest((capability) => {
+        capability.protocolVersions = ['2026-07-28'];
+      }),
+    ),
+  );
+
+  const coordinatedMatrix = structuredClone(matrix) as unknown as {
+    claims: {
+      dimension: string;
+      value: string;
+      capabilities?: { reference: string; scenarios: string[] }[];
+    }[];
+  };
+  const coordinatedSources = structuredClone(sources.manifest) as {
+    capabilities: Record<
+      'tools' | 'resources' | 'prompts',
+      {
+        name: string;
+        supportedLayouts: string[];
+        requiredScenarios: string[];
+      }[]
+    >;
+  } & Sources['manifest'];
+  const layoutClaim = coordinatedMatrix.claims.find(
+    (claim) => claim.dimension === 'layout' && claim.capabilities !== undefined,
+  );
+  const layoutCapabilities = layoutClaim?.capabilities;
+  const removedMapping = layoutCapabilities?.find((mapping) => {
+    const separator = mapping.reference.indexOf(':');
+    const kind = mapping.reference.slice(0, separator);
+    const name = mapping.reference.slice(separator + 1);
+    const capabilities =
+      kind === 'tool'
+        ? coordinatedSources.capabilities.tools
+        : kind === 'resource'
+          ? coordinatedSources.capabilities.resources
+          : coordinatedSources.capabilities.prompts;
+    return capabilities.some(
+      (capability) =>
+        capability.name === name &&
+        mapping.scenarios.some((scenario) => capability.requiredScenarios.includes(scenario)),
+    );
+  });
+  if (
+    layoutClaim === undefined ||
+    layoutCapabilities === undefined ||
+    removedMapping === undefined
+  ) {
+    throw new Error('The coordinated-omission seed needs a mapped layout capability');
+  }
+  layoutClaim.capabilities = layoutCapabilities.filter(
+    (mapping) => mapping.reference !== removedMapping.reference,
+  );
+  const removedSeparator = removedMapping.reference.indexOf(':');
+  const removedKind = removedMapping.reference.slice(0, removedSeparator);
+  const removedName = removedMapping.reference.slice(removedSeparator + 1);
+  const removedCollection =
+    removedKind === 'tool'
+      ? coordinatedSources.capabilities.tools
+      : removedKind === 'resource'
+        ? coordinatedSources.capabilities.resources
+        : coordinatedSources.capabilities.prompts;
+  const coordinatedCapability = removedCollection.find(
+    (capability) => capability.name === removedName,
+  );
+  if (coordinatedCapability === undefined) {
+    throw new Error('The coordinated-omission seed cannot resolve its capability');
+  }
+  coordinatedCapability.supportedLayouts = coordinatedCapability.supportedLayouts.filter(
+    (layout) => layout !== layoutClaim.value,
+  );
+  expectSeededFailure(
+    'coordinated capability omission',
+    await verify(coordinatedMatrix as unknown as CompatibilityMatrix, {
+      ...sources,
+      manifest: coordinatedSources,
+    }),
   );
 }
 
 async function main(): Promise<void> {
-  const matrix = await loadJson<Matrix>('config/compatibility.json');
+  const matrix = await loadJson<CompatibilityMatrix>('config/compatibility.json');
   const packageMetadata = await loadJson<{ engines: { node: string } }>('package.json');
   const sources: Sources = {
     schema: await loadJson<object>('config/compatibility.schema.json'),

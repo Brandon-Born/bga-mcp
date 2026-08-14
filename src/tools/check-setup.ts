@@ -58,7 +58,11 @@ export function summarizeSetup(status: CheckSetupResult): string {
  * capability that tells you why things are refusing is useless if it refuses
  * too.
  */
-export function registerCheckSetup(server: McpServer, policy: PolicyBoundary): void {
+export function registerCheckSetup(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     CHECK_SETUP_TOOL,
     {
@@ -77,7 +81,7 @@ export function registerCheckSetup(server: McpServer, policy: PolicyBoundary): v
       try {
         const structuredContent = await policy.runWithTimeout(
           CHECK_SETUP_TOOL,
-          async () => await buildSetupStatus(policy),
+          async (signal) => await buildSetupStatus(policy, { signal, era }),
         );
         return publishResult(
           policy,

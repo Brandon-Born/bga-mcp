@@ -5,7 +5,11 @@ import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
-import { loadProjectContext, resolveProjectRoot } from './project-context.js';
+import {
+  isProjectRootInputRequired,
+  loadProjectContext,
+  resolveProjectRootForRequest,
+} from './project-context.js';
 
 export const VALIDATE_NOTIFICATIONS_TOOL = 'validate_notifications';
 
@@ -92,7 +96,11 @@ export function summarizeNotifications(
   return lines.join('\n');
 }
 
-export function registerValidateNotifications(server: McpServer, policy: PolicyBoundary): void {
+export function registerValidateNotifications(
+  server: McpServer,
+  policy: PolicyBoundary,
+  era: 'legacy' | 'modern' = 'legacy',
+): void {
   server.registerTool(
     VALIDATE_NOTIFICATIONS_TOOL,
     {
@@ -107,21 +115,31 @@ export function registerValidateNotifications(server: McpServer, policy: PolicyB
         openWorldHint: false,
       },
     },
-    async ({ projectRoot }) => {
+    async ({ projectRoot }, context) => {
       try {
-        const root = await resolveProjectRoot(policy, projectRoot);
-        const result = await policy.runWithTimeout(VALIDATE_NOTIFICATIONS_TOOL, async (signal) => {
-          const context = await loadProjectContext(policy, root, {
+        const outcome = await policy.runWithTimeout(VALIDATE_NOTIFICATIONS_TOOL, async (signal) => {
+          const resolution = await resolveProjectRootForRequest(
+            policy,
+            projectRoot,
+            era,
+            context,
+            undefined,
+            signal,
+          );
+          if (isProjectRootInputRequired(resolution)) {
+            return resolution;
+          }
+          const project = await loadProjectContext(policy, resolution, {
             withPhpSources: true,
             withClientSources: true,
             signal,
           });
-          const trace = validateNotifications(context.phpSources, context.clientSources);
+          const trace = validateNotifications(project.phpSources, project.clientSources, signal);
           return {
             schemaVersion: 1,
-            layout: context.model.layout,
-            serverSourcesRead: context.phpSources.length,
-            clientSourcesRead: context.clientSources.length,
+            layout: project.model.layout,
+            serverSourcesRead: project.phpSources.length,
+            clientSourcesRead: project.clientSources.length,
             trace: {
               sent: trace.sent.map((notification) => ({
                 name: notification.name,
@@ -143,6 +161,10 @@ export function registerValidateNotifications(server: McpServer, policy: PolicyB
             diagnostics: trace.diagnostics,
           } satisfies ValidateNotificationsResult;
         });
+        if (isProjectRootInputRequired(outcome)) {
+          return outcome;
+        }
+        const result = outcome;
 
         return publishResult(
           policy,

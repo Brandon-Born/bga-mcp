@@ -76,7 +76,7 @@
         "name": "audit_database_usage",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -122,7 +122,7 @@
         "name": "inspect_project",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -142,6 +142,7 @@
           "E2E-INSPECT-PROJECT-DEFAULT-ROOT-AMBIGUOUS",
           "E2E-INSPECT-PROJECT-DEFAULT-ROOT-UNCONFIGURED",
           "INT-CLIENT-ROOTS-ADOPTED",
+          "E2E-LEGACY-CLIENT-ROOTS",
           "E2E-INSPECT-PROJECT-EMPTY",
           "E2E-INSPECT-PROJECT-PARTIAL",
           "E2E-INSPECT-PROJECT-UNREADABLE-FILES",
@@ -193,13 +194,14 @@
         "name": "run_pre_release_audit",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
           "E2E-PRE-RELEASE-CLEAN",
           "E2E-PRE-RELEASE-FAILING",
           "E2E-PRE-RELEASE-PARTIAL-SUPPORT",
+          "E2E-PRE-RELEASE-HYBRID",
           "E2E-PRE-RELEASE-MANUAL-NEVER-PASSES",
           "E2E-PRE-RELEASE-CATALOG-VERSION",
           "E2E-PRE-RELEASE-INVALID-INPUT",
@@ -247,7 +249,7 @@
         "name": "validate_action_contracts",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -275,7 +277,7 @@
         "name": "validate_notifications",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -303,7 +305,7 @@
         "name": "validate_project",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -315,6 +317,7 @@
           "E2E-VALIDATE-PROJECT-INVALID-INPUT",
           "E2E-VALIDATE-PROJECT-UNLISTED-ROOT",
           "E2E-VALIDATE-PROJECT-HYBRID",
+          "E2E-VALIDATE-PROJECT-MODERN",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION"
@@ -327,7 +330,7 @@
         "name": "validate_state_machine",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -399,7 +402,7 @@
         "name": "bga://project/diagnostics",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -409,6 +412,7 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE",
           "E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED",
+          "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-SUCCESS-OUTPUT-REDACTION"
         ],
         "liveStudioRequired": false,
@@ -419,7 +423,7 @@
         "name": "bga://project/states",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -429,6 +433,7 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE",
           "E2E-RESOURCE-STATES-GENERATIONS",
+          "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-RESOURCE-REFRESH",
           "E2E-SUCCESS-OUTPUT-REDACTION"
         ],
@@ -440,7 +445,7 @@
         "name": "bga://project/summary",
         "owner": "Brandon Born",
         "stability": "verified",
-        "supportedLayouts": ["legacy-flat"],
+        "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
         "environments": ["local"],
         "protocolVersions": ["2025-11-25"],
         "requiredScenarios": [
@@ -450,6 +455,7 @@
           "E2E-RESOURCE-AMBIGUOUS",
           "E2E-RESOURCE-IMMUTABLE",
           "E2E-RESOURCE-SUMMARY-BOUNDED",
+          "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-SUCCESS-OUTPUT-REDACTION"
         ],
         "liveStudioRequired": false,
@@ -459,5 +465,19 @@
     ],
     "prompts": []
   },
-  "adapters": []
+  "adapters": [
+    {
+      "name": "input-required-2026",
+      "owner": "Brandon Born",
+      "stability": "implemented",
+      "requiredScenarios": [
+        "E2E-MODERN-INPUT-REQUIRED-OUTCOMES",
+        "E2E-MODERN-INPUT-REQUIRED-ROOTS",
+        "E2E-MODERN-INPUT-REQUIRED-SETUP"
+      ],
+      "liveExternalRequired": false,
+      "boundary": "TB-CLIENT-INPUT",
+      "ciEvidence": "ci-31439224886"
+    }
+  ]
 }
