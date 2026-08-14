@@ -877,13 +877,13 @@
       "item": "BGA-330",
       "case": "A test-only installed-artifact barrier forces an intermediate-directory or configured-directory link swap after the final pre-open check and before the real open or opendir, and no outside marker content is returned",
       "boundary": "packaged",
-      "missing": "Direct PolicyBoundary integration barriers now force an intermediate-directory replacement after initial containment and a configured-directory replacement before traversal, and both return the stable refusal without marker content. They do not interpose on the installed package between its final lstat and actual open or opendir, so packaged stage-order evidence remains missing."
+      "scenarios": ["E2E-POLICY-RACE-BARRIER"]
     },
     {
       "item": "BGA-330",
       "case": "A test-only installed-artifact barrier forces growth after descriptor stat and before descriptor read, and the changed file is refused without publishing appended content",
       "boundary": "packaged",
-      "missing": "A direct PolicyBoundary integration barrier now appends marker content after the descriptor stat and proves the stable refusal without returning that marker. It does not run through an installed MCP server or record the packaged stat-to-read stage order, so the installed-artifact case remains missing."
+      "scenarios": ["E2E-POLICY-RACE-BARRIER"]
     },
     {
       "item": "BGA-320",

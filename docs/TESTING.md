@@ -40,6 +40,12 @@ The official MCP Inspector CLI may provide an additional independent client chec
 
 The small executable-only `src/cli.ts` boundary is excluded from in-process V8 line coverage because importing it starts stdio service. Its help, version, invalid-argument, startup, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.
 
+#### Test-only installed-process barriers
+
+A packaged suite may preload test-only instrumentation before the installed server when a deterministic in-operation event cannot be forced through the public schema alone. The preload must stay outside the tarball, production may expose no corresponding callback or environment switch, and the scenario must scan the installed package for the hook it claims is absent. The MCP boundary remains real: the suite installs the shared artifact, starts its CLI, connects through a real client, and invokes only public capabilities.
+
+The parent test must observe the barrier before releasing it and fail if the public operation settles first. A stage transcript must place the forced event between the production operations named by the claim, and the same live client must remain usable afterward. This is evidence about the installed production stages around the barrier; it is not evidence for behavior that the preload itself replaces.
+
 #### Scripted third-party sources
 
 A packaged suite may answer the server's outbound requests from a source the test scripts, and only for a source the project does not own. Nobody can ask a third party's wiki to lose DNS, stall, answer one page and not another, or serve the revision it published four months ago — and those are the conditions under which a documentation capability has most to get wrong. `tests/e2e/doc-network-stub.ts` replaces the connection factory for exactly that reason.
