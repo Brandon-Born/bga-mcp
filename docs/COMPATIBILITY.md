@@ -1,8 +1,10 @@
 # Compatibility matrix
 
-Updated: 2026-08-14. Backlog items: BGA-009 and BGA-414.
+Updated: 2026-08-14. Backlog items: BGA-009, BGA-402, and BGA-414.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
+
+The lifecycle of these claims is governed by [VERSIONING.md](VERSIONING.md). The first stable contract fingerprints every matrix entry. Adding supported coverage is minor; narrowing or removing supported coverage is major and requires the prior deprecation window. Upstream BGA drift freezes publication for review rather than silently changing `supported` to `unknown`.
 
 Support levels use the vocabulary from [TESTING.md](TESTING.md):
 
