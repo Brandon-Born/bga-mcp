@@ -76,6 +76,34 @@ describe('parseCliArguments', () => {
     });
   });
 
+  it('parses Studio preflight forms and resolves the session file', () => {
+    expect(
+      parseCliArguments(
+        ['--studio-session-file', 'session.txt', '--studio-check', 'mcpverification'],
+        '/workspace',
+      ),
+    ).toEqual({
+      kind: 'studio-check',
+      gameId: 'mcpverification',
+      config: {
+        projectRoots: [],
+        remoteProjects: [],
+        operationTimeoutMs: DEFAULT_SERVER_CONFIG.operationTimeoutMs,
+        maxOutputBytes: DEFAULT_SERVER_CONFIG.maxOutputBytes,
+        networkEnabled: false,
+        mutationsEnabled: false,
+        experimentalStudioLogs: false,
+        studioDevAccounts: [],
+        studioSessionFile: resolve('/workspace', 'session.txt'),
+      },
+    });
+
+    expect(parseCliArguments(['--studio-check'])).toMatchObject({
+      kind: 'studio-check',
+      gameId: null,
+    });
+  });
+
   it.each([
     [['--project-root'], '--project-root requires a value'],
     [['--project-root', '--help'], '--project-root requires a value'],
