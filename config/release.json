@@ -2,7 +2,7 @@
   "$schema": "./release.schema.json",
   "schemaVersion": 1,
   "id": "first-local-only",
-  "status": "implemented",
+  "status": "verified",
   "environment": "local",
   "entrypoint": "dist/release-cli.js",
   "protocolVersions": ["2025-11-25"],
