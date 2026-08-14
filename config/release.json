@@ -1,0 +1,32 @@
+{
+  "$schema": "./release.schema.json",
+  "schemaVersion": 1,
+  "id": "first-local-only",
+  "status": "implemented",
+  "environment": "local",
+  "entrypoint": "dist/release-cli.js",
+  "protocolVersions": ["2025-11-25"],
+  "transports": ["stdio"],
+  "capabilities": {
+    "tools": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "prompts": []
+  },
+  "adapters": [],
+  "consumers": [
+    "candidate-manifest",
+    "mcp-discovery",
+    "public-documentation",
+    "security-review",
+    "verification-evidence"
+  ],
+  "requiredScenarios": ["E2E-RELEASE-LOCAL-ONLY", "GATE-RELEASE-INVENTORY"]
+}

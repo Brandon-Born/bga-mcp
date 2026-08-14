@@ -102,7 +102,11 @@ function isPermissionError(error: unknown): boolean {
 }
 
 /** Configuration files the package ships and may read for itself. */
-export const PACKAGED_CONFIG_NAMES = ['rule-catalog.json', 'doc-sources.json'] as const;
+export const PACKAGED_CONFIG_NAMES = [
+  'rule-catalog.json',
+  'doc-sources.json',
+  'release.json',
+] as const;
 
 export type PackagedConfigName = (typeof PACKAGED_CONFIG_NAMES)[number];
 

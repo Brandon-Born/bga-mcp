@@ -2,6 +2,8 @@ export {
   CliUsageError,
   DEFAULT_SERVER_CONFIG,
   HELP_TEXT,
+  RELEASE_HELP_TEXT,
+  helpTextForProfile,
   parseCliArguments,
   type CliAction,
   type ServerConfig,
@@ -37,6 +39,14 @@ export {
   type ProjectFile,
   type ProjectListing,
 } from './policy.js';
+export {
+  RELEASE_PROFILE,
+  parseReleaseInventory,
+  releaseIncludes,
+  type ReleaseCapabilityKind,
+  type ReleaseInventory,
+  type ServerProfile,
+} from './release.js';
 export {
   REDACTED_CONNECTION,
   REDACTED_CREDENTIAL,

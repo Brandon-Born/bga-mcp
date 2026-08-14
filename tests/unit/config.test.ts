@@ -1,6 +1,11 @@
 import { resolve } from 'node:path';
 
-import { CliUsageError, DEFAULT_SERVER_CONFIG, parseCliArguments } from '../../src/config.js';
+import {
+  CliUsageError,
+  DEFAULT_SERVER_CONFIG,
+  helpTextForProfile,
+  parseCliArguments,
+} from '../../src/config.js';
 
 describe('parseCliArguments', () => {
   it('defaults to a local, network-free, read-only server with no allowed roots', () => {
@@ -22,6 +27,26 @@ describe('parseCliArguments', () => {
   it('returns help and version actions', () => {
     expect(parseCliArguments(['--help'])).toEqual({ kind: 'help' });
     expect(parseCliArguments(['--version'])).toEqual({ kind: 'version' });
+  });
+
+  it('keeps the release profile local-only and refuses every excluded relaxation', () => {
+    expect(helpTextForProfile('first-local-only')).toContain('local-only bga-mcp release');
+    expect(helpTextForProfile('first-local-only')).not.toContain('--allow-network');
+    expect(parseCliArguments([], process.cwd(), 'first-local-only')).toEqual(parseCliArguments([]));
+
+    for (const option of [
+      '--allow-network',
+      '--allow-mutations',
+      '--allow-remote-project',
+      '--experimental-studio-logs',
+      '--studio-check',
+      '--studio-dev-account',
+      '--studio-session-file',
+    ]) {
+      expect(() => parseCliArguments([option], process.cwd(), 'first-local-only')).toThrow(
+        new CliUsageError(`${option} is unavailable in the local-only release`),
+      );
+    }
   });
 
   it('resolves and deduplicates explicit project roots', () => {

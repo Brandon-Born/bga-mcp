@@ -1,6 +1,6 @@
 # Compatibility matrix
 
-Updated: 2026-08-13. Backlog item: BGA-009.
+Updated: 2026-08-14. Backlog items: BGA-009 and BGA-414.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
 
@@ -66,6 +66,8 @@ Every public capability is served by the user's local stdio process. Documentati
 The running server's negotiation constants, transport manifest, compatibility claim, and every capability's protocol list are checked compositionally. A seeded capability-level protocol mismatch must fail before the real matrix is accepted. Streamable HTTP exists only as loopback test infrastructure for the official conformance CLI; see [CONFORMANCE.md](CONFORMANCE.md).
 
 The installed server negotiates `2026-07-28`, supports discovery, and now completes project-root setup through its in-band multi-round-trip flow. The compatibility claim remains `unknown` because the pinned official conformance suite has no applicable stdio set for that revision; public capability entries do not claim the protocol until release evidence deliberately establishes the complete contract.
+
+The first release profile is separately frozen by [`config/release.json`](../config/release.json). Its installed entry point exposes only the seven verified local tools and three verified project resources on stdio and protocol `2025-11-25`; documentation, setup, Studio, and the implemented 2026 adapter remain available only in the development profile. `E2E-RELEASE-LOCAL-ONLY` compares real installed discovery with that inventory, and `GATE-RELEASE-INVENTORY` rejects a non-verified selection or candidate evidence from another commit or artifact.
 
 ## Clients
 
