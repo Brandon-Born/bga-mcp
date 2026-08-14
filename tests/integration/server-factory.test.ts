@@ -80,4 +80,34 @@ describe('production server factory', () => {
       await rm(temporaryRoot, { recursive: true, force: true });
     }
   });
+
+  it('loads the frozen release inventory and exposes only its local capabilities', async () => {
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const prepared = await createServerWithPolicy(DEFAULT_SERVER_CONFIG, 'first-local-only');
+    const server = prepared.create();
+    const client = new Client({ name: 'release-factory-test', version: '1.0.0' });
+
+    try {
+      await server.connect(serverTransport);
+      await client.connect(clientTransport);
+      expect((await client.listTools()).tools.map((tool) => tool.name).sort()).toEqual([
+        'audit_database_usage',
+        'inspect_project',
+        'run_pre_release_audit',
+        'validate_action_contracts',
+        'validate_notifications',
+        'validate_project',
+        'validate_state_machine',
+      ]);
+      expect((await client.listResources()).resources.map((entry) => entry.uri).sort()).toEqual([
+        'bga://project/diagnostics',
+        'bga://project/states',
+        'bga://project/summary',
+      ]);
+      expect((await client.listResourceTemplates()).resourceTemplates).toEqual([]);
+    } finally {
+      await client.close();
+      await server.close();
+    }
+  });
 });

@@ -38,7 +38,7 @@ The artifact is packed once per run in `tests/global-setup.ts`, and every capabi
 
 The official MCP Inspector CLI may provide an additional independent client check. It supplements the automated client harness; it does not replace capability-specific assertions.
 
-The small executable-only `src/cli.ts` boundary is excluded from in-process V8 line coverage because importing it starts stdio service. Its help, version, invalid-argument, startup, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.
+The executable-only `src/cli.ts` and `src/release-cli.ts` boundaries, and their shared `src/cli-runner.ts`, are excluded from in-process V8 line coverage because importing an entry point starts stdio service. Their help, version, invalid-argument, startup, profile, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.
 
 #### Test-only installed-process barriers
 
@@ -102,6 +102,12 @@ The repository will maintain a machine-readable manifest containing every advert
 CI evidence is a `ciEvidence` reference on every entry, resolving to a run recorded once in the manifest's `ciRuns`: its workflow, URL, commit, completion time, conclusion, and the matrix jobs it ran. Only a passing run may be recorded there. The evidence artifact then reports, per entry, whether that run covers the commit being verified or is `stale` — evidence of an earlier commit is evidence of that commit and of nothing else.
 
 CI must fail when runtime capability discovery and the manifest differ, or when a manifest entry lacks a required end-to-end scenario.
+
+### First-release inventory
+
+[`config/release.json`](../config/release.json) is a narrower, machine-readable allowlist over the capability manifest. The development entry point may retain implemented and experimental work, but the release entry point registers only names selected by this inventory and supports only the protocol revisions it names. The same inventory is the input to candidate-manifest generation, public documentation, security review, and release evidence; those consumers may not maintain parallel lists.
+
+`pnpm verify:release` first proves its gate against an excluded capability, runtime exposure, runtime omission, stale-commit evidence, and wrong-artifact evidence. A candidate manifest can be derived only when every selected entry is verified and local-only, every CI reference resolves, every retained scenario passed for the exact candidate commit, the evidence names the candidate tarball, and the inventory itself is verified. The derived manifest computes rather than accepts its inventory, capability-manifest, verification-evidence, and artifact digests.
 
 ## Minimum scenarios for every capability
 

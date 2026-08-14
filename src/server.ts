@@ -5,6 +5,12 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { DEFAULT_SERVER_CONFIG, type ServerConfig } from './config.js';
 import { SERVER_NAME, SERVER_VERSION } from './metadata.js';
 import { PolicyBoundary } from './policy.js';
+import {
+  parseReleaseInventory,
+  releaseIncludes,
+  type ReleaseInventory,
+  type ServerProfile,
+} from './release.js';
 import { registerDocumentationResources } from './resources/docs-resources.js';
 import { registerProjectResources } from './resources/project-resources.js';
 import type { RuleCatalog } from './rules/pre-release.js';
@@ -25,6 +31,8 @@ export interface ServerDependencies {
   readonly policy: PolicyBoundary;
   /** The pre-release checks shipped with the package. */
   readonly ruleCatalog: RuleCatalog;
+  /** Undefined for development; otherwise the only capabilities a release may advertise. */
+  readonly releaseInventory?: ReleaseInventory;
 }
 
 export function createServer(
@@ -38,23 +46,52 @@ export function createServer(
   const asker = new SetupAsker(era);
   const server = new McpServer(
     { name: SERVER_NAME, version: SERVER_VERSION },
-    { capabilities: { tools: {}, resources: {} } },
+    {
+      capabilities: { tools: {}, resources: {} },
+      ...(dependencies.releaseInventory === undefined
+        ? {}
+        : {
+            supportedProtocolVersions: [...dependencies.releaseInventory.protocolVersions],
+          }),
+    },
   );
   // First, because it is what a caller reaches for when something refuses.
-  registerCheckSetup(server, dependencies.policy, era);
-  registerInspectProject(server, dependencies.policy, era);
-  registerValidateStateMachine(server, dependencies.policy, era);
-  registerValidateActionContracts(server, dependencies.policy, era);
-  registerValidateNotifications(server, dependencies.policy, era);
-  registerAuditDatabaseUsage(server, dependencies.policy, era);
-  registerValidateProject(server, dependencies.policy, era);
+  const included = (kind: 'tools' | 'resources' | 'prompts', name: string): boolean =>
+    releaseIncludes(dependencies.releaseInventory, kind, name);
+
+  if (included('tools', 'check_setup')) registerCheckSetup(server, dependencies.policy, era);
+  if (included('tools', 'inspect_project'))
+    registerInspectProject(server, dependencies.policy, era);
+  if (included('tools', 'validate_state_machine'))
+    registerValidateStateMachine(server, dependencies.policy, era);
+  if (included('tools', 'validate_action_contracts'))
+    registerValidateActionContracts(server, dependencies.policy, era);
+  if (included('tools', 'validate_notifications'))
+    registerValidateNotifications(server, dependencies.policy, era);
+  if (included('tools', 'audit_database_usage'))
+    registerAuditDatabaseUsage(server, dependencies.policy, era);
+  if (included('tools', 'validate_project'))
+    registerValidateProject(server, dependencies.policy, era);
   // Advertised whether or not the network is enabled: the tool exists, and
   // without --allow-network every call refuses with the same stable code.
-  registerSearchBgaDocs(server, dependencies.policy);
-  registerReadStudioLogs(server, dependencies.policy, asker);
-  registerProjectResources(server, dependencies.policy, era);
-  registerDocumentationResources(server, dependencies.policy);
-  registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog, era);
+  if (included('tools', 'search_bga_docs')) registerSearchBgaDocs(server, dependencies.policy);
+  if (included('tools', 'read_studio_logs'))
+    registerReadStudioLogs(server, dependencies.policy, asker);
+  if (
+    included('resources', 'bga://project/summary') ||
+    included('resources', 'bga://project/states') ||
+    included('resources', 'bga://project/diagnostics')
+  ) {
+    registerProjectResources(server, dependencies.policy, era);
+  }
+  if (
+    included('resources', 'bga://docs/{topic}') ||
+    included('resources', 'bga://framework/version')
+  ) {
+    registerDocumentationResources(server, dependencies.policy);
+  }
+  if (included('tools', 'run_pre_release_audit'))
+    registerRunPreReleaseAudit(server, dependencies.policy, dependencies.ruleCatalog, era);
   return server;
 }
 
@@ -67,7 +104,10 @@ export async function createDefaultServer(): Promise<McpServer> {
  * Builds the policy boundary before any transport is served, so an invalid or
  * unavailable configuration fails at startup instead of at first use.
  */
-export async function createServerWithPolicy(config: ServerConfig): Promise<{
+export async function createServerWithPolicy(
+  config: ServerConfig,
+  profile: ServerProfile = 'development',
+): Promise<{
   readonly policy: PolicyBoundary;
   readonly create: (context?: { readonly era?: 'legacy' | 'modern' }) => McpServer;
 }> {
@@ -75,12 +115,24 @@ export async function createServerWithPolicy(config: ServerConfig): Promise<{
   const ruleCatalog = JSON.parse(
     await policy.readPackagedConfig('rule-catalog.json'),
   ) as RuleCatalog;
+  const releaseInventory =
+    profile === 'development'
+      ? undefined
+      : parseReleaseInventory(JSON.parse(await policy.readPackagedConfig('release.json')));
 
   return {
     policy,
     create: (context) => {
       const era = context?.era ?? 'legacy';
-      const server = createServer(config, { policy, ruleCatalog }, era);
+      const server = createServer(
+        config,
+        {
+          policy,
+          ruleCatalog,
+          ...(releaseInventory === undefined ? {} : { releaseInventory }),
+        },
+        era,
+      );
       wireClientRoots(server, policy, era);
       return server;
     },

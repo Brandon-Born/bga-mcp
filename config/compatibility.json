@@ -1,7 +1,7 @@
 {
   "$schema": "./compatibility.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-13",
+  "updatedAt": "2026-08-14",
   "claims": [
     {
       "id": "CLAIM-LAYOUT-MODERN",
@@ -451,8 +451,8 @@
       "dimension": "transport",
       "value": "stdio",
       "support": "supported",
-      "notes": "The only product transport. Launched as a subprocess by the MCP client.",
-      "scenarios": ["E2E-STDIO-SHUTDOWN", "GATE-COMPATIBILITY-MATRIX"]
+      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory.",
+      "scenarios": ["E2E-RELEASE-LOCAL-ONLY", "E2E-STDIO-SHUTDOWN", "GATE-COMPATIBILITY-MATRIX"]
     },
     {
       "id": "CLAIM-TRANSPORT-HTTP",

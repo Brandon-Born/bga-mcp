@@ -2,6 +2,7 @@ import { resolve } from 'node:path';
 
 import { DEFAULT_POLICY_CONFIG, type PolicyConfig } from './policy.js';
 import { MINIMUM_OUTPUT_BYTES } from './publish.js';
+import type { ServerProfile } from './release.js';
 
 /** Server configuration is exactly the policy configuration: nothing bypasses it. */
 export type ServerConfig = PolicyConfig;
@@ -41,6 +42,23 @@ Options:
   --version                      Show the package version
 `;
 
+export const RELEASE_HELP_TEXT = `Usage: bga-mcp [options]
+
+Run the local-only bga-mcp release over stdio. Network, Studio, and mutation surfaces are not included.
+
+Options:
+  --project-root <path>          Allow a local BGA project root (repeatable)
+  --operation-timeout-ms <n>     Deadline for a single operation (default ${String(DEFAULT_POLICY_CONFIG.operationTimeoutMs)})
+  --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)},
+                                 minimum ${String(MINIMUM_OUTPUT_BYTES)}, which is the smallest failure the server can send)
+  --help                         Show this help text
+  --version                      Show the package version
+`;
+
+export function helpTextForProfile(profile: ServerProfile): string {
+  return profile === 'development' ? HELP_TEXT : RELEASE_HELP_TEXT;
+}
+
 function requireValue(option: string, value: string | undefined): string {
   if (value === undefined || value.startsWith('-')) {
     throw new CliUsageError(`${option} requires a value`);
@@ -62,6 +80,7 @@ function requirePositiveInteger(option: string, value: string): number {
 export function parseCliArguments(
   arguments_: readonly string[],
   workingDirectory = process.cwd(),
+  profile: ServerProfile = 'development',
 ): CliAction {
   const projectRoots: string[] = [];
   const remoteProjects: string[] = [];
@@ -77,6 +96,21 @@ export function parseCliArguments(
 
   for (let index = 0; index < arguments_.length; index += 1) {
     const argument = arguments_[index];
+
+    if (
+      profile !== 'development' &&
+      [
+        '--allow-network',
+        '--allow-mutations',
+        '--allow-remote-project',
+        '--experimental-studio-logs',
+        '--studio-check',
+        '--studio-dev-account',
+        '--studio-session-file',
+      ].includes(argument ?? '')
+    ) {
+      throw new CliUsageError(`${argument ?? ''} is unavailable in the local-only release`);
+    }
 
     if (argument === '--help') {
       return { kind: 'help' };

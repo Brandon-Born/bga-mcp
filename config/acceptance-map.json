@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-13",
+  "updatedAt": "2026-08-14",
   "owner": "BGA-128",
   "cases": [
     {
@@ -914,6 +914,24 @@
       "case": "A live scenario creates an own-account marker, retrieves only that marker, and cleans up",
       "boundary": "packaged",
       "missing": "Needs a live authenticated run, which requires the operator's own Studio session; the 2026-08-10 browser run confirmed the identifiers and the wrong-project answer but did not drive the MCP tool against the live page."
+    },
+    {
+      "item": "BGA-414",
+      "case": "Every capability discoverable from the installed release artifact is explicitly included and verified in the frozen inventory",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RELEASE-LOCAL-ONLY"]
+    },
+    {
+      "item": "BGA-414",
+      "case": "Every implemented, experimental, documentation-networked, Studio-backed, or otherwise excluded source-tree capability is absent from release discovery",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RELEASE-LOCAL-ONLY"]
+    },
+    {
+      "item": "BGA-414",
+      "case": "Exposing an excluded capability, omitting an included capability, or attaching stale or wrong-artifact evidence fails the release gate",
+      "boundary": "repository",
+      "scenarios": ["GATE-RELEASE-INVENTORY"]
     }
   ]
 }

@@ -65,7 +65,9 @@
         "E2E-STDIO-MODERN-DISCOVER",
         "E2E-STDIO-UNADVERTISED-METHOD",
         "E2E-STDIO-SHUTDOWN",
-        "E2E-PACK-INSTALL-REMOVE"
+        "E2E-PACK-INSTALL-REMOVE",
+        "E2E-RELEASE-LOCAL-ONLY",
+        "GATE-RELEASE-INVENTORY"
       ],
       "ciEvidence": "ci-31439224886"
     }
