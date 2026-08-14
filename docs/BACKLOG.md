@@ -1312,7 +1312,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-402 — Define versioning and compatibility policy
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-006, BGA-009, BGA-414
 - **Deliverable:** Policies for package versions, tool/schema changes, manifest changes, MCP versions, deprecations, and BGA compatibility.
@@ -1320,11 +1320,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** [`GATE-VERSION-POLICY`](../tests/unit/version-policy.test.ts) seeds silent schema drift, an additive patch, a too-early removal, a major removal without deprecation, and a same-version versioned-schema rewrite; each is refused, while an additive minor and a removal after a declared 90-day/next-major boundary pass. [`E2E-CONTRACT-COMPATIBILITY`](../tests/e2e/version-policy.test.ts) installs the shared tarball, connects through the real MCP client, compares exact release discovery and shipped contracts with the retained `1.0.0` candidate, then calls all seven tools and reads all three resources using the retained contract.
 - **Policy:** [`config/version-policy.json`](../config/version-policy.json) defines SemVer levels, a 90-day and one-minor deprecation floor, 180 days of feasible critical-security fixes for the previous major, and no silent withdrawal of MCP or BGA support. [`config/contracts/1.0.0.json`](../config/contracts/1.0.0.json) fingerprints the BGA-414 package surface. Published snapshots are append-only; `0.0.0-development` remains unpublished and the first stable contract is `1.0.0`.
 - **Sources:** [Semantic Versioning 2.0.0](https://semver.org/) says incompatible public API changes increment the major and deprecation increments the minor. [MCP Versioning](https://modelcontextprotocol.io/docs/learn/versioning) says peers “MUST agree on a single version” for a session. The [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) says `states.inc.php` is “deprecated” while documenting its replacement, and the [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says an old file can be safely deleted only after its replacement is ready. Those sources justify separate package, protocol, and per-construct BGA lifecycles rather than treating one new form as removal of every old one.
-- **Evidence, 2026-08-14:** Full local `pnpm check` passes with 75 test files and 570 tests; all 168 required scenarios pass, and the acceptance map records 149 of 151 cases proven with the two existing live Studio cases explicitly missing. Exact-commit CI has not yet run, so this item remains `implemented`, not `verified`.
+- **Verified against:** Full local `pnpm check` passes with 75 test files and 570 tests; all 168 required scenarios pass, and the acceptance map records 149 of 151 cases proven with the two existing live Studio cases explicitly missing. All six Ubuntu, macOS, and Windows jobs on Node 22 and 24 passed for implementation commit [`1e05b39`](https://github.com/Brandon-Born/bga-mcp/commit/1e05b39bb93af10cef0699ba1ec12710afa60f7f) in exact-HEAD [CI run 31840842689](https://github.com/Brandon-Born/bga-mcp/actions/runs/31840842689), and the same matrix passed again for main merge commit [`6e7ae95`](https://github.com/Brandon-Born/bga-mcp/commit/6e7ae95c5ce8d8ca0ba01aa8c9416136cde9b657) in [CI run 31841250193](https://github.com/Brandon-Born/bga-mcp/actions/runs/31841250193). BGA-402 is `verified`, and BGA-403 may start.
 
 ### BGA-403 — Build the reproducible release-candidate pipeline
 
-- **Status:** planned
+- **Status:** ready
 - **Priority:** P0
 - **Depends on:** BGA-005, BGA-011, BGA-012, BGA-014, BGA-402, BGA-414
 - **Deliverable:** A least-privilege pipeline that builds once from a clean tag, verifies, packages, and preserves one immutable candidate for BGA-404, BGA-407, and BGA-405. This item does not publish and grants no registry or identity-token permission.
