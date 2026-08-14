@@ -271,6 +271,7 @@
         "TM-POLICY-TIMEOUT",
         "TM-POLICY-CANCELLATION",
         "TM-POLICY-FILESYSTEM-DEADLINE-QUIESCENCE",
+        "TM-POLICY-PARSER-DEADLINE-QUIESCENCE",
         "TM-POLICY-OUTPUT-LIMIT",
         "TM-POLICY-FINAL-OUTPUT-LIMIT",
         "TM-POLICY-OBJECT-BOUND-READS"
@@ -653,6 +654,15 @@
       "status": "implemented",
       "backlog": "BGA-326",
       "scenarios": ["E2E-FILESYSTEM-CANCELLATION"]
+    },
+    {
+      "id": "TM-POLICY-PARSER-DEADLINE-QUIESCENCE",
+      "title": "An installed non-yielding parser expires at the shared monotonic checkpoint with no later parser work or output",
+      "boundary": "TB-PROCESS",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-412",
+      "scenarios": ["E2E-POLICY-PARSER-DEADLINE"]
     },
     {
       "id": "TM-POLICY-OUTPUT-LIMIT",
@@ -1160,7 +1170,7 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, and quiescence for instrumented listing and descriptor-read syscalls. It does not yet prove an installed synchronous parser deadline or every native filesystem primitive; BGA-326 owns that remaining gap.",
+      "description": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, synchronous parser expiry, and quiescence for instrumented listing and descriptor-read syscalls. It does not prove every native filesystem primitive; BGA-326 owns that remaining gap.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },
