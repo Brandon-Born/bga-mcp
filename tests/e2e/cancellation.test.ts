@@ -1,6 +1,6 @@
 import { createServer, type Server, type ServerResponse } from 'node:http';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
 
@@ -43,6 +43,10 @@ import {
 const stubModule = new URL('./doc-network-stub.ts', import.meta.url).href;
 const dnsStubModule = new URL('./dns-stub.ts', import.meta.url).href;
 const fsDelayModule = new URL('./fs-delay-stub.ts', import.meta.url).href;
+const parserDeadlineModule = new URL('./parser-deadline-stub.ts', import.meta.url).href;
+const PARSER_DEADLINE_MS = 5_000;
+const PARSER_EXPIRY_CHECKPOINT = 5;
+const PARSER_MARKER = 'parser-content-that-must-not-be-published';
 
 let server: PackagedServer<'legacy'>;
 let stub: Server;
@@ -166,6 +170,73 @@ async function filesystemProbe(
         BGA_MCP_FS_DELAY_OPERATION: operation,
         BGA_MCP_FS_DELAY_MS: '250',
         BGA_MCP_FS_DELAY_TRANSCRIPT: transcriptPath,
+      },
+    },
+  );
+  return { ...result, stderr };
+}
+
+interface ParserDeadlineEvent {
+  readonly sequence: number;
+  readonly stage: 'register' | 'parser-checkpoint';
+  readonly parserCheckpoints: number;
+  readonly value: number;
+}
+
+function parserEvents(source: string): ParserDeadlineEvent[] {
+  return source
+    .split('\n')
+    .filter((line) => line.length > 0)
+    .map((line) => JSON.parse(line) as ParserDeadlineEvent);
+}
+
+async function slowParserProject(name: string): Promise<string> {
+  const root = resolve(server.temporaryRoot, name);
+  await mkdir(root, { recursive: true });
+  await writeFile(
+    resolve(root, 'gameinfos.jsonc'),
+    `/*${PARSER_MARKER}${'x'.repeat(32_768)}*/{"name":"SlowParser","players":[2]}\n`,
+  );
+  return root;
+}
+
+async function parserDeadlineProbe(
+  root: string,
+  label: string,
+): Promise<{
+  response: Awaited<ReturnType<typeof callTool>>;
+  atSettlement: string;
+  afterWait: string;
+  setup: Awaited<ReturnType<typeof callTool>>;
+  stderr: string;
+}> {
+  const controlPath = resolve(server.temporaryRoot, `parser-${label}.control`);
+  const transcriptPath = resolve(server.temporaryRoot, `parser-${label}.log`);
+  await writeFile(controlPath, 'armed\n');
+  await writeFile(transcriptPath, '');
+
+  const { result, stderr } = await withPackagedServer(
+    server.cli,
+    ['--project-root', root, '--operation-timeout-ms', String(PARSER_DEADLINE_MS)],
+    async (client) => {
+      const response = await callTool(client, 'inspect_project', {}, 30_000);
+      const atSettlement = await readFile(transcriptPath, 'utf8');
+      await writeFile(controlPath, 'disarmed\n');
+      await new Promise<void>((resolveDelay) => {
+        setTimeout(resolveDelay, 350);
+      });
+      const afterWait = await readFile(transcriptPath, 'utf8');
+      const setup = await callTool(client, 'check_setup', {}, 30_000);
+      return { response, atSettlement, afterWait, setup };
+    },
+    {
+      nodeArguments: ['--import', 'tsx', '--import', parserDeadlineModule],
+      env: {
+        ...process.env,
+        BGA_MCP_PARSER_DEADLINE_CONTROL: controlPath,
+        BGA_MCP_PARSER_DEADLINE_TRANSCRIPT: transcriptPath,
+        BGA_MCP_PARSER_DEADLINE_MS: String(PARSER_DEADLINE_MS),
+        BGA_MCP_PARSER_DEADLINE_CHECKPOINT: String(PARSER_EXPIRY_CHECKPOINT),
       },
     },
   );
@@ -485,6 +556,65 @@ describe('packaged operation deadlines', () => {
     expect(result.afterWait).toBe(result.atSettlement);
     expect(result.setup.isError, result.setup.text).toBe(false);
     expect(result.stderr).not.toContain('Unhandled');
+  }, 180_000);
+
+  it('[E2E-POLICY-PARSER-DEADLINE] expires inside an installed non-yielding parser checkpoint', async () => {
+    const root = await slowParserProject('slow-parser');
+    const result = await parserDeadlineProbe(root, 'active');
+    const events = parserEvents(result.atSettlement);
+
+    expect(
+      result.response.isError,
+      JSON.stringify({ response: result.response.text, events }, null, 2),
+    ).toBe(true);
+    expect(result.response.text).toContain('policy.timeout.exceeded');
+    expect(result.response.text).not.toContain(PARSER_MARKER);
+    expect(events.map((event) => event.stage)).toEqual([
+      'register',
+      ...Array.from({ length: PARSER_EXPIRY_CHECKPOINT }, () => 'parser-checkpoint' as const),
+    ]);
+    expect(events.map((event) => event.sequence)).toEqual(
+      Array.from({ length: events.length }, (_, index) => index + 1),
+    );
+    expect(events.at(-1)).toMatchObject({
+      stage: 'parser-checkpoint',
+      parserCheckpoints: PARSER_EXPIRY_CHECKPOINT,
+      value: PARSER_DEADLINE_MS + 1,
+    });
+    expect(result.afterWait, 'parser work continued after the public timeout settled').toBe(
+      result.atSettlement,
+    );
+    expect(result.setup.isError, result.setup.text).toBe(false);
+    expect(result.stderr).not.toContain(PARSER_MARKER);
+    expect(result.stderr).not.toContain('Unhandled');
+
+    // Mutation control: remove the installed periodic checkpoint and repeat
+    // the same probe. It must now complete instead of timing out, proving the
+    // oracle is observing that production checkpoint rather than shutdown or
+    // an elapsed-time guess. Restore the installed artifact even on failure.
+    const deadlineModule = resolve(dirname(server.cli), 'deadline.js');
+    const original = await readFile(deadlineModule, 'utf8');
+    const neutralized = original.replace(
+      /export function periodicCancellationCheckpoint\(iteration, signal\) \{\n {4}if \(\(iteration & 0x3ff\) === 0\) \{\n {8}cancellationCheckpoint\(signal\);\n {4}\}\n\}/u,
+      'export function periodicCancellationCheckpoint() {\n}',
+    );
+    expect(neutralized, 'the mutation control did not find the installed checkpoint').not.toBe(
+      original,
+    );
+    await writeFile(deadlineModule, neutralized);
+    try {
+      const control = await parserDeadlineProbe(root, 'neutralized');
+      const controlEvents = parserEvents(control.atSettlement);
+      expect(control.response.isError, control.response.text).toBe(false);
+      expect(controlEvents.map((event) => event.stage)).toEqual(['register']);
+      expect(control.afterWait).toBe(control.atSettlement);
+      expect(control.setup.isError, control.setup.text).toBe(false);
+      expect(control.response.text).not.toContain(PARSER_MARKER);
+      expect(control.stderr).not.toContain(PARSER_MARKER);
+      expect(control.stderr).not.toContain('Unhandled');
+    } finally {
+      await writeFile(deadlineModule, original);
+    }
   }, 180_000);
 
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] drops a body it will never read instead of draining it', async () => {

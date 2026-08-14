@@ -773,9 +773,9 @@
     },
     {
       "item": "BGA-326",
-      "case": "Documentation and Studio parsing stops at synchronous deadline checkpoints",
+      "case": "An installed non-yielding project parser stops at synchronous deadline checkpoints",
       "boundary": "packaged",
-      "missing": "Production parsing now uses monotonic cooperative deadline checkpoints and INT-POLICY-TIMEOUT forces a non-yielding JSONC scan past its deadline in-process. An installed-artifact slow-parser oracle is still missing, so this packaged case is not yet proven."
+      "scenarios": ["E2E-POLICY-PARSER-DEADLINE"]
     },
     {
       "item": "BGA-326",
