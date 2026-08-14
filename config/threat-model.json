@@ -601,7 +601,11 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-330",
-      "scenarios": ["E2E-POLICY-OBJECT-BOUND-READS", "INT-POLICY-POST-STAT-GROWTH-REFUSAL"]
+      "scenarios": [
+        "E2E-POLICY-OBJECT-BOUND-READS",
+        "E2E-POLICY-RACE-BARRIER",
+        "INT-POLICY-POST-STAT-GROWTH-REFUSAL"
+      ]
     },
     {
       "id": "TM-POLICY-SINGLE-SWAP-REFUSAL",
@@ -610,7 +614,7 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-330",
-      "scenarios": ["INT-POLICY-SINGLE-SWAP-REFUSAL"]
+      "scenarios": ["E2E-POLICY-RACE-BARRIER", "INT-POLICY-SINGLE-SWAP-REFUSAL"]
     },
     {
       "id": "TM-POLICY-SINGLE-GATE",
@@ -1234,7 +1238,7 @@
     },
     {
       "id": "RR-POLICY-TRAVERSAL-OPENAT",
-      "description": "Direct-policy integration barriers prove refusal in selected single-swap windows, but the installed-artifact barrier is still missing. Portable Node pathname checks cannot prevent repeated adversarial swaps across successive identity and containment checks because Node exposes no descriptor-relative openat; the integration evidence is not openat equivalence.",
+      "description": "Direct-policy and installed-artifact barriers prove refusal in selected single-swap windows. Portable Node pathname checks cannot prevent repeated adversarial swaps across successive identity and containment checks because Node exposes no descriptor-relative openat; the deterministic single-swap evidence is not openat equivalence.",
       "abuseCases": ["AC-SYMLINK-ESCAPE", "AC-PATH-TRAVERSAL"],
       "acceptedBy": "Brandon Born"
     },
