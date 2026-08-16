@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 
+import { SERVER_NAME, SERVER_VERSION } from '../../src/metadata.js';
 import { assertManifestMatchesRuntime, validateManifestSchema } from '../helpers/manifest.js';
 
 const configRoot = fileURLToPath(new URL('../../config/', import.meta.url));
@@ -15,7 +16,7 @@ describe('capability manifest gate', () => {
     const manifest = await loadJson('capabilities.json');
     validateManifestSchema(schema, manifest);
     assertManifestMatchesRuntime(manifest as never, {
-      server: { name: 'bga-mcp', version: '0.0.0-development' },
+      server: { name: SERVER_NAME, version: SERVER_VERSION },
       tools: [
         'audit_database_usage',
         'check_setup',

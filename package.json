@@ -77,9 +77,11 @@
     "verify:evidence": "tsx scripts/verify-evidence.ts",
     "verify:acceptance-map": "tsx scripts/verify-acceptance-map.ts",
     "verify:release": "tsx scripts/verify-release.ts",
+    "verify:release-candidate": "tsx scripts/verify-release-candidate.ts",
     "verify:version-policy": "tsx scripts/verify-version-policy.ts",
+    "release:candidate": "tsx scripts/create-release-candidate.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm verify:release-candidate && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
     "prepack": "pnpm build"
   },
   "dependencies": {

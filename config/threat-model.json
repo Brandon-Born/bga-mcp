@@ -449,6 +449,24 @@
       "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY", "TM-MODEL-AGREEMENT"]
     },
     {
+      "id": "AC-CANDIDATE-SUBSTITUTION",
+      "title": "A downstream release step rebuilds or substitutes bytes after verification",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-SUPPLY-CHAIN",
+      "impact": "Signing, security review, or publication consumes an artifact other than the one whose installed scenarios passed.",
+      "mitigations": ["TM-CANDIDATE-IMMUTABLE"]
+    },
+    {
+      "id": "AC-CANDIDATE-PUBLICATION",
+      "title": "The release-candidate dry run can publish or mint a publication identity",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-LOCAL-PRIVATE"],
+      "boundary": "TB-SUPPLY-CHAIN",
+      "impact": "An unreviewed candidate can reach a registry before signing, evidence publication, client testing, and security review finish.",
+      "mitigations": ["TM-CANDIDATE-NON-PUBLISHING"]
+    },
+    {
       "id": "AC-STUDIO-UPLOAD-SCOPE",
       "title": "A synchronization uploads files from outside the project",
       "actor": "ACTOR-DEVELOPER",
@@ -941,6 +959,24 @@
       "control": "automated",
       "status": "implemented",
       "scenarios": ["GATE-EVIDENCE-TAMPER"]
+    },
+    {
+      "id": "TM-CANDIDATE-IMMUTABLE",
+      "title": "A clean versioned tag builds one retained candidate whose exact bytes, source, lockfile, inventory, manifest, and evidence are digest-bound and reproducible",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-403",
+      "scenarios": ["INT-RELEASE-CANDIDATE-DRY-RUN"]
+    },
+    {
+      "id": "TM-CANDIDATE-NON-PUBLISHING",
+      "title": "The candidate workflow is manual, read-only, credential-free, and has no registry publication or identity-token path",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-403",
+      "scenarios": ["GATE-RELEASE-CANDIDATE"]
     },
     {
       "id": "TM-MODEL-AGREEMENT",

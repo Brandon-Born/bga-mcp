@@ -1324,12 +1324,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-403 — Build the reproducible release-candidate pipeline
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-005, BGA-011, BGA-012, BGA-014, BGA-402, BGA-414
 - **Deliverable:** A least-privilege pipeline that builds once from a clean tag, verifies, packages, and preserves one immutable candidate for BGA-404, BGA-407, and BGA-405. This item does not publish and grants no registry or identity-token permission.
 - **Acceptance:** Candidate creation fails when any release-included capability lacks required evidence; the artifact is reproducible from the recorded commit and lock digest; every downstream step consumes the recorded artifact digest rather than rebuilding it. Publication remains impossible until BGA-415.
 - **Verification:** A dry run proves all gates, artifact hashes, exact-artifact reuse, and absence of a publish path or publication credential. A seeded missing scenario, changed artifact, or failing required gate blocks candidate completion.
+- **Implementation, 2026-08-15:** [`.github/workflows/release-candidate.yml`](../.github/workflows/release-candidate.yml) is manual-only, checks out one existing `v1.0.0-rc.N` tag with persisted credentials disabled, grants only `contents: read`, and retains its output for 90 days. [`scripts/create-release-candidate.ts`](../scripts/create-release-candidate.ts) refuses a dirty or mismatched tag, runs the complete gate, packs the original candidate, reconstructs the same tag from an offline frozen-lockfile worktree, and requires byte-for-byte equality. The [`release-candidate.json` schema](../config/release-candidate.schema.json) binds the original tarball, source commit, tag, lockfile, frozen inventory, capability manifest, and sealed verification evidence by SHA-256; the bundle also carries the evidence, schema, and `SHA256SUMS`. The reconstruction is discarded and a non-empty destination is never overwritten.
+- **Implemented evidence:** `GATE-RELEASE-CANDIDATE` seeds automatic triggers, elevated permissions, registry commands and credentials, an unpinned artifact action, a dirty tree, a tag/HEAD mismatch, and version drift. `INT-RELEASE-CANDIDATE-DRY-RUN` assembles the retained bundle from equal candidate/reconstruction bytes, validates its schema and checksums, then proves changed bytes, failed tests, missing selected scenarios, and overwrite attempts stop it. Full local `pnpm check` passes with 76 test files and 572 tests; all 168 capability scenarios pass, the two new supply-chain claims pass, and the acceptance map records 152 of 154 cases proven with the two existing live Studio cases explicitly missing. This remains `implemented`, not `verified`, until exact-head CI passes and the manual workflow successfully builds an actual candidate tag.
+- **Sources:** [npm pack](https://docs.npmjs.com/cli/v11/commands/npm-pack/) documents that `npm pack` creates the installable tarball and supports an explicit pack destination. [GitHub workflow artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data) documents that v4 artifacts are immutable, can carry an explicit retention period, and expose a SHA-256 digest that download validates.
 
 ### BGA-404 — Sign and attest release artifacts
 

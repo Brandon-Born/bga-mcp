@@ -88,6 +88,8 @@ Exit criterion: a new developer can install, configure, verify, and remove the s
 
 The first public release is intentionally local-only. A capability counts as public when the installed MCP server advertises it, even if its description says experimental or requires an opt-in flag. Documentation-network and Studio capabilities therefore stay out of first-release discovery until their existing backlog owners are verified; they are not release blockers and they are not waived. BGA-402 now retains and gates the first stable contract; BGA-403 through BGA-415 define the remaining candidate, signing, evidence, documentation, security, and publication steps, and the serial queue in the backlog permits only one release item to be implemented at a time.
 
+BGA-403 was implemented on 2026-08-15 as a manual, read-only candidate workflow. It runs the complete gate from an existing release-candidate tag, retains one original npm tarball, independently reconstructs the same tag from the frozen lockfile, and requires byte-for-byte equality. The candidate manifest digest-binds the source, lockfile, inventory, capability manifest, verification evidence, and original tarball. The item stays `implemented` until exact-head CI and an actual tagged workflow dry run pass; signing, evidence publication, client claims, and registry publication remain absent.
+
 ## Explicit non-goals for the first release
 
 - Fully autonomous game implementation or release.

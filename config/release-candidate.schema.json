@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Brandon-Born/bga-mcp/raw/main/config/release-candidate.schema.json",
+  "title": "bga-mcp immutable release candidate manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "release",
+    "server",
+    "transports",
+    "capabilities",
+    "adapters"
+  ],
+  "properties": {
+    "$schema": { "const": "./release-candidate.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "environment",
+        "entrypoint",
+        "sourceTag",
+        "sourceCommit",
+        "packageName",
+        "packageVersion",
+        "artifactName",
+        "lockDigest",
+        "digests"
+      ],
+      "properties": {
+        "id": { "const": "first-local-only" },
+        "environment": { "const": "local" },
+        "entrypoint": { "const": "dist/release-cli.js" },
+        "sourceTag": {
+          "type": "string",
+          "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.[1-9][0-9]*$"
+        },
+        "sourceCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "packageName": { "type": "string", "minLength": 1 },
+        "packageVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+-rc\\.[1-9][0-9]*$"
+        },
+        "artifactName": { "type": "string", "pattern": "\\.tgz$" },
+        "lockDigest": { "$ref": "#/$defs/digest" },
+        "digests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["inventory", "capabilityManifest", "verificationEvidence", "artifact"],
+          "properties": {
+            "inventory": { "$ref": "#/$defs/digest" },
+            "capabilityManifest": { "$ref": "#/$defs/digest" },
+            "verificationEvidence": { "$ref": "#/$defs/digest" },
+            "artifact": { "$ref": "#/$defs/digest" }
+          }
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 }
+      }
+    },
+    "transports": { "$ref": "#/$defs/entries" },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools", "resources", "prompts"],
+      "properties": {
+        "tools": { "$ref": "#/$defs/entries" },
+        "resources": { "$ref": "#/$defs/entries" },
+        "prompts": { "$ref": "#/$defs/entries" }
+      }
+    },
+    "adapters": { "$ref": "#/$defs/entries" }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "stability", "requiredScenarios", "ciEvidence"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "stability": { "const": "verified" },
+          "requiredScenarios": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "boundary": { "type": "string", "minLength": 1 },
+          "ciEvidence": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
