@@ -61,11 +61,12 @@ queries that interpolate a PHP value into their text instead of escaping it.
 dbmodel.sql, DbQuery, and getObjectListFromDB are unchanged across the layouts,
 so this applies equally to a legacy, modern, or part-migrated project.
 
-A table that is missing from the schema is reported as a fact. Column-level
-claims are heuristics, because aliases, expressions, and SELECT * all limit
-what a textual reader can see. A query assembled from several expressions is
-reported as unsupported rather than reconstructed. Read-only, and no network
-access.`;
+A table that is missing from the schema is reported as a fact. Explicit and
+implicit output aliases are not schema columns, and qualified table aliases are
+resolved to their underlying tables. Column-level claims remain heuristics;
+expressions, subqueries, CTEs, and dynamically assembled queries outside the
+supported subset are reported as unsupported rather than reconstructed.
+Read-only, and no network access.`;
 
 export function summarizeDatabaseAudit(
   diagnostics: DiagnosticResult,

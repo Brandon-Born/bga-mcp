@@ -73,6 +73,25 @@ interface StateDraft extends StateDefinition {
   readonly initialPrivate: string | null;
 }
 
+const CONFLICTING_WALKTHROUGH_ACTION = /^action_[A-Za-z_]\w*$/u;
+
+/**
+ * Action names used by the official Complete Walkthrough but contradicted by
+ * the canonical state-class and Game.php pages, which require `act…`.
+ * Until BGA clarifies the conflict these names are unreadable framework
+ * semantics, not invalid project code.
+ */
+export function conflictingModernActionNames(php: string, signal?: AbortSignal): readonly string[] {
+  return readMethods(php, signal)
+    .filter(
+      (method) =>
+        method.attributes.includes('PossibleAction') &&
+        CONFLICTING_WALKTHROUGH_ACTION.test(method.name),
+    )
+    .map((method) => method.name)
+    .sort();
+}
+
 /** Reads the arguments of the `parent::__construct` call, in order. */
 function constructorArguments(
   text: string,
@@ -221,6 +240,26 @@ function readClass(
   }
 
   const methods = readMethods(source.text, signal);
+  const conflictingActions = methods.filter(
+    (method) =>
+      method.attributes.includes('PossibleAction') &&
+      CONFLICTING_WALKTHROUGH_ACTION.test(method.name),
+  );
+  for (const method of conflictingActions) {
+    report(
+      `state class ${className} uses documented-but-conflicting #[PossibleAction] method ${method.name}`,
+      'edge',
+    );
+  }
+  const imperativeRedirects = methods.filter((method) =>
+    /->gamestate\s*->\s*nextState\s*\(/u.test(maskLiterals(method.body, signal)),
+  );
+  for (const method of imperativeRedirects) {
+    report(
+      `state class ${className} uses documented-but-conflicting imperative nextState in ${method.name}`,
+      'edge',
+    );
+  }
   const returned = methods
     .filter((method) => redirects(method.name))
     .flatMap((method) => returnExpressions(method.body, signal));
@@ -249,7 +288,10 @@ function readClass(
     description: literal('description'),
     descriptionMyTurn: literal('descriptionMyTurn'),
     redirects: [],
-    edgesResolved: transitions.unreadable.length === 0,
+    edgesResolved:
+      transitions.unreadable.length === 0 &&
+      conflictingActions.length === 0 &&
+      imperativeRedirects.length === 0,
     returned,
     initialPrivate: named.get('initialPrivate') ?? null,
   };
@@ -596,6 +638,14 @@ export function parseModernActions(
   const unsupported: string[] = [];
   const masked = maskLiterals(php, options.signal);
   const methods = readMethods(php, options.signal);
+
+  if (options.requireAttribute) {
+    for (const name of conflictingModernActionNames(php, options.signal)) {
+      unsupported.push(
+        `state action ${name} uses the Complete Walkthrough form that conflicts with the canonical act… action contract`,
+      );
+    }
+  }
 
   for (const match of masked.matchAll(ACTION_METHOD)) {
     cancellationCheckpoint(options.signal);

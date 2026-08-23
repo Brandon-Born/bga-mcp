@@ -26,8 +26,15 @@ const fixturesRoot = resolve(repositoryRoot, 'tests/fixtures/projects');
 const corepackCommand = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 
 export interface PackagedServer<Fixture extends string = string> {
-  /** Path of the installed CLI entry point. */
+  /** Path of the installed development entry point, for development-profile suites. */
   readonly cli: string;
+  /** Root of the installed bga-mcp package. */
+  readonly packageRoot: string;
+  /** The package-manager-created public command and the arguments needed to invoke its shim. */
+  readonly publicCommand: {
+    readonly command: string;
+    readonly arguments: readonly string[];
+  };
   /** Fixture name to the copy this suite may read, typed by the names requested. */
   readonly projects: Readonly<Record<Fixture, string>>;
   readonly temporaryRoot: string;
@@ -95,6 +102,20 @@ export async function installPackagedServer<Fixture extends string>(
   );
   expect(install.exitCode, `${install.stderr}\n${install.stdout}`).toBe(0);
 
+  const packageRoot = resolve(installRoot, 'node_modules/bga-mcp');
+  const publicBin = resolve(
+    installRoot,
+    'node_modules/.bin',
+    process.platform === 'win32' ? 'bga-mcp.cmd' : 'bga-mcp',
+  );
+  const publicCommand =
+    process.platform === 'win32'
+      ? {
+          command: process.env.ComSpec ?? 'cmd.exe',
+          arguments: ['/d', '/s', '/c', publicBin] as const,
+        }
+      : { command: publicBin, arguments: [] as const };
+
   const projects = {} as Record<Fixture, string>;
   for (const [name, fixture] of Object.entries(fixtures) as [Fixture, string][]) {
     const target = resolve(temporaryRoot, 'projects', name);
@@ -104,7 +125,9 @@ export async function installPackagedServer<Fixture extends string>(
   }
 
   return {
-    cli: resolve(installRoot, 'node_modules/bga-mcp/dist/cli.js'),
+    cli: resolve(packageRoot, 'dist/cli.js'),
+    packageRoot,
+    publicCommand,
     projects,
     temporaryRoot,
     cleanup: async () => {
@@ -183,6 +206,26 @@ export async function withPackagedServer<T>(
     if (processId !== null) {
       await waitForProcessExit(processId);
     }
+  }
+}
+
+/** Starts the package-manager-created public command rather than an internal JS file. */
+export async function withPublicPackagedServer<T>(
+  server: PackagedServer,
+  arguments_: readonly string[],
+  use: (client: Client) => Promise<T>,
+): Promise<{ result: T; stderr: string }> {
+  const connection = await connectStdio(server.publicCommand.command, [
+    ...server.publicCommand.arguments,
+    ...arguments_,
+  ]);
+  const processId = connection.transport.pid;
+  try {
+    const result = await use(connection.client);
+    return { result, stderr: connection.stderr() };
+  } finally {
+    await connection.client.close();
+    if (processId !== null) await waitForProcessExit(processId);
   }
 }
 

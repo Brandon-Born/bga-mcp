@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { dirname, relative, resolve, sep } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
@@ -53,8 +53,7 @@ async function readTypeDeclarations(
 describe('installed public contract', () => {
   it('[E2E-CONTRACT-COMPATIBILITY] retains the first stable contract through real discovery, calls, resources, exports, and shipped schemas', async () => {
     const installed = await installPackagedServer('version-policy', {});
-    const packageRoot = resolve(dirname(installed.cli), '..');
-    const releaseCli = resolve(dirname(installed.cli), 'release-cli.js');
+    const packageRoot = installed.packageRoot;
 
     try {
       const policy = await readJson<VersionPolicy>(
@@ -114,8 +113,8 @@ describe('installed public contract', () => {
       expect(packageApi.DIAGNOSTIC_CONTRACT_VERSION).toBe(1);
 
       const connection = await connectStdio(
-        process.execPath,
-        [releaseCli, '--project-root', projectRoot],
+        installed.publicCommand.command,
+        [...installed.publicCommand.arguments, '--project-root', projectRoot],
         { protocolVersion: '2025-11-25' },
       );
       const processId = connection.transport.pid;

@@ -260,10 +260,10 @@ export const DATABASE_HELPERS = [
 const HELPER_CALL = new RegExp(`(?:->|::)\\s*(${DATABASE_HELPERS.join('|')})\\s*\\(`, 'gu');
 /** `$sql = …;`, so a query assigned before its call can be followed. */
 const ASSIGNMENT = /\$([A-Za-z_]\w*)\s*(\.?=)\s*/gu;
-const SQL_START = /^\s*(?:SELECT|INSERT|UPDATE|DELETE|REPLACE)\b/iu;
+const SQL_START = /^\s*(?:SELECT|INSERT|UPDATE|DELETE|REPLACE|WITH)\b/iu;
 const TABLE_CLAUSE =
-  /\b(?:FROM|JOIN|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+[`"]?([A-Za-z_][\w]*)[`"]?/giu;
-const QUALIFIED_COLUMN = /\b([A-Za-z_][\w]*)\s*\.\s*([A-Za-z_][\w]*)\b/gu;
+  /\b(?:FROM|JOIN|INSERT\s+INTO|UPDATE|DELETE\s+FROM)\s+([`"]?)([A-Za-z_]\w*)\1/giu;
+const QUALIFIED_COLUMN = /([`"]?)([A-Za-z_]\w*)\1\s*\.\s*([`"]?)([A-Za-z_]\w*|\*)\3/gu;
 const INTERPOLATION = /\$[A-Za-z_][\w]*|\{\s*\$/u;
 
 /**
@@ -322,6 +322,116 @@ function assignments(
  */
 function snippet(source: string, length = 60, signal?: AbortSignal): string {
   return maskSqlValues(source, signal).replace(/\s+/gu, ' ').trim().slice(0, length);
+}
+
+interface QueryStructure {
+  readonly tables: readonly string[];
+  readonly aliases: ReadonlyMap<string, string>;
+}
+
+/** Reads underlying tables and their explicit or implicit aliases. */
+function queryStructure(text: string, signal?: AbortSignal): QueryStructure {
+  const tables: string[] = [];
+  const aliases = new Map<string, string>();
+  for (const clause of text.matchAll(TABLE_CLAUSE)) {
+    cancellationCheckpoint(signal);
+    const table = clause[2];
+    if (table === undefined) continue;
+    if (!tables.includes(table)) tables.push(table);
+    aliases.set(table, table);
+    const alias = /^\s+(?:AS\s+)?([`"]?)([A-Za-z_]\w*)\1/iu.exec(
+      text.slice(clause.index + clause[0].length),
+    )?.[2];
+    if (alias !== undefined && !SQL_KEYWORDS.has(alias.toLowerCase())) aliases.set(alias, table);
+  }
+  return { tables, aliases };
+}
+
+function simpleColumn(
+  expression: string,
+  structure: QueryStructure,
+): { table: string | null; column: string } | null {
+  const match = /^\s*(?:([`"]?)([A-Za-z_]\w*)\1\s*\.\s*)?([`"]?)([A-Za-z_]\w*)\3\s*$/u.exec(
+    expression,
+  );
+  if (match === null) return null;
+  const qualifier = match[2];
+  const column = match[4];
+  if (column === undefined) return null;
+  if (qualifier === undefined) {
+    return {
+      table: structure.tables.length === 1 ? (structure.tables[0] ?? null) : null,
+      column,
+    };
+  }
+  return { table: structure.aliases.get(qualifier) ?? null, column };
+}
+
+interface SelectListReading {
+  readonly columns: readonly string[];
+  readonly unsupported: readonly string[];
+  readonly withoutList: string;
+}
+
+/** Reads SELECT expressions without treating result aliases as schema columns. */
+function readSelectList(
+  text: string,
+  structure: QueryStructure,
+  signal?: AbortSignal,
+): SelectListReading {
+  const select = /\bSELECT\b/iu.exec(text);
+  const afterSelect = select === null ? 0 : select.index + select[0].length;
+  const from = /\bFROM\b/iu.exec(text.slice(afterSelect));
+  if (select === null || from === null) {
+    return {
+      columns: [],
+      unsupported: ['a SELECT statement without a readable FROM clause'],
+      withoutList: text,
+    };
+  }
+  const start = afterSelect;
+  const end = start + from.index;
+  const list = text.slice(start, end).replace(/^\s*DISTINCT\b/iu, ' ');
+  const columns = new Set<string>();
+  const unsupported: string[] = [];
+
+  for (const rawItem of splitColumns(list, signal)) {
+    cancellationCheckpoint(signal);
+    const item = rawItem.trim();
+    if (item === '' || item === '*') continue;
+    const alias = /^(.*?)(?:\s+AS\s+|\s+)([`"]?)([A-Za-z_]\w*)\2\s*$/iu.exec(item);
+    const expression = (alias?.[1] ?? item).trim();
+    if (/^(?:([`"]?)[A-Za-z_]\w*\1\s*\.\s*)?\*$/u.test(expression)) continue;
+
+    const direct = simpleColumn(expression, structure);
+    if (direct?.table !== null && direct !== null) {
+      columns.add(`${direct.table}.${direct.column}`);
+      continue;
+    }
+
+    const aggregate = /^(?:COUNT|SUM|MIN|MAX|AVG)\s*\(\s*([\s\S]+)\s*\)$/iu.exec(expression);
+    const aggregateExpression = aggregate?.[1];
+    const aggregateColumn =
+      aggregateExpression === undefined || aggregateExpression === '*'
+        ? null
+        : simpleColumn(aggregateExpression, structure);
+    if (aggregate !== null && aggregateColumn?.table !== null) {
+      if (aggregateColumn !== null) {
+        columns.add(`${aggregateColumn.table}.${aggregateColumn.column}`);
+      }
+      continue;
+    }
+
+    unsupported.push(
+      `SELECT expression whose column provenance is unclear: ${snippet(item, 40, signal)}`,
+    );
+  }
+
+  return {
+    columns: [...columns],
+    unsupported,
+    withoutList: `${text.slice(0, start)}${' '.repeat(Math.max(0, end - start))}${text.slice(end)}`,
+  };
 }
 
 /**
@@ -418,19 +528,39 @@ export function parseQueries(
       continue;
     }
 
-    const tables = [
-      ...new Set(
-        [...text.matchAll(TABLE_CLAUSE)]
-          .map((clause) => clause[1])
-          .filter((name): name is string => name !== undefined),
-      ),
-    ];
+    if (/^\s*WITH\b/iu.test(text) || /\(\s*SELECT\b/iu.test(scrub(text))) {
+      unsupported.push(
+        `query uses a CTE or subquery outside the supported SQL subset: ${snippet(text, 40, signal)}`,
+      );
+      queries.push({
+        tables: [],
+        columns: [],
+        interpolated: INTERPOLATION.test(text),
+        text: maskSqlValues(text.replace(/\s+/gu, ' ').trim(), signal),
+      });
+      continue;
+    }
+
+    const structure = queryStructure(text, signal);
+    const tables = structure.tables;
     const columns = new Set<string>();
-    for (const qualified of text.matchAll(QUALIFIED_COLUMN)) {
+    let referenceText = text;
+    if (/^\s*SELECT\b/iu.test(text)) {
+      const selected = readSelectList(text, structure, signal);
+      referenceText = selected.withoutList;
+      for (const column of selected.columns) columns.add(column);
+      unsupported.push(...selected.unsupported);
+    }
+
+    for (const qualified of referenceText.matchAll(QUALIFIED_COLUMN)) {
       cancellationCheckpoint(signal);
-      const table = qualified[1];
-      const column = qualified[2];
-      if (table !== undefined && column !== undefined) {
+      const qualifier = qualified[2];
+      const column = qualified[4];
+      if (qualifier === undefined || column === undefined || column === '*') continue;
+      const table = structure.aliases.get(qualifier);
+      if (table === undefined) {
+        unsupported.push(`qualified column ${qualifier}.${column} uses an unknown table alias`);
+      } else {
         columns.add(`${table}.${column}`);
       }
     }
@@ -438,26 +568,27 @@ export function parseQueries(
     // Bare identifiers can only be attributed to a table when the query names
     // exactly one. Anything else stays unattributed rather than guessed.
     const singleTable = tables.length === 1 ? tables[0] : undefined;
-    if (singleTable !== undefined) {
-      const withoutQualified = scrub(text).replace(QUALIFIED_COLUMN, ' ');
-      for (const identifier of withoutQualified.matchAll(
-        /[`"]?\b([A-Za-z_][\w]*)\b[`"]?\s*(\()?/gu,
-      )) {
-        cancellationCheckpoint(signal);
-        const name = identifier[1];
-        if (
-          name === undefined ||
-          identifier[2] !== undefined ||
-          SQL_KEYWORDS.has(name.toLowerCase()) ||
-          name === singleTable
-        ) {
-          continue;
-        }
-        columns.add(`${singleTable}.${name}`);
+    const withoutQualified = scrub(referenceText).replace(QUALIFIED_COLUMN, ' ');
+    const bare: string[] = [];
+    for (const identifier of withoutQualified.matchAll(/[`"]?\b([A-Za-z_]\w*)\b[`"]?\s*(\()?/gu)) {
+      cancellationCheckpoint(signal);
+      const name = identifier[1];
+      if (
+        name === undefined ||
+        identifier[2] !== undefined ||
+        SQL_KEYWORDS.has(name.toLowerCase()) ||
+        structure.aliases.has(name) ||
+        tables.includes(name)
+      ) {
+        continue;
       }
-    } else if (tables.length > 1) {
+      bare.push(name);
+    }
+    if (singleTable !== undefined) {
+      for (const name of bare) columns.add(`${singleTable}.${name}`);
+    } else if (tables.length > 1 && bare.length > 0) {
       unsupported.push(
-        `columns of a multi-table query could not be attributed: ${snippet(text, 40, signal)}`,
+        `bare columns of a multi-table query could not be attributed: ${snippet(text, 40, signal)}`,
       );
     }
 

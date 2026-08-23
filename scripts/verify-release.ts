@@ -8,6 +8,7 @@ import {
   buildReleaseCandidateManifest,
   type CandidateEvidence,
   type CapabilityManifest,
+  type ReleasePackageIdentity,
   type ReleaseInventory,
   verifyReleaseInventory,
 } from './lib/release.js';
@@ -69,7 +70,11 @@ function soundEvidence(
   };
 }
 
-function proveSeededFailures(inventory: ReleaseInventory, manifest: CapabilityManifest): void {
+function proveSeededFailures(
+  inventory: ReleaseInventory,
+  manifest: CapabilityManifest,
+  packageIdentity: ReleasePackageIdentity,
+): void {
   const withExcludedTool: ReleaseInventory = {
     ...inventory,
     capabilities: {
@@ -78,6 +83,13 @@ function proveSeededFailures(inventory: ReleaseInventory, manifest: CapabilityMa
     },
   };
   expectSeededFailure('excluded capability', verifyReleaseInventory(withExcludedTool, manifest));
+  expectSeededFailure(
+    'public executable redirect',
+    verifyReleaseInventory(inventory, manifest, undefined, {
+      ...packageIdentity,
+      bin: { ...packageIdentity.bin, [manifest.server.name]: 'dist/cli.js' },
+    }),
+  );
 
   expectSeededFailure(
     'runtime exposure',
@@ -145,16 +157,17 @@ async function main(): Promise<void> {
   const schema = await loadJson<object>('config/release.schema.json');
   const inventory = await loadJson<ReleaseInventory>('config/release.json');
   const manifest = await loadJson<CapabilityManifest>('config/capabilities.json');
+  const packageIdentity = await loadJson<ReleasePackageIdentity>('package.json');
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   const validate = ajv.compile(schema);
   if (!validate(inventory)) {
     throw new Error(`Invalid release inventory: ${ajv.errorsText(validate.errors)}`);
   }
 
-  proveSeededFailures(inventory, manifest);
+  proveSeededFailures(inventory, manifest, packageIdentity);
   reportOrExit(
     'Release inventory',
-    verifyReleaseInventory(inventory, manifest),
+    verifyReleaseInventory(inventory, manifest, undefined, packageIdentity),
     `Release inventory is consistent and its gate detects excluded, omitted, stale-evidence, and wrong-artifact defects: ${String(inventory.capabilities.tools.length)} tools, ${String(inventory.capabilities.resources.length)} resources, and ${String(inventory.capabilities.prompts.length)} prompts are frozen for ${inventory.id}.`,
   );
 }

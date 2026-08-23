@@ -14,7 +14,12 @@ import {
   verifyCandidateSource,
   writeCandidateBundle,
 } from './lib/release-candidate.js';
-import { type CapabilityManifest, type ReleaseInventory, releaseDigest } from './lib/release.js';
+import {
+  type CapabilityManifest,
+  type ReleaseInventory,
+  type ReleasePackageIdentity,
+  releaseDigest,
+} from './lib/release.js';
 
 const execute = promisify(execFile);
 const repositoryRoot = resolve(import.meta.dirname, '..');
@@ -54,6 +59,12 @@ async function packedArtifact(directory: string, cwd: string): Promise<string> {
     throw new Error(`Expected one npm tarball in ${directory}, found ${String(archives.length)}`);
   }
   return resolve(directory, archives[0]);
+}
+
+/** Reads package identity from the tarball bytes that downstream jobs retain. */
+async function packedPackageIdentity(artifact: string): Promise<ReleasePackageIdentity> {
+  const packageJson = await command('tar', ['-xOf', artifact, 'package/package.json']);
+  return JSON.parse(packageJson) as ReleasePackageIdentity;
 }
 
 async function candidateSource(tag: string): Promise<CandidateSource> {
@@ -126,6 +137,10 @@ async function main(): Promise<void> {
     worktreeAdded = true;
     await command(corepack, ['pnpm', 'install', '--offline', '--frozen-lockfile'], worktreeRoot);
     const reconstructionPath = await packedArtifact(reconstructionRoot, worktreeRoot);
+    const [artifactPackage, reconstructionPackage] = await Promise.all([
+      packedPackageIdentity(artifactPath),
+      packedPackageIdentity(reconstructionPath),
+    ]);
 
     const inventoryText = await loadText('config/release.json');
     const capabilityManifestText = await loadText('config/capabilities.json');
@@ -144,6 +159,8 @@ async function main(): Promise<void> {
       schemaText,
       artifactPath,
       reconstructionPath,
+      artifactPackage,
+      reconstructionPackage,
       outputDirectory,
     });
 

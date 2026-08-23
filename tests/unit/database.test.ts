@@ -99,13 +99,62 @@ describe('query reading', () => {
     expect(outcome.value[0]?.interpolated).toBe(true);
   });
 
-  it('keeps qualified columns and refuses to attribute a multi-table query', () => {
+  it('resolves qualified columns across a multi-table query', () => {
     const outcome = parseQueries(
       `<?php self::DbQuery("SELECT card.card_id, deck.deck_id FROM card JOIN deck ON card.card_id = deck.deck_id");`,
     );
     expect(outcome.value[0]?.tables).toEqual(['card', 'deck']);
     expect(outcome.value[0]?.columns).toEqual(['card.card_id', 'deck.deck_id']);
-    expect(outcome.unsupported[0]).toContain('multi-table query');
+    expect(outcome.unsupported).toEqual([]);
+  });
+
+  it('resolves documented output aliases and explicit or implicit table aliases', () => {
+    const outcome = parseQueries(`<?php
+      self::getCollectionFromDB("SELECT player_id id, player_name name FROM player");
+      self::getCollectionFromDB("SELECT c.card_id AS id, c.card_location location FROM card c");
+      self::getCollectionFromDB("SELECT c.card_id, d.deck_id FROM card AS c JOIN deck d ON c.card_id = d.deck_id");
+    `);
+    expect(outcome.unsupported).toEqual([]);
+    expect(outcome.value.map((query) => query.tables)).toEqual([
+      ['player'],
+      ['card'],
+      ['card', 'deck'],
+    ]);
+    expect(outcome.value.map((query) => query.columns)).toEqual([
+      ['player.player_id', 'player.player_name'],
+      ['card.card_id', 'card.card_location'],
+      ['card.card_id', 'deck.deck_id'],
+    ]);
+  });
+
+  it('resolves quoted aliases, repeated columns, and alias renaming to the same schema references', () => {
+    const outcome = parseQueries(`<?php
+      self::getCollectionFromDB("SELECT \`c\`.\`card_id\` AS \`id\`, c.card_id repeated FROM \`card\` AS \`c\`");
+      self::getCollectionFromDB("SELECT renamed.card_id id FROM card renamed");
+    `);
+    expect(outcome.unsupported).toEqual([]);
+    expect(outcome.value.map((query) => query.tables)).toEqual([['card'], ['card']]);
+    expect(outcome.value.map((query) => query.columns)).toEqual([
+      ['card.card_id'],
+      ['card.card_id'],
+    ]);
+  });
+
+  it('keeps unsupported expressions, subqueries, and CTEs out of schema references', () => {
+    const expressions = parseQueries(
+      `<?php self::getCollectionFromDB("SELECT c.card_id + 1 AS next_id FROM card c");`,
+    );
+    expect(expressions.value[0]?.columns).toEqual([]);
+    expect(expressions.unsupported[0]).toContain('provenance is unclear');
+
+    for (const query of [
+      'SELECT card_id FROM (SELECT card_id FROM card) nested',
+      'WITH chosen AS (SELECT card_id FROM card) SELECT card_id FROM chosen',
+    ]) {
+      const outcome = parseQueries(`<?php self::getCollectionFromDB("${query}");`);
+      expect(outcome.value[0]).toMatchObject({ tables: [], columns: [] });
+      expect(outcome.unsupported[0]).toContain('CTE or subquery');
+    }
   });
 
   it('reports a query assembled from several expressions', () => {
@@ -167,6 +216,49 @@ describe('database rules', () => {
     expect(audit.diagnostics.status).toBe('passed');
     expect(audit.tables).toHaveLength(1);
     expect(audit.queries).toHaveLength(2);
+  });
+
+  it('does not derive undeclared or unused findings from SQL aliases', () => {
+    const audit = auditDatabaseUsage(schemaSource, [
+      {
+        path: 'game.php',
+        text: `<?php self::getCollectionFromDB(
+          "SELECT c.card_id AS id, c.card_location location, c.card_owner owner FROM card AS c"
+        );`,
+      },
+    ]);
+    expect(audit.diagnostics.status).toBe('passed');
+    expect(audit.queries[0]?.columns).toEqual([
+      'card.card_id',
+      'card.card_location',
+      'card.card_owner',
+    ]);
+
+    const missing = auditDatabaseUsage(schemaSource, [
+      {
+        path: 'game.php',
+        text: `<?php self::getCollectionFromDB("SELECT c.missing AS id FROM card c");`,
+      },
+    ]);
+    expect(
+      missing.diagnostics.findings.find((finding) => finding.code === 'database.column.undeclared')
+        ?.message,
+    ).toContain("'missing'");
+  });
+
+  it('does not claim columns are unused when an unsupported expression may reference them', () => {
+    const audit = auditDatabaseUsage(schemaSource, [
+      {
+        path: 'game.php',
+        text: `<?php self::getCollectionFromDB("SELECT card_id + card_owner AS total FROM card");`,
+      },
+    ]);
+    expect(
+      audit.diagnostics.findings.filter((finding) => finding.code === 'database.column.unused'),
+    ).toEqual([]);
+    expect(audit.diagnostics.findings).toContainEqual(
+      expect.objectContaining({ kind: 'unsupported-syntax', code: 'database.unsupported-syntax' }),
+    );
   });
 
   it('reports an undeclared table as a fact and an undeclared column as a heuristic', () => {

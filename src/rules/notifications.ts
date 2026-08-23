@@ -270,7 +270,11 @@ export function validateNotifications(
   for (const notification of sent) {
     cancellationCheckpoint(signal);
     const handler = handlerByName.get(notification.name);
-    if (handler === undefined || handler.payloadKeys.length === 0) {
+    if (
+      handler === undefined ||
+      handler.payloadKeys.length === 0 ||
+      notification.payloadShape === 'unknown'
+    ) {
       continue;
     }
     const sentKeys = new Set(notification.payloadKeys);

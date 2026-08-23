@@ -100,6 +100,7 @@ describe('client action call reading', () => {
         action: 'actPass',
         argumentNames: ['comment'],
         argumentValues: { comment: "'x'" },
+        argumentShape: 'known',
         style: 'ajaxcall',
       },
     ]);
@@ -114,10 +115,37 @@ describe('client action call reading', () => {
         action: 'actPlay',
         argumentNames: ['cardId', 'slot'],
         argumentValues: { cardId: '3', slot: '1' },
+        argumentShape: 'known',
         style: 'performAction',
       },
-      { action: 'actPass', argumentNames: [], argumentValues: {}, style: 'performAction' },
+      {
+        action: 'actPass',
+        argumentNames: [],
+        argumentValues: {},
+        argumentShape: 'known',
+        style: 'performAction',
+      },
     ]);
+  });
+
+  it('distinguishes omitted arguments from variable, helper, spread, and malformed shapes', () => {
+    const outcome = parseClientActionCalls(`
+      this.bga.actions.performAction('actOmitted');
+      this.bga.actions.performAction('actVariable', args);
+      this.bga.actions.performAction('actHelper', buildArgs());
+      this.bga.actions.performAction('actSpread', { known: 1, ...rest });
+      this.bga.actions.performAction('actMalformed', { broken: 1);
+      this.bga.actions.performAction('actUnclosedArray', { broken: [1 });
+    `);
+    expect(outcome.value.map((call) => [call.action, call.argumentShape])).toEqual([
+      ['actOmitted', 'known'],
+      ['actVariable', 'unknown'],
+      ['actHelper', 'unknown'],
+      ['actSpread', 'unknown'],
+      ['actMalformed', 'unknown'],
+      ['actUnclosedArray', 'unknown'],
+    ]);
+    expect(outcome.unsupported).toHaveLength(5);
   });
 
   it('reports a call it cannot read instead of guessing', () => {
@@ -144,7 +172,9 @@ describe('client action call reading', () => {
 describe('server entry point reading', () => {
   it('reads entry points and the arguments they consume', () => {
     const outcome = parseServerActionEntries(ACTION_CLASS);
-    expect(outcome.value).toEqual([{ action: 'actPass', argumentNames: ['comment'] }]);
+    expect(outcome.value).toEqual([
+      { action: 'actPass', argumentNames: ['comment'], scope: 'legacy-dispatcher' },
+    ]);
   });
 
   it('reads arguments taken straight from the request', () => {
@@ -156,7 +186,22 @@ class action_fixture {
         $slot = $args['slot'];
     }
 }`);
-    expect(outcome.value).toEqual([{ action: 'actPlay', argumentNames: ['cardId', 'slot'] }]);
+    expect(outcome.value).toEqual([
+      {
+        action: 'actPlay',
+        argumentNames: ['cardId', 'slot'],
+        scope: 'legacy-dispatcher',
+      },
+    ]);
+  });
+
+  it('does not expose private or protected legacy helpers as player entry points', () => {
+    const outcome = parseServerActionEntries(`<?php class action_fixture {
+      private function actPrivate() {}
+      protected function actProtected() {}
+      public function actPublic() {}
+    }`);
+    expect(outcome.value.map((entry) => entry.action)).toEqual(['actPublic']);
   });
 
   it('reports an argument name it cannot read', () => {
@@ -221,6 +266,20 @@ describe('action contract rules', () => {
     expect(mismatches.map((finding) => finding.kind)).toEqual(['heuristic', 'heuristic']);
     expect(mismatches[0]?.message).toContain("'cardId'");
     expect(mismatches[1]?.message).toContain("'comment'");
+  });
+
+  it('never compares an unreadable argument shape as an empty object', () => {
+    const trace = validateActionContracts(
+      model([state({ possibleActions: ['actPass'] })]),
+      [{ path: 'fixture.js', text: `this.bga.actions.performAction('actPass', args);` }],
+      php,
+    );
+    expect(
+      trace.diagnostics.findings.filter((finding) => finding.code === 'action.argument.mismatch'),
+    ).toEqual([]);
+    expect(trace.diagnostics.findings).toContainEqual(
+      expect.objectContaining({ kind: 'unsupported-syntax', code: 'action.unsupported-syntax' }),
+    );
   });
 
   it('reports a call no state allows and a declaration nothing calls', () => {
@@ -456,5 +515,62 @@ final class Game extends Table
     const entries = result.entryPoints.filter((entry) => entry.action === 'actPass');
     expect(entries).toHaveLength(1);
     expect(entries[0]?.source).toBe('fixture.action.php');
+  });
+
+  it('keeps equal state-local names in separate scopes and refuses ambiguous signatures', () => {
+    const stateSource = (className: string, parameter: string) => `<?php
+      final class ${className} extends GameState {
+        #[PossibleAction]
+        public function actPlay(int $${parameter}) {}
+      }`;
+    const result = validateActionContracts(
+      model([state({ possibleActions: ['actPlay'] })]),
+      [{ path: 'modules/js/Game.js', text: `this.bga.actions.performAction('actPlay', args);` }],
+      [
+        { path: 'modules/php/States/First.php', text: stateSource('First', 'cardId') },
+        { path: 'modules/php/States/Second.php', text: stateSource('Second', 'slotId') },
+      ],
+    );
+    expect(
+      result.diagnostics.findings.filter(
+        (finding) => finding.code === 'action.entry-point.duplicate',
+      ),
+    ).toEqual([]);
+    expect(result.entryPoints.map((entry) => entry.scopeId)).toEqual([
+      'modules/php/States/First.php',
+      'modules/php/States/Second.php',
+    ]);
+    expect(result.diagnostics.findings).toContainEqual(
+      expect.objectContaining({ kind: 'unsupported-syntax', code: 'action.unsupported-syntax' }),
+    );
+    expect(
+      result.diagnostics.findings.filter((finding) => finding.code === 'action.argument.mismatch'),
+    ).toEqual([]);
+  });
+
+  it('reports the conflicting official action_* form without inventing action defects', () => {
+    const result = validateActionContracts(
+      model([state({ possibleActions: [] })]),
+      [
+        {
+          path: 'modules/js/Game.js',
+          text: `this.bga.actions.performAction('action_pass');`,
+        },
+      ],
+      [
+        {
+          path: 'modules/php/States/PlayerTurn.php',
+          text: `<?php final class PlayerTurn extends GameState {
+            #[PossibleAction]
+            function action_pass() { $this->game->gamestate->nextState('pass'); }
+          }`,
+        },
+      ],
+    );
+    const codes = result.diagnostics.findings.map((finding) => finding.code);
+    expect(codes).toContain('action.unsupported-syntax');
+    expect(codes).not.toContain('action.name.convention');
+    expect(codes).not.toContain('action.entry-point.missing');
+    expect(codes).not.toContain('action.call.not-declared');
   });
 });

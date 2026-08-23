@@ -1,6 +1,10 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
 import { cancellationCheckpoint } from '../deadline.js';
-import { parseModernActions, type ActionParameter } from '../project/modern.js';
+import {
+  conflictingModernActionNames,
+  parseModernActions,
+  type ActionParameter,
+} from '../project/modern.js';
 import {
   parseClientActionCalls,
   parsePhpMethodNames,
@@ -24,7 +28,7 @@ export interface ActionContractRule {
   readonly falsePositives: readonly string[];
 }
 
-/** Modern BGA requires player action methods to start with `act`. */
+/** The canonical state and Game.php references require autowired actions to start with `act`. */
 const ACTION_PREFIX = /^act[A-Z0-9_]/u;
 
 export const ACTION_CONTRACT_RULES: readonly ActionContractRule[] = [
@@ -39,7 +43,7 @@ export const ACTION_CONTRACT_RULES: readonly ActionContractRule[] = [
     code: 'action.entry-point.duplicate',
     severity: 'error',
     certainty: 'certain',
-    summary: 'Two entry points in the action class share a name.',
+    summary: 'Two entry points in the same framework resolution scope share a name.',
     falsePositives: [],
   },
   {
@@ -189,7 +193,10 @@ function violation(parameter: ActionParameter, literal: string): string | null {
 
 export interface ActionContractTrace {
   readonly clientCalls: readonly (ClientActionCall & { readonly source: string })[];
-  readonly entryPoints: readonly (ServerActionEntry & { readonly source: string })[];
+  readonly entryPoints: readonly (ServerActionEntry & {
+    readonly source: string;
+    readonly scopeId: string;
+  })[];
   readonly gameMethods: readonly string[];
   readonly declaredActions: readonly string[];
   readonly diagnostics: DiagnosticResult;
@@ -238,6 +245,7 @@ export function validateActionContracts(
   const actionClassSources = phpSources.filter((source) => source.path.endsWith('.action.php'));
   const entryPoints: (ServerActionEntry & {
     source: string;
+    scopeId: string;
     parameters?: readonly ActionParameter[];
   })[] = [];
   for (const source of actionClassSources) {
@@ -245,7 +253,7 @@ export function validateActionContracts(
     const outcome = parseServerActionEntries(source.text, signal);
     for (const entry of outcome.value) {
       cancellationCheckpoint(signal);
-      entryPoints.push({ ...entry, source: source.path });
+      entryPoints.push({ ...entry, source: source.path, scopeId: source.path });
     }
     for (const construct of outcome.unsupported) {
       cancellationCheckpoint(signal);
@@ -259,6 +267,9 @@ export function validateActionContracts(
     /(?:^|\/)modules\/php\/States\//u.test(source.path),
   );
   const autowiredSources = [...gameClassSources, ...stateClassSources];
+  const conflictingActions = new Set(
+    stateClassSources.flatMap((source) => conflictingModernActionNames(source.text, signal)),
+  );
 
   for (const source of autowiredSources) {
     cancellationCheckpoint(signal);
@@ -276,6 +287,8 @@ export function validateActionContracts(
       entryPoints.push({
         action: action.action,
         argumentNames: [...action.argumentNames],
+        scope: action.declaredIn,
+        scopeId: source.path,
         parameters: action.parameters,
         source: source.path,
       });
@@ -329,25 +342,30 @@ export function validateActionContracts(
   }
 
   const seenEntryPoints = new Set<string>();
+  const knownEntryActions = new Set<string>();
   for (const entry of entryPoints) {
     cancellationCheckpoint(signal);
-    if (seenEntryPoints.has(entry.action)) {
+    const key = `${entry.scope}\u0000${entry.scopeId}\u0000${entry.action}`;
+    if (seenEntryPoints.has(key)) {
       findings.push(
         certain(
           'action.entry-point.duplicate',
           `Entry point '${entry.action}' is declared more than once.`,
-          'Two methods of the action class share a name.',
+          `Two methods in ${entry.scopeId} share the same ${entry.scope} action name.`,
           entry.source,
           'Remove or rename the duplicate entry point.',
         ),
       );
     }
-    seenEntryPoints.add(entry.action);
+    seenEntryPoints.add(key);
+    knownEntryActions.add(entry.action);
   }
 
   for (const call of clientCalls) {
     cancellationCheckpoint(signal);
-    if (!ACTION_PREFIX.test(call.action)) {
+    const unresolvedDocumentedForm =
+      conflictingActions.has(call.action) && !declaredByActionClass.has(call.action);
+    if (!unresolvedDocumentedForm && !ACTION_PREFIX.test(call.action)) {
       findings.push(
         certain(
           'action.name.convention',
@@ -366,6 +384,7 @@ export function validateActionContracts(
     // in any state, so no state has to list it.
     if (
       statesReadable &&
+      !unresolvedDocumentedForm &&
       declaredActions.size > 0 &&
       !declaredActions.has(call.action) &&
       !frameworkWideActions.has(call.action)
@@ -381,7 +400,7 @@ export function validateActionContracts(
       );
     }
 
-    if (entryPointsReadable && !seenEntryPoints.has(call.action)) {
+    if (entryPointsReadable && !unresolvedDocumentedForm && !knownEntryActions.has(call.action)) {
       findings.push(
         heuristic(
           'action.entry-point.missing',
@@ -393,8 +412,27 @@ export function validateActionContracts(
       );
     }
 
-    const entry = entryPoints.find((candidate) => candidate.action === call.action);
-    if (entry !== undefined) {
+    const matching = unresolvedDocumentedForm
+      ? []
+      : entryPoints.filter((candidate) => candidate.action === call.action);
+    const legacy = matching.filter((candidate) => candidate.scope === 'legacy-dispatcher');
+    const applicable = legacy.length > 0 ? legacy : matching;
+    const signatures = new Set(
+      applicable.map((candidate) => JSON.stringify([...candidate.argumentNames].sort())),
+    );
+    if (applicable.length > 1 && signatures.size > 1) {
+      findings.push(
+        unsupported(
+          `action ${call.action} resolves to state-scoped or fallback entry points with different argument shapes`,
+          call.source,
+        ),
+      );
+    }
+    const entry =
+      signatures.size <= 1
+        ? [...applicable].sort((left, right) => left.source.localeCompare(right.source))[0]
+        : undefined;
+    if (entry !== undefined && call.argumentShape === 'known') {
       const sent = new Set(call.argumentNames);
       const read = new Set(entry.argumentNames);
       for (const argument of [...sent].filter((name) => !read.has(name)).sort()) {
@@ -445,10 +483,9 @@ export function validateActionContracts(
     }
   }
 
-  const autowired = new Set(autowiredSources.map((source) => source.path));
   for (const entry of entryPoints) {
     cancellationCheckpoint(signal);
-    if (autowired.has(entry.source)) {
+    if (entry.scope !== 'legacy-dispatcher') {
       // An autowired action is its own game method; there is no second hop.
       continue;
     }

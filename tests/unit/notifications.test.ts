@@ -45,8 +45,8 @@ describe('sent notification reading', () => {
     const outcome = parseSentNotifications(SERVER);
     expect(outcome.unsupported).toEqual([]);
     expect(outcome.value).toEqual([
-      { name: 'playerPassed', payloadKeys: ['comment'], scope: 'all' },
-      { name: 'privateHand', payloadKeys: ['cards'], scope: 'player' },
+      { name: 'playerPassed', payloadKeys: ['comment'], payloadShape: 'known', scope: 'all' },
+      { name: 'privateHand', payloadKeys: ['cards'], payloadShape: 'known', scope: 'player' },
     ]);
   });
 
@@ -54,18 +54,31 @@ describe('sent notification reading', () => {
     const outcome = parseSentNotifications(
       `<?php $this->notifyAllPlayers('scored', '', array('points' => 3));`,
     );
-    expect(outcome.value).toEqual([{ name: 'scored', payloadKeys: ['points'], scope: 'all' }]);
+    expect(outcome.value).toEqual([
+      { name: 'scored', payloadKeys: ['points'], payloadShape: 'known', scope: 'all' },
+    ]);
   });
 
   it('reports a name or payload it cannot read instead of guessing', () => {
     const computed = parseSentNotifications(`<?php
       $this->notifyAllPlayers($name, '', []);
-      $this->notifyAllPlayers('built', '', $payload);`);
+      $this->notifyAllPlayers('built', '', $payload);
+      $this->notifyAllPlayers('helper', '', buildPayload());
+      $this->notifyAllPlayers('spread', '', ['known' => 1, ...$payload]);
+      $this->notifyAllPlayers('malformed', '', ['known' => 1);`);
     expect(computed.unsupported).toEqual([
       'notification sent with a computed name: $name',
       "notification 'built' sent with a computed payload",
+      "notification 'helper' sent with a computed payload",
+      "notification 'spread' sent with a computed payload",
+      "notification 'malformed' has malformed arguments",
     ]);
-    expect(computed.value).toEqual([{ name: 'built', payloadKeys: [], scope: 'all' }]);
+    expect(computed.value).toEqual([
+      { name: 'built', payloadKeys: [], payloadShape: 'unknown', scope: 'all' },
+      { name: 'helper', payloadKeys: [], payloadShape: 'unknown', scope: 'all' },
+      { name: 'spread', payloadKeys: ['known'], payloadShape: 'unknown', scope: 'all' },
+      { name: 'malformed', payloadKeys: [], payloadShape: 'unknown', scope: 'all' },
+    ]);
   });
 });
 
@@ -198,6 +211,30 @@ describe('notification rules', () => {
     // Deterministic order is alphabetical by message.
     expect(mismatches[0]?.message).toContain("reads 'to'");
     expect(mismatches[1]?.message).toContain("sends 'from'");
+  });
+
+  it('never compares a computed payload as a known-empty payload', () => {
+    const trace = validateNotifications(
+      [{ path: 'game.php', text: `<?php $this->notifyAllPlayers('moved', '', $payload);` }],
+      [
+        {
+          path: 'game.js',
+          text: `dojo.subscribe('moved', this, 'notif_moved');
+                 notif_moved: function (notif) { this.go(notif.args.to); },`,
+        },
+      ],
+    );
+    expect(
+      trace.diagnostics.findings.filter(
+        (finding) => finding.code === 'notification.payload.mismatch',
+      ),
+    ).toEqual([]);
+    expect(trace.diagnostics.findings).toContainEqual(
+      expect.objectContaining({
+        kind: 'unsupported-syntax',
+        code: 'notification.unsupported-syntax',
+      }),
+    );
   });
 
   it('reports a duplicate subscription as a fact', () => {

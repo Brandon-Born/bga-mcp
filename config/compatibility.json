@@ -1,14 +1,14 @@
 {
   "$schema": "./compatibility.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-14",
+  "updatedAt": "2026-08-23",
   "claims": [
     {
       "id": "CLAIM-LAYOUT-MODERN",
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Reopened by the 2026-08-08 audit and restored: BGA-124 corrected the state semantics, BGA-125 the action tracing, BGA-126 the notification registration, BGA-127 the database reading, and BGA-128 proved every acceptance case of the affected items through the installed server. The layout is inside the compatibility contract; the stability of each capability is a separate question that BGA-005 and BGA-017 own.",
+      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
@@ -24,7 +24,10 @@
         "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
         "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
         "E2E-VALIDATE-PROJECT-MODERN",
-        "E2E-VALIDATE-STATES-MODERN-CLEAN"
+        "E2E-VALIDATE-STATES-MODERN-CLEAN",
+        "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+        "E2E-VALIDATE-ACTION-SCOPES",
+        "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"
       ],
       "capabilities": [
         {
@@ -37,27 +40,46 @@
         },
         {
           "reference": "tool:run_pre_release_audit",
-          "scenarios": ["E2E-PRE-RELEASE-PARTIAL-SUPPORT"]
+          "scenarios": [
+            "E2E-PRE-RELEASE-PARTIAL-SUPPORT",
+            "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+            "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"
+          ]
         },
         {
           "reference": "tool:validate_action_contracts",
-          "scenarios": ["E2E-VALIDATE-ACTIONS-MODERN-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
+            "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+            "E2E-VALIDATE-ACTION-SCOPES",
+            "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"
+          ]
         },
         {
           "reference": "tool:validate_notifications",
-          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-NOTIFICATIONS-MODERN-CLEAN",
+            "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"
+          ]
         },
         {
           "reference": "tool:validate_project",
-          "scenarios": ["E2E-VALIDATE-PROJECT-MODERN"]
+          "scenarios": [
+            "E2E-VALIDATE-PROJECT-MODERN",
+            "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+            "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"
+          ]
         },
         {
           "reference": "tool:validate_state_machine",
-          "scenarios": ["E2E-VALIDATE-STATES-MODERN-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-STATES-MODERN-CLEAN",
+            "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"
+          ]
         },
         {
           "reference": "resource:bga://project/diagnostics",
-          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX"]
+          "scenarios": ["E2E-RESOURCE-LAYOUT-MATRIX", "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"]
         },
         {
           "reference": "resource:bga://project/states",
@@ -74,7 +96,7 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. State-machine validation is supported for this layout.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings.",
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -85,12 +107,14 @@
         "E2E-VALIDATE-ACTIONS-CLEAN",
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
         "E2E-VALIDATE-PROJECT-CLEAN",
-        "E2E-VALIDATE-STATES-CLEAN"
+        "E2E-VALIDATE-STATES-CLEAN",
+        "E2E-VALIDATE-ACTION-SCOPES",
+        "E2E-AUDIT-DATABASE-ALIASES"
       ],
       "capabilities": [
         {
           "reference": "tool:audit_database_usage",
-          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN", "E2E-AUDIT-DATABASE-ALIASES"]
         },
         {
           "reference": "tool:inspect_project",
@@ -102,7 +126,7 @@
         },
         {
           "reference": "tool:validate_action_contracts",
-          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN", "E2E-VALIDATE-ACTION-SCOPES"]
         },
         {
           "reference": "tool:validate_notifications",
@@ -452,7 +476,11 @@
       "value": "stdio",
       "support": "supported",
       "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory.",
-      "scenarios": ["E2E-RELEASE-LOCAL-ONLY", "E2E-STDIO-SHUTDOWN", "GATE-COMPATIBILITY-MATRIX"]
+      "scenarios": [
+        "E2E-RELEASE-PUBLIC-EXECUTABLE",
+        "E2E-STDIO-SHUTDOWN",
+        "GATE-COMPATIBILITY-MATRIX"
+      ]
     },
     {
       "id": "CLAIM-TRANSPORT-HTTP",

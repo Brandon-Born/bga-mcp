@@ -14,6 +14,8 @@ export interface SentNotification {
   readonly name: string;
   /** Payload keys the server sends, excluding framework-managed keys. */
   readonly payloadKeys: readonly string[];
+  /** Whether the complete payload shape is known, including an omitted known-empty payload. */
+  readonly payloadShape: 'known' | 'unknown';
   readonly scope: 'all' | 'player';
 }
 
@@ -68,8 +70,17 @@ function handlerMethodPattern(prefix: string): RegExp {
 const SUBSCRIBE =
   /(?:dojo\.subscribe|this\.subscribeNotif)\s*\(\s*(?:'([^']*)'|"([^"]*)"|([^,)]+))/gu;
 
+interface SplitCallArguments {
+  readonly parts: readonly string[];
+  readonly complete: boolean;
+}
+
 /** Splits a call's arguments at top level, respecting nesting and strings. */
-function splitArguments(source: string, openIndex: number, signal?: AbortSignal): string[] {
+function splitArguments(
+  source: string,
+  openIndex: number,
+  signal?: AbortSignal,
+): SplitCallArguments {
   const parts: string[] = [];
   let depth = 0;
   let current = '';
@@ -99,7 +110,7 @@ function splitArguments(source: string, openIndex: number, signal?: AbortSignal)
       depth -= 1;
       if (depth === 0) {
         parts.push(current);
-        return parts;
+        return { parts, complete: true };
       }
     }
     if (character === ',' && depth === 1) {
@@ -109,7 +120,8 @@ function splitArguments(source: string, openIndex: number, signal?: AbortSignal)
     }
     current += character;
   }
-  return parts;
+  if (current.trim() !== '') parts.push(current);
+  return { parts, complete: false };
 }
 
 function phpArrayKeys(literal: string, signal?: AbortSignal): string[] {
@@ -154,7 +166,8 @@ export function parseSentNotifications(
           ? 'player'
           : 'all'
         : (modern as 'all' | 'player');
-    const parts = splitArguments(source, match.index + match[0].length - 1, signal);
+    const split = splitArguments(source, match.index + match[0].length - 1, signal);
+    const parts = split.parts;
     // notifyAllPlayers(name, message, args); notifyPlayer(playerId, name, message, args)
     const nameArgument = scope === 'all' ? parts[0] : parts[1];
     const payloadArgument = scope === 'all' ? parts[2] : parts[3];
@@ -170,18 +183,34 @@ export function parseSentNotifications(
       continue;
     }
 
+    if (!split.complete) {
+      unsupported.push(`notification '${name}' has malformed arguments`);
+      sent.push({ name, payloadKeys: [], payloadShape: 'unknown', scope });
+      continue;
+    }
+
     if (payloadArgument === undefined) {
-      sent.push({ name, payloadKeys: [], scope });
+      sent.push({ name, payloadKeys: [], payloadShape: 'known', scope });
       continue;
     }
     const trimmedPayload = payloadArgument.trim();
     const literalPayload = /^(?:\[|array\s*\()/u.test(trimmedPayload);
-    if (!literalPayload) {
+    if (!literalPayload || trimmedPayload.includes('...')) {
       unsupported.push(`notification '${name}' sent with a computed payload`);
-      sent.push({ name, payloadKeys: [], scope });
+      sent.push({
+        name,
+        payloadKeys: literalPayload ? phpArrayKeys(payloadArgument, signal) : [],
+        payloadShape: 'unknown',
+        scope,
+      });
       continue;
     }
-    sent.push({ name, payloadKeys: phpArrayKeys(payloadArgument, signal), scope });
+    sent.push({
+      name,
+      payloadKeys: phpArrayKeys(payloadArgument, signal),
+      payloadShape: 'known',
+      scope,
+    });
   }
 
   cancellationCheckpoint(signal);

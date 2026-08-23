@@ -33,6 +33,7 @@ export const ValidateNotificationsOutputSchema = z.strictObject({
       z.strictObject({
         name: z.string(),
         payloadKeys: z.array(z.string()),
+        payloadShape: z.enum(['known', 'unknown']),
         scope: z.enum(['all', 'player']),
         source: z.string(),
       }),
@@ -72,9 +73,9 @@ the dojo.subscribe and promise-based client forms, including a project that
 mixes them.
 
 A duplicate subscription is reported as a fact. Every claim spanning the two
-sides is a heuristic that carries its known limitations, and a notification
-built at runtime is reported as unsupported rather than guessed at. Read-only,
-and no network access.`;
+sides is a heuristic that carries its known limitations. An omitted payload is
+known empty; a computed or spread payload remains unknown and is never compared
+as empty. Read-only, and no network access.`;
 
 export function summarizeNotifications(
   diagnostics: DiagnosticResult,
@@ -144,6 +145,7 @@ export function registerValidateNotifications(
               sent: trace.sent.map((notification) => ({
                 name: notification.name,
                 payloadKeys: [...notification.payloadKeys],
+                payloadShape: notification.payloadShape,
                 scope: notification.scope,
                 source: notification.source,
               })),

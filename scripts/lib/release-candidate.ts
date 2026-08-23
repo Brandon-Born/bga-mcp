@@ -18,7 +18,9 @@ import {
   type CapabilityManifest,
   type ReleaseCandidateManifest,
   type ReleaseInventory,
+  type ReleasePackageIdentity,
   releaseDigest,
+  verifyReleaseInventory,
 } from './release.js';
 import { formatFindings, scanDirectory } from './secret-scan.js';
 
@@ -53,6 +55,10 @@ export interface CandidateBundleInput {
   readonly schemaText: string;
   readonly artifactPath: string;
   readonly reconstructionPath: string;
+  /** Parsed from package/package.json inside the original tarball. */
+  readonly artifactPackage: ReleasePackageIdentity;
+  /** Parsed independently from the reconstructed tarball. */
+  readonly reconstructionPackage: ReleasePackageIdentity;
   readonly outputDirectory: string;
 }
 
@@ -234,6 +240,27 @@ export async function writeCandidateBundle(input: CandidateBundleInput): Promise
   if (artifactDigest !== reconstructedDigest || !artifact.equals(reconstruction)) {
     throw new Error(
       `Release candidate is not reproducible (candidate ${artifactDigest}, reconstruction ${reconstructedDigest})`,
+    );
+  }
+
+  const artifactProfile = verifyReleaseInventory(
+    input.inventory,
+    input.capabilityManifest,
+    undefined,
+    input.artifactPackage,
+  );
+  const reconstructionProfile = verifyReleaseInventory(
+    input.inventory,
+    input.capabilityManifest,
+    undefined,
+    input.reconstructionPackage,
+  );
+  if (artifactProfile.failed || reconstructionProfile.failed) {
+    throw new Error(
+      `Release candidate public executable is ineligible:\n- ${[
+        ...artifactProfile.failures,
+        ...reconstructionProfile.failures,
+      ].join('\n- ')}`,
     );
   }
 
