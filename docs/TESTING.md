@@ -109,6 +109,14 @@ CI must fail when runtime capability discovery and the manifest differ, or when 
 
 `pnpm verify:release` first proves its gate against an excluded capability, runtime exposure, runtime omission, stale-commit evidence, and wrong-artifact evidence. A candidate manifest can be derived only when every selected entry is verified and local-only, every CI reference resolves, every retained scenario passed for the exact candidate commit, the evidence names the candidate tarball, and the inventory itself is verified. The derived manifest computes rather than accepts its inventory, capability-manifest, verification-evidence, and artifact digests.
 
+### Release-candidate dry run
+
+The manual `Release candidate` workflow accepts only an existing `vX.Y.Z-rc.N` tag. Its checkout disables persisted credentials and its complete workflow permission is `contents: read`; it has no package, identity-token, registry, signing, or publication permission. BGA-404 and BGA-415 add signing and publication later, after they can consume the retained candidate rather than rebuild it.
+
+`pnpm release:candidate` runs the complete local gate at the tagged commit, packs the candidate, and checks that its digest is the artifact digest recorded by the packaged end-to-end run. It then creates a detached worktree at the same tag, installs the same lockfile offline, reconstructs the tarball, and requires byte-for-byte equality. The reconstruction is discarded. Only the original tarball enters the candidate directory.
+
+The retained directory contains the original `.tgz`, `release-candidate.json`, its JSON Schema, the sealed verification evidence, and `SHA256SUMS`. The manifest binds the tag, commit, package version, lockfile, release inventory, capability manifest, verification evidence, and tarball by SHA-256. Candidate output is write-once: an existing non-empty destination is refused instead of overwritten. GitHub retains that directory as one immutable workflow artifact for downstream signing, evidence publication, and security review.
+
 ## Minimum scenarios for every capability
 
 Every public capability requires:

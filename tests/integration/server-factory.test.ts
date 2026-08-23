@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { Client, InMemoryTransport } from '@modelcontextprotocol/client';
 
 import { DEFAULT_SERVER_CONFIG } from '../../src/config.js';
+import { SERVER_NAME, SERVER_VERSION } from '../../src/metadata.js';
 import { createDefaultServer, createServerWithPolicy } from '../../src/server.js';
 
 describe('production server factory', () => {
@@ -17,8 +18,8 @@ describe('production server factory', () => {
       await server.connect(serverTransport);
       await client.connect(clientTransport);
       expect(client.getServerVersion()).toEqual({
-        name: 'bga-mcp',
-        version: '0.0.0-development',
+        name: SERVER_NAME,
+        version: SERVER_VERSION,
       });
       expect(client.getServerCapabilities()).toEqual({
         tools: { listChanged: true },

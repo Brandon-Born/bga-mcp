@@ -47,7 +47,12 @@ export interface ReleaseRuntime {
 
 export interface CandidateEvidence {
   readonly source: { readonly commit: string; readonly clean: boolean };
-  readonly package: { readonly artifactDigest?: string };
+  readonly package: {
+    readonly name: string;
+    readonly version: string;
+    readonly lockDigest: string;
+    readonly artifactDigest?: string;
+  };
   readonly capabilities: readonly {
     readonly kind: 'transport' | 'tool' | 'resource' | 'prompt' | 'adapter';
     readonly name: string;
@@ -68,12 +73,18 @@ export interface CandidateDigests {
 }
 
 export interface ReleaseCandidateManifest {
+  readonly $schema: './release-candidate.schema.json';
   readonly schemaVersion: 1;
   readonly release: {
     readonly id: string;
     readonly environment: string;
     readonly entrypoint: string;
+    readonly sourceTag: string;
     readonly sourceCommit: string;
+    readonly packageName: string;
+    readonly packageVersion: string;
+    readonly artifactName: string;
+    readonly lockDigest: string;
     readonly digests: CandidateDigests;
   };
   readonly server: CapabilityManifest['server'];
@@ -103,7 +114,7 @@ function manifestEntry(entries: readonly ManifestEntry[], name: string): Manifes
 }
 
 /** SHA-256 of exact bytes, used to bind a candidate to each source it consumed. */
-export function releaseDigest(value: string): string {
+export function releaseDigest(value: string | Uint8Array): string {
   return `sha256:${createHash('sha256').update(value).digest('hex')}`;
 }
 
@@ -256,17 +267,34 @@ export function buildReleaseCandidateManifest(
   inventory: ReleaseInventory,
   manifest: CapabilityManifest,
   evidence: CandidateEvidence,
+  candidateTag: string,
   candidateCommit: string,
+  candidateArtifactName: string,
   candidateArtifactDigest: string,
+  sourceDigests?: Omit<CandidateDigests, 'artifact'>,
 ): ReleaseCandidateManifest {
   const digests: CandidateDigests = {
-    inventory: releaseDigest(JSON.stringify(inventory)),
-    capabilityManifest: releaseDigest(JSON.stringify(manifest)),
-    verificationEvidence: releaseDigest(JSON.stringify(evidence)),
+    inventory: sourceDigests?.inventory ?? releaseDigest(JSON.stringify(inventory)),
+    capabilityManifest:
+      sourceDigests?.capabilityManifest ?? releaseDigest(JSON.stringify(manifest)),
+    verificationEvidence:
+      sourceDigests?.verificationEvidence ?? releaseDigest(JSON.stringify(evidence)),
     artifact: candidateArtifactDigest,
   };
   const report = verifyReleaseInventory(inventory, manifest);
   report.require(inventory.status === 'verified', 'The release inventory is not verified');
+  report.require(
+    candidateTag === `v${evidence.package.version}`,
+    `Candidate tag ${candidateTag} does not identify package ${evidence.package.version}`,
+  );
+  report.require(
+    /^sha256:[0-9a-f]{64}$/u.test(evidence.package.lockDigest),
+    'Candidate evidence has no valid lockfile digest',
+  );
+  report.require(
+    candidateArtifactName.endsWith('.tgz'),
+    'Candidate artifact is not an npm tarball',
+  );
   report.require(evidence.source.clean, 'Candidate evidence was produced from a dirty tree');
   report.require(
     evidence.source.commit === candidateCommit,
@@ -324,12 +352,18 @@ export function buildReleaseCandidateManifest(
   }
 
   return {
+    $schema: './release-candidate.schema.json',
     schemaVersion: 1,
     release: {
       id: inventory.id,
       environment: inventory.environment,
       entrypoint: inventory.entrypoint,
+      sourceTag: candidateTag,
       sourceCommit: candidateCommit,
+      packageName: evidence.package.name,
+      packageVersion: evidence.package.version,
+      artifactName: candidateArtifactName,
+      lockDigest: evidence.package.lockDigest,
       digests,
     },
     server: manifest.server,

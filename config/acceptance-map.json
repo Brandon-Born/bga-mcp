@@ -934,6 +934,24 @@
       "scenarios": ["E2E-CONTRACT-COMPATIBILITY"]
     },
     {
+      "item": "BGA-403",
+      "case": "A clean versioned tag produces one candidate whose artifact, source commit, lockfile, inventory, manifest, and verification evidence are digest-bound and reproducible",
+      "boundary": "repository",
+      "scenarios": ["INT-RELEASE-CANDIDATE-DRY-RUN"]
+    },
+    {
+      "item": "BGA-403",
+      "case": "A changed reconstruction, failed gate, missing release scenario, or attempt to replace retained candidate bytes blocks completion",
+      "boundary": "repository",
+      "scenarios": ["INT-RELEASE-CANDIDATE-DRY-RUN"]
+    },
+    {
+      "item": "BGA-403",
+      "case": "The candidate workflow is manual and read-only and has no registry publication path, publication credential, or identity-token permission",
+      "boundary": "repository",
+      "scenarios": ["GATE-RELEASE-CANDIDATE"]
+    },
+    {
       "item": "BGA-414",
       "case": "Every capability discoverable from the installed release artifact is explicitly included and verified in the frozen inventory",
       "boundary": "packaged",

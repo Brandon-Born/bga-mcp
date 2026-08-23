@@ -71,6 +71,8 @@ Ten tools and eleven concrete resources are discoverable. Seven local tools and 
 
 Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), and [version policy](docs/VERSIONING.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
 
+The local-only first-release inventory and its `1.0.0` contract are frozen. A manual, non-publishing release-candidate workflow is implemented: it accepts only an existing `v1.0.0-rc.N` tag, reconstructs the npm tarball from the same frozen lockfile, and refuses anything other than byte-for-byte equality before retaining the original artifact and its digest-bound evidence. BGA-403 remains `implemented`, not `verified`, until that workflow passes on an actual candidate tag and exact-head CI; no package has been published.
+
 See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
 
 ## Install it

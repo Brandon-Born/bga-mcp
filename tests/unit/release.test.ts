@@ -41,7 +41,12 @@ function candidateEvidence(
   ];
   return {
     source: { commit, clean: true },
-    package: { artifactDigest },
+    package: {
+      name: 'bga-mcp',
+      version: '1.0.0-rc.1',
+      lockDigest: `sha256:${'3'.repeat(64)}`,
+      artifactDigest,
+    },
     capabilities: selected.map(({ kind, entry }) => {
       if (entry === undefined) throw new Error('Seeded evidence entry is missing');
       return {
@@ -95,7 +100,9 @@ describe('release inventory gate', () => {
       candidateInventory,
       manifest,
       evidence,
+      'v1.0.0-rc.1',
       commit,
+      'bga-mcp-1.0.0-rc.1.tgz',
       artifact,
     );
     expect(candidate).toMatchObject({
@@ -117,10 +124,21 @@ describe('release inventory gate', () => {
 
     for (const defective of [
       { ...evidence, source: { commit: '0'.repeat(40), clean: true } },
-      { ...evidence, package: { artifactDigest: `sha256:${'9'.repeat(64)}` } },
+      {
+        ...evidence,
+        package: { ...evidence.package, artifactDigest: `sha256:${'9'.repeat(64)}` },
+      },
     ]) {
       expect(() =>
-        buildReleaseCandidateManifest(candidateInventory, manifest, defective, commit, artifact),
+        buildReleaseCandidateManifest(
+          candidateInventory,
+          manifest,
+          defective,
+          'v1.0.0-rc.1',
+          commit,
+          'bga-mcp-1.0.0-rc.1.tgz',
+          artifact,
+        ),
       ).toThrow(/ineligible/iu);
     }
   });

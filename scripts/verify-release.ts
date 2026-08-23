@@ -47,7 +47,12 @@ function soundEvidence(
   ];
   return {
     source: { commit, clean: true },
-    package: { artifactDigest },
+    package: {
+      name: 'bga-mcp',
+      version: '1.0.0-rc.1',
+      lockDigest: `sha256:${'3'.repeat(64)}`,
+      artifactDigest,
+    },
     capabilities: entries.map(({ kind, entry }) => {
       if (entry === undefined) throw new Error('The sound evidence seed cannot resolve an entry');
       return {
@@ -96,18 +101,37 @@ function proveSeededFailures(inventory: ReleaseInventory, manifest: CapabilityMa
   const commit = '1'.repeat(40);
   const artifact = `sha256:${'2'.repeat(64)}`;
   const evidence = soundEvidence(candidateInventory, manifest, commit, artifact);
-  buildReleaseCandidateManifest(candidateInventory, manifest, evidence, commit, artifact);
+  buildReleaseCandidateManifest(
+    candidateInventory,
+    manifest,
+    evidence,
+    'v1.0.0-rc.1',
+    commit,
+    'bga-mcp-1.0.0-rc.1.tgz',
+    artifact,
+  );
 
   for (const [name, defective] of [
     ['stale evidence', { ...evidence, source: { commit: '0'.repeat(40), clean: true } }],
     [
       'different artifact evidence',
-      { ...evidence, package: { artifactDigest: `sha256:${'9'.repeat(64)}` } },
+      {
+        ...evidence,
+        package: { ...evidence.package, artifactDigest: `sha256:${'9'.repeat(64)}` },
+      },
     ],
   ] as const) {
     let rejected = false;
     try {
-      buildReleaseCandidateManifest(candidateInventory, manifest, defective, commit, artifact);
+      buildReleaseCandidateManifest(
+        candidateInventory,
+        manifest,
+        defective,
+        'v1.0.0-rc.1',
+        commit,
+        'bga-mcp-1.0.0-rc.1.tgz',
+        artifact,
+      );
     } catch (error) {
       rejected = /ineligible/iu.test(String(error));
     }
