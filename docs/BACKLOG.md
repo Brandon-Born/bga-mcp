@@ -60,22 +60,30 @@ Release work is deliberately serialized. Only the first unfinished item in the q
 
 The first public release queue is:
 
-1. `BGA-412` — installed parser-deadline evidence.
-2. `BGA-413` — installed filesystem race-stage evidence.
-3. `BGA-414` — freeze the verified local-only release capability set.
-4. `BGA-402` — versioning and compatibility policy.
-5. `BGA-403` — reproducible, non-publishing release-candidate pipeline.
-6. `BGA-404` — signatures and provenance.
-7. `BGA-407` — per-release evidence artifact.
-8. `BGA-400` — candidate-based install and removal guides.
-9. `BGA-401` — supported-client smoke matrix.
-10. `BGA-411` — self-contained, inventory-derived public documentation.
-11. `BGA-406` — private vulnerability reporting.
-12. `BGA-408` — BGA framework change process.
-13. `BGA-405` — security review of the exact signed candidate.
-14. `BGA-415` — publish and independently reinstall the first release.
+1. `BGA-416` — make the installed public command run the frozen release profile.
+2. `BGA-417` — preserve unknown action arguments and notification payloads as unknown.
+3. `BGA-418` — model state-scoped action entry points and precedence.
+4. `BGA-419` — resolve contradictory documented modern action and transition forms without false certainty.
+5. `BGA-420` — resolve documented SQL aliases before database findings.
+6. `BGA-422` — clear current toolchain advisories and add a release advisory gate.
+7. `BGA-403` — rerun the reproducible, non-publishing release-candidate pipeline against the restored inventory.
+8. `BGA-404` — signatures and provenance.
+9. `BGA-407` — per-release evidence artifact.
+10. `BGA-400` — candidate-based install and removal guides.
+11. `BGA-401` — supported-client smoke matrix.
+12. `BGA-411` — self-contained, inventory-derived public documentation.
+13. `BGA-406` — private vulnerability reporting.
+14. `BGA-408` — BGA framework change process.
+15. `BGA-405` — security review of the exact signed candidate.
+16. `BGA-415` — publish and independently reinstall the first release.
 
 This queue does not include BGA-320's live Studio marker, BGA-324's documentation-request privacy decision, or BGA-328's second-account ownership proof. They remain real backlog items for later documentation or Studio integration releases, but are not blockers for a local-only first release. If BGA-414 includes any affected capability after all, its existing owner re-enters the queue before release; it may not be waived or relabeled as verified.
+
+### Adversarial review reopening — 2026-08-23
+
+The exact `main` checkout at `2822480` passed all 572 tests and every configured gate, but an isolated install exposed a different server from the one the release scenario exercised. Fresh, minimal source cases also reproduced false validator findings that the existing unknown-syntax and modern-framework scenarios claimed to exclude. BGA-416 through BGA-423 own the new findings. BGA-414 is reopened, and no release candidate may advance until BGA-416 through BGA-420 and BGA-422 restore the selected capability set and public executable.
+
+This review also found that the existing documentation owner, BGA-411, already covers several current stale/broken install statements, so those findings extend that item instead of receiving a duplicate ID. BGA-421 and BGA-423 concern the development-only Studio check and opt-in documentation surface respectively; they are real issues but do not enter the local-only first-release queue.
 
 ### Adversarial review reopening — 2026-08-08
 
@@ -479,7 +487,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-106 — Implement `validate_state_machine`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Cross-file validation for state identifiers, types, transitions, targets, handlers, reachability where provable, and supported BGA state conventions.
@@ -487,10 +495,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Tool E2E covers every rule's positive and negative fixture plus invalid input, unsupported syntax, path confinement, deterministic ordering, and immutability.
 - **Evidence:** Eleven rules in [`src/rules/state-machine.ts`](../src/rules/state-machine.ts), each carrying its severity, certainty, and known false positives, published to the client in every result. Structural rules are proven from the parsed declaration and reported as facts; the three cross-file handler rules are heuristics with `likely` certainty and heuristic evidence, and they stay silent when no PHP source could be read. A new `legacy-broken` fixture seeds nine defects and declares them in its `expected.json`, so a rule change cannot silently repurpose it; the `legacy` fixture gained its handler methods so it is a true clean baseline. Seven packaged scenarios prove the behavior through a real MCP client. See the [state-machine validation verification](verification/STATE_MACHINE_VALIDATION.md).
 - **Scope note:** Rules apply to the legacy `states.inc.php` declaration. A modern project returns an `unsupported` result rather than a clean one, because class-based state definitions are not yet interpreted; BGA-118 delivered that reader on 2026-08-07; modern state classes are read.
+- **Reopened, 2026-08-23:** BGA-419 reproduced a documented walkthrough-style state class whose `#[PossibleAction] action_pass()` calls `nextState('pass')`. The reader records no action, no edge, and no unsupported construct, so this validator can emit the certain `state.dead-end` finding from an incomplete graph. Restore `verified` only with BGA-419's documented-source decision and installed regression.
 
 ### BGA-107 — Implement `validate_action_contracts`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace client action calls to server endpoints, argument validation, and game methods for supported layouts.
@@ -498,10 +507,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Tool E2E exercises every supported action pattern, seeded mismatch, dynamic or uncertain pattern, invalid input, and non-execution of project code.
 - **Evidence:** [`src/project/actions.ts`](../src/project/actions.ts) reads legacy `ajaxcall` URLs, modern `bgaPerformAction` names, and the request arguments an entry point consumes; [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) traces each action from client call to entry point to game method. Eight rules: a duplicated entry point and a broken `act…` name are facts, every cross-file claim is a heuristic carrying its limitations, and a call assembled at runtime becomes unsupported syntax rather than a guess. When a side of the contract cannot be read the result says so instead of passing. Both fixtures gained real action wiring, and `legacy-broken` declares its eight expected contract findings. Seven packaged scenarios prove it through a real MCP client. See the [action contract verification](verification/ACTION_CONTRACTS.md).
 - **Scope note:** Tracing covers the legacy client and action class. A modern project reports `action.trace.unavailable` because its attribute-based entry points are not yet read; BGA-119 delivered that reader on 2026-08-07; autowired actions are traced.
+- **Reopened, 2026-08-23:** BGA-417 reproduced a computed `performAction` argument object that becomes an empty known object and a false `action.argument.mismatch`; BGA-418 reproduced two valid state-local actions as one certain duplicate; BGA-419 records contradictory official action-name forms that the reader currently converts into certain and likely project defects. Those owners must pass before this item can return to `verified`.
 
 ### BGA-108 — Implement `validate_notifications`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Trace server notifications to client subscriptions and compare supported payload shapes and handler use.
@@ -509,10 +519,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Tool E2E covers valid, missing, mismatched, extra, dynamic, and malformed notification fixtures with stable evidence.
 - **Evidence:** [`src/project/notifications.ts`](../src/project/notifications.ts) reads `notifyAllPlayers` and `notifyPlayer` sends with their payload keys, and the client handlers bound by `dojo.subscribe` or the `notif_<name>` method convention with the keys each reads. [`src/rules/notifications.ts`](../src/rules/notifications.ts) compares the two sides. Five rules: a duplicate subscription and an untraceable contract are facts; sent-but-unhandled, handled-but-unsent, and payload disagreement in either direction are heuristics carrying their limitations. A send with a computed name or payload becomes unsupported syntax. Both fixtures gained notification wiring, and `legacy-broken` declares its five expected findings. Seven packaged scenarios prove it through a real MCP client. See the [notification contract verification](verification/NOTIFICATIONS.md).
 - **Scope note:** Tracing covers the legacy client and PHP sources. A modern project reports `notification.trace.unavailable`, as does any project where neither side mentions a notification, so an unreadable contract never returns a clean result.
+- **Reopened, 2026-08-23:** A computed server payload is reported as unsupported and simultaneously stored as a known empty payload, producing `notification.payload.mismatch` against a handler that reads a key. BGA-417 owns the correction and installed regression.
 
 ### BGA-109 — Implement `audit_database_usage`
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-008, BGA-101
 - **Deliverable:** Compare `dbmodel.sql` with supported query usage and detect high-confidence schema, reference, and unsafe-pattern findings.
@@ -521,6 +532,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** [`src/project/database.ts`](../src/project/database.ts) reads the tables and columns `dbmodel.sql` declares and the queries the PHP sources run, attributing bare columns only when a query names exactly one table. [`src/rules/database.ts`](../src/rules/database.ts) compares them. Seven rules: undeclared tables and duplicate declarations are facts; undeclared columns, unused columns, and interpolated queries are heuristics carrying their limitations. Framework-owned tables are never reported as undeclared. Both fixtures gained a real schema and queries, and `legacy-broken` declares its four expected findings. Seven packaged scenarios prove it through a real MCP client. See the [database audit verification](verification/DATABASE_AUDIT.md).
 - **Scope note:** Column attribution needs a single-table query; a multi-table query keeps only its qualified columns and reports the rest as unsupported. A query concatenated from several expressions is reported rather than reconstructed.
 - **Change, 2026-08-10:** Published query text carries masked values (`WHERE card_location = '?'`), which BGA-327 owns. The findings, tables, columns, and interpolation flag are unchanged; what a result no longer contains is the constant a query compared against.
+- **Reopened, 2026-08-23:** BGA-420 reproduced the official `SELECT player_id id ... FROM player` form as references to nonexistent `player.id`, and `SELECT c.card_id AS id FROM card c` as `c.card_id`, `card.c`, and `card.id`. The current documented false-positive note does not satisfy this item's promise that parser limits constrain certainty; the official examples require a real alias model or explicit unsupported syntax.
 
 ### BGA-110 — Define the pre-release rule catalog
 
@@ -554,13 +566,14 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-113 — Implement explicit unknown-syntax handling
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-007, BGA-101
 - **Deliverable:** Shared behavior for syntax that cannot be parsed or relationships that cannot be proven.
 - **Acceptance:** Unknown syntax produces an `unsupported` or `uncertain` result with a location and reason, never an implicit pass or fabricated relationship.
 - **Verification:** Every parser and public validation E2E suite includes at least one unknown construct and asserts the explicit uncertainty result.
 - **Evidence:** [`src/rules/uncertainty.ts`](../src/rules/uncertainty.ts) is the shared behavior every rule module now builds its findings with: a proven claim is a fact, a claim depending on unseen code is a heuristic carrying the rule's recorded false positives, and a construct the reader cannot interpret is unsupported syntax with its location and reason. A result made entirely of unsupported syntax reports `unsupported`, never `passed`. The four rule modules previously duplicated these builders; the refactor left every existing test passing unchanged. `tests/unit/uncertainty.test.ts` asserts the three shapes, that every non-certain rule records how it can be wrong, and that all seven parsers report a construct they cannot read rather than dropping it. Each validator's packaged suite already asserts the explicit unsupported result for a project it cannot fully read.
+- **Reopened, 2026-08-23:** BGA-417 proves two unknown values survive as fabricated empty structures; BGA-419 proves documented-but-conflicting modern forms disappear without even an unsupported finding; BGA-420 proves SQL aliases are treated as columns instead of unknown syntax. These violate the acceptance criterion directly.
 
 ### BGA-114 — Enforce local read-only and network-off behavior
 
@@ -592,7 +605,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-118 — Read modern state classes
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-101, BGA-106, BGA-117
 - **Deliverable:** A reader for state classes under `modules/php/States`, extracting the identifier, type, description, transitions, and action methods from the `parent::__construct` call and the class body, plus the `GameStateBuilder` form.
@@ -600,10 +613,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** The state-machine suite gains modern scenarios mirroring its legacy ones, including a seeded defect set, and the compatibility matrix claims modern support only once they pass.
 - **Evidence:** [`src/project/modern.ts`](../src/project/modern.ts) reads state classes into the same shape the legacy declaration produces: identifier, type mapped from `StateType`, name defaulting to the class name as the framework does, transitions, and the `getArgs` and `onEnteringState` handlers. A computed identifier, type, or transition target is reported as unsupported syntax rather than guessed. Every state-machine rule now applies to both layouts, proven by `E2E-VALIDATE-STATES-MODERN-CLEAN` and `E2E-VALIDATE-STATES-MODERN-DEFECTS`.
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory).
+- **Reopened, 2026-08-23:** BGA-419 records an official walkthrough state method that the reader silently omits from both possible actions and graph edges. Until the conflict with the canonical state page is resolved, the reader must report that form as unsupported rather than let downstream rules treat the class as complete.
 
 ### BGA-119 — Read modern action autowiring and the modern client action API
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-107, BGA-117, BGA-118
 - **Deliverable:** Action-contract tracing for projects with no `.action.php`: autowired public `act…` methods on the game class as the server side, and `this.bga.actions.performAction` alongside the existing `bgaPerformAction` and `ajaxcall` on the client side.
@@ -611,6 +625,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** The action-contract suite gains modern scenarios mirroring its legacy ones, including a seeded mismatch, and proves the legacy path is unchanged.
 - **Evidence:** Action tracing now accepts a project with no `.action.php`: autowired public `act…` methods on the game class are the entry point, their typed parameters are the contract, and an autowired action is its own game method rather than a missing second hop. The client reader accepts `this.bga.actions.performAction` alongside `bgaPerformAction` and `ajaxcall`. The rule comparing calls against a state's declared actions now stays silent when no state enumerates any, because an empty set means unknown rather than nothing-allowed; that limitation is recorded on the rule.
 - **Sources:** [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide), [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_yourgamename.game.php).
+- **Reopened, 2026-08-23:** BGA-417 shows the modern client reader does not mark a computed argument object unsupported. BGA-419 shows it treats the official walkthrough's `action_*` names as impossible even though that same page pairs them with `bga.actions.performAction` and `#[PossibleAction]`.
 
 ### BGA-120 — Read the modern notification API
 
@@ -669,7 +684,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-124 — Correct modern state semantics and replace the false clean fixture
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-008, BGA-101, BGA-106, BGA-117, BGA-118, BGA-123
 - **Deliverable:** A documented modern-state reader and layout-aware validator whose clean fixture uses current state-class constructs rather than carrying the legacy states 1 and 99 into the class model.
@@ -679,10 +694,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** [Modern state semantics verification](verification/MODERN_STATE_SEMANTICS.md) records the whole correction. [`src/project/php.ts`](../src/project/php.ts) masks string and comment content before reading structure, so a `clienttranslate` description containing brackets no longer moves the reader off the end of a call, and collects the `define()` and class constants both spellings use. [`src/project/modern.ts`](../src/project/modern.ts) reads every documented constructor argument, resolves identifiers through constants, keeps descriptions, `getArgs`, `onEnteringState`, `zombie` and `#[PossibleAction]`, and resolves class, identifier and transition redirects into edges; `readInitialState` reads what `setupNewGame` returns. [`src/project/parse.ts`](../src/project/parse.ts) reads the `GameStateBuilder` chain beside the array form and marks `gameSetup`/`endScore` as the framework's own states. [`src/project/model.ts`](../src/project/model.ts) resolves the entry point per generation, records whether declarations and edges were read completely, and reports duplicates per source. [`src/rules/state-machine.ts`](../src/rules/state-machine.ts) seeds reachability from the resolved entry point, treats 1 and 99 as the framework's, accepts the four documented types, and stays silent about the whole machine when part of it could not be read; `state.id.reserved` is the one thing it says about a class that takes a reserved identifier. `run_pre_release_audit` leaves a check `unsupported` whenever its validator reported an unreadable construct. `tests/fixtures/projects/modern` is rebuilt on the documented shapes, `modern-state-classes` and `modern-unreadable` are new, and the fixture-integrity gate fails if an `-unreadable` fixture ever declares a certain finding. Proven through the installed package by `E2E-VALIDATE-STATES-MODERN-CLEAN`, `E2E-VALIDATE-STATES-MODERN-CONSTRUCTS`, `E2E-VALIDATE-STATES-MODERN-DEFECTS`, `E2E-VALIDATE-STATES-UNSUPPORTED`, `E2E-PRE-RELEASE-UNSUPPORTED-PRESERVED`, `E2E-INSPECT-PROJECT-MODERN` and `E2E-INSPECT-PROJECT-HYBRID`. It stays `implemented` rather than `verified` because the evidence system itself is reopened: BGA-017 owns compositional verification and BGA-005 owns the current CI record.
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says to add `return PlayerTurn::class` in `setupNewGame`, says state-class IDs “cannot use 1 or 99,” lists `StateType::PRIVATE` among “4 types of game states,” documents class/id/transition return values, and shows the `StateConstants` example. [Your game state machine: states.inc.php](https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php) documents the `GameStateBuilder` chain, `GameStateBuilder::gameSetup(2)` “only keep this line if your initial state is not 2,” and the `define()` constants. [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says “States 1 and 99, that must not be changed, are now optional” and preserves the independently migrated older forms.
 - **Open questions:** The current documentation lists four state types and no longer mentions `manager`, which older skeletons gave the reserved states; it is accepted on identifiers 1 and 99, which no rule judges, and reported as undocumented anywhere else. The state-class page marks the default entry point of a project that returns nothing “(_to be confirmed_)”; the reader uses state 2 and says so in its evidence. A `transitions` target written as a class name is not documented, so it is reported as unreadable rather than assumed. `GameStateBuilder::endScore()` has no documented transitions, so it is treated as the framework's state rather than judged as the project's.
+- **Reopened, 2026-08-23:** The Complete Walkthrough now documents a materially different state-class action and transition shape from the canonical state page. BGA-419 owns the source-authority decision and the fail-safe behavior while that conflict remains; treating the walkthrough form as a complete edge-free state is not acceptable.
 
 ### BGA-125 — Correct modern action-contract tracing
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-107, BGA-119, BGA-124
 - **Deliverable:** Action tracing that models both state-class and Game.php autowiring, including framework-injected parameters and documented parameter attributes.
@@ -692,10 +708,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says actions need `#[PossibleAction]`, lists the injected parameter aliases, and says the framework checks Game.php for actions available in any state. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents autowired actions and parameter attributes.
 - **Evidence:** [Modern action contract verification](verification/MODERN_ACTION_CONTRACTS.md) records the correction. `parseModernActions` in [`src/project/modern.ts`](../src/project/modern.ts) reads `act…` methods from either form, honours `#[PossibleAction]` where a state class requires it, skips a non-public method, excludes every documented injected parameter in both spellings — and not `$playerId`, which the documentation says autowired actions do not support — and reads each parameter attribute's name and checks. [`src/rules/action-contracts.ts`](../src/rules/action-contracts.ts) builds entry points from the action class, the game class, and the state classes, lets the legacy dispatcher win where it declares an action, exempts a game-class action from `action.call.not-declared` because the framework allows it in any state, and adds `action.argument.invalid` for a literal client value that fails its attribute's documented check. `parseClientActionCalls` reads shorthand keys and literal values, and treats the framework key list as belonging to `ajaxcall` rather than to `bgaPerformAction`, whose own documented example expects a parameter named `action`. `tests/fixtures/projects/modern-state-classes` declares its action contract as passing and `modern-broken` declares the attribute violation. Proven through the installed package by `E2E-VALIDATE-ACTIONS-STATE-CLASSES`, `E2E-VALIDATE-ACTIONS-MODERN-CLEAN`, `E2E-VALIDATE-ACTIONS-MODERN-DEFECTS`, and the unchanged legacy scenarios.
 - **Open questions:** `#[CheckAction(false)]` marks an action playable outside the player's turn; it is read as an ordinary entry point, and the documentation does not settle whether such an action should be exempt from state-related rules. `JsonParam(class: …)` is recognized by name, but the shape of the mapped object is not compared with the client's payload.
+- **Reopened, 2026-08-23:** BGA-417, BGA-418, and BGA-419 invalidate the claimed dynamic-syntax, state-class, and exact-parameter coverage. In particular, the same action name in separate state classes is state-scoped, while the current duplicate rule and parameter comparison flatten every class into one global namespace.
 
 ### BGA-126 — Correct modern notification sends and registrations
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-108, BGA-120, BGA-124
 - **Deliverable:** Notification tracing for every documented Game.php and state-class send form, with client handlers counted only when they are actually registered.
@@ -705,6 +722,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) says state classes can write `$this->notif->all`. [Game interface logic: Game.js](https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js) says `setupPromiseNotifications` “auto-detect[s] all notifications declared on the game object (functions starting with `notif_`) and register[s] them with dojo.subscribe”, documents its `prefix` and `ignoreNotifications` parameters, and lists `tableWindow`, `message` and `simplePause` as pre-defined types a game may send with nothing on the client side. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents `bga->notify->all` and `bga->notify->player`.
 - **Evidence:** [Modern notification verification](verification/MODERN_NOTIFICATIONS.md) records the correction. `parseSentNotifications` in [`src/project/notifications.ts`](../src/project/notifications.ts) reads all three documented spellings including the state-class shortcut; `parsePromiseRegistration` reads the prefix and ignore list; `parseNotificationHandlers` marks a handler `bound` only when the registration covers it or the client subscribes by hand. [`src/rules/notifications.ts`](../src/rules/notifications.ts) looks for the registration across every client source, compares only bound handlers, says why an unregistered method does not receive its send, and never reports a predefined type as unhandled. `tests/fixtures/projects/modern-state-classes` declares its notification contract as passing; `modern-broken` declares the ignored registration. Proven through the installed package by `E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES` and `E2E-VALIDATE-NOTIFICATIONS-MODERN-DEFECTS`.
 - **Open questions:** `handlers: [this, ...this.bga.states.getStateClasses()]` registers methods declared on other objects, and the documentation warns a duplicated name is called several times; a registration anywhere in the client is treated as registering every matching method rather than resolving ownership. `setIgnoreNotificationCheck` suppresses a notification by run-time predicate and is not read.
+- **Reopened, 2026-08-23:** BGA-417 invalidates the claimed dynamic-payload coverage: one computed payload currently yields both unsupported syntax and a fabricated missing-key warning.
 
 ### BGA-127 — Restrict database findings to executed framework database calls
 
@@ -721,7 +739,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-128 — Complete the packaged public-boundary matrix for local capabilities
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-017, BGA-124, BGA-125, BGA-126, BGA-127
 - **Deliverable:** The missing installed-artifact scenarios required by the original acceptance criteria of BGA-007, BGA-008, BGA-016, BGA-100, BGA-102 through BGA-114, and BGA-116 through BGA-123. Superseded BGA-115 remains excluded.
@@ -731,6 +749,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** [Packaged boundary matrix verification](verification/PACKAGED_BOUNDARY_MATRIX.md) records the whole item. [`config/acceptance-map.json`](../config/acceptance-map.json) is the map this item exists to produce: every literal acceptance case of the reopened items, each either naming the assertions that prove it or recording why nothing does yet. `pnpm verify:acceptance-map` refuses a case whose scenario is undeclared, skipped, declared outside `tests/e2e/` when the case says packaged, absent from the retained evidence, recorded as anything but passed, or proven against an artifact other than the packed one; six seeded defects must be rejected before it reports. `tests/fixture-integrity.test.ts` now runs the readers and all four validators over every fixture and compares the result with the fixture's declared model and finding sets, so a fixture can no longer agree only with itself. New packaged scenarios close the empty-project, partial-layout, hybrid-per-capability and duplicate-precedence cases: `E2E-INSPECT-PROJECT-EMPTY`, `E2E-INSPECT-PROJECT-PARTIAL`, `E2E-VALIDATE-STATES-HYBRID`, `E2E-VALIDATE-ACTIONS-HYBRID`, `E2E-VALIDATE-NOTIFICATIONS-HYBRID`, `E2E-AUDIT-DATABASE-HYBRID`, and the class-wins assertion inside `E2E-INSPECT-PROJECT-HYBRID`. The hybrid fixture now declares a state in both sources so that precedence is a fact a public result shows.
   All 76 cases are now proven: `E2E-INSPECT-PROJECT-UNREADABLE-FILES` and `E2E-INSPECT-PROJECT-NESTED-ROOT` for the permission-denied and nested projects, `E2E-RESOURCE-SUMMARY-BOUNDED`, `E2E-RESOURCE-STATES-GENERATIONS`, `E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED` and `E2E-RESOURCE-REFRESH` for the resources, `E2E-VALIDATE-STATES-RULE-COVERAGE` for the four state rules that had no failing fixture, `E2E-VALIDATE-ACTIONS-UNSUPPORTED-SYNTAX`, `E2E-VALIDATE-NOTIFICATIONS-UNSUPPORTED-SYNTAX` and `E2E-AUDIT-DATABASE-UNREADABLE-STATEMENT` for dynamic and unrecognized syntax, and `E2E-TOOLS-REDACTION` and `E2E-TOOLS-DEFAULT-ROOT` for the guarantees every project tool shares. The rule-catalog gate now cross-checks `failingModern` against the modern defective fixture, and each fixture states the BGA behavior it represents. Writing the permission-denied case found a real defect: a directory the process may not list made `inspect_project` fail with `internal.unexpected`; it is now recorded in the listing and reported as `project.listing.unreadable`.
 - **Note:** Coverage is complete; release verification is not. A capability still cannot be `verified` until CI has run the commit being claimed and conformance covers every protocol version it advertises, which BGA-005 and BGA-017 own.
+- **Reopened, 2026-08-23:** BGA-416 shows every packaged suite starts an internal `dist/*.js` file instead of the installed package command, and the release suite selects `dist/release-cli.js` itself. BGA-417 through BGA-420 add minimal documented/dynamic forms the current fixture matrix omits. Coverage is not complete until those forms and the actual public executable cross the real-client boundary.
 
 ## Phase 2 — Documentation
 
@@ -1326,12 +1345,13 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Status:** implemented
 - **Priority:** P0
-- **Depends on:** BGA-005, BGA-011, BGA-012, BGA-014, BGA-402, BGA-414
+- **Depends on:** BGA-005, BGA-011, BGA-012, BGA-014, BGA-402, BGA-414, BGA-416 through BGA-420, BGA-422
 - **Deliverable:** A least-privilege pipeline that builds once from a clean tag, verifies, packages, and preserves one immutable candidate for BGA-404, BGA-407, and BGA-405. This item does not publish and grants no registry or identity-token permission.
 - **Acceptance:** Candidate creation fails when any release-included capability lacks required evidence; the artifact is reproducible from the recorded commit and lock digest; every downstream step consumes the recorded artifact digest rather than rebuilding it. Publication remains impossible until BGA-415.
 - **Verification:** A dry run proves all gates, artifact hashes, exact-artifact reuse, and absence of a publish path or publication credential. A seeded missing scenario, changed artifact, or failing required gate blocks candidate completion.
 - **Implementation, 2026-08-15:** [`.github/workflows/release-candidate.yml`](../.github/workflows/release-candidate.yml) is manual-only, checks out one existing `v1.0.0-rc.N` tag with persisted credentials disabled, grants only `contents: read`, and retains its output for 90 days. [`scripts/create-release-candidate.ts`](../scripts/create-release-candidate.ts) refuses a dirty or mismatched tag, runs the complete gate, packs the original candidate, reconstructs the same tag from an offline frozen-lockfile worktree, and requires byte-for-byte equality. The [`release-candidate.json` schema](../config/release-candidate.schema.json) binds the original tarball, source commit, tag, lockfile, frozen inventory, capability manifest, and sealed verification evidence by SHA-256; the bundle also carries the evidence, schema, and `SHA256SUMS`. The reconstruction is discarded and a non-empty destination is never overwritten.
 - **Implemented evidence:** `GATE-RELEASE-CANDIDATE` seeds automatic triggers, elevated permissions, registry commands and credentials, an unpinned artifact action, a dirty tree, a tag/HEAD mismatch, and version drift. `INT-RELEASE-CANDIDATE-DRY-RUN` assembles the retained bundle from equal candidate/reconstruction bytes, validates its schema and checksums, then proves changed bytes, failed tests, missing selected scenarios, and overwrite attempts stop it. Full local `pnpm check` passes with 76 test files and 572 tests; all 168 capability scenarios pass, the two new supply-chain claims pass, and the acceptance map records 152 of 154 cases proven with the two existing live Studio cases explicitly missing. This remains `implemented`, not `verified`, until exact-head CI passes and the manual workflow successfully builds an actual candidate tag.
+- **Reopened dependency, 2026-08-23:** The tarball is reproducible, but BGA-416 proves its public `bga-mcp` executable is the development profile rather than the release entry point the candidate inventory verifies. BGA-417 through BGA-420 invalidate selected validator claims, and BGA-422 records current advisories in the candidate toolchain. Candidate creation must be rerun only after those owners restore BGA-414.
 - **Sources:** [npm pack](https://docs.npmjs.com/cli/v11/commands/npm-pack/) documents that `npm pack` creates the installable tarball and supports an explicit pack destination. [GitHub workflow artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data) documents that v4 artifacts are immutable, can carry an explicit retention period, and expose a SHA-256 digest that download validates.
 
 ### BGA-404 — Sign and attest release artifacts
@@ -1401,11 +1421,12 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Status:** ready
 - **Priority:** P0
-- **Depends on:** BGA-003, BGA-006, BGA-400, BGA-414
+- **Depends on:** BGA-003, BGA-006, BGA-400, BGA-414, BGA-416
 - **Deliverable:** A packed artifact whose README/help links resolve for an installed-package reader and whose public/canonical agent-facing capability inventory and boundary descriptions are generated or checked against real MCP discovery and policy configuration.
 - **Acceptance:** Every relative path in the packed README exists in the tarball; alternatively, repository-only material uses an absolute, versioned public URL. CLI help never tells an installed user to read a file the package omits. Tool, resource-template, concrete-resource, prompt, stability, network, and experimental counts are derived from the manifest plus packaged discovery, with the distinction between templates and concrete listed resources stated. README, install/help text, and `AGENTS.md` agree that network access is off by default—not absent—and identify the explicitly enabled network surfaces. None calls an implemented or experimental capability verified.
 - **Verification:** An isolated consumer installs the tarball, resolves every local Markdown/help path, follows one install and one removal flow, discovers the server, and compares all documented names/counts/stabilities with the client response and packed manifest. A seeded missing file and stale count each fail.
 - **Finding:** The audited tarball contained README.md but no `docs/`; all README links to installation, testing, backlog, compatibility, threat model, and verification records were broken locally. Discovery returned 10 tools and 11 concrete resources, not the documented 7 and 3. The canonical agent instructions also retained the obsolete absolute claim that the server never opens a network connection.
+- **Additional finding, 2026-08-23:** Current prose has drifted again. `docs/INSTALL.md` says BGA-403 has not landed and only `legacy-flat` is supported; README says BGA-318, BGA-326, and BGA-328 remain open after their recorded implementations, points users at the development `dist/cli.js`, and describes an incomplete session boundary the backlog says was closed. The install guide still reports the older `4/9` documentation score while BGA-211 records `3/9`. The package still omits every linked `docs/*` page and `SECURITY.md`. BGA-416 additionally proves the installed public command and README inventory describe different profiles. These remain one inventory-derived documentation defect, not separate implementation items.
 
 ### BGA-412 — Prove parser deadlines through the installed artifact
 
@@ -1431,7 +1452,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-414 — Freeze a verified local-only first-release capability set
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-006, BGA-017, BGA-318, BGA-326, BGA-330, BGA-412, BGA-413
 - **Deliverable:** One machine-readable first-release inventory that drives the candidate manifest, MCP discovery, documentation, security review, and verification evidence.
@@ -1440,35 +1461,123 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Release effect:** This keeps BGA-320, BGA-324, BGA-328, and the blocked Studio chain out of the local-release critical path without waiving them. Adding documentation or Studio to a later release requires completing their permanent owners and revising this inventory in a reviewed change.
 - **Evidence, 2026-08-14:** [`config/release.json`](../config/release.json) freezes seven verified local tools, three verified project resources, stdio, and protocol `2025-11-25`; its schema fixes the release entry point and the five consumers that must derive from it. [`dist/release-cli.js`](../src/release-cli.ts) is an inventory-bound installed entry point, not a caller-selected flag: it omits setup, documentation, Studio, and the 2026 adapter from discovery; refuses every network, Studio, remote-project, and mutation relaxation before startup; and connects a single 2025-era server so the dual-era development router cannot advertise a protocol the release does not claim. [`E2E-RELEASE-LOCAL-ONLY`](../tests/e2e/release-inventory.test.ts) installs the shared tarball, connects with the real client, compares tool, concrete-resource, template, prompt, adapter, and protocol discovery with the packed inventory and source manifest, refuses calls to all three excluded tool families, and checks the release-only help and option boundary. [`GATE-RELEASE-INVENTORY`](../tests/unit/release.test.ts) and `pnpm verify:release` reject a non-verified selection, an exposed exclusion, an omitted inclusion, evidence from another commit, and evidence for another artifact. Candidate-manifest derivation copies the selected manifest entries and computes inventory, capability-manifest, verification-evidence, and tarball digests; it refuses an inventory that is not verified, a dirty tree, or evidence that does not belong to the exact candidate commit and artifact.
 - **Verified against:** Full local `pnpm check` passes with 73 test files and 568 tests; all 166 required scenarios pass, and the acceptance map records 146 of 148 cases proven with the two existing live Studio cases explicitly missing. All six Ubuntu, macOS, and Windows jobs on Node 22 and 24 passed for implementation commit [`804650a`](https://github.com/Brandon-Born/bga-mcp/commit/804650a2660336ef72f5e24bbdbdf2b228d2cfdf) in exact-HEAD [CI run 31815781536](https://github.com/Brandon-Born/bga-mcp/actions/runs/31815781536). The inventory and this item are now `verified`, and BGA-402 may start.
+- **Reopened, 2026-08-23:** The recorded CI result remains historical evidence for `dist/release-cli.js`; it is not evidence for the command npm installs. The exact current tarball maps `bin.bga-mcp` to `dist/cli.js`, and an isolated real-client connection to that public command discovered 10 tools and 11 resources, including setup, documentation, and experimental Studio surfaces, instead of the frozen seven and three. The current full gate still passes because `E2E-RELEASE-LOCAL-ONLY` bypasses the installed command and starts `release-cli.js` directly. BGA-416 owns that release blocker. BGA-417 through BGA-420 also reopen selected validator evidence, and BGA-422 must clear or explicitly dispose of current toolchain advisories before this inventory can return to `verified`.
 
 ### BGA-415 — Publish and independently verify the first release
 
 - **Status:** planned
 - **Priority:** P0
-- **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414
+- **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414, BGA-416 through BGA-420, BGA-422
 - **Deliverable:** Publish the exact signed and security-reviewed BGA-403 candidate without rebuilding it, then verify the public artifact as an unrelated consumer would.
 - **Acceptance:** The registry package, checksums/provenance, source tag, candidate manifest, and verification evidence identify the same bytes and commit. Publication requires an explicit package-name/registry/trusted-publisher decision and an approved release candidate; no token or publish permission is available to pull-request or dry-run jobs. A failed post-publication check stops promotion and follows the documented recovery path rather than silently rebuilding or overwriting a version.
 - **Verification:** In a fresh environment, download the public artifact, verify its digest and provenance, install it, discover exactly the BGA-414 inventory with a real MCP client, run the documented first-use call, remove it, and confirm no project mutation or credential artifact remains. Record the registry URL, immutable version, source commit, CI run, and evidence digest in the release record.
+
+### BGA-416 — Bind the installed public executable to the frozen release profile
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-003, BGA-012, BGA-402, BGA-403, BGA-414
+- **Deliverable:** One public package command whose installed executable, release inventory entry point, candidate contract, documentation, and real MCP discovery all select the same release profile. Development-only discovery may remain available through a separately named source/development entry point, but it is never the command a release consumer installs by default.
+- **Acceptance:** The `bin.bga-mcp` path inside the actual tarball is either the inventory's entry point or a generated wrapper cryptographically/factually bound to that profile. Invoking `node_modules/.bin/bga-mcp` exposes exactly the BGA-414 tools, resources, prompts, transports, protocol versions, help, and option boundary. No test or guide substitutes `dist/cli.js` or `dist/release-cli.js` after installation. The stable contract fingerprints the public executable mapping and profile, and candidate creation rejects a tarball whose executable differs even when its internal release file is correct.
+- **Verification:** `E2E-RELEASE-PUBLIC-EXECUTABLE` installs the shared tarball in a fresh directory and connects a real MCP client to the package-manager-created command on Linux, macOS, and Windows. It compares discovery with `config/release.json`, refuses excluded capabilities/options, exercises one included tool, and removes the package. A seeded `bin` redirect to the development CLI makes the release, version-policy, candidate, documentation, and acceptance-map gates fail.
+- **Finding:** At `2822480`, `config/release.json` names `dist/release-cli.js`, while the packed `package.json` maps `bga-mcp` to `dist/cli.js`. An isolated install and real client discovered 10 tools and 11 resources from the public command, including `check_setup`, documentation search/resources, and experimental Studio logs; the frozen inventory contains seven tools and three resources. All 572 tests still passed because the release test starts `release-cli.js` directly, while the shared packaged-test helper starts `dist/cli.js` directly.
+- **Sources:** [npm package.json `bin`](https://docs.npmjs.com/files/package.json/#bin) says the field maps a command name to the local file npm links for installed use. Checked 2026-08-23.
+
+### BGA-417 — Preserve unknown action arguments and notification payloads through validation
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-107, BGA-108, BGA-113, BGA-125, BGA-126
+- **Deliverable:** A tri-state cross-file value model that distinguishes known-empty, known-shaped, and unreadable action arguments/notification payloads all the way from parser to individual validator, aggregate, pre-release result, resources, and evidence.
+- **Acceptance:** An omitted `performAction` argument is known empty, while a variable, spread, helper call, or other computed argument is unsupported and is never compared as empty. A notification with no payload is known empty, while a computed payload is unsupported and is never compared as empty. Names and other independently readable relationships may still be checked, but no missing/extra argument or payload-key finding is derived from the unknown shape. The owning validator group and pre-release checks remain `unsupported`/inconclusive rather than failed or passed.
+- **Verification:** Installed public-command scenarios cover omitted, literal-empty, literal-shaped, variable, spread, helper-returned, and malformed forms on both APIs. They assert the exact unsupported finding and the absence of `action.argument.mismatch` or `notification.payload.mismatch`; aggregate, diagnostics resource, and pre-release outputs preserve that distinction. A seed that replaces unknown with `[]` or `{}` fails the gate.
+- **Finding:** `performAction('actPlay', args)` is stored with empty argument names and no unsupported marker, so an entry point reading `cardId` produces a false mismatch. `notifyAllPlayers('built', '', $payload)` does emit unsupported syntax, but is also stored with empty payload keys, so a handler reading `card` simultaneously receives a false mismatch. The catalogued limitations explicitly promise the opposite behavior.
+- **Sources:** [Game interface logic: Game.js](https://en.doc.boardgamearena.com/Game_interface_logic:_yourgamename.js) defines `args` as “an object containing the call parameters” and permits it to be omitted; it does not require a source-code object literal. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents notification arguments as data passed by the game. Checked 2026-08-23.
+
+### BGA-418 — Model action entry-point scope and precedence before comparing contracts
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-107, BGA-119, BGA-125
+- **Deliverable:** An action-resolution model that retains whether an entry point belongs to the legacy dispatcher, the game class, or a particular state class, and applies the documented precedence and visibility rules without flattening state-local methods into one global namespace.
+- **Acceptance:** The same action name in two different state classes is not a duplicate merely because the text matches. A state-local action is resolved only for that state; a Game.php action is the documented fallback; and a legacy `.action.php` action takes precedence where it exists. If static client code cannot identify which state-local signature receives a call, differing signatures produce one explicit uncertainty result rather than comparison with whichever file was enumerated first. Legacy dispatcher entry points must be callable/public action methods; private/protected helpers cannot satisfy a client call or participate as duplicates.
+- **Verification:** Packaged public-command fixtures cover the same state-local name with equal and different signatures, a genuine same-scope duplicate, Game.php fallback, legacy precedence, non-public legacy helpers, and deterministic file-order reversal. A seed that keys entries only by action name reproduces the current false certain duplicate and fails.
+- **Finding:** Two separate state classes declaring `#[PossibleAction] public function actPlay()` currently produce the certain error `action.entry-point.duplicate` with evidence claiming “Two methods of the action class share a name.” Argument comparison then selects the first matching entry globally. The legacy reader likewise accepts private and protected methods as public endpoints.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) describes an action declared “in this state” and says the framework checks Game.php only when it is absent there. [Players actions: yourgamename.action.php](https://en.doc.boardgamearena.com/Players_actions:_yourgamename.action.php) documents public legacy entry-point methods. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) says `.action.php` is used instead of autowiring when both declare the function. Checked 2026-08-23.
+
+### BGA-419 — Resolve contradictory modern action and transition documentation without false certainty
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-106, BGA-113, BGA-118, BGA-119, BGA-124, BGA-125, BGA-206
+- **Deliverable:** A reviewed source-authority decision and parser behavior for the conflicting official modern state-class examples, with unresolved forms reported as unsupported rather than converted into project defects.
+- **Acceptance:** Record which official page governs action names and state transitions, the reviewed revision/date, the exact conflict, and whether an upstream clarification is required. Until the conflict is resolved, a `#[PossibleAction] action_*` method invoked by `bga.actions.performAction` and an imperative `nextState`/related state call shown by official material must produce located unsupported syntax and suppress any name, missing-entry-point, reachability, or dead-end conclusion that depends on rejecting/ignoring it. If the forms are confirmed supported, normalize their names, arguments, scopes, and edges; if confirmed erroneous, only then emit a documented rule.
+- **Verification:** Captured minimal examples from both official pages drive reader, state-validator, action-validator, aggregate, and pre-release tests through the installed public command. The walkthrough form can never yield `action.name.convention`, `action.entry-point.missing`, `state.dead-end`, or a clean pass while unresolved. A seed that silently drops the method or imperative edge fails.
+- **Finding:** The canonical state page says action functions “must be prefixed by `act`” and redirect by return value. The official Complete Walkthrough instead declares `#[PossibleAction] action_resolve()`/`action_pass()`, calls them with `bga.actions.performAction`, and uses `$this->game->gamestate->nextState('pass')`. The current reader recognizes only `act[A-Z]` and handler return expressions. The walkthrough-shaped class is therefore recorded as a complete state with no possible actions or edges; downstream validation emits certain/likely defects rather than an unsupported-source conflict.
+- **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) and [Create a game in BGA Studio: Complete Walkthrough](https://en.doc.boardgamearena.com/Create_a_game_in_BGA_Studio:_Complete_Walkthrough), checked 2026-08-23. [Tutorial Reversi](https://en.doc.boardgamearena.com/Tutorial_reversi) follows the `actPlayDisc` form, which confirms the documentation is inconsistent rather than establishing that the walkthrough form is safe to reject.
+
+### BGA-420 — Resolve SQL table and output aliases before database diagnostics
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-109, BGA-113, BGA-121, BGA-127
+- **Deliverable:** A bounded SQL reference reader that distinguishes schema tables/columns, table aliases, output aliases, keywords, and unsupported expressions for the documented BGA query forms.
+- **Acceptance:** `AS` and implicit output aliases are result names, not schema-column references. Qualified columns through a table alias resolve to the underlying table. Both explicit and implicit table aliases work in single- and multi-table queries, including quoted identifiers, joins, and repeated columns. Aliased expressions, subqueries, CTEs, and syntax outside the supported subset become located unsupported constructs wherever their provenance cannot be proved; they do not generate undeclared/unused findings from guessed identifiers.
+- **Verification:** Installed public-command scenarios use the exact player-query shapes from the official Game.php reference plus project tables with `AS`, implicit aliases, table aliases, joins, and unsupported expressions. They assert no alias-derived `database.column.undeclared` or `database.column.unused`, while a seeded genuinely missing underlying column still fails. Reversing aliases and source order is deterministic.
+- **Finding:** `SELECT c.card_id AS id FROM card c` currently becomes `c.card_id`, `card.c`, and `card.id` with no unsupported marker. The official `SELECT player_id id, player_name name FROM player` examples therefore make aliases look like undeclared framework columns and can make real columns look unused. Calling this a known false positive is insufficient for a common form the official framework documentation recommends.
+- **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) repeatedly documents implicit output aliases such as `SELECT player_id id, player_name name ...`. [Tutorial Reversi](https://en.doc.boardgamearena.com/Tutorial_reversi) uses the same shape, and the [Complete Walkthrough](https://en.doc.boardgamearena.com/Create_a_game_in_BGA_Studio:_Complete_Walkthrough) says the player fields “all have to be aliases.” Checked 2026-08-23.
+
+### BGA-421 — Collapse and redact every top-level CLI failure
+
+- **Status:** ready
+- **Priority:** P2
+- **Depends on:** BGA-016, BGA-018, BGA-319, BGA-328
+- **Deliverable:** One fail-closed top-level error boundary for serve startup, `--studio-check`, and shutdown that publishes only stable redacted diagnostics and never lets Node print an uncaught exception, cause chain, stack, or absolute path.
+- **Acceptance:** Known failures retain a stable code and safe message; unexpected failures collapse to `internal.unexpected`. Redaction options are registered before any credential-bearing Studio work and applied to stdout/stderr as appropriate. Exit codes distinguish usage/configuration from operational/internal failure without exposing internals. The threat model and surface coverage explicitly include direct CLI execution, not only MCP tool results and formatted logger calls.
+- **Verification:** Packaged development-CLI scenarios seed an unavailable project root, unreadable session file, Studio policy refusal, unexpected setup exception, protocol startup exception, and shutdown exception with unique path/session/cause canaries. None appears in stdout, stderr, stack text, retained evidence, or CI artifacts; each exits deterministically. A seed that throws outside the boundary fails `GATE-LOG-REDACTION` and the threat-model gate.
+- **Finding:** `node dist/cli.js --studio-check --project-root /private/tmp/bga-mcp-definitely-missing-audit` prints the full `PolicyViolationError` stack and nested `ENOENT` cause, including the absolute path. The `studio-check` branch sits outside the catch used by normal server configuration, so it bypasses `formatErrorLog` and contradicts the stated process-stderr redaction control. This branch is absent from the local-only release but remains an advertised development command.
+
+### BGA-422 — Clear current toolchain advisories and gate release-time dependency risk
+
+- **Status:** ready
+- **Priority:** P0
+- **Depends on:** BGA-004, BGA-005, BGA-013, BGA-403
+- **Deliverable:** A reviewed dependency update or explicit time-bounded disposition for every current advisory in the exact lockfile, plus a release-time gate that cannot silently publish from a newly vulnerable build/test/candidate toolchain.
+- **Acceptance:** Upgrade or constrain direct `ajv@8.17.1` and every transitive affected copy to a patched version, or record why the vulnerable feature is unreachable with an owner, expiry, and compensating test. Upgrade the Vite/PostCSS `nanoid@3.3.17` path to `>=3.3.18` or eliminate it. Production and development/toolchain results are reported separately: a clean production audit cannot hide an advisory in code that verifies or packages the release. The ordinary offline commit gate remains reproducible; a current registry-backed advisory check runs during scheduled security review and before BGA-405/BGA-415, retains a non-secret report, and blocks unexpired high/critical findings or undisposed lower findings.
+- **Verification:** `pnpm audit --prod --json` and the full locked-graph audit are captured for the exact candidate. Seeded high and moderate advisories in direct and transitive build dependencies fail the release preflight; a documented exception expires and then fails. The gate does not print credentials or silently rewrite the lockfile.
+- **Finding:** On 2026-08-23 the production-only audit reported zero advisories across three runtime dependencies. The full graph reported `ajv@8.17.1` under GHSA-2g4f-4pwh-qvx6 (moderate, patched in 8.18.0) and `nanoid@3.3.17` under GHSA-2v37-7h3g-55p8 (high, patched in 3.3.18), all in development/release-tooling paths. The current `pnpm check` and candidate verifier do not run or retain an advisory assessment.
+- **Sources:** [GHSA-2g4f-4pwh-qvx6](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6) limits the ajv issue to `$data`-enabled validation and names 8.18.0 as patched. [GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8) describes the zero-size custom-generator loop and names 3.3.18 as the patched 3.x release. Checked 2026-08-23.
+
+### BGA-423 — Match documentation authority on exact canonical page boundaries
+
+- **Status:** ready
+- **Priority:** P2
+- **Depends on:** BGA-200, BGA-202, BGA-203, BGA-207, BGA-209
+- **Deliverable:** Canonical URL matching that scopes page-specific authority and use policy to the exact normalized page (and only explicitly reviewed aliases/subpages), rather than to every URL sharing its text prefix.
+- **Acceptance:** Scheme and host remain exact. Path matching is segment/page-aware after safe URL normalization; query strings and fragments on the same canonical page do not change authority. `BGA_Studio_CookbookExtra`, encoded delimiter tricks, case variants not canonicalized by the source, and unlisted subpages cannot inherit the Cookbook's community label or its page-specific retrieval policy. Redirect targets are reclassified after resolution. Adding any reviewed alias or subtree requires an explicit catalog entry and source-policy review.
+- **Verification:** Unit and installed documentation-network scenarios cover the exact Cookbook URL, query/fragment variants, prefix-collision pages, encoded variants, redirects into and out of the page, and the site-wide fallback. A seeded raw `href.startsWith(canonicalUrl)` implementation fails provenance, cache, search, resource, and source-catalog assertions.
+- **Finding:** `sourceForUrl` currently uses `url.href.startsWith(source.canonicalUrl)`. As a result, both `https://en.doc.boardgamearena.com/BGA_Studio_CookbookExtra` and `/BGA_Studio_Cookbook/Subpage` are classified as the page-specific `official-host-community-edited` source even though the catalog reviews only the Cookbook page. This can misstate authority, provenance, retention, and allowed use for another page on the official host.
+- **Sources:** [`config/doc-sources.json`](../config/doc-sources.json) scopes the community entry to `https://en.doc.boardgamearena.com/BGA_Studio_Cookbook`; [BGA Studio Cookbook](https://en.doc.boardgamearena.com/BGA_Studio_Cookbook) identifies itself as community-editable. Checked 2026-08-23.
 
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
 
-| Commitment source                                 | Backlog coverage                                                                                              |
-| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-128, BGA-200 through BGA-211, BGA-313 through BGA-330                            |
-| Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011, BGA-017, BGA-318, BGA-325, BGA-326                                        |
-| Public MCP tools and resources                    | BGA-006, BGA-102 through BGA-128, BGA-202 through BGA-211, BGA-303, BGA-304, BGA-312, BGA-320 through BGA-330 |
-| Diagnostic schema and uncertainty                 | BGA-007, BGA-017, BGA-101, BGA-106 through BGA-128                                                            |
-| Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101, BGA-117 through BGA-128                                                   |
-| Documentation provenance and currency             | BGA-200 through BGA-211, BGA-313, BGA-408                                                                     |
-| Local-first, read-only, narrow permissions        | BGA-013 through BGA-018, BGA-114, BGA-319, BGA-323 through BGA-330                                            |
-| Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307, BGA-319 through BGA-322, BGA-327, BGA-328                                            |
-| Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                                                       |
-| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-017, BGA-018, BGA-128, BGA-307, BGA-407                                          |
-| Security, secrets, data handling, telemetry       | BGA-013 through BGA-018, BGA-300, BGA-301, BGA-319 through BGA-330, BGA-405, BGA-406, BGA-410                 |
-| Packaging, clients, versioning, releases          | BGA-400 through BGA-415                                                                                       |
-| Optional remote documentation transport           | BGA-409                                                                                                       |
+| Commitment source                                 | Backlog coverage                                                                                                                                |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Project goals and developer workflows             | BGA-001, BGA-100 through BGA-128, BGA-200 through BGA-211, BGA-313 through BGA-330, BGA-417 through BGA-420                                     |
+| Local stdio MCP deployment                        | BGA-002, BGA-003, BGA-010, BGA-011, BGA-017, BGA-318, BGA-325, BGA-326, BGA-416                                                                 |
+| Public MCP tools and resources                    | BGA-006, BGA-102 through BGA-128, BGA-202 through BGA-211, BGA-303, BGA-304, BGA-312, BGA-320 through BGA-330, BGA-416 through BGA-420, BGA-423 |
+| Diagnostic schema and uncertainty                 | BGA-007, BGA-017, BGA-101, BGA-106 through BGA-128, BGA-417 through BGA-420                                                                     |
+| Modern and legacy compatibility                   | BGA-008, BGA-009, BGA-100, BGA-101, BGA-117 through BGA-128, BGA-417 through BGA-420                                                            |
+| Documentation provenance and currency             | BGA-200 through BGA-211, BGA-313, BGA-408, BGA-411, BGA-423                                                                                     |
+| Local-first, read-only, narrow permissions        | BGA-013 through BGA-018, BGA-114, BGA-319, BGA-323 through BGA-330, BGA-416, BGA-421                                                            |
+| Credentials, SFTP, sync, and logs                 | BGA-300 through BGA-307, BGA-319 through BGA-322, BGA-327, BGA-328                                                                              |
+| Test tables, player perspectives, saved states    | BGA-308 through BGA-311                                                                                                                         |
+| Unit, integration, conformance, E2E, and evidence | BGA-004 through BGA-012, BGA-017, BGA-018, BGA-128, BGA-307, BGA-407                                                                            |
+| Security, secrets, data handling, telemetry       | BGA-013 through BGA-018, BGA-300, BGA-301, BGA-319 through BGA-330, BGA-405, BGA-406, BGA-410, BGA-421, BGA-422                                 |
+| Packaging, clients, versioning, releases          | BGA-400 through BGA-422                                                                                                                         |
+| Optional remote documentation transport           | BGA-409                                                                                                                                         |
 
 ## Explicitly preserved non-goals
 
