@@ -43,6 +43,7 @@ describe('notification validation against the fixture corpus', () => {
       {
         name: 'playerPassed',
         payloadKeys: ['comment'],
+        payloadShape: 'known',
         scope: 'all',
         source: 'bgamcplegacy.game.php',
       },

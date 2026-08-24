@@ -67,8 +67,10 @@ reported as the project's mistake.
 
 Structural findings are reported as facts. Cross-file handler findings are
 reported as heuristics with their known limitations, never as facts. Syntax the
-reader cannot interpret is reported rather than passed over, so an unreadable
-project never returns a clean result. Read-only, and no network access.`;
+reader cannot interpret is reported rather than passed over. The conflicting
+official action_* and imperative-transition walkthrough form remains explicitly
+unsupported, so no dependent reachability or dead-end rule consumes an
+incomplete graph. Read-only, and no network access.`;
 
 /** Renders the result as the short text an agent or a human reads first. */
 export function summarizeValidation(

@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.5.0. Updated 2026-08-09. Backlog items: BGA-110, BGA-124 through BGA-127.
+Catalog version 1.6.0. Updated 2026-08-23. Backlog items: BGA-110, BGA-124 through BGA-127, BGA-417 through BGA-420.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -56,6 +56,8 @@ Run by `validate_action_contracts`. Implemented in [`src/rules/action-contracts.
 
 An action reaches the server by one of three documented routes, and a real project uses more than one at a time: the legacy `<game>.action.php` dispatcher, which wins wherever it declares the action; an autowired `act…` method on the game class, which the framework checks "for actions that can be triggered at any state"; and a `#[PossibleAction]` method on a state class, which is that state's action. An action the game class declares is therefore never reported as one no state allows.
 
+Those scopes stay distinct. Equal names in separate state classes are not duplicates. When static client source cannot identify which state-local signature receives a call, differing signatures produce unsupported syntax rather than a comparison against the first file enumerated. Private and protected helpers in a legacy dispatcher are not public entry points. Computed client argument objects likewise remain unknown; only a known literal shape is compared.
+
 The client sends what the parameter names, not what the variable is called: `#[IntParam(name: 'id')] int $cardId` expects `id`. The framework fills `$args`, `$activePlayerId`/`$active_player_id`, `$activePlayerNo`, `$currentPlayerId`/`$current_player_id`, and `$currentPlayerNo` itself, so none of them is an argument the client is missing. Where a parameter attribute declares a check and the client writes the value out as a literal, `action.argument.invalid` compares the two.
 
 ## Notifications
@@ -76,6 +78,8 @@ A `notif_…` method is a handler only once something registers it. `setupPromis
 
 The types the framework predefines — `message`, `tableWindow`, `simplePause` — need no handler, and sending one is never reported as unhandled.
 
+An omitted payload is known empty. A payload assembled in a variable, helper, or spread is unknown: its independently readable notification name remains in the trace, but payload-key comparison is suppressed and the validator reports unsupported syntax.
+
 ## Database usage
 
 Run by `audit_database_usage`. Implemented in [`src/rules/database.ts`](../src/rules/database.ts).
@@ -93,6 +97,8 @@ Run by `audit_database_usage`. Implemented in [`src/rules/database.ts`](../src/r
 A quoted string becomes a query only where data flow puts it in one of the framework's documented database methods: `DbQuery`, which "is the generic method to access the database", or one of the specialized SELECT helpers — `getUniqueValueFromDB`, `getCollectionFromDB`, `getNonEmptyCollectionFromDB`, `getObjectFromDB`, `getNonEmptyObjectFromDB`, `getObjectListFromDB`, `getDoubleKeyCollectionFromDB`. A literal argument is read, and a variable is followed to the last literal assigned to it before the call.
 
 Anything else — an example in a comment, a message in an exception, a string assigned and never run, a query concatenated from a value only the running game has — is not a query. Where such an argument reaches a helper, it is reported as one located unsupported construct, and no table or column is reconstructed from it.
+
+Within a readable `SELECT`, explicit and implicit result aliases are output names rather than schema columns. Explicit and implicit table aliases resolve qualified columns back to the underlying table. Expressions, subqueries, and CTEs outside the supported subset remain located unsupported constructs, and an incomplete query suppresses the inferred unused-column check.
 
 A reported query carries its shape, not its values. `escapeStringForDB` "makes sure that no SQL injection will be done through the string used, as long as the SQL statement uses single quotes around the string", so a quoted run is where a value sits, and `WHERE card_location = 'hand'` is published as `WHERE card_location = '?'` — in the query text, in the findings that quote it, and in the messages that report an unreadable statement. An interpolation survives the mask, because which variable reaches a query is the whole content of `database.query.interpolated`. What a developer needs to fix a query is which table, which column, and where; what the value was is data, and one of those values was a password in the project the 2026-08-08 review ran against.
 

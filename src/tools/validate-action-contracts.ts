@@ -33,6 +33,7 @@ export const ValidateActionContractsOutputSchema = z.strictObject({
       z.strictObject({
         action: z.string(),
         argumentNames: z.array(z.string()),
+        argumentShape: z.enum(['known', 'unknown']),
         style: z.enum(['ajaxcall', 'performAction']),
         source: z.string(),
       }),
@@ -41,6 +42,8 @@ export const ValidateActionContractsOutputSchema = z.strictObject({
       z.strictObject({
         action: z.string(),
         argumentNames: z.array(z.string()),
+        scope: z.enum(['legacy-dispatcher', 'game-class', 'state-class']),
+        scopeId: z.string(),
         source: z.string(),
       }),
     ),
@@ -63,20 +66,21 @@ export type ValidateActionContractsResult = z.infer<typeof ValidateActionContrac
 
 const DESCRIPTION = `Trace a BGA project's player actions across its client and server.
 
-Follows each action from the client call, to the entry point in the action
-class, to the game method that handles it, and compares the arguments each side
-expects. Reports actions the client calls that no state allows, actions a state
-declares that nothing calls, missing entry points and game methods, and
+Follows each action from the client call to its legacy dispatcher, game-class,
+or state-local entry point and compares arguments only when the complete client
+shape is known. Reports actions the client calls that no state allows, actions
+a state declares that nothing calls, missing entry points and game methods, and
 argument disagreements.
 
 Reads both the legacy path (<game>.action.php with ajaxcall or bgaPerformAction)
 and the modern one (autowired act… methods with this.bga.actions.performAction),
 including a project that mixes them.
 
-Only a duplicated entry point and a broken naming convention are reported as
-facts; every cross-file claim is a heuristic that carries its known limitations.
-A call assembled at runtime is reported as unsupported, never guessed at.
-Read-only, and no network access.`;
+Only a duplicate inside one framework resolution scope and a documented naming
+violation are reported as facts; every cross-file claim is a heuristic that
+carries its known limitations. A computed argument object, ambiguous state-local
+signature, or documented-but-conflicting action form is reported as unsupported,
+never guessed at. Read-only, and no network access.`;
 
 export function summarizeActionContracts(
   diagnostics: DiagnosticResult,
@@ -153,12 +157,15 @@ export function registerValidateActionContracts(
                 clientCalls: trace.clientCalls.map((call) => ({
                   action: call.action,
                   argumentNames: [...call.argumentNames],
+                  argumentShape: call.argumentShape,
                   style: call.style,
                   source: call.source,
                 })),
                 entryPoints: trace.entryPoints.map((entry) => ({
                   action: entry.action,
                   argumentNames: [...entry.argumentNames],
+                  scope: entry.scope,
+                  scopeId: entry.scopeId,
                   source: entry.source,
                 })),
                 declaredActions: [...trace.declaredActions],

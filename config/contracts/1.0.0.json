@@ -9,16 +9,16 @@
     "id": "first-local-only",
     "serverName": "bga-mcp",
     "entrypoint": "dist/release-cli.js",
-    "bin": { "bga-mcp": "dist/cli.js" },
+    "bin": { "bga-mcp": "dist/release-cli.js" },
     "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-    "typesDigest": "sha256:10cab6e0fe59d469b4260a3465b363bd1e17b5d7a6f1b5e40ffa1756531b38b3",
+    "typesDigest": "sha256:e9469e67fadf05ca1baa74269cfe2b204f6831cfe6b12fbe5aed216b167cf180",
     "protocolVersions": ["2025-11-25"],
     "transports": ["stdio"]
   },
   "tools": [
     {
       "name": "audit_database_usage",
-      "metadataDigest": "sha256:0a7e7082cd5d6ca75bd41eb814a2b3bc2481710837e029f551e7e7e3e4f1e1fd",
+      "metadataDigest": "sha256:54d20769afd386b4e2705dc1158c37cbf07475447cf2187181ddbce9b0361745",
       "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
       "outputSchemaDigest": "sha256:0327829ba24247957ff603c3c4679a99e1697e360461ffdae0bf5769651f57c0",
       "manifest": {
@@ -60,9 +60,9 @@
     },
     {
       "name": "validate_action_contracts",
-      "metadataDigest": "sha256:7cb1517e4ed4ce2fab8e18d45e94f12ca6bc73006f53a03041876d1dcaa50bee",
+      "metadataDigest": "sha256:3b61ef43cb3e2f38a98e96de641352b67b9f0ed5ddc74973ae81d038f6e69cf9",
       "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
-      "outputSchemaDigest": "sha256:90322da6c2d38eb00fcf64ffdc0452b21f00d1e6268215abd012e0cdc4a3df2a",
+      "outputSchemaDigest": "sha256:b3382f7f4da0a01c80dc31c6e739b77ffcf8286f470ed616c4658bc482c01527",
       "manifest": {
         "stability": "verified",
         "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
@@ -74,9 +74,9 @@
     },
     {
       "name": "validate_notifications",
-      "metadataDigest": "sha256:c065e70bf7cdd92b86a11be93f8c3a05f5e1f4b4a5148cbf76086386c0caabee",
+      "metadataDigest": "sha256:e3e511af5cac788d7db57957f6515ade078b1467cd945cb5b1b2b1b950dd481d",
       "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
-      "outputSchemaDigest": "sha256:62cff02d4eab26ff4049b5eb38c9b88e63d9bbdbe6d568e2df0b85e3de6f3299",
+      "outputSchemaDigest": "sha256:375dce0bf25aa2ecd1e7f7f28bf10f82f11b52464a9c50ec5b987e59901e6ab8",
       "manifest": {
         "stability": "verified",
         "supportedLayouts": ["legacy-flat", "modern-modules", "part-migrated"],
@@ -102,7 +102,7 @@
     },
     {
       "name": "validate_state_machine",
-      "metadataDigest": "sha256:d19ffe9d9bef26a6efc7d509a18634e7ef90699dccd0bc41d2b1383f81555074",
+      "metadataDigest": "sha256:3884229b0924eed8b428151ebf1fc5d41ad5d04557872e909a6ea18b4171467b",
       "inputSchemaDigest": "sha256:d1dc2ae488eda4d03223558208ee5aed98b908e04eefba40ae59936cdbfb3c2c",
       "outputSchemaDigest": "sha256:de1617a414ed6951b75a41c24bfaf34f995fdb01bcab31604f27b8f585b8e4f0",
       "manifest": {

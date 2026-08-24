@@ -18,7 +18,13 @@ interface NotificationResult {
   readonly serverSourcesRead: number;
   readonly clientSourcesRead: number;
   readonly trace: {
-    sent: { name: string; payloadKeys: string[]; scope: string; source: string }[];
+    sent: {
+      name: string;
+      payloadKeys: string[];
+      payloadShape: string;
+      scope: string;
+      source: string;
+    }[];
     handlers: { name: string; binding: string; payloadKeys: string[]; source: string }[];
   };
   readonly rules: { code: string; certainty: string; falsePositives: string[] }[];
@@ -117,6 +123,7 @@ describe('packaged validate_notifications', () => {
       {
         name: 'playerPassed',
         payloadKeys: ['comment'],
+        payloadShape: 'known',
         scope: 'all',
         source: 'bgamcplegacy.game.php',
       },

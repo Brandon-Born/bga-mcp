@@ -18,8 +18,20 @@ interface ContractResult {
   readonly clientSourcesRead: number;
   readonly phpSourcesRead: number;
   readonly trace: {
-    clientCalls: { action: string; argumentNames: string[]; style: string; source: string }[];
-    entryPoints: { action: string; argumentNames: string[]; source: string }[];
+    clientCalls: {
+      action: string;
+      argumentNames: string[];
+      argumentShape: string;
+      style: string;
+      source: string;
+    }[];
+    entryPoints: {
+      action: string;
+      argumentNames: string[];
+      scope: string;
+      scopeId: string;
+      source: string;
+    }[];
     declaredActions: string[];
     gameMethods: string[];
   };
@@ -119,12 +131,19 @@ describe('packaged validate_action_contracts', () => {
       {
         action: 'actPass',
         argumentNames: ['comment'],
+        argumentShape: 'known',
         style: 'ajaxcall',
         source: 'bgamcplegacy.js',
       },
     ]);
     expect(result?.trace.entryPoints).toEqual([
-      { action: 'actPass', argumentNames: ['comment'], source: 'bgamcplegacy.action.php' },
+      {
+        action: 'actPass',
+        argumentNames: ['comment'],
+        scope: 'legacy-dispatcher',
+        scopeId: 'bgamcplegacy.action.php',
+        source: 'bgamcplegacy.action.php',
+      },
     ]);
     expect(result?.trace.declaredActions).toEqual(['actPass']);
     expect(result?.clientSourcesRead).toBeGreaterThan(0);

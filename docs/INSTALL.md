@@ -8,9 +8,9 @@ Nothing here asks you to paste a secret into a chat, and nothing here is irrever
 
 - **Node.js 22.13 or newer** on the Node 22 line, or **Node.js 24 LTS or newer**. Check with `node --version`.
 - **An MCP client.** The supported contract is protocol `2025-11-25` over stdio. A `2026-07-28` handshake/discovery smoke works, but that era remains unverified and is not a supported capability contract until BGA-017 and BGA-318 pass.
-- **A BGA project on disk**, in any layout. Detection can identify the legacy flat form, the modern `modules/php` form, and projects part-way between. Only the legacy-flat capability contract is currently supported; state-machine reading for the other two was corrected under BGA-124, and the rest of modern and hybrid validation remains unverified under BGA-125 through BGA-128.
+- **A BGA project on disk**, in a legacy flat, modern `modules/php`, or part-migrated layout. The frozen local release includes inspection and all five validators for those layouts.
 
-There is no published package yet, so installation means building the repository. That changes when BGA-403 lands.
+There is no published package yet. A release consumer will launch the package-manager-created `bga-mcp` command; the internal `dist/*.js` files are not public package commands. To evaluate a source checkout before publication, build and run the separate development profile:
 
 ```sh
 git clone https://github.com/Brandon-Born/bga-mcp.git
@@ -20,16 +20,16 @@ corepack pnpm build
 node dist/cli.js --version
 ```
 
-If the last command prints a version, the server works.
+If the last command prints a version, the development checkout works. It is not evidence for the installed release profile.
 
 ## Point your client at it
 
-Add the server to your client's MCP configuration. The exact file differs by client; the contents do not.
+After installing a release package, add its public command to your client's MCP configuration. The exact file differs by client; the command does not.
 
 ```json
 {
-  "command": "node",
-  "args": ["/absolute/path/to/bga-mcp/dist/cli.js"]
+  "command": "bga-mcp",
+  "args": []
 }
 ```
 
@@ -39,29 +39,24 @@ If yours does not, name the project yourself:
 
 ```json
 {
-  "command": "node",
-  "args": ["/absolute/path/to/bga-mcp/dist/cli.js", "--project-root", "/absolute/path/to/your/game"]
+  "command": "bga-mcp",
+  "args": ["--project-root", "/absolute/path/to/your/game"]
 }
 ```
 
 ## Check it worked
 
-Ask your assistant to run the `check_setup` tool. It reports what is available, what is missing, and what to do about each thing — and it never refuses, so it works even when everything else would.
+Ask your assistant to run `inspect_project`. A healthy first run identifies the layout and components without a policy error. `check_setup` belongs to the source-only development profile and is deliberately absent from the frozen release.
 
-A healthy first run says the server is ready and lists your project roots. Anything it flags comes with the fix attached.
+If `inspect_project` reports `policy.root.unconfigured`, add an explicit `--project-root` as shown above.
 
-## What you get, and what it costs
+## What the public release includes
 
-Everything below is off unless you turn it on. The defaults are local, read-only, and network-free.
+The public command is local, read-only, and network-free. It accepts only `--project-root`, `--operation-timeout-ms`, `--max-output-bytes`, `--help`, and `--version`. Network, Studio, mutation, setup, and documentation-search options are rejected because those surfaces are outside the frozen release inventory.
 
-| Option                       | What it enables                                   | What it costs                                                                                                                                                                                                                                                                                                                                                                  |
-| ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| _(none)_                     | Project inspection and all five validators        | Nothing. The server reads your project and never writes to it.                                                                                                                                                                                                                                                                                                                 |
-| `--allow-network`            | `search_bga_docs` and the documentation resources | Outbound HTTPS to the BGA documentation wiki, one page per request you make. Your exact query leaves the machine. Recognizable pastes — paths, control characters, over-long queries, source syntax — are refused before anything is sent, but that reads shape rather than origin: ordinary-looking text is sent as an ordinary question, so never send project-derived text. |
-| `--experimental-studio-logs` | `read_studio_logs`                                | Reads a Studio page BGA does not document or version, so it can break without warning. See [reading your own Studio logs](#reading-your-own-studio-logs-experimental).                                                                                                                                                                                                         |
-| `--allow-mutations`          | Nothing yet                                       | Reserved for Studio synchronization, which is not built.                                                                                                                                                                                                                                                                                                                       |
+With no feature flag, the command exposes project inspection, all five validators, the aggregate and pre-release tools, and the three project resources. `--operation-timeout-ms` bounds one operation. `--max-output-bytes` bounds one result payload, successful or not; its minimum is the smallest failure the server can send.
 
-Two more shape the results rather than enabling anything: `--operation-timeout-ms` and `--max-output-bytes`. The output budget bounds one result payload, successful or not; its minimum is the smallest failure the server can send, and the server refuses to start below it rather than accept a setting under which nothing could be answered.
+The source-only development profile also contains documentation and experimental Studio options. They are not installed-release capabilities and are documented for contributors below.
 
 ## Reading your own Studio logs (experimental)
 

@@ -1,8 +1,8 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.5.0",
-  "updatedAt": "2026-08-08",
+  "catalogVersion": "1.6.0",
+  "updatedAt": "2026-08-23",
   "checks": [
     {
       "id": "action.argument.mismatch",
@@ -28,7 +28,9 @@
       "scenarios": [
         "E2E-VALIDATE-ACTIONS-CLEAN",
         "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
-        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
+        "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+        "E2E-VALIDATE-ACTION-SCOPES"
       ],
       "owner": "Brandon Born"
     },
@@ -119,14 +121,15 @@
       "automatable": true,
       "group": "action-contracts",
       "tool": "validate_action_contracts",
-      "summary": "Two entry points in the action class share a name.",
+      "summary": "Two entry points in the same framework resolution scope share a name.",
       "severity": "error",
       "certainty": "certain",
       "implementation": "src/rules/action-contracts.ts",
       "sources": [
         {
-          "kind": "framework-behavior",
-          "reference": "A player action travels from the client call, through the action class entry point, to a game method of the same name."
+          "kind": "official-documentation",
+          "reference": "State classes: State directory defines a PossibleAction method in a particular state and names Game.php as the fallback only when that state does not declare it.",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -136,7 +139,8 @@
       "scenarios": [
         "E2E-VALIDATE-ACTIONS-CLEAN",
         "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
-        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
+        "E2E-VALIDATE-ACTION-SCOPES"
       ],
       "owner": "Brandon Born"
     },
@@ -325,7 +329,8 @@
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
-        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY",
+        "E2E-AUDIT-DATABASE-ALIASES"
       ],
       "owner": "Brandon Born"
     },
@@ -352,7 +357,8 @@
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-AUDIT-DATABASE-SEEDED-DEFECTS",
-        "E2E-AUDIT-DATABASE-STRINGS-ONLY"
+        "E2E-AUDIT-DATABASE-STRINGS-ONLY",
+        "E2E-AUDIT-DATABASE-ALIASES"
       ],
       "owner": "Brandon Born"
     },
@@ -487,7 +493,8 @@
       "scenarios": [
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
         "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
-        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES"
+        "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES",
+        "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"
       ],
       "owner": "Brandon Born"
     },

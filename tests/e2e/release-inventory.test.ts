@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 
 import type { CapabilityManifest, ReleaseInventory } from '../../scripts/lib/release.js';
 import { verifyReleaseInventory } from '../../scripts/lib/release.js';
@@ -9,10 +9,10 @@ import { runCommand } from '../helpers/process.js';
 import { waitForProcessExit } from '../helpers/scenario.js';
 
 describe('first local-only release inventory', () => {
-  it('[E2E-RELEASE-LOCAL-ONLY] installs the release profile and discovers exactly the frozen verified local capability set', async () => {
-    const installed = await installPackagedServer('release-inventory', {});
-    const packageRoot = resolve(dirname(installed.cli), '..');
-    const releaseCli = resolve(dirname(installed.cli), 'release-cli.js');
+  it('[E2E-RELEASE-PUBLIC-EXECUTABLE] installs the public command and discovers exactly the frozen verified local capability set', async () => {
+    const installed = await installPackagedServer('release-inventory', { legacy: 'legacy' });
+    const packageRoot = installed.packageRoot;
+    const releaseCli = resolve(packageRoot, 'dist/release-cli.js');
 
     try {
       const inventory = JSON.parse(
@@ -26,9 +26,13 @@ describe('first local-only release inventory', () => {
       ).resolves.toContain('first-release inventory');
       await expect(readFile(releaseCli, 'utf8')).resolves.toContain('first-local-only');
 
-      const connection = await connectStdio(process.execPath, [releaseCli], {
-        protocolVersion: '2025-11-25',
-      });
+      const connection = await connectStdio(
+        installed.publicCommand.command,
+        [...installed.publicCommand.arguments, '--project-root', installed.projects.legacy],
+        {
+          protocolVersion: '2025-11-25',
+        },
+      );
       const processId = connection.transport.pid;
       try {
         const tools = (await connection.client.listTools()).tools.map((tool) => tool.name).sort();
@@ -55,6 +59,13 @@ describe('first local-only release inventory', () => {
         });
         expect(report.failures).toEqual([]);
 
+        const inspected = await connection.client.callTool({
+          name: 'inspect_project',
+          arguments: { projectRoot: installed.projects.legacy },
+        });
+        expect(inspected.isError).not.toBe(true);
+        expect(inspected.structuredContent).toMatchObject({ schemaVersion: 1, layout: 'legacy' });
+
         for (const excluded of ['check_setup', 'read_studio_logs', 'search_bga_docs']) {
           await expect(
             connection.client.callTool({ name: excluded, arguments: {} }),
@@ -67,20 +78,26 @@ describe('first local-only release inventory', () => {
       expect(connection.stderr()).toBe('');
 
       await expect(
-        connectStdio(process.execPath, [releaseCli], {
+        connectStdio(installed.publicCommand.command, installed.publicCommand.arguments, {
           protocolVersion: '2026-07-28',
           timeoutMs: 2_000,
         }),
       ).rejects.toThrow(/protocol|version|support/iu);
 
-      const help = await runCommand(process.execPath, [releaseCli, '--help']);
+      const help = await runCommand(installed.publicCommand.command, [
+        ...installed.publicCommand.arguments,
+        '--help',
+      ]);
       expect(help.exitCode).toBe(0);
       expect(help.stdout).toContain('local-only bga-mcp release');
       expect(help.stdout).not.toContain('--allow-network');
       expect(help.stdout).not.toContain('--experimental-studio-logs');
 
       for (const option of ['--allow-network', '--experimental-studio-logs', '--studio-check']) {
-        const refused = await runCommand(process.execPath, [releaseCli, option]);
+        const refused = await runCommand(installed.publicCommand.command, [
+          ...installed.publicCommand.arguments,
+          option,
+        ]);
         expect(refused.exitCode).toBe(2);
         expect(refused.stdout).toBe('');
         expect(refused.stderr).toContain(`${option} is unavailable in the local-only release`);

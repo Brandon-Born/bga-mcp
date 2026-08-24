@@ -58,7 +58,7 @@ export const DATABASE_RULES: readonly DatabaseRule[] = [
     certainty: 'likely',
     summary: 'A query names a column its table does not declare.',
     falsePositives: [
-      'A column alias, a computed expression, or a function this reader does not recognize can look like a column reference.',
+      'A computed expression or function outside the supported SQL subset is reported as unsupported rather than reconstructed.',
       'A column added by a later migration rather than by dbmodel.sql will not be found.',
     ],
   },
@@ -143,8 +143,8 @@ export interface DatabaseAudit {
  * Compares the declared schema with the queries that use it.
  *
  * A table a query names but the schema never declares is provable and reported
- * as a fact. Column-level claims are heuristics: aliases, expressions, and
- * `SELECT *` all make a textual reader's view of columns incomplete.
+ * as a fact. Column-level claims are heuristics: dynamic expressions and
+ * `SELECT *` can still make a textual reader's view of columns incomplete.
  */
 export function auditDatabaseUsage(
   schemaSource: DatabaseSource | null,
@@ -196,6 +196,7 @@ export function auditDatabaseUsage(
   }
 
   const queries: (QueryReference & { source: string })[] = [];
+  let queriesComplete = true;
   for (const source of phpSources) {
     cancellationCheckpoint(signal);
     const outcome = parseQueries(source.text, signal);
@@ -205,6 +206,7 @@ export function auditDatabaseUsage(
     }
     for (const construct of outcome.unsupported) {
       cancellationCheckpoint(signal);
+      queriesComplete = false;
       findings.push(unsupported(construct, source.path, 'php'));
     }
   }
@@ -281,7 +283,7 @@ export function auditDatabaseUsage(
   }
 
   const selectsEverything = queries.some((query) => /\bSELECT\s+\*/iu.test(query.text));
-  if (!selectsEverything) {
+  if (!selectsEverything && queriesComplete) {
     for (const table of tables) {
       cancellationCheckpoint(signal);
       for (const column of table.columns) {

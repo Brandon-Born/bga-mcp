@@ -955,19 +955,109 @@
       "item": "BGA-414",
       "case": "Every capability discoverable from the installed release artifact is explicitly included and verified in the frozen inventory",
       "boundary": "packaged",
-      "scenarios": ["E2E-RELEASE-LOCAL-ONLY"]
+      "scenarios": ["E2E-RELEASE-PUBLIC-EXECUTABLE"]
     },
     {
       "item": "BGA-414",
       "case": "Every implemented, experimental, documentation-networked, Studio-backed, or otherwise excluded source-tree capability is absent from release discovery",
       "boundary": "packaged",
-      "scenarios": ["E2E-RELEASE-LOCAL-ONLY"]
+      "scenarios": ["E2E-RELEASE-PUBLIC-EXECUTABLE"]
     },
     {
       "item": "BGA-414",
       "case": "Exposing an excluded capability, omitting an included capability, or attaching stale or wrong-artifact evidence fails the release gate",
       "boundary": "repository",
       "scenarios": ["GATE-RELEASE-INVENTORY"]
+    },
+    {
+      "item": "BGA-416",
+      "case": "The package-manager-created bga-mcp command selects the frozen release entry point on every supported platform",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RELEASE-PUBLIC-EXECUTABLE"]
+    },
+    {
+      "item": "BGA-416",
+      "case": "The installed public command exposes exactly the frozen release discovery, protocol, help, and option boundary",
+      "boundary": "packaged",
+      "scenarios": ["E2E-RELEASE-PUBLIC-EXECUTABLE"]
+    },
+    {
+      "item": "BGA-416",
+      "case": "Release and stable-contract gates reject a public executable mapping that differs from the frozen profile",
+      "boundary": "repository",
+      "scenarios": ["GATE-RELEASE-INVENTORY", "GATE-VERSION-POLICY"]
+    },
+    {
+      "item": "BGA-417",
+      "case": "Omitted and literal action arguments remain known while variable, spread, helper-returned, and malformed arguments remain unknown",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"]
+    },
+    {
+      "item": "BGA-417",
+      "case": "Omitted and literal notification payloads remain known while computed and spread payloads remain unknown",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"]
+    },
+    {
+      "item": "BGA-417",
+      "case": "Unknown cross-file shapes never create mismatch findings and keep validator, aggregate, resource, and pre-release consumers inconclusive",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"]
+    },
+    {
+      "item": "BGA-418",
+      "case": "Legacy dispatchers expose only public action methods and take precedence over autowired entries",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTION-SCOPES"]
+    },
+    {
+      "item": "BGA-418",
+      "case": "The same action name in different state classes remains state-local rather than becoming a duplicate",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTION-SCOPES"]
+    },
+    {
+      "item": "BGA-418",
+      "case": "Ambiguous state-local signatures produce one deterministic unsupported result rather than an order-dependent comparison",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTION-SCOPES"]
+    },
+    {
+      "item": "BGA-419",
+      "case": "The contradictory official modern action and transition forms are recorded with a reviewed source-authority decision",
+      "boundary": "repository",
+      "scenarios": ["E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"]
+    },
+    {
+      "item": "BGA-419",
+      "case": "Walkthrough-style action names and imperative transitions produce located unsupported syntax instead of dependent action or graph defects",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"]
+    },
+    {
+      "item": "BGA-419",
+      "case": "State, action, aggregate, and pre-release consumers never turn the unresolved walkthrough form into a clean pass",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT"]
+    },
+    {
+      "item": "BGA-420",
+      "case": "Explicit and implicit output aliases are not treated as schema columns and table aliases resolve to underlying tables",
+      "boundary": "packaged",
+      "scenarios": ["E2E-AUDIT-DATABASE-ALIASES"]
+    },
+    {
+      "item": "BGA-420",
+      "case": "Single-table, joined, quoted, and repeated-column aliases are read deterministically while a genuinely missing underlying column still fails",
+      "boundary": "packaged",
+      "scenarios": ["E2E-AUDIT-DATABASE-ALIASES"]
+    },
+    {
+      "item": "BGA-420",
+      "case": "Expressions, subqueries, and CTEs outside the supported SQL subset remain unsupported without guessed undeclared or unused findings",
+      "boundary": "packaged",
+      "scenarios": ["E2E-AUDIT-DATABASE-ALIASES"]
     }
   ]
 }

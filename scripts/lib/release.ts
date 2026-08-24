@@ -45,6 +45,12 @@ export interface ReleaseRuntime {
   readonly prompts: readonly string[];
 }
 
+/** Package identity that determines which profile an installed consumer actually runs. */
+export interface ReleasePackageIdentity {
+  readonly name: string;
+  readonly bin: Readonly<Record<string, string>>;
+}
+
 export interface CandidateEvidence {
   readonly source: { readonly commit: string; readonly clean: boolean };
   readonly package: {
@@ -126,8 +132,19 @@ export function verifyReleaseInventory(
   inventory: ReleaseInventory,
   manifest: CapabilityManifest,
   runtime?: ReleaseRuntime,
+  packageIdentity?: ReleasePackageIdentity,
 ): GateReport {
   const report = new GateReport();
+  if (packageIdentity !== undefined) {
+    report.require(
+      packageIdentity.name === manifest.server.name,
+      'Release package name differs from the manifest',
+    );
+    report.require(
+      packageIdentity.bin[manifest.server.name] === inventory.entrypoint,
+      `Installed ${manifest.server.name} command does not select ${inventory.entrypoint}`,
+    );
+  }
   report.require(
     sameMembers(inventory.consumers, REQUIRED_CONSUMERS),
     `Release consumers differ from the required inventory consumers (${REQUIRED_CONSUMERS.join(', ')})`,

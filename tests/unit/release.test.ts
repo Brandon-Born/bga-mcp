@@ -6,6 +6,7 @@ import {
   type CandidateEvidence,
   type CapabilityManifest,
   type ReleaseInventory,
+  type ReleasePackageIdentity,
   verifyReleaseInventory,
 } from '../../scripts/lib/release.js';
 import { parseReleaseInventory, releaseIncludes } from '../../src/release.js';
@@ -68,7 +69,16 @@ describe('release inventory gate', () => {
     const raw = await loadJson<unknown>('config/release.json');
     const inventory: ReleaseInventory = parseReleaseInventory(raw);
     const manifest = await loadJson<CapabilityManifest>('config/capabilities.json');
-    expect(verifyReleaseInventory(inventory, manifest).failures).toEqual([]);
+    const packageIdentity = await loadJson<ReleasePackageIdentity>('package.json');
+    expect(
+      verifyReleaseInventory(inventory, manifest, undefined, packageIdentity).failures,
+    ).toEqual([]);
+    expect(
+      verifyReleaseInventory(inventory, manifest, undefined, {
+        ...packageIdentity,
+        bin: { ...packageIdentity.bin, 'bga-mcp': 'dist/cli.js' },
+      }).failures,
+    ).toContainEqual(expect.stringContaining('does not select'));
     expect(releaseIncludes(inventory, 'tools', 'inspect_project')).toBe(true);
     expect(releaseIncludes(inventory, 'tools', 'search_bga_docs')).toBe(false);
     expect(releaseIncludes(undefined, 'tools', 'search_bga_docs')).toBe(true);

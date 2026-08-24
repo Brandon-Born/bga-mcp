@@ -198,6 +198,8 @@ describe('release candidate pipeline', () => {
         schemaText: await loadText('config/release-candidate.schema.json'),
         artifactPath,
         reconstructionPath,
+        artifactPackage: { name: 'bga-mcp', bin: { 'bga-mcp': inventory.entrypoint } },
+        reconstructionPackage: { name: 'bga-mcp', bin: { 'bga-mcp': inventory.entrypoint } },
         outputDirectory: resolve(temporaryRoot, 'output'),
       };
 
@@ -220,6 +222,13 @@ describe('release candidate pipeline', () => {
       );
 
       await expect(writeCandidateBundle(base)).rejects.toThrow(/replace immutable candidate/iu);
+      await expect(
+        writeCandidateBundle({
+          ...base,
+          artifactPackage: { name: 'bga-mcp', bin: { 'bga-mcp': 'dist/cli.js' } },
+          outputDirectory: resolve(temporaryRoot, 'wrong-public-command'),
+        }),
+      ).rejects.toThrow(/public executable/iu);
       await writeFile(reconstructionPath, 'changed reconstruction\n');
       await expect(
         writeCandidateBundle({ ...base, outputDirectory: resolve(temporaryRoot, 'drift') }),

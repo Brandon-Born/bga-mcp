@@ -60,22 +60,17 @@ Release work is deliberately serialized. Only the first unfinished item in the q
 
 The first public release queue is:
 
-1. `BGA-416` — make the installed public command run the frozen release profile.
-2. `BGA-417` — preserve unknown action arguments and notification payloads as unknown.
-3. `BGA-418` — model state-scoped action entry points and precedence.
-4. `BGA-419` — resolve contradictory documented modern action and transition forms without false certainty.
-5. `BGA-420` — resolve documented SQL aliases before database findings.
-6. `BGA-422` — clear current toolchain advisories and add a release advisory gate.
-7. `BGA-403` — rerun the reproducible, non-publishing release-candidate pipeline against the restored inventory.
-8. `BGA-404` — signatures and provenance.
-9. `BGA-407` — per-release evidence artifact.
-10. `BGA-400` — candidate-based install and removal guides.
-11. `BGA-401` — supported-client smoke matrix.
-12. `BGA-411` — self-contained, inventory-derived public documentation.
-13. `BGA-406` — private vulnerability reporting.
-14. `BGA-408` — BGA framework change process.
-15. `BGA-405` — security review of the exact signed candidate.
-16. `BGA-415` — publish and independently reinstall the first release.
+1. `BGA-422` — clear current toolchain advisories and add a release advisory gate.
+2. `BGA-403` — rerun the reproducible, non-publishing release-candidate pipeline against the restored inventory.
+3. `BGA-404` — signatures and provenance.
+4. `BGA-407` — per-release evidence artifact.
+5. `BGA-400` — candidate-based install and removal guides.
+6. `BGA-401` — supported-client smoke matrix.
+7. `BGA-411` — self-contained, inventory-derived public documentation.
+8. `BGA-406` — private vulnerability reporting.
+9. `BGA-408` — BGA framework change process.
+10. `BGA-405` — security review of the exact signed candidate.
+11. `BGA-415` — publish and independently reinstall the first release.
 
 This queue does not include BGA-320's live Studio marker, BGA-324's documentation-request privacy decision, or BGA-328's second-account ownership proof. They remain real backlog items for later documentation or Studio integration releases, but are not blockers for a local-only first release. If BGA-414 includes any affected capability after all, its existing owner re-enters the queue before release; it may not be waived or relabeled as verified.
 
@@ -1474,56 +1469,61 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-416 — Bind the installed public executable to the frozen release profile
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-003, BGA-012, BGA-402, BGA-403, BGA-414
 - **Deliverable:** One public package command whose installed executable, release inventory entry point, candidate contract, documentation, and real MCP discovery all select the same release profile. Development-only discovery may remain available through a separately named source/development entry point, but it is never the command a release consumer installs by default.
 - **Acceptance:** The `bin.bga-mcp` path inside the actual tarball is either the inventory's entry point or a generated wrapper cryptographically/factually bound to that profile. Invoking `node_modules/.bin/bga-mcp` exposes exactly the BGA-414 tools, resources, prompts, transports, protocol versions, help, and option boundary. No test or guide substitutes `dist/cli.js` or `dist/release-cli.js` after installation. The stable contract fingerprints the public executable mapping and profile, and candidate creation rejects a tarball whose executable differs even when its internal release file is correct.
 - **Verification:** `E2E-RELEASE-PUBLIC-EXECUTABLE` installs the shared tarball in a fresh directory and connects a real MCP client to the package-manager-created command on Linux, macOS, and Windows. It compares discovery with `config/release.json`, refuses excluded capabilities/options, exercises one included tool, and removes the package. A seeded `bin` redirect to the development CLI makes the release, version-policy, candidate, documentation, and acceptance-map gates fail.
+- **Evidence:** `package.json`, the retained `1.0.0` contract, and the release inventory now agree on `dist/release-cli.js`. The shared packaged helper resolves `node_modules/.bin/bga-mcp`; release discovery, protocol/help/option refusal, version policy, release inventory, and candidate reconstruction all consume or reject that public mapping. `E2E-RELEASE-PUBLIC-EXECUTABLE`, the release/candidate integration seeds, and the complete local `pnpm check` pass. Exact-current CI remains required before this item or BGA-414 can be called `verified`.
 - **Finding:** At `2822480`, `config/release.json` names `dist/release-cli.js`, while the packed `package.json` maps `bga-mcp` to `dist/cli.js`. An isolated install and real client discovered 10 tools and 11 resources from the public command, including `check_setup`, documentation search/resources, and experimental Studio logs; the frozen inventory contains seven tools and three resources. All 572 tests still passed because the release test starts `release-cli.js` directly, while the shared packaged-test helper starts `dist/cli.js` directly.
 - **Sources:** [npm package.json `bin`](https://docs.npmjs.com/files/package.json/#bin) says the field maps a command name to the local file npm links for installed use. Checked 2026-08-23.
 
 ### BGA-417 — Preserve unknown action arguments and notification payloads through validation
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-107, BGA-108, BGA-113, BGA-125, BGA-126
 - **Deliverable:** A tri-state cross-file value model that distinguishes known-empty, known-shaped, and unreadable action arguments/notification payloads all the way from parser to individual validator, aggregate, pre-release result, resources, and evidence.
 - **Acceptance:** An omitted `performAction` argument is known empty, while a variable, spread, helper call, or other computed argument is unsupported and is never compared as empty. A notification with no payload is known empty, while a computed payload is unsupported and is never compared as empty. Names and other independently readable relationships may still be checked, but no missing/extra argument or payload-key finding is derived from the unknown shape. The owning validator group and pre-release checks remain `unsupported`/inconclusive rather than failed or passed.
 - **Verification:** Installed public-command scenarios cover omitted, literal-empty, literal-shaped, variable, spread, helper-returned, and malformed forms on both APIs. They assert the exact unsupported finding and the absence of `action.argument.mismatch` or `notification.payload.mismatch`; aggregate, diagnostics resource, and pre-release outputs preserve that distinction. A seed that replaces unknown with `[]` or `{}` fails the gate.
+- **Evidence:** Client calls and sent notifications now carry `known`/`unknown` shape independently of the readable names and partial keys. Omitted and literal values stay known; variables, helpers, spreads, and malformed calls remain located unsupported syntax and bypass mismatch comparison. `E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES` proves the individual tools, `validate_project`, diagnostics resource, and pre-release audit through the installed public command. Parser, rule, aggregate, public schema, contract, catalog, and full local gate coverage pass; exact-current CI is still pending.
 - **Finding:** `performAction('actPlay', args)` is stored with empty argument names and no unsupported marker, so an entry point reading `cardId` produces a false mismatch. `notifyAllPlayers('built', '', $payload)` does emit unsupported syntax, but is also stored with empty payload keys, so a handler reading `card` simultaneously receives a false mismatch. The catalogued limitations explicitly promise the opposite behavior.
 - **Sources:** [Game interface logic: Game.js](https://en.doc.boardgamearena.com/Game_interface_logic:_yourgamename.js) defines `args` as “an object containing the call parameters” and permits it to be omitted; it does not require a source-code object literal. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) documents notification arguments as data passed by the game. Checked 2026-08-23.
 
 ### BGA-418 — Model action entry-point scope and precedence before comparing contracts
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-107, BGA-119, BGA-125
 - **Deliverable:** An action-resolution model that retains whether an entry point belongs to the legacy dispatcher, the game class, or a particular state class, and applies the documented precedence and visibility rules without flattening state-local methods into one global namespace.
 - **Acceptance:** The same action name in two different state classes is not a duplicate merely because the text matches. A state-local action is resolved only for that state; a Game.php action is the documented fallback; and a legacy `.action.php` action takes precedence where it exists. If static client code cannot identify which state-local signature receives a call, differing signatures produce one explicit uncertainty result rather than comparison with whichever file was enumerated first. Legacy dispatcher entry points must be callable/public action methods; private/protected helpers cannot satisfy a client call or participate as duplicates.
 - **Verification:** Packaged public-command fixtures cover the same state-local name with equal and different signatures, a genuine same-scope duplicate, Game.php fallback, legacy precedence, non-public legacy helpers, and deterministic file-order reversal. A seed that keys entries only by action name reproduces the current false certain duplicate and fails.
+- **Evidence:** Every entry point now records `legacy-dispatcher`, `game-class`, or `state-class` plus its scope identifier. Duplicate keys include that scope; legacy precedence is applied per action; private/protected legacy methods are excluded; and ambiguous state-local signatures yield one unsupported result instead of an order-dependent comparison. `E2E-VALIDATE-ACTION-SCOPES` covers equal, different, reversed, and genuine same-scope forms plus legacy visibility through the installed command; existing state-class scenarios retain Game.php fallback. Focused and full local gates pass; exact-current CI is still pending.
 - **Finding:** Two separate state classes declaring `#[PossibleAction] public function actPlay()` currently produce the certain error `action.entry-point.duplicate` with evidence claiming “Two methods of the action class share a name.” Argument comparison then selects the first matching entry globally. The legacy reader likewise accepts private and protected methods as public endpoints.
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) describes an action declared “in this state” and says the framework checks Game.php only when it is absent there. [Players actions: yourgamename.action.php](https://en.doc.boardgamearena.com/Players_actions:_yourgamename.action.php) documents public legacy entry-point methods. [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) says `.action.php` is used instead of autowiring when both declare the function. Checked 2026-08-23.
 
 ### BGA-419 — Resolve contradictory modern action and transition documentation without false certainty
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-106, BGA-113, BGA-118, BGA-119, BGA-124, BGA-125, BGA-206
 - **Deliverable:** A reviewed source-authority decision and parser behavior for the conflicting official modern state-class examples, with unresolved forms reported as unsupported rather than converted into project defects.
 - **Acceptance:** Record which official page governs action names and state transitions, the reviewed revision/date, the exact conflict, and whether an upstream clarification is required. Until the conflict is resolved, a `#[PossibleAction] action_*` method invoked by `bga.actions.performAction` and an imperative `nextState`/related state call shown by official material must produce located unsupported syntax and suppress any name, missing-entry-point, reachability, or dead-end conclusion that depends on rejecting/ignoring it. If the forms are confirmed supported, normalize their names, arguments, scopes, and edges; if confirmed erroneous, only then emit a documented rule.
 - **Verification:** Captured minimal examples from both official pages drive reader, state-validator, action-validator, aggregate, and pre-release tests through the installed public command. The walkthrough form can never yield `action.name.convention`, `action.entry-point.missing`, `state.dead-end`, or a clean pass while unresolved. A seed that silently drops the method or imperative edge fails.
+- **Evidence:** [Modern action and transition source decision](verification/MODERN_ACTION_TRANSITION_CONFLICT.md) records the governing pages, exact conflict, review date, and need for upstream clarification. The readers locate the walkthrough's `#[PossibleAction] action_*` and imperative `nextState` forms as unsupported and mark dependent graph/action inputs incomplete. `E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT` proves state, action, aggregate, and pre-release behavior through the installed command without the forbidden defects or a clean pass. Focused and full local gates pass; exact-current CI is still pending.
 - **Finding:** The canonical state page says action functions “must be prefixed by `act`” and redirect by return value. The official Complete Walkthrough instead declares `#[PossibleAction] action_resolve()`/`action_pass()`, calls them with `bga.actions.performAction`, and uses `$this->game->gamestate->nextState('pass')`. The current reader recognizes only `act[A-Z]` and handler return expressions. The walkthrough-shaped class is therefore recorded as a complete state with no possible actions or edges; downstream validation emits certain/likely defects rather than an unsupported-source conflict.
 - **Sources:** [State classes: State directory](https://en.doc.boardgamearena.com/State_classes:_State_directory) and [Create a game in BGA Studio: Complete Walkthrough](https://en.doc.boardgamearena.com/Create_a_game_in_BGA_Studio:_Complete_Walkthrough), checked 2026-08-23. [Tutorial Reversi](https://en.doc.boardgamearena.com/Tutorial_reversi) follows the `actPlayDisc` form, which confirms the documentation is inconsistent rather than establishing that the walkthrough form is safe to reject.
 
 ### BGA-420 — Resolve SQL table and output aliases before database diagnostics
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-109, BGA-113, BGA-121, BGA-127
 - **Deliverable:** A bounded SQL reference reader that distinguishes schema tables/columns, table aliases, output aliases, keywords, and unsupported expressions for the documented BGA query forms.
 - **Acceptance:** `AS` and implicit output aliases are result names, not schema-column references. Qualified columns through a table alias resolve to the underlying table. Both explicit and implicit table aliases work in single- and multi-table queries, including quoted identifiers, joins, and repeated columns. Aliased expressions, subqueries, CTEs, and syntax outside the supported subset become located unsupported constructs wherever their provenance cannot be proved; they do not generate undeclared/unused findings from guessed identifiers.
 - **Verification:** Installed public-command scenarios use the exact player-query shapes from the official Game.php reference plus project tables with `AS`, implicit aliases, table aliases, joins, and unsupported expressions. They assert no alias-derived `database.column.undeclared` or `database.column.unused`, while a seeded genuinely missing underlying column still fails. Reversing aliases and source order is deterministic.
+- **Evidence:** The bounded SQL reader now separates result aliases from schema references, resolves explicit/implicit and quoted table aliases to underlying tables, deduplicates repeated columns, and keeps expressions, subqueries, and CTEs unsupported. Incomplete query provenance suppresses inferred unused-column findings without hiding a genuinely missing resolved column. `E2E-AUDIT-DATABASE-ALIASES` proves the exact official player aliases, project aliases, joins, quoted/repeated forms, missing-column control, and unsupported forms through the installed command. Parser/rule/catalog and full local gates pass; exact-current CI is still pending.
 - **Finding:** `SELECT c.card_id AS id FROM card c` currently becomes `c.card_id`, `card.c`, and `card.id` with no unsupported marker. The official `SELECT player_id id, player_name name FROM player` examples therefore make aliases look like undeclared framework columns and can make real columns look unused. Calling this a known false positive is insufficient for a common form the official framework documentation recommends.
 - **Sources:** [Main game logic: Game.php](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) repeatedly documents implicit output aliases such as `SELECT player_id id, player_name name ...`. [Tutorial Reversi](https://en.doc.boardgamearena.com/Tutorial_reversi) uses the same shape, and the [Complete Walkthrough](https://en.doc.boardgamearena.com/Create_a_game_in_BGA_Studio:_Complete_Walkthrough) says the player fields “all have to be aliases.” Checked 2026-08-23.
 

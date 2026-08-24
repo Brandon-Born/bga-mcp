@@ -43,6 +43,7 @@ describe('action contract validation against the fixture corpus', () => {
       {
         action: 'actPass',
         argumentNames: ['comment'],
+        argumentShape: 'known',
         // The literal the client writes out, kept so a parameter attribute's
         // documented check can be compared against it.
         argumentValues: { comment: "'no play'" },
@@ -51,7 +52,13 @@ describe('action contract validation against the fixture corpus', () => {
       },
     ]);
     expect(result.entryPoints).toEqual([
-      { action: 'actPass', argumentNames: ['comment'], source: 'bgamcplegacy.action.php' },
+      {
+        action: 'actPass',
+        argumentNames: ['comment'],
+        scope: 'legacy-dispatcher',
+        scopeId: 'bgamcplegacy.action.php',
+        source: 'bgamcplegacy.action.php',
+      },
     ]);
     expect(result.declaredActions).toEqual(['actPass']);
     expect(result.gameMethods).toContain('actPass');

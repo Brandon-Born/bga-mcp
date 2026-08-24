@@ -15,6 +15,8 @@ export interface ClientActionCall {
   readonly action: string;
   /** Argument names sent with the call, excluding framework keys such as `lock`. */
   readonly argumentNames: readonly string[];
+  /** Whether the complete argument shape is known, including a known-empty omitted object. */
+  readonly argumentShape: 'known' | 'unknown';
   /**
    * The literal value of each argument the call writes as one.
    *
@@ -29,6 +31,8 @@ export interface ServerActionEntry {
   readonly action: string;
   /** Argument names the entry point reads from the request. */
   readonly argumentNames: readonly string[];
+  /** The framework namespace in which this entry point is resolved. */
+  readonly scope: 'legacy-dispatcher' | 'game-class' | 'state-class';
 }
 
 /**
@@ -98,19 +102,45 @@ function objectLiteralAt(source: string, start: number, signal?: AbortSignal): s
     return null;
   }
   let depth = 0;
+  let parentheses = 0;
+  let brackets = 0;
+  let quote: string | null = null;
   for (let index = start; index < source.length; index += 1) {
     periodicCancellationCheckpoint(index - start, signal);
     const character = source[index];
+    if (quote !== null) {
+      if (character === quote && source[index - 1] !== '\\') quote = null;
+      continue;
+    }
+    if (character === "'" || character === '"' || character === '`') {
+      quote = character;
+      continue;
+    }
     if (character === '{') {
       depth += 1;
     } else if (character === '}') {
       depth -= 1;
       if (depth === 0) {
-        return source.slice(start, index + 1);
+        return parentheses === 0 && brackets === 0 ? source.slice(start, index + 1) : null;
       }
+    } else if (character === '(') {
+      parentheses += 1;
+    } else if (character === ')') {
+      if (parentheses === 0) return null;
+      parentheses -= 1;
+    } else if (character === '[') {
+      brackets += 1;
+    } else if (character === ']') {
+      if (brackets === 0) return null;
+      brackets -= 1;
     }
   }
   return null;
+}
+
+/** Object spread makes a literal only partially readable, never known-empty or complete. */
+function hasSpread(literal: string): boolean {
+  return literal.includes('...');
 }
 
 function nextNonSpace(source: string, from: number, signal?: AbortSignal): number {
@@ -158,15 +188,17 @@ export function parseClientActionCalls(
     }
     const argumentsStart = nextNonSpace(source, match.index + match[0].length, signal);
     const literalObject = objectLiteralAt(source, argumentsStart, signal);
+    const argumentShape = literalObject !== null && !hasSpread(literalObject) ? 'known' : 'unknown';
     calls.push({
       action,
       argumentNames:
         literalObject === null ? [] : objectKeys(literalObject, AJAX_FRAMEWORK_KEYS, signal),
       argumentValues:
         literalObject === null ? {} : objectValues(literalObject, AJAX_FRAMEWORK_KEYS, signal),
+      argumentShape,
       style: 'ajaxcall',
     });
-    if (literalObject === null) {
+    if (argumentShape === 'unknown') {
       unsupported.push(`ajaxcall to ${action} with computed arguments`);
     }
   }
@@ -181,13 +213,20 @@ export function parseClientActionCalls(
       continue;
     }
     const argumentsStart = nextNonSpace(source, match.index + match[0].length, signal);
-    const literalObject = objectLiteralAt(source, argumentsStart, signal);
+    const omitted = match[4] === undefined;
+    const literalObject = omitted ? null : objectLiteralAt(source, argumentsStart, signal);
+    const argumentShape =
+      omitted || (literalObject !== null && !hasSpread(literalObject)) ? 'known' : 'unknown';
     calls.push({
       action: literal,
       argumentNames: literalObject === null ? [] : objectKeys(literalObject, new Set(), signal),
       argumentValues: literalObject === null ? {} : objectValues(literalObject, new Set(), signal),
+      argumentShape,
       style: 'performAction',
     });
+    if (argumentShape === 'unknown') {
+      unsupported.push(`bgaPerformAction to ${literal} with computed arguments`);
+    }
   }
 
   cancellationCheckpoint(signal);
@@ -195,7 +234,7 @@ export function parseClientActionCalls(
 }
 
 const PHP_FUNCTION =
-  /(?:public\s+|protected\s+|private\s+|static\s+)*function\s+([A-Za-z_]\w*)\s*\(/gu;
+  /((?:(?:public|protected|private|static|final|abstract)\s+)*)function\s+([A-Za-z_]\w*)\s*\(/gu;
 const GET_ARG = /getArg\s*\(\s*(?:'([^']+)'|"([^"]+)")/gu;
 const REQUEST_ARG = /\$(?:_POST|_GET|args)\s*\[\s*(?:'([^']+)'|"([^"]+)")\s*\]/gu;
 
@@ -217,8 +256,15 @@ export function parseServerActionEntries(
 
   for (const [index, match] of matches.entries()) {
     cancellationCheckpoint(signal);
-    const name = match[1];
+    const modifiers = match[1] ?? '';
+    const name = match[2];
     if (name === undefined || name === '__construct') {
+      continue;
+    }
+    // The legacy action file is a public request dispatcher. Private and
+    // protected helpers are not player entry points merely because they are
+    // methods of the same class.
+    if (/\b(?:private|protected)\b/u.test(modifiers)) {
       continue;
     }
     const start = match.index + match[0].length;
@@ -244,7 +290,11 @@ export function parseServerActionEntries(
       unsupported.push(`entry point ${name} reads a computed argument name`);
     }
 
-    entries.push({ action: name, argumentNames: [...argumentNames].sort() });
+    entries.push({
+      action: name,
+      argumentNames: [...argumentNames].sort(),
+      scope: 'legacy-dispatcher',
+    });
   }
 
   cancellationCheckpoint(signal);
@@ -257,7 +307,7 @@ export function parsePhpMethodNames(source: string, signal?: AbortSignal): reado
   const names: string[] = [];
   for (const match of source.matchAll(PHP_FUNCTION)) {
     cancellationCheckpoint(signal);
-    const name = match[1];
+    const name = match[2];
     if (name !== undefined) {
       names.push(name);
     }

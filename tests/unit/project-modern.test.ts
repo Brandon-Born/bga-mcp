@@ -268,6 +268,34 @@ final class Turn extends GameState {
     expect(outcome.value).toEqual([]);
     expect(outcome.unsupported).toEqual([]);
   });
+
+  it('keeps the conflicting official walkthrough action and nextState form unsupported', () => {
+    const outcome = parseModernStates([
+      {
+        path: 'modules/php/States/PlayerTurn.php',
+        text: `<?php
+final class PlayerTurn extends GameState {
+  public function __construct(protected Game $game) {
+    parent::__construct($game, id: 2, type: StateType::ACTIVE_PLAYER);
+  }
+  #[PossibleAction]
+  function action_pass() {
+    $this->game->gamestate->nextState('pass');
+  }
+}`,
+      },
+    ]);
+    expect(outcome.value[0]).toMatchObject({
+      possibleActions: [],
+      redirects: [],
+      edgesResolved: false,
+    });
+    expect(outcome.unsupported.map((entry) => entry.construct)).toEqual([
+      'state class PlayerTurn uses documented-but-conflicting #[PossibleAction] method action_pass',
+      'state class PlayerTurn uses documented-but-conflicting imperative nextState in action_pass',
+    ]);
+    expect(outcome.unsupported.every((entry) => entry.scope === 'edge')).toBe(true);
+  });
 });
 
 describe('initial state reading', () => {
