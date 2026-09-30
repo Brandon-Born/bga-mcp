@@ -14,6 +14,7 @@ import {
   type ReleaseInventory,
 } from '../../scripts/lib/release.js';
 import {
+  findRelease,
   reconcileRelease,
   validatePublicationPlan,
   type PublicationPlan,
@@ -170,6 +171,9 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
         e.protocol.conformance.coverage.splice(0);
       },
       (e: MutableEvidence) => {
+        e.environment.node = ['AKIA', 'IOSFODNN7EXAMPLE'].join('');
+      },
+      (e: MutableEvidence) => {
         e.source.commit = '0'.repeat(40);
       },
     ]) {
@@ -222,6 +226,9 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
         prerelease: true,
         assets: [],
       };
+      expect(findRelease([[remote]], plan.tag)).toEqual(remote);
+      expect(findRelease([[]], plan.tag)).toBeUndefined();
+      expect(() => findRelease([[remote], [remote]], plan.tag)).toThrow();
       expect(reconcileRelease(remote, plan)).toHaveLength(12);
       expect(() => reconcileRelease({ ...remote, draft: false }, plan)).toThrow();
       remote.assets = plan.assets.map((a) => ({ ...a, state: 'uploaded' }));

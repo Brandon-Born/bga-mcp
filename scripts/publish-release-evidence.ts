@@ -105,24 +105,24 @@ export function reconcileRelease(release: RemoteRelease, plan: PublicationPlan):
   );
   return missing;
 }
+export function findRelease(pages: RemoteRelease[][], tag: string): RemoteRelease | undefined {
+  const matches = pages.flat().filter((release) => release.tag_name === tag);
+  assert(
+    matches.length <= 1,
+    'Ambiguous release identity; refuse creating or modifying duplicates',
+  );
+  return matches[0];
+}
 async function remote(tag: string): Promise<RemoteRelease | undefined> {
-  try {
-    const { stdout } = await execute('gh', ['api', `repos/${repository}/releases/tags/${tag}`], {
-      timeout: 120_000,
-      maxBuffer: 1_000_000,
-    });
-    return JSON.parse(stdout) as RemoteRelease;
-  } catch (error) {
-    if (
-      typeof error === 'object' &&
-      error !== null &&
-      'stderr' in error &&
-      typeof error.stderr === 'string' &&
-      error.stderr.includes('(HTTP 404)')
-    )
-      return undefined;
-    throw error;
-  }
+  // GitHub's by-tag endpoint omits unpublished drafts. The authenticated list
+  // includes drafts and prevents a retry from creating a duplicate after interruption.
+  // https://docs.github.com/en/rest/releases/releases#list-releases
+  const { stdout } = await execute(
+    'gh',
+    ['api', `repos/${repository}/releases`, '--paginate', '--slurp'],
+    { timeout: 120_000, maxBuffer: 8 * 1024 * 1024 },
+  );
+  return findRelease(JSON.parse(stdout) as RemoteRelease[][], tag);
 }
 async function publish(directory: string, expectedDigest: string): Promise<void> {
   const plan = await validatePublicationPlan(directory, expectedDigest);

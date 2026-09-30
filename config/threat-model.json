@@ -208,6 +208,11 @@
       "id": "SURFACE-CI-ARTIFACT",
       "name": "Retained artifact",
       "description": "Verification evidence, packaged-run records, and anything else a CI job uploads or keeps."
+    },
+    {
+      "id": "SURFACE-RELEASE-EVIDENCE",
+      "name": "Public release evidence assets",
+      "description": "Authenticated original candidate observations and derived metadata attached to public GitHub release records."
     }
   ],
   "abuseCases": [
@@ -294,8 +299,13 @@
       "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-STUDIO-CREDENTIALS"],
       "boundary": "TB-OUTPUT",
       "impact": "A public workflow artifact publishes a secret that must then be rotated.",
-      "mitigations": ["TM-SOURCE-SECRET-SCAN", "TM-ARTIFACT-SCAN", "TM-LOG-REDACTION"],
-      "surfaces": ["SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"]
+      "mitigations": [
+        "TM-SOURCE-SECRET-SCAN",
+        "TM-ARTIFACT-SCAN",
+        "TM-LOG-REDACTION",
+        "TM-RELEASE-EVIDENCE"
+      ],
+      "surfaces": ["SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT", "SURFACE-RELEASE-EVIDENCE"]
     },
     {
       "id": "AC-ARTWORK-REDISTRIBUTION",
@@ -451,7 +461,8 @@
         "TM-EVIDENCE-INTEGRITY",
         "TM-MODEL-AGREEMENT",
         "TM-RELEASE-EVIDENCE"
-      ]
+      ],
+      "surfaces": ["SURFACE-RELEASE-EVIDENCE"]
     },
     {
       "id": "AC-CANDIDATE-SUBSTITUTION",
@@ -1227,7 +1238,8 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-407",
-      "scenarios": ["GATE-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE-PACKET"]
+      "scenarios": ["GATE-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE-PACKET"],
+      "surfaces": ["SURFACE-RELEASE-EVIDENCE"]
     }
   ],
   "residualRisks": [
