@@ -74,9 +74,9 @@ For Windows, use the package-manager-created `.cmd` shim through the command int
     "/d",
     "/s",
     "/c",
-    "\"C:\\absolute\\path\\to\\bga-mcp-install\\node_modules\\.bin\\bga-mcp.cmd\"",
+    "C:\\absolute\\path\\to\\bga-mcp-install\\node_modules\\.bin\\bga-mcp.cmd",
     "--project-root",
-    "\"C:\\absolute\\path\\to\\your\\game\""
+    "C:\\absolute\\path\\to\\your\\game"
   ]
 }
 ```
