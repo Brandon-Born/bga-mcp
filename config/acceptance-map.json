@@ -1112,6 +1112,12 @@
       "case": "A scanned metadata-only handoff is digest-bound, matching interrupted drafts can resume, and existing or conflicting published assets cannot be overwritten",
       "boundary": "repository",
       "scenarios": ["INT-RELEASE-EVIDENCE-PACKET"]
+    },
+    {
+      "item": "BGA-400",
+      "case": "Published commands and platform configuration complete install, first use, root refusal, repeat install, shutdown and removal without project changes",
+      "boundary": "packaged",
+      "scenarios": ["E2E-INSTALL-GUIDE"]
     }
   ]
 }

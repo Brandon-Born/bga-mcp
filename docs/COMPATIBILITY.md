@@ -96,3 +96,5 @@ The `v1.0.0-rc.1` candidate passed exact-source CI across Ubuntu, macOS and Wind
 BGA-404 release signing adds no network access or new transport to the installed server. Its ordinary scenarios check offline release policy; real signatures and fresh use of the verified original package are exercised by the separate manual workflow described in [release signing](verification/RELEASE_SIGNING.md).
 
 BGA-407 distributes signed candidate verification metadata with exact frozen local-inventory coverage, explicit exclusions and no live Studio claim. It adds no installed-server transport or network access. Ordinary scenarios prove offline policy; the separate workflow proves public evidence download and signature acceptance.
+
+BGA-400 extends CLAIM-CLIENT-SDK evidence: the generic stdio guide is exercised with the reference client on the CI platforms. This is not named coding-client support. The signed original candidate is separately evaluated through the same guide; only repeat installation, not cross-version upgrade, is currently measurable.

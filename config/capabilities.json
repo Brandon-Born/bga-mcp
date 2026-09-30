@@ -92,7 +92,8 @@
         "INT-RELEASE-SIGNING",
         "GATE-RELEASE-EVIDENCE",
         "INT-RELEASE-EVIDENCE",
-        "INT-RELEASE-EVIDENCE-PACKET"
+        "INT-RELEASE-EVIDENCE-PACKET",
+        "E2E-INSTALL-GUIDE"
       ],
       "ciEvidence": "ci-36665974043"
     }

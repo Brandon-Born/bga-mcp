@@ -1,107 +1,131 @@
 # Installing, configuring, and removing bga-mcp
 
-Written for a developer who has a BGA project and an MCP client, and would like the second to know something about the first.
-
-Nothing here asks you to paste a secret into a chat, and nothing here is irreversible: the server only reads, and removing it is deleting a directory and a few lines of configuration.
+Use the signed `v1.0.0-rc.1` candidate for evaluation. There is no registry package yet. The [public release page](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.1) distributes verification metadata, not an installable tarball. Package publication belongs to BGA-415.
 
 ## Before you start
 
-- **Node.js 22.13 or newer** on the Node 22 line, or **Node.js 24 LTS or newer**. Check with `node --version`.
-- **An MCP client.** The supported contract is protocol `2025-11-25` over stdio. A `2026-07-28` handshake/discovery smoke works, but that era remains unverified and is not a supported capability contract until BGA-017 and BGA-318 pass.
-- **A BGA project on disk**, in a legacy flat, modern `modules/php`, or part-migrated layout. The frozen local release includes inspection and all five validators for those layouts.
+Use Node 22.13 or later on the Node 22 line, or Node 24 or later, with Corepack and pnpm 11.15.1 available. The walkthrough uses a dedicated installation directory outside your game project. Create that empty directory and save this `package.json` there:
 
-There is no published package yet. A release consumer will launch the package-manager-created `bga-mcp` command; the internal `dist/*.js` files are not public package commands. To evaluate a source checkout before publication, build and run the separate development profile:
-
-```sh
-git clone https://github.com/Brandon-Born/bga-mcp.git
-cd bga-mcp
-corepack pnpm install --frozen-lockfile
-corepack pnpm build
-node dist/cli.js --version
-```
-
-If the last command prints a version, the development checkout works. It is not evidence for the installed release profile.
-
-## Point your client at it
-
-After installing a release package, add its public command to your client's MCP configuration. The exact file differs by client; the command does not.
+<!-- guide:manifest -->
 
 ```json
 {
-  "command": "bga-mcp",
-  "args": []
+  "name": "bga-mcp-consumer",
+  "private": true,
+  "packageManager": "pnpm@11.15.1"
 }
 ```
 
-**If your client tells the server which folders you have open, that is the whole configuration.** The server asks for those folders and uses them as project roots. Clients that advertise roots on the `2025-11-25` protocol do this automatically.
+Use a local BGA project that you own or have permission to inspect. The frozen candidate supports legacy flat, modern `modules/php`, and partially migrated layouts through its verified local inspection and validator scenarios. Unsupported syntax is reported as uncertainty; this is not a guarantee that every game is valid. Protocol `2025-11-25` over stdio is the supported contract. Named editor/agent clients require the separate BGA-401 smoke matrix.
 
-If yours does not, name the project yourself:
+## Obtain and verify the candidate
+
+Follow the [signing verification instructions](verification/RELEASE_SIGNING.md) from an independently trusted verifier checkout. They identify the exact original candidate, signing identity, trusted-root acquisition, and provenance checks. Maintainers with GitHub Actions artifact access can retrieve the retained signed packet:
+
+```sh
+gh run download 36740988457 --repo Brandon-Born/bga-mcp --name signed-candidate-36740988457 --dir /absolute/path/to/signed-packet
+```
+
+That artifact expires on 2026-12-29. If it is unavailable, stop and ask the maintainer for the same authenticated original bytes; do not replace it with a source build or an arbitrary registry package. Checksum comparison alone is not signature verification. The expected original tarball digest is `sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa`.
+
+Verification requires independent GitHub trust roots and may contact GitHub. Artifact download requires GitHub access; installation may download dependencies from the package registry and uses the package manager's cache. These setup operations are separate from the installed MCP server, which reads only authorized local roots, makes no network requests, and stores no persistent project state. No Studio session or other BGA credential is needed.
+
+## Install and check the command
+
+Replace `/absolute/path/to/bga-mcp-install` with your dedicated installation directory and `/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz` with the verified original tarball. Keep the quotes when a path contains spaces. These commands work in a POSIX shell or Windows PowerShell with Corepack on PATH.
+
+<!-- guide:install -->
+
+```sh
+corepack pnpm add --prefer-offline --dir "/absolute/path/to/bga-mcp-install" "/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz"
+```
+
+<!-- guide:version -->
+
+```sh
+corepack pnpm --dir "/absolute/path/to/bga-mcp-install" exec bga-mcp --version
+```
+
+Expect `1.0.0-rc.1`. This launches the package-manager-created public command. Do not configure an internal `dist/*.js` file: the contributor development entry point has a different capability set.
+
+## Configure your MCP client
+
+Add the following stdio server entry in your client's configuration, substituting absolute paths. The surrounding configuration format belongs to your client. Use the public executable directly, so starting the server does not invoke a package manager or download anything.
+
+For macOS/Linux:
+
+<!-- guide:posix-client -->
 
 ```json
 {
-  "command": "bga-mcp",
+  "command": "/absolute/path/to/bga-mcp-install/node_modules/.bin/bga-mcp",
   "args": ["--project-root", "/absolute/path/to/your/game"]
 }
 ```
 
-## Check it worked
+For Windows, use the package-manager-created `.cmd` shim through the command interpreter:
 
-Ask your assistant to run `inspect_project`. A healthy first run identifies the layout and components without a policy error. `check_setup` belongs to the source-only development profile and is deliberately absent from the frozen release.
+<!-- guide:windows-client -->
 
-If `inspect_project` reports `policy.root.unconfigured`, add an explicit `--project-root` as shown above.
-
-## What the public release includes
-
-The public command is local, read-only, and network-free. It accepts only `--project-root`, `--operation-timeout-ms`, `--max-output-bytes`, `--help`, and `--version`. Network, Studio, mutation, setup, and documentation-search options are rejected because those surfaces are outside the frozen release inventory.
-
-With no feature flag, the command exposes project inspection, all five validators, the aggregate and pre-release tools, and the three project resources. `--operation-timeout-ms` bounds one operation. `--max-output-bytes` bounds one result payload, successful or not; its minimum is the smallest failure the server can send.
-
-The source-only development profile also contains documentation and experimental Studio options. They are not installed-release capabilities and are documented for contributors below.
-
-## Reading your own Studio logs (experimental)
-
-**This one does not currently work, and the reason is now measured rather than suspected.** A live run on 2026-08-10 found that the Studio page serves a JavaScript application and none of the log text: the panel you see in a browser is rendered there. The tool retrieves the page, finds no log lines, and says so. Nothing below will produce a log until the capability gets a different mechanism (BGA-312). It reads an authenticated page that BGA has never documented. The MCP result filter keeps parsed lines attributed to accounts you declare and withholds other parsed lines; production error logs and Sentry are not requested. A line carrying a credential is withheld whole and a line that is kept is passed through the same value redaction as every other successful result (BGA-327), but the capability is not ready for general live use: BGA-322 and BGA-326 remain open against it.
-
-You need your own Studio session cookie. Sign in to `studio.boardgamearena.com`, open developer tools, find any request to that host, and copy its entire `Cookie` request header.
-
-> [!WARNING]
-> The session is registered for redaction by whichever provider resolved it (BGA-321), and `--studio-session-file` must now be a small regular file that only its owner can read, with no diagnostic naming its path (BGA-328). On Windows the file provider is refused as unsupported; use `BGA_STUDIO_SESSION` there. Never paste a cookie into a prompt, launcher configuration, shell command, or repository. The environment provider has existing exact-value error-redaction evidence, but no supported general live recipe is published while BGA-312's blockers remain open.
-
-The CLI preflight already accepts a project name, but do not use its page-fetching mode until BGA-319 removes foreign actor names and BGA-328 removes credential-file paths from diagnostics. The MCP tool takes the project name from Manage Games — the `game` parameter of your studiogame URL — rather than the numeric Play ID (BGA-320).
-
-You do not have to name your dev accounts up front: if your client supports it, the server asks the first time it needs them, and remembers your answer for the session. Declining is fine and it will not ask again.
-
-The session is never accepted as a tool argument, so it does not enter your client's transcript.
-
-## Updating
-
-```sh
-cd bga-mcp
-git pull
-corepack pnpm install --frozen-lockfile
-corepack pnpm build
+```json
+{
+  "command": "cmd.exe",
+  "args": [
+    "/d",
+    "/s",
+    "/c",
+    "\"C:\\absolute\\path\\to\\bga-mcp-install\\node_modules\\.bin\\bga-mcp.cmd\"",
+    "--project-root",
+    "\"C:\\absolute\\path\\to\\your\\game\""
+  ]
+}
 ```
 
-Restart your client afterwards; it launches the server per session and will keep using the old build until it does.
+If your client advertises authorized project roots on protocol `2025-11-25`, you can omit `--project-root` and its value. Explicit configuration is the reproducible first-run path. Multiple configured roots require the tool's `projectRoot` argument; the server never chooses between them.
 
-## Removing it
+Restart the client and ask it to call `inspect_project`. A successful first use identifies your layout and available components. Inspect findings and unsupported-pattern notes before making development decisions. The release exposes seven tools and three project resources from the [frozen inventory](../config/release.json); discovery must match that inventory. `check_setup`, documentation search, Studio reads, mutations, and the newer protocol adapter are excluded.
 
-1. Delete the server entry from your client's MCP configuration.
-2. `rm -rf /path/to/bga-mcp`
-3. `rm -f ~/.bga-mcp-session` if you created one.
+The release accepts `--project-root`, `--operation-timeout-ms`, `--max-output-bytes`, `--help`, and `--version`. The timeout bounds each operation; the output limit bounds successful and failed payloads. Network and Studio flags are refused. Contributor-only integrations have separate backlog and verification requirements.
 
-That is everything. The server writes nothing outside its own directory — no configuration file, no cache on disk, no state in your project. Your BGA project is byte-for-byte as it was, which is checked on every release by a test that snapshots the project before and after running every capability.
+## Update
 
-## When something does not work
+Stop the client/server, obtain and independently verify the replacement candidate, and repeat the install command with that candidate's exact tarball path. Never overwrite the old candidate or treat a rebuilt archive as the same release. Keep its packet if you need to reinstall it. With the current single candidate, this command verifies the repeat-install path:
 
-**Everything refuses with `policy.root.unconfigured`.** No project root. Either your client does not advertise roots, or it advertises none. Pass `--project-root`.
+<!-- guide:update -->
 
-**A tool refuses with `resource.project.ambiguous`.** More than one root is configured, so the server will not guess. Pass `projectRoot` explicitly.
+```sh
+corepack pnpm add --prefer-offline --dir "/absolute/path/to/bga-mcp-install" "/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz"
+```
 
-**Documentation search refuses with `policy.network.disabled`.** Add `--allow-network`.
+Restart the client and repeat `inspect_project`. A cross-version upgrade cannot be claimed until a second reviewed candidate exists. New candidate installation may download dependencies; MCP calls remain local.
 
-**Documentation search returns nothing useful.** Known and measured: retrieval currently answers 4 of the 9 questions in the maintained evaluation set. Topic lookups through `bga://docs/{topic}` are more reliable than search. Tracked in BGA-313.
+## Remove
 
-**Studio logs return nothing.** The capability remains experimental and unverified; see BGA-312 for the complete current blocker set rather than treating an empty result as a setup-only problem. The likely eventual causes include an expired session, wrong project/account identifier, or upstream page drift.
+Remove the server entry from the client's configuration and stop/restart that client to end its server process. Then remove the package:
 
-**Anything else.** Run `check_setup` first and read what it says; it is more current than this document.
+<!-- guide:remove -->
+
+```sh
+corepack pnpm remove --dir "/absolute/path/to/bga-mcp-install" bga-mcp
+```
+
+The public command is now absent. Delete the dedicated installation directory if you no longer need its package manifest or lockfile, and delete downloaded candidate packets/trust-root files if you no longer want them. The package manager may retain its shared cache; removing that cache is optional and affects other packages. The MCP server creates no config, cache, session file, or project file to remove. Your client's own logs/history follow that client's retention policy.
+
+## Troubleshooting
+
+- **Command not found or unsupported Node:** check Node/Corepack availability and the absolute installed command path. Do not use a package downloader as an automatic fallback.
+- **`policy.root.unconfigured`:** configure an explicit `--project-root` or authorize a root in a client that advertises roots.
+- **`resource.project.ambiguous`:** supply `projectRoot` to select one authorized root.
+- **Root/path refused:** check that the configured directory exists, is readable, and matches the intended authorized project; do not broaden roots to your home directory.
+- **Unsupported syntax:** retain the uncertainty in your review. A clean audit does not establish correctness for syntax the reader cannot interpret.
+- **Excluded tool or flag:** use the frozen local inventory; source-only `check_setup` or Studio options cannot diagnose this release.
+- **Signature/provenance mismatch or expired artifact access:** stop before installation and retain the failure for maintainer investigation.
+
+## Verification and sources
+
+`E2E-INSTALL-GUIDE` executes the marked commands and the platform's configuration above against a freshly packed public package, including first use, root refusal, repeat install, project hashing, process shutdown, and package removal. A separate retained run follows the same guide against the signed original candidate. It does not establish named-client compatibility or real-game usefulness; BGA-401 and BGA-424 own those claims. See the [installation verification record](verification/INSTALLATION.md).
+
+- [pnpm add](https://pnpm.io/cli/add) documents local tarball installation.
+- [pnpm exec](https://pnpm.io/cli/exec) states that `node_modules/.bin` is added to PATH.
+- [pnpm remove](https://pnpm.io/cli/remove) states that removal affects `node_modules` and the project's `package.json`.
+- [Candidate signing and provenance](verification/RELEASE_SIGNING.md) records the independently authenticated artifact and finite retention.
