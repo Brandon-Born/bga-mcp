@@ -15,4 +15,8 @@ The native Codex evaluation uses the actual installed CLI/app-server MCP stack a
 
 ## Observed verification
 
-Controlled execution and exact-commit CI will be recorded after the completed implementation passes its gates. BGA-401 remains implemented until then.
+[Exact-commit CI 36776024143](https://github.com/Brandon-Born/bga-mcp/actions/runs/36776024143) passed every Ubuntu/macOS/Windows Node 22/24 job at `4d2141048bb92abd7e93dc6b27b6d209afba1e9f`, each with 598 tests and all 182 required scenarios. This covers the maintained reference SDK flow and seeded matrix refusals.
+
+The independent native Codex run on macOS arm64/Node 22.17.1 used CLI 0.159.2 and the clean committed runner at that same source. The retained receipt names the actual client binary digest and runner hashes, original candidate source `a2031af`, and original package digest `sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa`. Exact discovery, all seven tool calls, all three resource reads, schema/outside-root/excluded-tool refusals, unchanged project and user configuration, clean app-server/child-process exit, restart and removal passed. Codex emitted startup diagnostics; raw stderr was discarded rather than represented as a clean stream. No inference turn or GUI interaction occurred.
+
+BGA-401 is verified within these scopes. It makes no claim for other clients, platforms, versions or replacement candidate bytes. BGA-424 is the next release item and requires an owner-authorized real game project and reviewed development tasks.
