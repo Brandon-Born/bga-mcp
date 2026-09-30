@@ -76,6 +76,7 @@ export interface CandidateDigests {
   readonly capabilityManifest: string;
   readonly verificationEvidence: string;
   readonly artifact: string;
+  readonly securityAudit?: string;
 }
 
 export interface ReleaseCandidateManifest {
@@ -297,6 +298,9 @@ export function buildReleaseCandidateManifest(
     verificationEvidence:
       sourceDigests?.verificationEvidence ?? releaseDigest(JSON.stringify(evidence)),
     artifact: candidateArtifactDigest,
+    ...(sourceDigests?.securityAudit === undefined
+      ? {}
+      : { securityAudit: sourceDigests.securityAudit }),
   };
   const report = verifyReleaseInventory(inventory, manifest);
   report.require(inventory.status === 'verified', 'The release inventory is not verified');

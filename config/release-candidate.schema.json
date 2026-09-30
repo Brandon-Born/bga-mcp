@@ -55,7 +55,8 @@
             "inventory": { "$ref": "#/$defs/digest" },
             "capabilityManifest": { "$ref": "#/$defs/digest" },
             "verificationEvidence": { "$ref": "#/$defs/digest" },
-            "artifact": { "$ref": "#/$defs/digest" }
+            "artifact": { "$ref": "#/$defs/digest" },
+            "securityAudit": { "$ref": "#/$defs/digest" }
           }
         }
       }

@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
+import { normalizeAudit } from '../../scripts/lib/security-audit.js';
 
 import { sealEvidence, type Evidence } from '../../scripts/lib/evidence.js';
 import {
@@ -128,6 +129,11 @@ describe('release candidate pipeline', () => {
       verifyCandidateWorkflow(workflow.replace('contents: read', 'id-token: write')).failed,
     ).toBe(true);
     expect(verifyCandidateWorkflow(`${workflow}\n# npm publish\n`).failed).toBe(true);
+    expect(
+      verifyCandidateWorkflow(
+        workflow.replace(/actions\/upload-artifact@[0-9a-f]{40}/u, 'actions/upload-artifact@v7'),
+      ).failed,
+    ).toBe(true);
 
     const policy = JSON.parse(await loadText('config/version-policy.json')) as VersionPolicySummary;
     const source: CandidateSource = {
@@ -149,7 +155,7 @@ describe('release candidate pipeline', () => {
     expect(verifyCandidateSource({ ...source, packageVersion: '1.0.0' }, policy).failed).toBe(true);
   });
 
-  it('[INT-RELEASE-CANDIDATE-DRY-RUN] retains the original reproducible bytes and refuses drift or overwrite', async () => {
+  it('[INT-RELEASE-CANDIDATE-DRY-RUN][INT-SECURITY-AUDIT-PREFLIGHT] retains the original reproducible bytes and refuses advisory risk, drift or overwrite', async () => {
     const temporaryRoot = await mkdtemp(join(tmpdir(), 'bga-mcp-candidate-test-'));
     try {
       const policy = JSON.parse(
@@ -186,6 +192,26 @@ describe('release candidate pipeline', () => {
       const artifactDigest = releaseDigest(artifact);
       const evidence = evidenceFor(inventory, capabilityManifest, source, artifactDigest);
       const evidenceText = `${JSON.stringify(evidence, null, 2)}\n`;
+      const securityPolicyText = `${JSON.stringify({ schemaVersion: 1, maxAgeHours: 24, exceptions: [] })}\n`;
+      const auditIdentity = {
+        commit: source.commit,
+        lockDigest: source.lockDigest,
+        packageDigest: releaseDigest('package'),
+        workspaceDigest: releaseDigest('workspace'),
+        policyDigest: releaseDigest(securityPolicyText),
+      };
+      const emptyAudit = normalizeAudit({
+        advisories: {},
+        metadata: { vulnerabilities: { info: 0, low: 0, moderate: 0, high: 0, critical: 0 } },
+      });
+      const securityAuditText = `${JSON.stringify({
+        schemaVersion: 1,
+        generatedAt: new Date().toISOString(),
+        registry: 'https://registry.npmjs.org',
+        source: auditIdentity,
+        production: emptyAudit,
+        all: emptyAudit,
+      })}\n`;
       const base: CandidateBundleInput = {
         source,
         policy,
@@ -201,6 +227,9 @@ describe('release candidate pipeline', () => {
         artifactPackage: { name: 'bga-mcp', bin: { 'bga-mcp': inventory.entrypoint } },
         reconstructionPackage: { name: 'bga-mcp', bin: { 'bga-mcp': inventory.entrypoint } },
         outputDirectory: resolve(temporaryRoot, 'output'),
+        securityAuditText,
+        securityPolicyText,
+        auditIdentity,
       };
 
       const bundle = await writeCandidateBundle(base);
@@ -216,7 +245,32 @@ describe('release candidate pipeline', () => {
       const schema = JSON.parse(base.schemaText) as object;
       expect(new Ajv2020({ strict: true }).compile(schema)(bundle.manifestDocument)).toBe(true);
       const checksumLines = (await readFile(bundle.checksums, 'utf8')).trim().split('\n');
-      expect(checksumLines).toHaveLength(4);
+      expect(checksumLines).toHaveLength(6);
+      expect(bundle.manifestDocument.release.digests.securityAudit).toBe(
+        releaseDigest(securityAuditText),
+      );
+      expect(await readFile(resolve(bundle.directory, 'security-audit.json'), 'utf8')).toBe(
+        securityAuditText,
+      );
+      for (const severity of ['high', 'moderate'] as const) {
+        const defective = JSON.parse(securityAuditText) as {
+          all: {
+            counts: Record<string, number>;
+            findings: unknown[];
+          };
+        };
+        defective.all.counts[severity] = 1;
+        defective.all.findings = [
+          { id: 'GHSA-aaaa-bbbb-cccc', module: 'transitive-tool', severity },
+        ];
+        await expect(
+          writeCandidateBundle({
+            ...base,
+            securityAuditText: JSON.stringify(defective),
+            outputDirectory: resolve(temporaryRoot, `blocked-${severity}`),
+          }),
+        ).rejects.toThrow(/security preflight/iu);
+      }
       expect(checksumLines).toContain(
         `${createHash('sha256').update(artifact).digest('hex')}  bga-mcp-1.0.0-rc.1.tgz`,
       );
@@ -234,6 +288,13 @@ describe('release candidate pipeline', () => {
         writeCandidateBundle({ ...base, outputDirectory: resolve(temporaryRoot, 'drift') }),
       ).rejects.toThrow(/not reproducible/iu);
       await writeFile(reconstructionPath, artifact);
+      await expect(
+        writeCandidateBundle({
+          ...base,
+          auditIdentity: { ...auditIdentity, lockDigest: releaseDigest('another lock') },
+          outputDirectory: resolve(temporaryRoot, 'wrong-audit'),
+        }),
+      ).rejects.toThrow(/security preflight/iu);
       const failedEvidence = sealEvidence({
         ...evidence,
         tests: { ...evidence.tests, failed: 1 },

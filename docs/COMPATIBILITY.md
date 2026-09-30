@@ -75,6 +75,8 @@ The first release profile is separately frozen by [`config/release.json`](../con
 
 ## Clients
 
+BGA-422 adds `GATE-SECURITY-AUDIT` and `INT-SECURITY-AUDIT-PREFLIGHT` to the release transport's evidence requirements. Release tooling needs a fresh, source-bound production and full-graph advisory assessment; the ordinary gate tests the security policy offline. The installed local server gains no network capability from this tooling check. See [dependency security verification](verification/DEPENDENCY_SECURITY.md).
+
 | Claim                | Value                              | Support   |
 | -------------------- | ---------------------------------- | --------- |
 | CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.0.0 | supported |

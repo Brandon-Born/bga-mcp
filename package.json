@@ -81,8 +81,10 @@
     "verify:version-policy": "tsx scripts/verify-version-policy.ts",
     "release:candidate": "tsx scripts/create-release-candidate.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm verify:release-candidate && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
-    "prepack": "pnpm build"
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm verify:release-candidate && pnpm verify:security-audit && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
+    "prepack": "pnpm build",
+    "audit:security": "tsx scripts/audit-security.ts",
+    "verify:security-audit": "tsx scripts/verify-security-audit.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
@@ -94,14 +96,14 @@
     "@modelcontextprotocol/conformance": "0.2.0-alpha.11",
     "@modelcontextprotocol/node": "2.0.0",
     "@types/node": "26.1.2",
-    "@vitest/coverage-v8": "4.1.10",
-    "ajv": "8.17.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "ajv": "8.20.0",
     "eslint": "10.8.0",
     "prettier": "3.9.6",
     "publint": "0.3.23",
     "tsx": "4.20.6",
     "typescript": "6.0.2",
     "typescript-eslint": "8.66.0",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   }
 }

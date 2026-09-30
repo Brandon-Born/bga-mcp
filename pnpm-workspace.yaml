@@ -1,4 +1,14 @@
 allowBuilds:
   esbuild: true
+overrides:
+  'ajv@>=8.0.0 <8.20.0': 8.20.0
+  'nanoid@>=3.0.0 <3.3.19': 3.3.19
+  'fast-uri@>=3.0.0 <3.1.8': 3.1.8
+  'brace-expansion@>=5.0.0 <5.0.12': 5.0.12
+  'qs@>=6.0.0 <6.16.0': 6.16.0
+  'undici@>=7.0.0 <7.30.0': 7.30.0
+  'hono@>=4.0.0 <4.13.11': 4.13.11
+  'ip-address@>=10.0.0 <10.7.2': 10.7.2
 minimumReleaseAgeExclude:
   - '@modelcontextprotocol/conformance@0.2.0-alpha.11'
+  - hono@4.13.11

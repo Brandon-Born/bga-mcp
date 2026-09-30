@@ -1,0 +1,47 @@
+name: Dependency security review
+
+on:
+  schedule:
+    - cron: '17 14 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-security-review
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Install the locked graph and run offline gates
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm check
+      - name: Assess current production and toolchain advisories
+        run: pnpm audit:security
+      - name: Scan retained reports before upload
+        id: safety
+        if: always()
+        run: pnpm verify:safety-gates
+      - name: Retain sanitized security and verification reports
+        if: always() && steps.safety.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dependency-security-review
+          if-no-files-found: warn
+          retention-days: 30
+          path: |
+            .artifacts/security-audit.json
+            .artifacts/verification-evidence.json

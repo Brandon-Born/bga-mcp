@@ -4,6 +4,7 @@ import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve, sep } from 'node:path';
 import { promisify } from 'node:util';
+import { runSecurityAudit } from './audit-security.js';
 
 import { Ajv2020 } from 'ajv/dist/2020.js';
 
@@ -120,6 +121,9 @@ async function main(): Promise<void> {
   // the installed artifact once for all packaged scenarios and records its
   // digest. The later pack must reproduce those exact bytes.
   await command(corepack, ['pnpm', 'check']);
+  // A live registry check is mandatory here, but never part of the offline commit gate.
+  const security = await runSecurityAudit(repositoryRoot);
+  const securityPolicyText = await loadText('config/security-audit-policy.json');
 
   const scratch = await mkdtemp(join(tmpdir(), 'bga-mcp-release-candidate-'));
   const primaryRoot = resolve(scratch, 'candidate');
@@ -162,6 +166,9 @@ async function main(): Promise<void> {
       artifactPackage,
       reconstructionPackage,
       outputDirectory,
+      securityAuditText: security.text,
+      securityPolicyText,
+      auditIdentity: security.audit.source,
     });
 
     const ajv = new Ajv2020({ allErrors: true, strict: true });

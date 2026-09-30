@@ -8,9 +8,9 @@ This record describes a run, so it states which one. `pnpm verify:evidence` comp
 {
   "kind": "run",
   "capabilities": 17,
-  "scenarios": 172,
+  "scenarios": 174,
   "claims": 97,
-  "tests": 588
+  "tests": 590
 }
 ```
 

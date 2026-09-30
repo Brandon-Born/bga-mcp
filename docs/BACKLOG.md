@@ -1373,6 +1373,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Deliverable:** Review of threat mitigations, dependencies, permissions, data handling, adapters, release pipeline, and residual risks.
 - **Acceptance:** Every open release-blocking risk has an owner and resolution; unsupported risk results in removal or disabling of the affected capability.
 - **Verification:** Security scenarios and scans pass against the exact release candidate, including live tests for Studio-backed behavior.
+- **Dependency preflight:** Run BGA-422's registry-backed `pnpm audit:security` on the exact candidate source immediately before review, validate its source/configuration digests against the retained candidate assessment, and retain the fresh result. Missing, unavailable, expired, or undisposed assessments block approval; the original candidate bytes are preserved.
 
 ### BGA-406 — Establish private vulnerability reporting
 
@@ -1474,6 +1475,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Deliverable:** Publish the exact signed and security-reviewed BGA-403 candidate without rebuilding it, then verify the public artifact as an unrelated consumer would.
 - **Acceptance:** The registry package, checksums/provenance, source tag, candidate manifest, and verification evidence identify the same bytes and commit. Publication requires an explicit package-name/registry/trusted-publisher decision and an approved release candidate; no token or publish permission is available to pull-request or dry-run jobs. A failed post-publication check stops promotion and follows the documented recovery path rather than silently rebuilding or overwriting a version.
 - **Verification:** In a fresh environment, download the public artifact, verify its digest and provenance, install it, discover exactly the BGA-414 inventory with a real MCP client, run the documented first-use call, remove it, and confirm no project mutation or credential artifact remains. Record the registry URL, immutable version, source commit, CI run, and evidence digest in the release record.
+- **Dependency preflight:** Repeat BGA-422's live assessment on the exact candidate source immediately before publication and retain it alongside the approved immutable artifact. Recheck freshness, source/configuration identity, exception expiry and disposition; stale or failed results stop publication rather than cause a rebuild.
 
 ### BGA-416 — Bind the installed public executable to the frozen release profile
 
@@ -1547,13 +1549,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-422 — Clear current toolchain advisories and gate release-time dependency risk
 
-- **Status:** ready
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-004, BGA-005, BGA-013, BGA-403
 - **Deliverable:** A reviewed dependency update or explicit time-bounded disposition for every current advisory in the exact lockfile, plus a release-time gate that cannot silently publish from a newly vulnerable build/test/candidate toolchain.
 - **Acceptance:** Upgrade or constrain direct `ajv@8.17.1` and every transitive affected copy to a patched version, or record why the vulnerable feature is unreachable with an owner, expiry, and compensating test. Upgrade the Vite/PostCSS `nanoid@3.3.17` path to `>=3.3.18` or eliminate it. Production and development/toolchain results are reported separately: a clean production audit cannot hide an advisory in code that verifies or packages the release. The ordinary offline commit gate remains reproducible; a current registry-backed advisory check runs during scheduled security review and before BGA-405/BGA-415, retains a non-secret report, and blocks unexpired high/critical findings or undisposed lower findings.
 - **Verification:** `pnpm audit --prod --json` and the full locked-graph audit are captured for the exact candidate. Seeded high and moderate advisories in direct and transitive build dependencies fail the release preflight; a documented exception expires and then fails. The gate does not print credentials or silently rewrite the lockfile.
 - **Finding:** On 2026-08-23 the production-only audit reported zero advisories across three runtime dependencies. The full graph reported `ajv@8.17.1` under GHSA-2g4f-4pwh-qvx6 (moderate, patched in 8.18.0) and `nanoid@3.3.17` under GHSA-2v37-7h3g-55p8 (high, patched in 3.3.18), all in development/release-tooling paths. The current `pnpm check` and candidate verifier do not run or retain an advisory assessment.
+- **Implementation, 2026-09-29:** Direct Ajv and Vitest/coverage dependencies and affected transitive packages are patched with exact, same-major overrides. The refreshed production and full audits both report zero findings; the reviewed policy contains no exceptions. `pnpm audit:security` queries both scopes, refuses registry failure, advisory filtering, malformed/count-inconsistent reports and source drift, and retains only sanitized fields tied to the commit, lockfile, package, workspace and policy digests. The offline `pnpm verify:security-audit` gate is included in `pnpm check`; weekly/manual security review and candidate creation require the live check. Candidate bundles retain the report and policy under checksums and digest-bind the report in their manifest. High/critical findings cannot be excepted; lower findings need an owner, reason, at most 30 days, and a current passing compensating scenario. See [dependency security verification](verification/DEPENDENCY_SECURITY.md).
+- **Verification:** `GATE-SECURITY-AUDIT` and `INT-SECURITY-AUDIT-PREFLIGHT` exercise direct/transitive findings, clean production with vulnerable tooling, expiry, absent compensating evidence, stale/future reports, changed source digests, unavailable/malformed data, sanitized output, offline command execution and actual candidate-bundle refusal/retention. Exact-commit CI and the actual tagged candidate's retained audit remain required before this item is marked `verified`; BGA-403 owns that tagged dry run.
 - **Sources:** [GHSA-2g4f-4pwh-qvx6](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6) limits the ajv issue to `$data`-enabled validation and names 8.18.0 as patched. [GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8) describes the zero-size custom-generator loop and names 3.3.18 as the patched 3.x release. Checked 2026-08-23.
 
 ### BGA-423 — Match documentation authority on exact canonical page boundaries

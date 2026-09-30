@@ -23,6 +23,7 @@ import {
   verifyReleaseInventory,
 } from './release.js';
 import { formatFindings, scanDirectory } from './secret-scan.js';
+import { verifySecurityAudit, type AuditIdentity } from './security-audit.js';
 
 export interface VersionPolicySummary {
   readonly package: {
@@ -60,6 +61,9 @@ export interface CandidateBundleInput {
   /** Parsed independently from the reconstructed tarball. */
   readonly reconstructionPackage: ReleasePackageIdentity;
   readonly outputDirectory: string;
+  readonly securityAuditText: string;
+  readonly securityPolicyText: string;
+  readonly auditIdentity: AuditIdentity;
 }
 
 export interface CandidateBundle {
@@ -139,8 +143,11 @@ export function verifyCandidateWorkflow(source: string): GateReport {
     source.includes('pnpm release:candidate'),
     'Candidate workflow does not run the candidate builder',
   );
+  const uploads = [
+    ...source.matchAll(/^\s*(?:-\s*)?uses:\s*actions\/upload-artifact@([^\s#]+)/gmu),
+  ];
   report.require(
-    /actions\/upload-artifact@[0-9a-f]{40}/u.test(source),
+    uploads.length > 0 && uploads.every((match) => /^[0-9a-f]{40}$/u.test(match[1] ?? '')),
     'Candidate workflow does not retain the immutable output with a pinned action',
   );
   return report;
@@ -233,6 +240,39 @@ export async function writeCandidateBundle(input: CandidateBundleInput): Promise
     );
   }
 
+  const passedScenarios = new Set(
+    [...input.evidence.capabilities, ...input.evidence.claims]
+      .flatMap((entry) => entry.scenarios)
+      .filter((entry) => entry.status === 'passed')
+      .map((entry) => entry.id),
+  );
+  let audit: unknown;
+  let securityPolicy: unknown;
+  try {
+    audit = JSON.parse(input.securityAuditText);
+    securityPolicy = JSON.parse(input.securityPolicyText);
+  } catch {
+    throw new Error('Candidate security preflight report or policy is invalid JSON');
+  }
+  const auditReport = verifySecurityAudit(
+    audit,
+    securityPolicy,
+    input.auditIdentity,
+    new Date(),
+    passedScenarios,
+  );
+  auditReport.require(
+    input.auditIdentity.commit === input.source.commit &&
+      input.auditIdentity.lockDigest === input.source.lockDigest,
+    'Security audit does not belong to the candidate source',
+  );
+  auditReport.require(
+    input.auditIdentity.policyDigest === releaseDigest(input.securityPolicyText),
+    'Security audit exception policy differs from retained bytes',
+  );
+  if (auditReport.failed)
+    throw new Error(`Candidate security preflight failed:\n- ${auditReport.failures.join('\n- ')}`);
+
   const artifact = await readFile(input.artifactPath);
   const reconstruction = await readFile(input.reconstructionPath);
   const artifactDigest = releaseDigest(artifact);
@@ -307,6 +347,7 @@ export async function writeCandidateBundle(input: CandidateBundleInput): Promise
       inventory: releaseDigest(input.inventoryText),
       capabilityManifest: releaseDigest(input.capabilityManifestText),
       verificationEvidence: releaseDigest(input.evidenceText),
+      securityAudit: releaseDigest(input.securityAuditText),
     },
   );
 
@@ -325,6 +366,8 @@ export async function writeCandidateBundle(input: CandidateBundleInput): Promise
   const evidenceOutput = resolve(staging, 'verification-evidence.json');
   const schemaOutput = resolve(staging, 'release-candidate.schema.json');
   const checksumsOutput = resolve(staging, 'SHA256SUMS');
+  const auditOutput = resolve(staging, 'security-audit.json');
+  const policyOutput = resolve(staging, 'security-audit-policy.json');
   const manifestText = `${JSON.stringify(manifestDocument, null, 2)}\n`;
 
   try {
@@ -332,11 +375,15 @@ export async function writeCandidateBundle(input: CandidateBundleInput): Promise
     await writeFile(manifestOutput, manifestText);
     await writeFile(evidenceOutput, input.evidenceText);
     await writeFile(schemaOutput, input.schemaText);
+    await writeFile(auditOutput, input.securityAuditText);
+    await writeFile(policyOutput, input.securityPolicyText);
     const checksums = [
       checksumLine(artifactOutput, artifact),
       checksumLine(manifestOutput, manifestText),
       checksumLine(schemaOutput, input.schemaText),
       checksumLine(evidenceOutput, input.evidenceText),
+      checksumLine(auditOutput, input.securityAuditText),
+      checksumLine(policyOutput, input.securityPolicyText),
     ]
       .sort()
       .join('\n');

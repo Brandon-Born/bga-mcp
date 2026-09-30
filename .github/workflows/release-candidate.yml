@@ -46,3 +46,14 @@ jobs:
           if-no-files-found: error
           retention-days: 90
           compression-level: 0
+      - name: Scan advisory report before upload
+        id: safety
+        if: always()
+        run: pnpm verify:safety-gates
+      - name: Retain advisory assessment even when preflight blocks the candidate
+        if: always() && steps.safety.outcome == 'success'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: candidate-security-audit-${{ inputs.tag }}
+          if-no-files-found: warn
+          path: .artifacts/security-audit.json

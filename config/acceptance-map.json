@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-08-14",
+  "updatedAt": "2026-09-29",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1058,6 +1058,30 @@
       "case": "Expressions, subqueries, and CTEs outside the supported SQL subset remain unsupported without guessed undeclared or unused findings",
       "boundary": "packaged",
       "scenarios": ["E2E-AUDIT-DATABASE-ALIASES"]
+    },
+    {
+      "item": "BGA-422",
+      "case": "Direct and transitive advisories across the full graph block release independently of a clean production report",
+      "boundary": "repository",
+      "scenarios": ["GATE-SECURITY-AUDIT"]
+    },
+    {
+      "item": "BGA-422",
+      "case": "Exceptions expire, require passing compensating evidence, and cannot waive high or critical findings",
+      "boundary": "repository",
+      "scenarios": ["GATE-SECURITY-AUDIT"]
+    },
+    {
+      "item": "BGA-422",
+      "case": "Candidate reports bind the commit and locked graph, are sanitized, and are retained without rebuilding the artifact",
+      "boundary": "repository",
+      "scenarios": ["INT-SECURITY-AUDIT-PREFLIGHT"]
+    },
+    {
+      "item": "BGA-422",
+      "case": "The offline commit gate checks release and scheduled review wiring without querying the registry",
+      "boundary": "repository",
+      "scenarios": ["GATE-SECURITY-AUDIT"]
     }
   ]
 }

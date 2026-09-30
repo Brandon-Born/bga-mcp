@@ -251,7 +251,10 @@
           "reference": "tool:audit_database_usage",
           "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
         },
-        { "reference": "tool:check_setup", "scenarios": ["E2E-SETUP-READY"] },
+        {
+          "reference": "tool:check_setup",
+          "scenarios": ["E2E-SETUP-READY"]
+        },
         {
           "reference": "tool:inspect_project",
           "scenarios": ["E2E-INSPECT-PROJECT-LEGACY", "E2E-LEGACY-CLIENT-ROOTS"]
@@ -401,7 +404,10 @@
           "reference": "tool:audit_database_usage",
           "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
         },
-        { "reference": "tool:check_setup", "scenarios": ["E2E-SETUP-READY"] },
+        {
+          "reference": "tool:check_setup",
+          "scenarios": ["E2E-SETUP-READY"]
+        },
         {
           "reference": "tool:inspect_project",
           "scenarios": ["E2E-INSPECT-PROJECT-LEGACY"]
@@ -475,11 +481,13 @@
       "dimension": "transport",
       "value": "stdio",
       "support": "supported",
-      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory.",
+      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server.",
       "scenarios": [
         "E2E-RELEASE-PUBLIC-EXECUTABLE",
         "E2E-STDIO-SHUTDOWN",
-        "GATE-COMPATIBILITY-MATRIX"
+        "GATE-COMPATIBILITY-MATRIX",
+        "GATE-SECURITY-AUDIT",
+        "INT-SECURITY-AUDIT-PREFLIGHT"
       ]
     },
     {
