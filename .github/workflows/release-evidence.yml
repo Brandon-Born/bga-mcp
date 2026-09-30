@@ -1,0 +1,102 @@
+name: Publish candidate verification evidence
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-evidence-v1.0.0-rc.1
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      plan-digest: ${{ steps.packet.outputs.plan-digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Verify implementation without publication permission
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm check
+      - name: Verify signed originals and prepare scanned evidence packet
+        id: packet
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: pnpm release:evidence prepare "$RUNNER_TEMP/prepared"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: prepared-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/prepared
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: prepared-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/prepared
+      - name: Publish only digest-bound scanned metadata with no dependency installation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_PLAN_DIGEST: ${{ needs.prepare.outputs.plan-digest }}
+        run: node --experimental-strip-types scripts/publish-release-evidence.ts "$RUNNER_TEMP/prepared" "$EXPECTED_PLAN_DIGEST"
+
+  verify:
+    if: github.ref == 'refs/heads/main'
+    needs: publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Download public release evidence and validate schema, signature and exact coverage
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm release:evidence download "$RUNNER_TEMP/published-evidence"
+      - name: Retain independently downloaded public evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: verified-published-evidence-${{ github.run_id }}
+          path: ${{ runner.temp }}/published-evidence
+          if-no-files-found: error
+          retention-days: 90

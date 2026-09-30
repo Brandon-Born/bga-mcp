@@ -1094,6 +1094,24 @@
       "case": "Retained bytes, original source and CI, archive and full subjects must match independently reviewed receipt; rewritten checksums and substituted provenance fail offline policy checks",
       "boundary": "repository",
       "scenarios": ["INT-RELEASE-SIGNING"]
+    },
+    {
+      "item": "BGA-407",
+      "case": "Evidence publication is main-only, manual and isolated from builds; public schema/signature/coverage download acceptance is required",
+      "boundary": "repository",
+      "scenarios": ["GATE-RELEASE-EVIDENCE"]
+    },
+    {
+      "item": "BGA-407",
+      "case": "Every frozen advertised capability and environment has exact evidence; excluded and stale entries cannot become local or live Studio claims",
+      "boundary": "repository",
+      "scenarios": ["INT-RELEASE-EVIDENCE"]
+    },
+    {
+      "item": "BGA-407",
+      "case": "A scanned metadata-only handoff is digest-bound, matching interrupted drafts can resume, and existing or conflicting published assets cannot be overwritten",
+      "boundary": "repository",
+      "scenarios": ["INT-RELEASE-EVIDENCE-PACKET"]
     }
   ]
 }

@@ -89,7 +89,10 @@
         "GATE-SECURITY-AUDIT",
         "INT-SECURITY-AUDIT-PREFLIGHT",
         "GATE-RELEASE-SIGNING",
-        "INT-RELEASE-SIGNING"
+        "INT-RELEASE-SIGNING",
+        "GATE-RELEASE-EVIDENCE",
+        "INT-RELEASE-EVIDENCE",
+        "INT-RELEASE-EVIDENCE-PACKET"
       ],
       "ciEvidence": "ci-36665974043"
     }

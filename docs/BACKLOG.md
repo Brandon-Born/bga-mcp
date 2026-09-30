@@ -1393,12 +1393,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-407 — Publish per-release verification evidence
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-012, BGA-403, BGA-404
 - **Deliverable:** Non-secret machine-readable evidence attached to every release and retained according to policy.
 - **Acceptance:** Evidence covers every advertised capability and claimed environment, clearly separates local from live Studio results, and identifies stale or excluded capabilities.
 - **Verification:** Release validation downloads the published evidence, checks schema/signature, and proves exact capability coverage.
+
+- **Implementation, 2026-09-30:** A separate manual main-only prepare/publish/verify workflow consumes the existing BGA-404 signed candidate without rebuilding or executing it. It publishes twelve scanned metadata assets on the existing candidate tag, including the signed original evidence, bundle, digest-bound original inventory/manifest, trusted schemas and a recomputed release-scoped view. Seven tools, three resources and stdio are distinguished from six excluded repository entries; live Studio remains `not-run`, and stale evidence cannot stand behind advertised entries. Only the publisher has repository-write permission, takes a job-output digest-bound plan and installs no dependencies. Matching drafts can resume; foreign/conflicting or incomplete public records fail without overwriting. Public download validates schemas, signature, original source/digests and exact coverage. Actual publication, independent public download and exact-source CI remain pending. [Retention policy and verification](verification/RELEASE_EVIDENCE.md).
+- **Sources:** [GitHub releases](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases) says releases are "based on Git tags"; [GitHub CLI](https://cli.github.com/manual/gh_release_create) documents `--verify-tag`, drafts and prereleases; [release assets API](https://docs.github.com/en/rest/releases/releases) documents asset digests. BGA-404 owns the existing signature and its reviewed identity constraints.
 
 ### BGA-408 — Establish the BGA framework change process
 

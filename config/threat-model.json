@@ -446,7 +446,12 @@
       "assets": ["ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "A capability is released as verified while a scenario proving it never ran, or the artifact saying so was edited afterwards.",
-      "mitigations": ["TM-EVIDENCE-COVERAGE", "TM-EVIDENCE-INTEGRITY", "TM-MODEL-AGREEMENT"]
+      "mitigations": [
+        "TM-EVIDENCE-COVERAGE",
+        "TM-EVIDENCE-INTEGRITY",
+        "TM-MODEL-AGREEMENT",
+        "TM-RELEASE-EVIDENCE"
+      ]
     },
     {
       "id": "AC-CANDIDATE-SUBSTITUTION",
@@ -1214,6 +1219,15 @@
       "status": "implemented",
       "backlog": "BGA-404",
       "scenarios": ["GATE-RELEASE-SIGNING", "INT-RELEASE-SIGNING"]
+    },
+    {
+      "id": "TM-RELEASE-EVIDENCE",
+      "title": "Evidence-only release publication requires exact signed capability coverage and a scanned digest-bound handoff isolated from builds",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-407",
+      "scenarios": ["GATE-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE-PACKET"]
     }
   ],
   "residualRisks": [

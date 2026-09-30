@@ -186,17 +186,22 @@ export async function readSigningCandidate(directory: string, receipt: unknown) 
   return {
     identity,
     subjects: names.map((name) => ({ name, digest: { sha256: digest(bytes(name)).slice(7) } })),
-    predicate: {
-      schemaVersion: 1,
-      repository: SIGNING_REPOSITORY,
-      source: { commit: identity.sourceCommit, tag: identity.sourceTag },
-      producer: { workflow: '.github/workflows/release-candidate.yml', run: identity.producerUrl },
-      sourceCi: identity.ciUrl,
-      retainedArchive: { artifactId: identity.artifactId, digest: identity.archiveDigest },
-      candidate: identity.candidate,
-      assertion:
-        'The reviewed BGA-403 candidate bytes were retained and checked without rebuilding. This is a retention attestation, not a claim that the signing workflow built them or approved publication.',
-    },
+    predicate: retentionPredicate(receipt),
+  };
+}
+
+export function retentionPredicate(receipt: unknown) {
+  const identity = signingIdentity(receipt);
+  return {
+    schemaVersion: 1,
+    repository: SIGNING_REPOSITORY,
+    source: { commit: identity.sourceCommit, tag: identity.sourceTag },
+    producer: { workflow: '.github/workflows/release-candidate.yml', run: identity.producerUrl },
+    sourceCi: identity.ciUrl,
+    retainedArchive: { artifactId: identity.artifactId, digest: identity.archiveDigest },
+    candidate: identity.candidate,
+    assertion:
+      'The reviewed BGA-403 candidate bytes were retained and checked without rebuilding. This is a retention attestation, not a claim that the signing workflow built them or approved publication.',
   };
 }
 
@@ -235,7 +240,7 @@ export function attestationArguments(
 }
 export function checkVerifiedStatement(
   input: unknown,
-  expected: Awaited<ReturnType<typeof readSigningCandidate>>,
+  expected: Pick<Awaited<ReturnType<typeof readSigningCandidate>>, 'subjects' | 'predicate'>,
 ): void {
   assert(Array.isArray(input) && input.length > 0, 'No cryptographically verified attestation');
   assert(
