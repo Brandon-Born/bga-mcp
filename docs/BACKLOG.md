@@ -1360,12 +1360,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-404 — Sign and attest release artifacts
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-403
 - **Deliverable:** Checksums, signatures or provenance attestations, and verification instructions for distributed packages.
 - **Acceptance:** Users can connect an artifact to the source commit and CI run; signing credentials are isolated from untrusted builds.
 - **Verification:** Clean artifacts verify, modified artifacts fail, and fresh-install E2E uses the verified released artifact.
+
+- **Implementation, 2026-09-30:** Separate manual main-only prepare/sign/verify jobs consume original BGA-403 artifact `11098152088`, recheck its independently recorded archive SHA-256, and never rebuild it. Only the sign job has short-lived OIDC/attestation permission; it installs no dependencies and executes no candidate. A custom multi-subject retention predicate binds the original tag, source, producer workflow, source CI and candidate digests, rather than claiming the signing job built the package. Verification checks crypto identity and all signed subjects/provenance, then uses the verified tarball for fresh real-client install/use/removal. Ordinary gates cover isolation and seeded policy defects offline; actual workflow, cryptographic negatives and consumer evidence remain pending. [Verification instructions](verification/RELEASE_SIGNING.md).
+- **Sources:** [actions/attest](https://github.com/actions/attest) says "a short-lived Sigstore-issued certificate"; [GitHub attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations), [CLI verification](https://cli.github.com/manual/gh_attestation_verify), and [offline verification](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/verify-attestations-offline) document custom predicates, identity constraints and independent trusted roots.
 
 ### BGA-405 — Complete release security review
 

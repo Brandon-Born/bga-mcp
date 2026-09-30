@@ -455,7 +455,7 @@
       "assets": ["ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "Signing, security review, or publication consumes an artifact other than the one whose installed scenarios passed.",
-      "mitigations": ["TM-CANDIDATE-IMMUTABLE"]
+      "mitigations": ["TM-CANDIDATE-IMMUTABLE", "TM-RELEASE-SIGNING"]
     },
     {
       "id": "AC-CANDIDATE-PUBLICATION",
@@ -901,7 +901,7 @@
     },
     {
       "id": "TM-DOC-REQUEST-CONTENT",
-      "title": "A request carries the client query only after recognizable pastes — paths, control characters, over-long text, source syntax — are refused where the request is built",
+      "title": "A request carries the client query only after recognizable pastes \u2014 paths, control characters, over-long text, source syntax \u2014 are refused where the request is built",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
@@ -1205,6 +1205,15 @@
       "status": "implemented",
       "scenarios": ["INT-STUDIO-NO-PRODUCTION-LOGS"],
       "backlog": "BGA-312"
+    },
+    {
+      "id": "TM-RELEASE-SIGNING",
+      "title": "Short-lived signing identity is isolated from builds and binds original retained bytes to reviewed source and CI",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-404",
+      "scenarios": ["GATE-RELEASE-SIGNING", "INT-RELEASE-SIGNING"]
     }
   ],
   "residualRisks": [
@@ -1268,7 +1277,7 @@
     },
     {
       "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
-      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason.",
+      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason.",
       "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
       "acceptedBy": "Brandon Born"
     },

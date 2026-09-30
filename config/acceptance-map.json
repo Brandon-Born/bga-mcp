@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-09-29",
+  "updatedAt": "2026-09-30",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1082,6 +1082,18 @@
       "case": "The offline commit gate checks release and scheduled review wiring without querying the registry",
       "boundary": "repository",
       "scenarios": ["GATE-SECURITY-AUDIT"]
+    },
+    {
+      "item": "BGA-404",
+      "case": "Manual main-only signing isolates identity from builds, prevents rebuilding and publication, and requires verified consumer use",
+      "boundary": "repository",
+      "scenarios": ["GATE-RELEASE-SIGNING"]
+    },
+    {
+      "item": "BGA-404",
+      "case": "Retained bytes, original source and CI, archive and full subjects must match independently reviewed receipt; rewritten checksums and substituted provenance fail offline policy checks",
+      "boundary": "repository",
+      "scenarios": ["INT-RELEASE-SIGNING"]
     }
   ]
 }

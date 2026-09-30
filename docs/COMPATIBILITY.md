@@ -92,3 +92,5 @@ No editor or agent client is claimed as supported yet. BGA-401 introduces the ma
 4. Run `pnpm check`. A claim without evidence fails the gate rather than shipping as a promise.
 
 The `v1.0.0-rc.1` candidate passed exact-source CI across Ubuntu, macOS and Windows on Node 22 and 24. Its retained Ubuntu/Node 24 tarball was also installed independently on macOS and exercised through its package-manager-created public command. The [candidate verification record](verification/RELEASE_CANDIDATE.md) distinguishes source CI package hashes from the one immutable candidate and records the supported inventory. BGA-401 still owns real coding-client smoke claims.
+
+BGA-404 release signing adds no network access or new transport to the installed server. Its ordinary scenarios check offline release policy; real signatures and fresh use of the verified original package are exercised by the separate manual workflow described in [release signing](verification/RELEASE_SIGNING.md).

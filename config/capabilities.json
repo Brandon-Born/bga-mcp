@@ -87,7 +87,9 @@
         "GATE-RELEASE-INVENTORY",
         "GATE-VERSION-POLICY",
         "GATE-SECURITY-AUDIT",
-        "INT-SECURITY-AUDIT-PREFLIGHT"
+        "INT-SECURITY-AUDIT-PREFLIGHT",
+        "GATE-RELEASE-SIGNING",
+        "INT-RELEASE-SIGNING"
       ],
       "ciEvidence": "ci-36665974043"
     }

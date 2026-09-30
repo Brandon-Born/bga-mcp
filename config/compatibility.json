@@ -481,13 +481,15 @@
       "dimension": "transport",
       "value": "stdio",
       "support": "supported",
-      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests.",
+      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests. BGA-404 adds isolated original-byte attestation and a separate signature-verified consumer workflow; ordinary scenario tests exercise offline policy only.",
       "scenarios": [
         "E2E-RELEASE-PUBLIC-EXECUTABLE",
         "E2E-STDIO-SHUTDOWN",
         "GATE-COMPATIBILITY-MATRIX",
         "GATE-SECURITY-AUDIT",
-        "INT-SECURITY-AUDIT-PREFLIGHT"
+        "INT-SECURITY-AUDIT-PREFLIGHT",
+        "GATE-RELEASE-SIGNING",
+        "INT-RELEASE-SIGNING"
       ]
     },
     {

@@ -111,7 +111,7 @@ CI must fail when runtime capability discovery and the manifest differ, or when 
 
 ### Release-candidate dry run
 
-The manual `Release candidate` workflow accepts only an existing `vX.Y.Z-rc.N` tag. Its checkout disables persisted credentials and its complete workflow permission is `contents: read`; it has no package, identity-token, registry, signing, or publication permission. BGA-404 and BGA-415 add signing and publication later, after they can consume the retained candidate rather than rebuild it.
+The manual `Release candidate` workflow accepts only an existing `vX.Y.Z-rc.N` tag. Its checkout disables persisted credentials and its complete workflow permission is `contents: read`; it has no package, identity-token, registry, signing, or publication permission. BGA-404 adds a separate signing workflow that consumes that retained candidate; BGA-415 retains publication ownership.
 
 `pnpm release:candidate` runs the complete local gate at the tagged commit, packs the candidate, and checks that its digest is the artifact digest recorded by the packaged end-to-end run. It then creates a detached worktree at the same tag, installs the same lockfile offline, reconstructs the tarball, and requires byte-for-byte equality. The reconstruction is discarded. Only the original tarball enters the candidate directory.
 
@@ -196,3 +196,7 @@ Project documentation and release notes use these terms precisely:
 - **Experimental:** available only by explicit opt-in and not part of the verified compatibility contract.
 
 No other wording should imply a stronger level of confidence than the recorded evidence supports.
+
+### Original-candidate signing — BGA-404
+
+`pnpm verify:release-signing` and the GATE-RELEASE-SIGNING/INT-RELEASE-SIGNING scenarios run offline in the ordinary gate. They prove job isolation, pinned actions, no rebuild or publication path, and archive/subject/provenance policy refusal; synthetic policy tests do not produce signatures. The explicit manual signing workflow separately runs `pnpm verify:signed-release` against a real Sigstore bundle with independently acquired trust roots. It verifies the reviewed signing identity, refuses modified bytes and wrong commit/workflow, and installs that exact original tarball for real-client discovery, first use, excluded-call refusal, unchanged-project hash, clean exit and removal. See [verification policy and evidence](verification/RELEASE_SIGNING.md).
