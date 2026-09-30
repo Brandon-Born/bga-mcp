@@ -13,13 +13,13 @@ The custom predicate `https://github.com/Brandon-Born/bga-mcp/predicates/release
 
 ## Verification instructions
 
-Obtain the signed packet and the expected signing commit from the independently reviewed signing receipt. Obtain a trusted verifier checkout from that same reviewed commit (or a subsequently reviewed checkout), Node 24 and GitHub CLI with artifact-attestation support. Never run verification code or accept a trusted-root file supplied by the artifact packet itself.
+Obtain the signed packet and the expected signing commit from the independently reviewed [signing receipt](release-signing-v1.0.0-rc.1.json). Obtain a trusted verifier checkout from that same reviewed commit (or a subsequently reviewed checkout), Node 24 and GitHub CLI with artifact-attestation support. Never run verification code or accept a trusted-root file supplied by the artifact packet itself.
 
 The packet contains the original seven files plus `sigstore-bundle.json` and `release-provenance.json`. In the trusted repository checkout, run:
 
 ```sh
 gh attestation trusted-root > /tmp/bga-independent-trusted-root.jsonl
-node --experimental-strip-types scripts/release-signing.ts verify /path/to/signed-packet EXPECTED_SIGNING_COMMIT /tmp/bga-independent-trusted-root.jsonl
+node --experimental-strip-types scripts/release-signing.ts verify /path/to/signed-packet 5a3dc725adcf2bf914d8a0be09ab1a6207c46cde /tmp/bga-independent-trusted-root.jsonl
 ```
 
 Replace the packet path and signing commit with the reviewed values. The verifier requires repository `Brandon-Born/bga-mcp`, workflow `.github/workflows/release-signing.yml`, `refs/heads/main`, the exact signing/source commit, GitHub OIDC issuer, hosted runners, the exact custom predicate and seven matching signed subjects. It then compares the original source, producer CI and all candidate bytes with the independently tracked candidate receipt. The signing commit is distinct from the original package source commit. Passing `gh attestation verify` without these policy checks is insufficient. `SHA256SUMS` alone does not authenticate bytes.
@@ -30,7 +30,15 @@ Trusted roots are acquired independently through GitHub CLI, then verification a
 
 Ordinary `pnpm check` includes two offline scenarios: GATE-RELEASE-SIGNING rejects unsafe workflow permissions, triggers, dependencies, rebuilds and publication; INT-RELEASE-SIGNING rejects archive, checksum, source, subject and predicate substitution against synthetic retention-policy inputs. Those tests do not generate signatures.
 
-The manual workflow separately runs `pnpm verify:signed-release` with a real bundle. It must cryptographically refuse changed tarball bytes, a wrong signing commit and a wrong workflow. A fresh consumer installs the verified original tarball, discovers seven tools and three resources, performs first use, refuses excluded tools, hashes the project before/after, checks clean process exit and removes the installed command. The retained result records the original digest and signing commit. Hosted execution and independent verification are pending; BGA-404 remains implemented until they pass.
+The manual workflow separately runs `pnpm verify:signed-release` with a real bundle. It must cryptographically refuse changed tarball bytes, a wrong signing commit and a wrong workflow. A fresh consumer installs the verified original tarball, discovers seven tools and three resources, performs first use, refuses excluded tools, hashes the project before/after, checks clean process exit and removes the installed command. The retained result records the original digest and signing commit. BGA-404 is verified with the actual and independent evidence below.
+
+## Observed verification, 2026-09-30
+
+[Signing workflow 36740988457](https://github.com/Brandon-Born/bga-mcp/actions/runs/36740988457) completed successfully at signing source `5a3dc725adcf2bf914d8a0be09ab1a6207c46cde`. [Attestation 51527596](https://github.com/Brandon-Born/bga-mcp/attestations/51527596) and its [public transparency entry](https://search.sigstore.dev?logIndex=3021662324) bind seven original subjects. [Exact-source CI 36740949025](https://github.com/Brandon-Born/bga-mcp/actions/runs/36740949025) passed all six Ubuntu/macOS/Windows Node 22/24 jobs, each with 592 tests and 176 passing required scenarios. CI checks later signing code and does not rebuild or replace the tagged release candidate.
+
+The signed packet is GitHub artifact `11109319828`, named `signed-candidate-36740988457`, archive digest `sha256:3f2143b05960f69cbaf9a4798751e4d931ac7058957e303f42fb2174684fbc54`, retained until `2026-12-29T16:00:17Z`. Download it with `gh run download 36740988457 --name signed-candidate-36740988457 --dir /path/to/signed-packet`. It contains the original tarball digest `sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa`, plus the original manifest, schema, evidence, audit/policy and checksums, and the new bundle/readable predicate. All seven originals were independently compared byte for byte with the BGA-403 bundle. The tag and original source remain unchanged.
+
+Both the Ubuntu hosted consumer and an independent macOS consumer acquired trust roots separately, verified the exact signing identity and original provenance/subjects, refused actual modified tarball bytes and wrong signing commit/workflow, and passed fresh installation, seven-tool/three-resource discovery, first use, excluded-call refusal, unchanged-project hashing, clean exit and removal. The [machine receipt](release-signing-v1.0.0-rc.1.json) retains digests and sanitized results; local original signed files are ignored under `.artifacts/signed-release-candidates/v1.0.0-rc.1/`. Finite workflow artifact retention is distinct from BGA-407's durable per-release evidence distribution. This signature adds no coding-client compatibility claim and does not approve publication or renew the dated security audit.
 
 ## Sources
 
