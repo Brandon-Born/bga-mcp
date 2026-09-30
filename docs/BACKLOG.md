@@ -1324,7 +1324,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-401 — Maintain the supported-client smoke matrix
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-009, BGA-010, BGA-400, BGA-414
 - **Deliverable:** Automated or reproducible smoke tests for every MCP client explicitly claimed as supported.
@@ -1334,7 +1334,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Implementation:** [Client matrix](../config/client-smoke.json), [client guide](CLIENTS.md) and `pnpm verify:clients` bind every maintained supported client to its exact dependency version, compatibility claim, fixtures, runnable packaged scenarios and CI environments. Controlled native Codex app-server 0.159.2/macOS arm64 evidence uses the signed original candidate and checks all released calls, refusals, unchanged project/configuration, restart, process exit and removal. Untested clients remain candidates; the native smoke adds no GUI, inference-turn or general editor support claim to the frozen contract.
 - **Sources:** [Official Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli) and [app-server API](https://learn.chatgpt.com/docs/app-server), which describes its tool method as “call a tool on a thread’s configured MCP server.” The installed binary's generated schema confirms request fields before implementation. This item changes client verification tooling, not BGA framework rules.
 
-- **Verified, 2026-09-30:** [Exact-commit CI 36776024143](https://github.com/Brandon-Born/bga-mcp/actions/runs/36776024143) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at `4d2141048bb92abd7e93dc6b27b6d209afba1e9f`, each with 598 tests and 182 required scenarios. A separate native Codex run from that clean committed implementation passed against the original signed candidate, without inference turns. [Client verification](verification/CLIENT_SMOKE.md) records the exact bounded claim and cleanup evidence. BGA-424 is next and still requires selection/authorization of a real project and task set.
+- **Verified, 2026-09-30:** [Exact-commit CI 36777743287](https://github.com/Brandon-Born/bga-mcp/actions/runs/36777743287) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at `7e97256b42ac9c43931008c4d79dcb6b460bfbd8`, each with 598 tests and 182 required scenarios. A separate native Codex run from that clean committed implementation passed against the original signed candidate, without inference turns. [Client verification](verification/CLIENT_SMOKE.md) records the exact bounded claim and cleanup evidence. BGA-424 is next and still requires selection/authorization of a real project and task set.
 
 ### BGA-402 — Define versioning and compatibility policy
 
