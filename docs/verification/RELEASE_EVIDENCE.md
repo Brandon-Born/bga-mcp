@@ -19,7 +19,7 @@ The view accounts for all 17 repository entries: the frozen seven tools, three r
 
 ## Validation
 
-Use a separately trusted, reviewed repository checkout with full Git history, its frozen dependencies, GitHub CLI supporting artifact attestations and curl. Acquire trust roots through GitHub CLI independently of the packet. Do not execute verifier code supplied by an asset packet.
+Use the separately trusted distribution checkout `0c7564c2b872dc3e73eeb54561e542fa1023d118` (or a later reviewed verifier that accepts this same packet) with full Git history, its frozen dependencies, GitHub CLI supporting artifact attestations and curl. Acquire trust roots through GitHub CLI independently of the packet. Do not execute verifier code supplied by an asset packet.
 
 ```sh
 corepack pnpm release:evidence download /tmp/bga-public-release-evidence
@@ -43,7 +43,15 @@ Retain release assets for the lifetime of their release, with no automatic expir
 
 ## Evidence
 
-GATE-RELEASE-EVIDENCE, INT-RELEASE-EVIDENCE and INT-RELEASE-EVIDENCE-PACKET test isolation, exact coverage, exclusions/staleness, digest-bound handoff and conflict refusal offline using synthetic policy inputs. They do not generate signatures or establish live Studio compatibility. Actual workflow publication, independent public download and exact-source CI remain pending; BGA-407 is implemented until those gates pass.
+GATE-RELEASE-EVIDENCE, INT-RELEASE-EVIDENCE and INT-RELEASE-EVIDENCE-PACKET test isolation, exact coverage, exclusions/staleness, digest-bound handoff and conflict refusal offline using synthetic policy inputs. They do not generate signatures or establish live Studio compatibility. Actual workflow publication, independent public download and exact-source CI passed as recorded below; BGA-407 is verified.
+
+## Observed verification, 2026-09-30
+
+[Publication workflow 36747466711](https://github.com/Brandon-Born/bga-mcp/actions/runs/36747466711) at `0c7564c2b872dc3e73eeb54561e542fa1023d118` passed prepare, publish and public-download verification. The [candidate evidence prerelease](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.1) is release `400250086`, with twelve metadata assets and no npm tarball. The publisher resumed that same existing draft after authenticated discovery; it created no duplicate and overwrote no asset. All asset IDs, public URLs and SHA-256 digests are retained in the [distribution receipt](release-evidence-v1.0.0-rc.1.json).
+
+[Exact-source CI 36747467733](https://github.com/Brandon-Born/bga-mcp/actions/runs/36747467733) passed all six supported platform/Node jobs, each with 595 tests and 179 required scenarios. These are distribution-code checks. The published signed original observations retain their own source `a2031afe9da6acbdcf1712007da8394bc0fdeef2`, date and 590-test/174-scenario results; their bytes were preserved. The original signing source remains `5a3dc725adcf2bf914d8a0be09ab1a6207c46cde`.
+
+The hosted Ubuntu verifier and independent macOS verifier downloaded the fixed public asset URLs without a token and independently acquired trust roots. Both passed original signature/identity, trusted schema and exact eleven-entry local coverage with six exclusions and no live Studio claim. Independent probes on copies of the public packet refused omission of an advertised capability, invented Studio support, a permissive replacement schema and changed signed evidence through the actual cryptographic verifier. Local copies remain ignored under `.artifacts/published-release-evidence/v1.0.0-rc.1/`; release assets are retained for the release lifetime under the policy above. BGA-400, BGA-401, BGA-405 and BGA-415 retain install guides, client breadth, release security review and package publication ownership.
 
 ## Sources
 

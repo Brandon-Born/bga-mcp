@@ -46,3 +46,5 @@ Both the Ubuntu hosted consumer and an independent macOS consumer acquired trust
 - [GitHub artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations) documents job permissions and verification.
 - [GitHub CLI verification](https://cli.github.com/manual/gh_attestation_verify) documents signer/source/workflow/issuer policy flags and explicit bundles.
 - [Offline verification](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/verify-attestations-offline) documents independently acquired trusted roots and their limitations.
+
+BGA-407 subsequently distributed the same signed original metadata, original bundle and digest-bound inventory/manifest as public release assets. [Distribution verification](RELEASE_EVIDENCE.md) records the durable destination and independent public download. This does not alter the historical signing receipt or approve package publication.
