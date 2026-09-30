@@ -66,11 +66,14 @@ The first public release queue is:
 4. `BGA-407` — per-release evidence artifact.
 5. `BGA-400` — candidate-based install and removal guides.
 6. `BGA-401` — supported-client smoke matrix.
-7. `BGA-411` — self-contained, inventory-derived public documentation.
-8. `BGA-406` — private vulnerability reporting.
-9. `BGA-408` — BGA framework change process.
-10. `BGA-405` — security review of the exact signed candidate.
-11. `BGA-415` — publish and independently reinstall the first release.
+7. `BGA-424` — evaluate the installed candidate during real agent-assisted BGA development and bound usefulness claims to the results.
+8. `BGA-411` — self-contained, inventory-derived public documentation.
+9. `BGA-406` — private vulnerability reporting.
+10. `BGA-408` — BGA framework change process.
+11. `BGA-405` — security review of the exact signed candidate.
+12. `BGA-415` — publish and independently reinstall the first release.
+
+BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
 This queue does not include BGA-320's live Studio marker, BGA-324's documentation-request privacy decision, or BGA-328's second-account ownership proof. They remain real backlog items for later documentation or Studio integration releases, but are not blockers for a local-only first release. If BGA-414 includes any affected capability after all, its existing owner re-enters the queue before release; it may not be waived or relabeled as verified.
 
@@ -1268,6 +1271,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Depends on:** BGA-001, BGA-013, BGA-300
 - **Deliverable:** A feasibility decision for creating, starting, stopping, and identifying Studio test tables using stable and permitted interfaces.
 - **Acceptance:** The decision records authorization, cleanup, multi-user behavior, rate/abuse risks, and whether automation may be supported, experimental, or rejected.
+- **Runtime testing scope:** Map the steps an agent would need to reproduce a game defect: identify the exact project/build and test accounts, establish a known starting state, exercise a developer-defined scenario, observe its assertions, and stop or restore the session. Record an evidenced mechanism or an explicit unsupported/manual step for each operation. Review official sources before proposing framework behavior; an absent or ambiguous interface remains an open question. BGA-425 owns how resulting game-specific test evidence could be read, and this item owns the Studio-operation feasibility decision.
 - **Verification:** A constrained live proof is required before any public capability is proposed.
 - **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
@@ -1278,6 +1282,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Depends on:** BGA-307, BGA-308
 - **Deliverable:** Only the test-table operations approved by BGA-308, each as a separate manifest capability.
 - **Acceptance:** Operations are isolated to the test project/accounts, explicitly mutating, idempotent where possible, bounded, and always stop/clean up created tables.
+- **Runtime testing scope:** If BGA-308 establishes a viable mechanism, bind each operation to the exact test session and project/build under test, and expose enough outcome evidence for an agent to distinguish setup failure, incomplete execution, and completed execution. Starting or ending a table cannot establish that a game's assertions passed. Any composition with test-result reading depends on the BGA-425 decision and separately reviewed implementation work.
 - **Verification:** Each operation receives its own live E2E success, invalid-input, wrong-target, interruption, repeat, and cleanup scenarios.
 - **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
@@ -1288,6 +1293,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Depends on:** BGA-308, BGA-309
 - **Deliverable:** A feasibility decision followed, only if approved, by safe access to allowed test-player perspectives.
 - **Acceptance:** No real player impersonation or session leakage; behavior is confined to Studio test accounts and documented interfaces.
+- **Runtime testing scope:** Evaluate whether an agent can reproduce a developer-defined scenario from each required test-player perspective and associate observations with the exact actor and test session. Record which observations are available, manual, or unsupported; successful perspective access is not evidence of UI correctness or permission correctness. Observation filtering must preserve the existing ownership and privacy boundaries.
 - **Verification:** Live E2E proves identity boundaries, allowed perspective switching, rejection of non-test users, and session redaction.
 - **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
@@ -1298,6 +1304,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Depends on:** BGA-308, BGA-309
 - **Deliverable:** A feasibility decision followed, only if approved, by save/restore operations for isolated test tables.
 - **Acceptance:** Slots and table ownership are explicit; restore cannot target another table; test cleanup restores or ends the table safely.
+- **Runtime testing scope:** Evaluate repeatable reproduction of a developer-defined regression from a known state, including the test session, source/build identity, state provenance, and compatibility of the saved state with the tested change. Verify restoration before consuming subsequent test outcomes; a stale, incompatible, or unverified restoration leaves the scenario incomplete. No game state or private source is retained in public fixtures or evidence.
 - **Verification:** Live E2E saves, mutates, restores, verifies exact state, rejects cross-table restore, handles unavailable/ended states, and cleans up.
 - **Note:** The 2026-08-07 [Studio boundary review](verification/STUDIO_BOUNDARY_REVIEW.md) found no documented interface for this — it is a web page — so building it means driving an authenticated session, which is an explicit non-goal. Left `planned` rather than rejected: the research question is still open if BGA publishes an API, but nothing should be built on the current evidence.
 
@@ -1414,11 +1421,12 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-411 — Make public and agent-facing documentation self-contained and inventory-derived
 
-- **Status:** ready
+- **Status:** planned
 - **Priority:** P0
-- **Depends on:** BGA-003, BGA-006, BGA-400, BGA-414, BGA-416
+- **Depends on:** BGA-003, BGA-006, BGA-400, BGA-414, BGA-416, BGA-424
 - **Deliverable:** A packed artifact whose README/help links resolve for an installed-package reader and whose public/canonical agent-facing capability inventory and boundary descriptions are generated or checked against real MCP discovery and policy configuration.
 - **Acceptance:** Every relative path in the packed README exists in the tarball; alternatively, repository-only material uses an absolute, versioned public URL. CLI help never tells an installed user to read a file the package omits. Tool, resource-template, concrete-resource, prompt, stability, network, and experimental counts are derived from the manifest plus packaged discovery, with the distinction between templates and concrete listed resources stated. README, install/help text, and `AGENTS.md` agree that network access is off by default—not absent—and identify the explicitly enabled network surfaces. None calls an implemented or experimental capability verified.
+- **Usefulness claims:** Real-development examples and claims about agent effectiveness cite BGA-424's candidate, client, tasks, and adjudicated results. Fixture coverage and client smoke tests cannot be presented as evidence of developer productivity or general game correctness; an inconclusive evaluation produces explicitly limited claims.
 - **Verification:** An isolated consumer installs the tarball, resolves every local Markdown/help path, follows one install and one removal flow, discovers the server, and compares all documented names/counts/stabilities with the client response and packed manifest. A seeded missing file and stale count each fail.
 - **Finding:** The audited tarball contained README.md but no `docs/`; all README links to installation, testing, backlog, compatibility, threat model, and verification records were broken locally. Discovery returned 10 tools and 11 concrete resources, not the documented 7 and 3. The canonical agent instructions also retained the obsolete absolute claim that the server never opens a network connection.
 - **Additional finding, 2026-08-23:** Current prose has drifted again. `docs/INSTALL.md` says BGA-403 has not landed and only `legacy-flat` is supported; README says BGA-318, BGA-326, and BGA-328 remain open after their recorded implementations, points users at the development `dist/cli.js`, and describes an incomplete session boundary the backlog says was closed. The install guide still reports the older `4/9` documentation score while BGA-211 records `3/9`. The package still omits every linked `docs/*` page and `SECURITY.md`. BGA-416 additionally proves the installed public command and README inventory describe different profiles. These remain one inventory-derived documentation defect, not separate implementation items.
@@ -1462,7 +1470,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Status:** planned
 - **Priority:** P0
-- **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414, BGA-416 through BGA-420, BGA-422
+- **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414, BGA-416 through BGA-420, BGA-422, BGA-424
 - **Deliverable:** Publish the exact signed and security-reviewed BGA-403 candidate without rebuilding it, then verify the public artifact as an unrelated consumer would.
 - **Acceptance:** The registry package, checksums/provenance, source tag, candidate manifest, and verification evidence identify the same bytes and commit. Publication requires an explicit package-name/registry/trusted-publisher decision and an approved release candidate; no token or publish permission is available to pull-request or dry-run jobs. A failed post-publication check stops promotion and follows the documented recovery path rather than silently rebuilding or overwriting a version.
 - **Verification:** In a fresh environment, download the public artifact, verify its digest and provenance, install it, discover exactly the BGA-414 inventory with a real MCP client, run the documented first-use call, remove it, and confirm no project mutation or credential artifact remains. Record the registry URL, immutable version, source commit, CI run, and evidence digest in the release record.
@@ -1559,6 +1567,30 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Finding:** `sourceForUrl` currently uses `url.href.startsWith(source.canonicalUrl)`. As a result, both `https://en.doc.boardgamearena.com/BGA_Studio_CookbookExtra` and `/BGA_Studio_Cookbook/Subpage` are classified as the page-specific `official-host-community-edited` source even though the catalog reviews only the Cookbook page. This can misstate authority, provenance, retention, and allowed use for another page on the official host.
 - **Sources:** [`config/doc-sources.json`](../config/doc-sources.json) scopes the community entry to `https://en.doc.boardgamearena.com/BGA_Studio_Cookbook`; [BGA Studio Cookbook](https://en.doc.boardgamearena.com/BGA_Studio_Cookbook) identifies itself as community-editable. Checked 2026-08-23.
 
+### BGA-424 — Evaluate usefulness during real agent-assisted BGA development
+
+- **Status:** planned
+- **Priority:** P1
+- **Depends on:** BGA-001, BGA-008, BGA-010, BGA-400, BGA-401, BGA-403, BGA-414
+- **Deliverable:** A reproducible, non-secret evaluation report for the installed release candidate and an actual coding-agent client working on an explicitly authorized, nontrivial BGA game project. The report identifies the candidate commit and artifact digest, client/version/platform, reviewed task definitions, project revision, and the limits of the sample.
+- **Acceptance:** Complete at least one feature implementation, one defect diagnosis, and one change review. Record setup friction, tools invoked, useful findings, false positives, unsupported patterns, independently identified missed defects, and the agent's resulting decisions. Adjudicate findings against official framework sources or developer-owned game assertions as appropriate; unresolved findings remain unresolved. Measure time or effort savings only with a declared comparable baseline, and state attribution limits when no baseline exists. No untriaged false-certain finding may be represented as a verified success. Record reproducible defects under permanent backlog owners, and turn transferable framework cases into original minimal regression fixtures under BGA-008 with the affected capability's packaged scenario.
+- **Verification:** Install the exact candidate and complete the tasks through the real agent client. Retain a sanitized task/result ledger with observed calls, adjudication evidence, failures, and cleanup; snapshot the project around MCP calls to distinguish the MCP's read-only behavior from intentional agent edits. Re-run any extracted regression through the installed public command, and apply the normal full gate and exact-commit CI requirements to resulting behavior changes. A replacement candidate needs an explicit carry-forward review and re-execution of affected tasks; claims must identify the evaluated artifact rather than silently transfer to new bytes. Client smoke evidence alone does not satisfy this evaluation.
+- **Boundaries:** Project access and edits need the owner's authorization; no private source, credentials, player data, publisher art, or raw transcripts enter repository fixtures or retained public evidence. Studio access is not required for this local evaluation and is not authorized by it. The report may conclude useful, limited, or inconclusive; it establishes only the observed tasks and does not declare every layout, client, or game correct.
+- **Release effect:** Run after BGA-401 and before BGA-411/BGA-415 so public usefulness claims reflect observed development work. Release-blocking defects found here follow their existing owners or receive new permanent IDs; they are resolved before the affected candidate advances. This work does not waive any existing release gate.
+- **Open questions:** The owner-authorized project, concrete task set, participating client, and baseline remain to be selected. Fixture-based verification is not a substitute when a suitable project is unavailable.
+
+### BGA-425 — Research how agents receive game-specific runtime test evidence
+
+- **Status:** planned
+- **Priority:** P2
+- **Depends on:** BGA-001, BGA-013, BGA-016, BGA-424
+- **Deliverable:** A reviewed feasibility and boundary decision for reading developer-owned test results alongside framework diagnostics. Consider scenarios for turns, scoring, end conditions, and UI interactions without assuming that a test runner, Studio API, or portable report format already exists. The decision selects proceed, narrower scope, defer, or reject and creates separate permanent implementation owners only for an accepted approach.
+- **Acceptance:** Establish whether reading local reports adds value beyond the agent's existing tools. Define how results identify the project, tested source/build, producer, scenario/assertions, execution time, and completeness; distinguish passed, failed, skipped, incomplete, stale, malformed, and untrusted evidence. Bind results to the tested revision using an evidenced mechanism or report identity as unknown. Treat reports as untrusted data, never instructions, and define configured-root confinement, size/deadline limits, redaction, and permitted retention. Keep test execution with the agent's existing tools; executing project code or adding browser/network/Studio operations to this MCP requires a separate explicit scope and threat-model decision. A passing assertion cannot imply correctness of the whole game or untested UI behavior.
+- **Verification:** Evaluate representative developer-owned outputs for the accepted subset, including a passing scenario, a failing assertion, and stale, partial, skipped, malformed, and credential-bearing reports. Document what can be checked independently and what remains a producer assertion. A proceeding decision requires an observed end-to-end example from a real game test; synthetic reports may prove proposed parsing/security behavior but cannot establish live BGA compatibility. Later implementation must add its public contract, capability/compatibility entries, installed-command scenarios, and privacy evidence before it can be called verified.
+- **Coordination:** BGA-308 through BGA-311 own Studio runtime-operation feasibility; BGA-312 owns log access. This item neither duplicates those owners nor assumes their blockers are resolved. Its decision records any dependencies on their outcomes and the manual steps that remain in an agent's development/testing loop.
+- **Release effect:** Later-release research, outside the local-only first-release queue. Adding a runtime-evidence capability requires a reviewed inventory change and its own implementation and verification work.
+- **Open questions:** Which producers/formats are available on an authorized game, whether results can identify the exact tested revision, and whether a bounded reader is useful enough to justify a new MCP capability. Consult official BGA documentation before proposing any framework-specific runtime mechanism; silence or ambiguity remains an explicit unsupported case.
+
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
@@ -1578,6 +1610,8 @@ This map makes omissions visible when source documents evolve.
 | Security, secrets, data handling, telemetry       | BGA-013 through BGA-018, BGA-300, BGA-301, BGA-319 through BGA-330, BGA-405, BGA-406, BGA-410, BGA-421, BGA-422                                 |
 | Packaging, clients, versioning, releases          | BGA-400 through BGA-422                                                                                                                         |
 | Optional remote documentation transport           | BGA-409                                                                                                                                         |
+| Real agent-development usefulness                 | BGA-424                                                                                                                                         |
+| Game-specific runtime test evidence               | BGA-425, BGA-308 through BGA-311, BGA-312                                                                                                       |
 
 ## Explicitly preserved non-goals
 

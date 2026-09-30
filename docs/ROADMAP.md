@@ -36,6 +36,14 @@ Reading the official documentation for that work showed the premise behind it wa
 
 The 2026-08-08 installed-package adversarial review reopened the exit criterion. Common documented modern constructs produced false findings, and several literal acceptance cases never crossed the packaged public boundary. BGA-124 through BGA-128 own the correction; Phase 1 is not complete until they pass. BGA-124 landed the same day: the state machine is now read in whichever form the project declares it, the framework's own identifiers 1 and 99 are no longer judged as the project's, and a rule that cannot read the whole machine says so instead of guessing.
 
+## Practical usefulness in agent-assisted development
+
+- Evaluate the installed release candidate with a real coding-agent client on an owner-authorized, nontrivial game project (BGA-424).
+- Complete feature implementation, defect diagnosis, and change review tasks; adjudicate useful findings, false positives, unsupported patterns, missed defects, and setup friction.
+- Extract original regression fixtures from transferable framework issues, and limit effectiveness claims to the tasks and comparative evidence actually observed.
+
+Exit criterion: a reproducible, sanitized evaluation identifies the exact candidate and client, accounts for its findings and limitations, and informs public documentation. Fixture scenarios and client smoke tests remain separate evidence; neither establishes developer productivity. BGA-424 follows BGA-401 and precedes BGA-411 and publication in the release queue; BGA-422 remains the next item.
+
 ## Phase 2: Documentation
 
 - Allowlist documentation sources and record what each one permits.
@@ -68,6 +76,7 @@ Opened on 2026-08-08 (BGA-314 through BGA-318). The 2025 push-style roots and el
 - Preview local-to-Studio synchronization as a structured diff.
 - Add guarded, explicitly requested synchronization.
 - Run every Studio adapter scenario against a dedicated, isolated BGA Studio test project.
+- Evaluate the runtime testing loop under the existing BGA-308 through BGA-311 research owners: reproducible setup, developer-defined scenarios, actor-specific observations, restoration, and cleanup. Each step needs an evidenced mechanism or an explicit manual/unsupported outcome before implementation is proposed.
 
 Exit criterion: live end-to-end tests prove that every advertised Studio capability can safely preview and perform its operation, verify the exact target and result, clean up test state, and avoid exposing credentials. Capabilities without this evidence remain unreleased.
 
@@ -83,12 +92,19 @@ Own-account log reading went the other way. The owner accepted that trade on 202
 - Publish packages and signed release artifacts.
 - Establish a process for tracking BGA framework changes.
 - Publish a test-evidence artifact that maps every public capability to a passing end-to-end scenario.
+- Ground public claims about practical agent usefulness in the real-development evaluation (BGA-424).
 
 Exit criterion: a new developer can install, configure, verify, and remove the server using documented steps, and the release has no public capability missing current end-to-end evidence.
 
 The first public release is intentionally local-only. A capability counts as public when the installed MCP server advertises it, even if its description says experimental or requires an opt-in flag. Documentation-network and Studio capabilities therefore stay out of first-release discovery until their existing backlog owners are verified; they are not release blockers and they are not waived. BGA-402 now retains and gates the first stable contract; BGA-403 through BGA-415 define the remaining candidate, signing, evidence, documentation, security, and publication steps, and the serial queue in the backlog permits only one release item to be implemented at a time.
 
 BGA-403 was implemented on 2026-08-15 as a manual, read-only candidate workflow. It runs the complete gate from an existing release-candidate tag, retains one original npm tarball, independently reconstructs the same tag from the frozen lockfile, and requires byte-for-byte equality. The candidate manifest digest-binds the source, lockfile, inventory, capability manifest, verification evidence, and original tarball. The item stays `implemented` until exact-head CI and an actual tagged workflow dry run pass; signing, evidence publication, client claims, and registry publication remain absent.
+
+## Later research: game-specific runtime test evidence
+
+BGA-425 will evaluate whether reading developer-owned test reports through the MCP helps an agent assess turns, scoring, end conditions, and UI scenarios. The research must establish available producers, source/build identity, freshness, completeness, privacy, and the limits of each assertion. Test execution stays with the agent's existing tools unless a separate scope and threat-model decision approves an additional boundary.
+
+The outcome may be a narrower capability, deferral, or rejection. Any accepted implementation receives separate backlog owners and installed-package verification; Studio operations and logs retain their existing owners and blockers. This research is outside the local-only first release, and no passing report will imply correctness of an entire game.
 
 ## Explicit non-goals for the first release
 
