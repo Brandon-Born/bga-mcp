@@ -1,6 +1,6 @@
 {
   "name": "bga-mcp",
-  "version": "0.0.0-development",
+  "version": "1.0.0-rc.1",
   "description": "Unofficial MCP server for Board Game Arena Studio development",
   "type": "module",
   "license": "Apache-2.0",
