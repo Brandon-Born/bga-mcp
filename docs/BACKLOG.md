@@ -1312,14 +1312,14 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-400 — Publish installation and removal guides
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-003, BGA-009, BGA-414
 - **Deliverable:** Verified setup, configuration, troubleshooting, update, and removal instructions for each supported MCP client and platform, including a first-run walkthrough that states the supported layouts and what a modern-layout project will and will not get today.
 - **Acceptance:** Commands use released artifacts, explain permissions and data flow, and never require copying secrets into agent prompts.
 - **Evidence:** [INSTALL.md](INSTALL.md) now leads with the signed original candidate rather than a development clone, identifies finite artifact retention and signature/provenance prerequisites, and distinguishes public metadata distribution from unpublished package bytes. Marked commands/configuration are executed by E2E-INSTALL-GUIDE against the public executable on each CI platform. First use, missing-root refusal, repeated installation, process exit, project hashing and package removal are asserted. BGA-401 owns named coding-client claims; BGA-411 retains ownership of installed documentation completeness.
 - **Update limit:** Only one candidate exists. The repeat-install path is tested; a cross-version update requires a second independently reviewed artifact and cannot yet be claimed.
-- **Verification:** Fresh-environment E2E follows each guide verbatim from install through capability call and clean removal. The same runner separately tests the retained signed original candidate; exact-commit CI remains required before verification.
+- **Verification:** Fresh-environment E2E follows each guide verbatim from install through capability call and clean removal. The same runner separately tests the retained signed original candidate; [Exact-commit CI 36772791627](https://github.com/Brandon-Born/bga-mcp/actions/runs/36772791627) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at `3a24f01`, each with 596 tests and 180 required scenarios. The independent macOS run against the signed original passed; see [installation verification](verification/INSTALLATION.md).
 - **Sources:** [pnpm add](https://pnpm.io/cli/add) documents local tarball sources; [pnpm exec](https://pnpm.io/cli/exec) says “node_modules/.bin is added to the PATH”; [pnpm remove](https://pnpm.io/cli/remove) documents removal from node_modules and package.json. [Signing record](verification/RELEASE_SIGNING.md) binds independently authenticated original bytes.
 
 ### BGA-401 — Maintain the supported-client smoke matrix
