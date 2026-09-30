@@ -1324,7 +1324,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-401 — Maintain the supported-client smoke matrix
 
-- **Status:** verified
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-009, BGA-010, BGA-400, BGA-414
 - **Deliverable:** Automated or reproducible smoke tests for every MCP client explicitly claimed as supported.

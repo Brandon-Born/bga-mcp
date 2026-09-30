@@ -85,7 +85,10 @@ try {
     await connection.close();
   }
   assert.equal(await digestDirectory(project), before);
-  assert.deepEqual(await readFile(userConfig), configBefore);
+  assert(
+    (await readFile(userConfig)).equals(configBefore),
+    'User configuration changed during controlled smoke',
+  );
   const restarted = await connectCodexSmoke(
     'codex',
     resolve(install, 'node_modules/.bin/bga-mcp'),
@@ -102,7 +105,10 @@ try {
   });
   assert.equal(removed.exitCode, 0);
   await assert.rejects(readFile(resolve(install, 'node_modules/.bin/bga-mcp')));
-  assert.deepEqual(await readFile(userConfig), configBefore);
+  assert(
+    (await readFile(userConfig)).equals(configBefore),
+    'User configuration changed during controlled smoke',
+  );
   const output = `${JSON.stringify(
     {
       schemaVersion: 1,
