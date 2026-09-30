@@ -90,3 +90,5 @@ No editor or agent client is claimed as supported yet. BGA-401 introduces the ma
 2. Add the executable scenario that proves it, declaring the scenario identifier in the test title.
 3. Update this file and the affected backlog item in the same change.
 4. Run `pnpm check`. A claim without evidence fails the gate rather than shipping as a promise.
+
+The `v1.0.0-rc.1` candidate passed exact-source CI across Ubuntu, macOS and Windows on Node 22 and 24. Its retained Ubuntu/Node 24 tarball was also installed independently on macOS and exercised through its package-manager-created public command. The [candidate verification record](verification/RELEASE_CANDIDATE.md) distinguishes source CI package hashes from the one immutable candidate and records the supported inventory. BGA-401 still owns real coding-client smoke claims.

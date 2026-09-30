@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-30",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.1",
+    "sourceCommit": "a2031afe9da6acbdcf1712007da8394bc0fdeef2",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.1",
+    "artifactName": "bga-mcp-1.0.0-rc.1.tgz",
+    "lockDigest": "sha256:a17c4c126275539fbea34035bf7af053881f5fca166de0cb51ad30941f5994fa",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:7ef948afd6aadb6bce5b459edf7bbe935b0006bbf515a9ed5f2cca3fcdc4b0a4",
+      "verificationEvidence": "sha256:cd1717e7c146e9588ed5b42d0607de071ac3b9826b015fcf3984f5c3eaa27eda",
+      "artifact": "sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa",
+      "securityAudit": "sha256:41dd84e3abea302827b1824fc951d6dff3a85953b8c42bab6d912e99ead0f4f1"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36720091111",
+    "conclusion": "success",
+    "artifactId": 11098152088,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.1",
+    "archiveDigest": "sha256:d2bf5b3bc0234e1fe2f441956f218df23f9658de5e35e037cdd616f983571385",
+    "expiresAt": "2026-12-29T13:13:29Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36720062520",
+    "commit": "a2031afe9da6acbdcf1712007da8394bc0fdeef2",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:e05755d33698530f62704db593ebea58553b74b2498e085b91cf1c8acb4f7631",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:e05755d33698530f62704db593ebea58553b74b2498e085b91cf1c8acb4f7631",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "linux",
+        "artifactDigest": "sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "win32",
+        "artifactDigest": "sha256:83f32be98b24b5a366a12e69914799e9bf3bd45ffe9e3cb46c72a5669fa4d065",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:83f32be98b24b5a366a12e69914799e9bf3bd45ffe9e3cb46c72a5669fa4d065",
+        "testsPassed": 590,
+        "scenariosPassed": 174
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-09-30T13:16:28.342Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0,
+    "exceptions": 0
+  },
+  "independentConsumer": {
+    "platform": "macOS",
+    "node": "v22.17.1",
+    "sourceCommit": "a2031afe9da6acbdcf1712007da8394bc0fdeef2",
+    "tag": "v1.0.0-rc.1",
+    "artifactDigest": "sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa",
+    "checksumsVerified": 6,
+    "tests": 590,
+    "scenarios": 174,
+    "packagedSuites": 27,
+    "tools": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "productionFindings": 0,
+    "fullGraphFindings": 0,
+    "realClientFirstUse": "passed",
+    "excludedCapabilities": "refused",
+    "excludedOptions": "refused",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed"
+  },
+  "localRetention": ".artifacts/release-candidates/v1.0.0-rc.1",
+  "published": false,
+  "signed": false
+}
