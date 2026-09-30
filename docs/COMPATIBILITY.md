@@ -82,7 +82,7 @@ BGA-422 adds `GATE-SECURITY-AUDIT` and `INT-SECURITY-AUDIT-PREFLIGHT` to the rel
 | CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.0.0 | supported |
 | CLAIM-CLIENT-EDITORS | editor and agent clients           | unknown   |
 
-No editor or agent client is claimed as supported yet. BGA-401 introduces the maintained smoke matrix that would allow such a claim.
+The [BGA-401 client matrix](CLIENTS.md) maintains the supported reference SDK flow and records a bounded native Codex app-server 0.159.2/macOS evaluation of the exact signed candidate. General editor/agent support remains unknown; the controlled smoke does not test GUI behavior or inference turns. New public support claims follow VERSIONING.md without rewriting the frozen signed candidate.
 
 ## Changing a claim
 
@@ -98,3 +98,5 @@ BGA-404 release signing adds no network access or new transport to the installed
 BGA-407 distributes signed candidate verification metadata with exact frozen local-inventory coverage, explicit exclusions and no live Studio claim. It adds no installed-server transport or network access. Ordinary scenarios prove offline policy; the separate workflow proves public evidence download and signature acceptance.
 
 BGA-400 extends CLAIM-CLIENT-SDK evidence: the generic stdio guide is exercised with the reference client on the CI platforms. This is not named coding-client support. The signed original candidate is separately evaluated through the same guide; only repeat installation, not cross-version upgrade, is currently measurable.
+
+BGA-401 adds E2E-CLIENT-SDK-SMOKE and GATE-CLIENT-MATRIX to transport evidence. The gate refuses missing/version/environment/scenario claims and rejects changed controlled runners or candidate identities.

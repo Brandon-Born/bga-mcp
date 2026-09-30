@@ -93,7 +93,9 @@
         "GATE-RELEASE-EVIDENCE",
         "INT-RELEASE-EVIDENCE",
         "INT-RELEASE-EVIDENCE-PACKET",
-        "E2E-INSTALL-GUIDE"
+        "E2E-INSTALL-GUIDE",
+        "E2E-CLIENT-SDK-SMOKE",
+        "GATE-CLIENT-MATRIX"
       ],
       "ciEvidence": "ci-36665974043"
     }

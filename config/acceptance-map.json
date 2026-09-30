@@ -1118,6 +1118,18 @@
       "case": "Published commands and platform configuration complete install, first use, root refusal, repeat install, shutdown and removal without project changes",
       "boundary": "packaged",
       "scenarios": ["E2E-INSTALL-GUIDE"]
+    },
+    {
+      "item": "BGA-401",
+      "case": "Every supported client version/platform maps to a maintained packaged smoke flow",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLIENT-SDK-SMOKE", "E2E-INSTALL-GUIDE"]
+    },
+    {
+      "item": "BGA-401",
+      "case": "Missing, unmeasured or mismatched client evidence cannot become a supported claim",
+      "boundary": "repository",
+      "scenarios": ["GATE-CLIENT-MATRIX"]
     }
   ]
 }

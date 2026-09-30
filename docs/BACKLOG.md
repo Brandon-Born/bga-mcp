@@ -1324,12 +1324,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-401 — Maintain the supported-client smoke matrix
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-009, BGA-010, BGA-400, BGA-414
 - **Deliverable:** Automated or reproducible smoke tests for every MCP client explicitly claimed as supported.
 - **Acceptance:** Client/version/platform claims map to current evidence; untested clients are described only as MCP-compatible candidates, not supported.
 - **Verification:** Release gates run each supported client flow or attach current controlled-environment evidence.
+
+- **Implementation:** [Client matrix](../config/client-smoke.json), [client guide](CLIENTS.md) and `pnpm verify:clients` bind every maintained supported client to its exact dependency version, compatibility claim, fixtures, runnable packaged scenarios and CI environments. Controlled native Codex app-server 0.159.2/macOS arm64 evidence uses the signed original candidate and checks all released calls, refusals, unchanged project/configuration, restart, process exit and removal. Untested clients remain candidates; the native smoke adds no GUI, inference-turn or general editor support claim to the frozen contract.
+- **Sources:** [Official Codex MCP configuration](https://learn.chatgpt.com/docs/extend/mcp?surface=cli) and [app-server API](https://learn.chatgpt.com/docs/app-server), which describes its tool method as “call a tool on a thread’s configured MCP server.” The installed binary's generated schema confirms request fields before implementation. This item changes client verification tooling, not BGA framework rules.
 
 ### BGA-402 — Define versioning and compatibility policy
 

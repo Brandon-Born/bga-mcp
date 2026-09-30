@@ -81,14 +81,16 @@
     "verify:version-policy": "tsx scripts/verify-version-policy.ts",
     "release:candidate": "tsx scripts/create-release-candidate.ts",
     "check:package": "pnpm build && publint",
-    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm verify:release-candidate && pnpm verify:security-audit && pnpm verify:release-signing && pnpm verify:release-evidence && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm verify:quality-gates && pnpm verify:threat-model && pnpm verify:compatibility && pnpm verify:clients && pnpm verify:version-policy && pnpm verify:rule-catalog && pnpm verify:doc-sources && pnpm verify:doc-evaluation && pnpm verify:scenarios && pnpm verify:release && pnpm verify:release-candidate && pnpm verify:security-audit && pnpm verify:release-signing && pnpm verify:release-evidence && pnpm test:coverage && pnpm check:package && pnpm test:conformance && pnpm verify:safety-gates && pnpm evidence && pnpm verify:evidence && pnpm verify:acceptance-map",
     "prepack": "pnpm build",
     "audit:security": "tsx scripts/audit-security.ts",
     "verify:security-audit": "tsx scripts/verify-security-audit.ts",
     "verify:release-signing": "tsx scripts/verify-release-signing.ts",
     "verify:signed-release": "tsx scripts/test-signed-release.ts",
     "release:evidence": "tsx scripts/release-evidence.ts",
-    "verify:release-evidence": "tsx scripts/verify-release-evidence.ts"
+    "verify:release-evidence": "tsx scripts/verify-release-evidence.ts",
+    "verify:clients": "tsx scripts/verify-clients.ts",
+    "test:client-codex": "tsx scripts/test-codex-client.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",

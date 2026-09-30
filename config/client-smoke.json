@@ -1,0 +1,49 @@
+{
+  "$schema": "./client-smoke.schema.json",
+  "schemaVersion": 1,
+  "owner": "BGA-401",
+  "clients": [
+    {
+      "id": "CLIENT-REFERENCE-SDK",
+      "name": "@modelcontextprotocol/client",
+      "version": "2.0.0",
+      "status": "supported",
+      "compatibilityClaim": "CLAIM-CLIENT-SDK",
+      "platforms": ["ubuntu-latest", "macos-latest", "windows-latest"],
+      "nodeMajors": [22, 24],
+      "protocolVersions": ["2025-11-25"],
+      "fixtures": [
+        "tests/fixtures/projects/legacy",
+        "tests/fixtures/projects/modern",
+        "tests/fixtures/projects/hybrid"
+      ],
+      "scenarios": ["E2E-CLIENT-SDK-SMOKE", "E2E-INSTALL-GUIDE"],
+      "scope": "Maintained CI flow against each freshly packed public package; install/removal, exact discovery, all seven tools and three resources, refusals, restart, unchanged project and cleanup."
+    },
+    {
+      "id": "CLIENT-CODEX-APP-SERVER",
+      "name": "Codex app-server",
+      "version": "0.159.2",
+      "status": "evaluated",
+      "platforms": ["darwin"],
+      "nodeMajors": [22],
+      "protocolVersions": ["2025-11-25"],
+      "fixtures": ["tests/fixtures/projects/legacy"],
+      "scenarios": [],
+      "receipt": "docs/verification/codex-client-v1.0.0-rc.1.json",
+      "scope": "Controlled macOS arm64 smoke of the exact signed original candidate through the real Codex MCP stack. No inference turn or GUI interaction; no general editor/agent support claim. Replacement clients/artifacts require re-execution."
+    },
+    {
+      "id": "CLIENT-OTHER-EDITORS",
+      "name": "Other editor and agent clients",
+      "version": null,
+      "status": "candidate",
+      "platforms": [],
+      "nodeMajors": [],
+      "protocolVersions": [],
+      "fixtures": [],
+      "scenarios": [],
+      "scope": "MCP-compatible candidates only. No evidence for Claude Code/Desktop, VS Code, Cursor, Codex GUI, other versions or platforms."
+    }
+  ]
+}

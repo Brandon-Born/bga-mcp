@@ -507,21 +507,26 @@
       "dimension": "client",
       "value": "@modelcontextprotocol/client 2.0.0",
       "support": "supported",
-      "notes": "The reference client used by every packaged end-to-end scenario. The executable generic installation guide also uses this reference client; named agent support is owned by BGA-401.",
+      "notes": "Maintained supported reference client, pinned to 2.0.0 and smoke-tested with the installed public package on every CI platform/Node pair. See config/client-smoke.json.",
       "scenarios": [
         "E2E-STDIO-UNADVERTISED-METHOD",
         "E2E-POLICY-CONFIG-FAILS-CLOSED",
         "E2E-INSPECT-PROJECT-MODERN",
-        "E2E-INSTALL-GUIDE"
+        "E2E-INSTALL-GUIDE",
+        "E2E-CLIENT-SDK-SMOKE"
       ],
-      "fixtures": ["tests/fixtures/projects/legacy"]
+      "fixtures": [
+        "tests/fixtures/projects/legacy",
+        "tests/fixtures/projects/modern",
+        "tests/fixtures/projects/hybrid"
+      ]
     },
     {
       "id": "CLAIM-CLIENT-EDITORS",
       "dimension": "client",
       "value": "editor and agent clients",
       "support": "unknown",
-      "notes": "No editor or agent client has a maintained smoke scenario yet. BGA-401 owns the supported-client matrix; until then no client-specific support is claimed."
+      "notes": "General editor/agent support remains unknown. BGA-401 records a bounded native Codex app-server 0.159.2/macOS arm64 evaluation of the exact signed candidate; that evidence is not GUI, inference-turn or general editor support. See docs/CLIENTS.md."
     }
   ]
 }

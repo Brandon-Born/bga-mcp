@@ -11,7 +11,7 @@ import { waitForProcessExit } from '../../tests/helpers/scenario.js';
 const installPlaceholder = '/absolute/path/to/bga-mcp-install';
 const artifactPlaceholder = '/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz';
 
-async function digestDirectory(directory: string): Promise<string> {
+export async function digestDirectory(directory: string): Promise<string> {
   const hash = createHash('sha256');
   const walk = async (current: string): Promise<void> => {
     for (const entry of (await readdir(current, { withFileTypes: true })).sort((a, b) =>

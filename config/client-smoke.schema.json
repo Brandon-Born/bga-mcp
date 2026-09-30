@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "bga-mcp client smoke matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "owner", "clients"],
+  "properties": {
+    "$schema": {
+      "const": "./client-smoke.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "owner": {
+      "const": "BGA-401"
+    },
+    "clients": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "version",
+          "status",
+          "platforms",
+          "nodeMajors",
+          "protocolVersions",
+          "fixtures",
+          "scenarios",
+          "scope"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^CLIENT-[A-Z0-9-]+$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "version": {
+            "type": ["string", "null"]
+          },
+          "status": {
+            "enum": ["supported", "evaluated", "candidate"]
+          },
+          "platforms": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "nodeMajors": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "integer"
+            }
+          },
+          "protocolVersions": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "fixtures": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "compatibilityClaim": {
+            "type": "string"
+          },
+          "receipt": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "supported"
+                }
+              }
+            },
+            "then": {
+              "required": ["compatibilityClaim"],
+              "properties": {
+                "version": {
+                  "type": "string"
+                },
+                "platforms": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "nodeMajors": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "fixtures": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "scenarios": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "compatibilityClaim": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "evaluated"
+                }
+              }
+            },
+            "then": {
+              "required": ["receipt"],
+              "properties": {
+                "version": {
+                  "type": "string"
+                },
+                "platforms": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "nodeMajors": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "fixtures": {
+                  "minItems": 1,
+                  "type": "array"
+                },
+                "receipt": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "candidate"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "scenarios": {
+                  "maxItems": 0,
+                  "type": "array"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
