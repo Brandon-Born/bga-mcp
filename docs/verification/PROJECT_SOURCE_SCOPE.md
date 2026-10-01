@@ -138,6 +138,10 @@ The mixed/tracked pre-release audits report 0 passed, 2 failed, 31 unsupported a
 8 manual-required. The selected production subset reports 25 passed, 2 failed,
 6 unsupported and 8 manual-required. No source set is claimed release-ready.
 
-Exact-source cross-platform CI remains required before BGA-429 becomes verified.
+Exact-source [CI 36932134751](https://github.com/Brandon-Born/bga-mcp/actions/runs/36932134751)
+passed all six Ubuntu/macOS/Windows jobs on Node 22/24 at implementation commit
+`02257ed9291a208be00edfc4b9eb0db9de651477`. Retained evidence identifies clean
+source, 617 passing tests and 188 passing required scenarios in every environment.
+BGA-429 is verified for the bounded production-contract scope above.
 The original signed candidate remains unchanged and unpromoted. This regression
 rerun does not complete BGA-424's independent development evaluation.
