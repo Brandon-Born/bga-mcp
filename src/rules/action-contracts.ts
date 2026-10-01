@@ -217,7 +217,9 @@ export function validateActionContracts(
   phpSources: readonly ActionContractSource[],
   signal?: AbortSignal,
 ): ActionContractTrace {
-  const findings: DiagnosticFinding[] = [];
+  const findings: DiagnosticFinding[] = model.diagnostics.findings.filter(
+    (finding) => finding.code === 'project.source.unsupported-syntax',
+  );
 
   const clientCalls: (ClientActionCall & { source: string })[] = [];
   for (const source of clientSources) {

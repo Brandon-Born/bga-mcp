@@ -1662,7 +1662,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-429 — Define source scope for working folders with copied projects
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-013, BGA-100, BGA-427
 - **Deliverable:** A reviewed, explicit source-selection decision for repositories containing disabled samples, tests, generated output, or copied game backups. Define whether caller-selected exclusions, separate source roots, or a documented runtime model should own those files before implementing a new public option or rule.
@@ -1670,6 +1670,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Acceptance:** Distinguish filesystem inventory from runtime contracts and report scope/selection uncertainty. Never infer BGA execution solely from Git ignore rules or arbitrary directory names; never silently discard real runtime PHP modules. Preserve configured-root confinement, file/read budgets, cancellation, and the frozen release API. A new configuration surface needs its own version-policy and threat-model review. Document a supported agent workflow for inspecting a canonical source snapshot while this decision remains pending.
 - **Verification:** Original fixtures contain both runtime modules and copied/disabled artifacts with colliding names. Installed-command scenarios prove selected-source identity, correct findings without duplicate contracts, retained uncertainty for unknown scope, immutability and confinement. A proceeding implementation updates capability, compatibility, scenario, source-scope documentation and acceptance evidence in one change, then passes the full gate and exact-source CI.
 - **Sources:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) documents the game entry points; [BGA IDE setup](https://en.doc.boardgamearena.com/Setting_up_BGA_Development_environment_using_VSCode) documents root editor helpers and a synchronization ignore example. Neither establishes that arbitrary local backup paths or Git ignore files determine BGA runtime execution. Record that ambiguity before implementing source exclusions.
+
+- **Decision and implementation, 2026-10-01:** [Source-scope decision](verification/PROJECT_SOURCE_SCOPE.md) records the official production boundary: retain all source under `modules/` and independently retain documented root PHP/client forms; inventory other local source but report its execution scope as unsupported instead of reading it into contracts. No Git ignore interpretation or folder-name exclusion is introduced. The file reference explicitly says additional source outside those locations is not published in production; Studio-only execution remains unknown. Existing root selection is the explicit caller control. No new configuration, public schema, export or privilege is added. Original fixtures and installed-command scenarios cover copies, disabled samples, generators, ignored runtime modules, legacy/hybrid retention, budget separation and separately identified canonical roots. The full local gate passes (617 tests, 188 required scenarios). Real-client calls on the unchanged mixed root remove backup-generated contracts and retain one explicit scope finding for its 16 outside sources; tracked and separately selected production source sets are identified independently. Exact-source CI remains required before verification.
 
 ## Coverage map
 

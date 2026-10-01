@@ -274,7 +274,11 @@ export function validateStateMachine(
   // Anything the reader could not interpret stays visible in this result.
   for (const finding of model.diagnostics.findings) {
     cancellationCheckpoint(signal);
-    if (finding.kind === 'unsupported-syntax' && finding.code.startsWith('project.states.')) {
+    if (
+      finding.kind === 'unsupported-syntax' &&
+      (finding.code.startsWith('project.states.') ||
+        finding.code === 'project.source.unsupported-syntax')
+    ) {
       findings.push(finding);
     }
   }

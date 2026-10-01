@@ -227,6 +227,11 @@ export async function loadProjectContext(
 
   const phpSources: PhpSource[] = [];
   const clientSources: PhpSource[] = [];
+  const unclassifiedSources = new Set(
+    model.diagnostics.findings
+      .filter((finding) => finding.code === 'project.source.unsupported-syntax')
+      .flatMap((finding) => finding.locations.map((location) => location.uri)),
+  );
   let budget = MAX_SOURCE_BYTES;
 
   for (const file of listing.files) {
@@ -245,7 +250,11 @@ export async function loadProjectContext(
       (options.withClientSources === true &&
         /\.(?:js|ts)$/u.test(file.path) &&
         !file.path.endsWith('.d.ts'));
-    if (!wanted || phpSources.length + clientSources.length >= MAX_SOURCE_FILES) {
+    if (
+      !wanted ||
+      unclassifiedSources.has(file.path) ||
+      phpSources.length + clientSources.length >= MAX_SOURCE_FILES
+    ) {
       continue;
     }
     if (file.bytes > budget) {

@@ -624,6 +624,46 @@ export async function buildProjectModel(
   });
   const findings: DiagnosticFinding[] = [];
 
+  // The official file reference publishes additional code from modules/:
+  // "If you need them use modules/ directory." Other local source files may
+  // serve Studio, tests or generators; their execution scope is unknown.
+  // https://en.doc.boardgamearena.com/Studio_file_reference#%3Cother_files%3E
+  // Keep every module (including ignored files and arbitrary subdirectories),
+  // and retain both generations of the documented root PHP/client files.
+  const unclassifiedSources: string[] = [];
+  for (const path of paths) {
+    cancellationCheckpoint(options.signal);
+    if (!/\.(?:php|js|ts)$/u.test(path) || path.endsWith('.d.ts') || path === '_ide_helper.php') {
+      continue;
+    }
+    const documentedRoot =
+      !path.includes('/') &&
+      (/^(?:gameinfos|gameoptions|gamepreferences|stats|material|states)\.inc\.php$/u.test(path) ||
+        /^[^/]+\.(?:game|action|view)\.php$/u.test(path) ||
+        (detection.gameKey !== null && path === `${detection.gameKey}.js`));
+    if (!path.startsWith('modules/') && !documentedRoot) unclassifiedSources.push(path);
+  }
+  if (unclassifiedSources.length > 0) {
+    // One bounded-inventory location list, not repeated prose per file. The
+    // same complete list also drives contract selection in project-context.
+    const finding = unsupportedSyntax(
+      'project.source.unsupported-syntax',
+      `Execution scope is unknown for ${String(unclassifiedSources.length)} local source file(s); they are inventoried but do not supply production game contracts.`,
+      'source outside documented production code locations',
+      'project-source',
+    );
+    findings.push({
+      ...finding,
+      locations: unclassifiedSources.map((uri) => ({ uri })),
+      suggestions: [
+        {
+          message:
+            'Confirm the intended source set. Keep runtime modules under modules/, or inspect a separately identified canonical project root; Git ignore rules do not select game code.',
+        },
+      ],
+    });
+  }
+
   const components = COMPONENT_RULES.map((rule) => {
     cancellationCheckpoint(options.signal);
     const files = paths.filter((path) => {

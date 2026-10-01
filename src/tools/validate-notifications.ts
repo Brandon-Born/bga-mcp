@@ -5,6 +5,7 @@ import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
+import { summarizeFindings } from '../rules/uncertainty.js';
 import {
   isProjectRootInputRequired,
   loadProjectContext,
@@ -160,7 +161,15 @@ export function registerValidateNotifications(
               ...rule,
               falsePositives: [...rule.falsePositives],
             })),
-            diagnostics: trace.diagnostics,
+            diagnostics: summarizeFindings(
+              [
+                ...trace.diagnostics.findings,
+                ...project.model.diagnostics.findings.filter(
+                  (finding) => finding.code === 'project.source.unsupported-syntax',
+                ),
+              ],
+              signal,
+            ),
           } satisfies ValidateNotificationsResult;
         });
         if (isProjectRootInputRequired(outcome)) {

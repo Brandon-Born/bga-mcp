@@ -9,6 +9,7 @@ import { validateActionContracts } from '../src/rules/action-contracts.js';
 import { validateNotifications } from '../src/rules/notifications.js';
 import { validateStateMachine } from '../src/rules/state-machine.js';
 import type { DiagnosticResult } from '../src/diagnostics.js';
+import { summarizeFindings } from '../src/rules/uncertainty.js';
 
 const projectsRoot = fileURLToPath(new URL('./fixtures/projects/', import.meta.url));
 const bannedAssetExtensions = new Set([
@@ -72,14 +73,24 @@ async function run(directory: string, paths: readonly string[]): Promise<Fixture
     { root: directory, files, truncated: false, skippedLinks: [], unreadablePaths: [] },
     { read },
   );
+  const scopeFindings = model.diagnostics.findings.filter(
+    (finding) => finding.code === 'project.source.unsupported-syntax',
+  );
+  const unclassified = new Set(
+    scopeFindings.flatMap((finding) => finding.locations.map((location) => location.uri)),
+  );
   const php = await Promise.all(
     paths
-      .filter((path) => path.endsWith('.php') && path !== '_ide_helper.php')
+      .filter(
+        (path) => path.endsWith('.php') && path !== '_ide_helper.php' && !unclassified.has(path),
+      )
       .map(async (path) => ({ path, text: await read(path) })),
   );
   const client = await Promise.all(
     paths
-      .filter((path) => /\.(?:js|ts)$/u.test(path) && !path.endsWith('.d.ts'))
+      .filter(
+        (path) => /\.(?:js|ts)$/u.test(path) && !path.endsWith('.d.ts') && !unclassified.has(path),
+      )
       .map(async (path) => ({ path, text: await read(path) })),
   );
   const schema = paths.find((path) => path.endsWith('.sql'));
@@ -89,11 +100,17 @@ async function run(directory: string, paths: readonly string[]): Promise<Fixture
     results: {
       stateMachine: validateStateMachine(model, php),
       actionContracts: validateActionContracts(model, client, php).diagnostics,
-      notifications: validateNotifications(php, client).diagnostics,
-      database: auditDatabaseUsage(
-        schema === undefined ? null : { path: schema, text: await read(schema) },
-        php,
-      ).diagnostics,
+      notifications: summarizeFindings([
+        ...validateNotifications(php, client).diagnostics.findings,
+        ...scopeFindings,
+      ]),
+      database: summarizeFindings([
+        ...auditDatabaseUsage(
+          schema === undefined ? null : { path: schema, text: await read(schema) },
+          php,
+        ).diagnostics.findings,
+        ...scopeFindings,
+      ]),
     },
   };
 }
@@ -102,6 +119,7 @@ describe('BGA project fixture corpus', () => {
   it.each([
     'modern',
     'modern-generated-regression',
+    'modern-source-scope-unreadable',
     'modern-broken',
     'modern-state-classes',
     'modern-unreadable',

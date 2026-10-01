@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-09-30",
+  "updatedAt": "2026-10-01",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1130,6 +1130,24 @@
       "case": "Missing, unmeasured or mismatched client evidence cannot become a supported claim",
       "boundary": "repository",
       "scenarios": ["GATE-CLIENT-MATRIX"]
+    },
+    {
+      "item": "BGA-429",
+      "case": "Outside local sources remain inventoried with uncertainty and cannot supply production contracts",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PROJECT-SOURCE-SCOPE"]
+    },
+    {
+      "item": "BGA-429",
+      "case": "Explicit canonical-root selection preserves legacy/hybrid contracts and refuses unrelated roots",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PROJECT-SOURCE-SELECTION"]
+    },
+    {
+      "item": "BGA-429",
+      "case": "Ignored runtime modules are retained and outside source cannot consume their read budget",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PROJECT-SOURCE-MODULES"]
     }
   ]
 }

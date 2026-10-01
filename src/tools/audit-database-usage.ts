@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
+import { summarizeFindings } from '../rules/uncertainty.js';
 import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
 import {
   isProjectRootInputRequired,
@@ -155,7 +156,15 @@ export function registerAuditDatabaseUsage(
               ...rule,
               falsePositives: [...rule.falsePositives],
             })),
-            diagnostics: audit.diagnostics,
+            diagnostics: summarizeFindings(
+              [
+                ...audit.diagnostics.findings,
+                ...project.model.diagnostics.findings.filter(
+                  (finding) => finding.code === 'project.source.unsupported-syntax',
+                ),
+              ],
+              signal,
+            ),
           } satisfies AuditDatabaseUsageResult;
         });
         if (isProjectRootInputRequired(outcome)) {

@@ -126,7 +126,9 @@
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
-          "E2E-CONTRACT-EDITOR-HELPERS"
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -184,7 +186,9 @@
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-INSPECT-JSONC-COMPONENTS",
           "E2E-STATE-DELEGATED-RETURNS",
-          "E2E-CONTRACT-EDITOR-HELPERS"
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -248,7 +252,9 @@
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-CONTRACT-EDITOR-HELPERS",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -310,7 +316,9 @@
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
-          "E2E-CONTRACT-EDITOR-HELPERS"
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -340,7 +348,10 @@
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
-          "E2E-CONTRACT-EDITOR-HELPERS"
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-PROJECT-SOURCE-MODULES"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -369,7 +380,10 @@
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-CONTRACT-EDITOR-HELPERS",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-PROJECT-SOURCE-MODULES"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -399,7 +413,9 @@
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
           "E2E-SUCCESS-OUTPUT-REDACTION",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -467,7 +483,9 @@
           "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-CONTRACT-EDITOR-HELPERS",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -490,7 +508,9 @@
           "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-RESOURCE-REFRESH",
           "E2E-SUCCESS-OUTPUT-REDACTION",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -513,7 +533,9 @@
           "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-INSPECT-JSONC-COMPONENTS",
-          "E2E-STATE-DELEGATED-RETURNS"
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-PROJECT-SOURCE-SCOPE",
+          "E2E-PROJECT-SOURCE-SELECTION"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

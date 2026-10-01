@@ -1,0 +1,65 @@
+{
+  "layout": "modern",
+  "represents": "An original modern project with copied game sources, a Studio generator and a disabled example outside production code locations; an ignored real module remains a contract source.",
+  "files": [
+    ".gitignore",
+    "_ide_helper.php",
+    "bga-framework.d.ts",
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.jsonc",
+    "gamepreferences.jsonc",
+    "misc/generator.php",
+    "modules/Shared/Runtime.php",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/StateConstants.php",
+    "modules/php/States/NextPlayer.php",
+    "modules/php/States/PlayerTurn.php",
+    "private/studio-baseline/modules/js/Game.js",
+    "private/studio-baseline/modules/php/Game.php",
+    "stats.jsonc",
+    "tests/sample.js"
+  ],
+  "diagnostics": ["project.source.unsupported-syntax"],
+  "stateMachine": {
+    "status": "unsupported",
+    "codes": ["project.source.unsupported-syntax"],
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    }
+  },
+  "actionContracts": {
+    "status": "unsupported",
+    "codes": ["project.source.unsupported-syntax"],
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    }
+  },
+  "notifications": {
+    "status": "unsupported",
+    "codes": ["project.source.unsupported-syntax"],
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    }
+  },
+  "database": {
+    "status": "unsupported",
+    "codes": ["project.source.unsupported-syntax"],
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 1
+    }
+  }
+}

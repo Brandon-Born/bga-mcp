@@ -25,10 +25,12 @@ is unchanged.
 
 ## Current MCP priority
 
-Close the three observed reader gaps and rerun the same real project with an
-identified changed artifact. Treat mixed working-folder backup pollution as a
-separate BGA-429 source-scope limitation; an explicitly exported tracked snapshot
-can isolate the unchanged canonical sources but cannot erase that limitation.
+BGA-426 through BGA-428 are verified against original regressions and the same
+real project with an identified development artifact. BGA-429 now owns the
+working-folder source-scope correction: documented production module/root sources
+supply contracts; other local source stays inventoried with explicit unknown scope.
+[Source-scope decision and workflow](verification/PROJECT_SOURCE_SCOPE.md) describe
+canonical-root selection without treating Git ignore or backup names as authority.
 [Regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) separates
 these results from the still-pending BGA-424 task set. Do not advance game features
 merely to make progress when the active objective is MCP correctness.

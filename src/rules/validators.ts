@@ -5,6 +5,7 @@ import type { GroupRunner } from './aggregate.js';
 import { auditDatabaseUsage } from './database.js';
 import { validateNotifications } from './notifications.js';
 import { validateStateMachine } from './state-machine.js';
+import { summarizeFindings } from './uncertainty.js';
 
 /**
  * Builds the validator set every aggregating capability runs.
@@ -34,7 +35,16 @@ export function createValidatorRunners(
     {
       id: 'notifications',
       run: () =>
-        validateNotifications(context.phpSources, context.clientSources, signal).diagnostics,
+        summarizeFindings(
+          [
+            ...validateNotifications(context.phpSources, context.clientSources, signal).diagnostics
+              .findings,
+            ...context.model.diagnostics.findings.filter(
+              (finding) => finding.code === 'project.source.unsupported-syntax',
+            ),
+          ],
+          signal,
+        ),
     },
     {
       id: 'database',
@@ -55,7 +65,15 @@ export function createValidatorRunners(
                   signal === undefined ? {} : { signal },
                 ),
               };
-        return auditDatabaseUsage(schemaSource, context.phpSources, signal).diagnostics;
+        return summarizeFindings(
+          [
+            ...auditDatabaseUsage(schemaSource, context.phpSources, signal).diagnostics.findings,
+            ...context.model.diagnostics.findings.filter(
+              (finding) => finding.code === 'project.source.unsupported-syntax',
+            ),
+          ],
+          signal,
+        );
       },
     },
   ];
