@@ -1622,7 +1622,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-426 — Recognize JSONC options, preferences, and statistics independently
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-008, BGA-100, BGA-122
 - **Deliverable:** Component inventory recognizes `gameoptions.jsonc`, `gamepreferences.jsonc`, and `stats.jsonc` alongside each existing JSON and legacy PHP form, independently of the generation of other components.
@@ -1631,11 +1631,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Original minimal fixtures cover JSONC, JSON, PHP, mixed migrations, empty present files, and genuinely absent files through installed `inspect_project` and affected aggregate/resource paths. Add the capability, compatibility, scenario, and documentation evidence together, then pass the full gate and exact-source CI.
 - **Sources:** [Options and preferences](https://en.doc.boardgamearena.com/Options_and_preferences:_gameoptions.json,_gamepreferences.json) and [Game statistics](https://en.doc.boardgamearena.com/Game_statistics:_stats.json) both say: “you can use jsonc instead of json, to allow comments in the Json.” Fetched from the [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), 2026-10-01. Legacy forms remain documented.
 
-- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source CI remains required before this item is verified.
+- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source [CI 36929053758](https://github.com/Brandon-Born/bga-mcp/actions/runs/36929053758) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at implementation commit `d5112626b77415d6f5feb7b851c8c3a8adf5903b`, completing this bounded verification.
 
 ### BGA-427 — Separate declaration and editor helpers from runtime contracts
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-008, BGA-107, BGA-108, BGA-125, BGA-128
 - **Deliverable:** A documented source-selection model prevents non-runtime declaration/editor helpers from supplying game actions, notification handlers, and game-method existence, while retaining real runtime modules and explicitly reporting uncertain scope.
@@ -1645,11 +1645,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Sources:** [TypeScript declarations](https://www.typescriptlang.org/docs/handbook/2/type-declarations.html) says: “`.d.ts` files are declaration files that contain only type information.” [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) and [Game interface logic](https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js) establish the runtime client construct; no explicit general PHP-editor-helper exclusion rule was established by those pages. Checked 2026-10-01.
 - **Source decision:** The [official migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide#IDE_Support) identifies `_ide_helper.php` as IDE support, “allowing IDE to provide syntax error highlighting for the framework functions”, and also identifies `bga-framework.d.ts`. The [official VSCode guide](https://en.doc.boardgamearena.com/Setting_up_BGA_Development_environment_using_VSCode) includes both in the upload ignore list. Exclude the documented root PHP helper and declaration files from contracts; arbitrary nested helpers, disabled samples, backups and Git ignore files do not establish runtime scope. This resolves the helper question without inventing a general exclusion policy.
 
-- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source CI remains required before this item is verified.
+- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source [CI 36929053758](https://github.com/Brandon-Born/bga-mcp/actions/runs/36929053758) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at implementation commit `d5112626b77415d6f5feb7b851c8c3a8adf5903b`, completing this bounded verification.
 
 ### BGA-428 — Resolve bounded delegated state-handler returns
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P2
 - **Depends on:** BGA-008, BGA-118, BGA-124, BGA-419
 - **Deliverable:** Read documented state handlers that return a same-state action's result when the delegate and its literal target states can be resolved statically, with bounded recursion and explicit uncertainty for unsupported cases.
@@ -1658,7 +1658,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Original state-class fixtures cover direct delegation, literal delegate targets, cycles, computed calls, and ambiguous/missing delegates. Installed state validation, aggregate, resources, and pre-release outputs preserve partial/complete distinctions. Update capability and compatibility evidence and pass the full gate and exact-source CI.
 - **Sources:** [State classes](https://en.doc.boardgamearena.com/State_classes:_State_directory) documents zombie return behavior: “The return value works the same way as onEnteringState.” Its example returns the result of `actPlayCard(...)`. Fetched from the [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), 2026-10-01.
 
-- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source CI remains required before this item is verified.
+- **Implementation, 2026-10-01:** [Source decision and original regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) record the bounded change. Original installed-public-command scenarios and the complete local gate pass (613 tests, 185 required scenarios). The actual generated game at `12ff03a`, explicitly exported as a clean tracked source set, passes project/state/action checks with the three targeted gaps removed; existing unmatched notification and unreadable SQL remain. The mixed working folder still has BGA-429 backup-scope pollution. Exact-source [CI 36929053758](https://github.com/Brandon-Born/bga-mcp/actions/runs/36929053758) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at implementation commit `d5112626b77415d6f5feb7b851c8c3a8adf5903b`, completing this bounded verification.
 
 ### BGA-429 — Define source scope for working folders with copied projects
 

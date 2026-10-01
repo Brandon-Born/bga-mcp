@@ -80,8 +80,8 @@ its exact declared findings, source inventory, no binary art/secrets, and immuta
 
 Unit cases cover entering-state delegation, computed targets, compound calls,
 cycles, ambiguous declarations, absent bodies, depth limits and class isolation.
-The real-project rerun and full-gate outcome are recorded below after execution;
-exact-source CI is a separate gate before these owners become verified.
+The real-project rerun and full-gate outcome are recorded below. Exact-source CI
+completed for the implementation commit before these owners became verified.
 
 ## Sources
 
@@ -124,6 +124,9 @@ a clean fixture; the exported snapshot is explicitly a narrower source set.
 
 The local `pnpm check` passed: 613 tests, 185 required retained scenarios,
 17 capabilities, 99 claims, package/contract checks, safety gates, and applicable
-2025-11-25 conformance. Exact-source CI remains pending for these changes.
+2025-11-25 conformance. Exact-source [CI 36929053758](https://github.com/Brandon-Born/bga-mcp/actions/runs/36929053758)
+passed all six Ubuntu/macOS/Windows jobs on Node 22/24 at implementation commit
+`d5112626b77415d6f5feb7b851c8c3a8adf5903b`. Its retained clean-source evidence
+records 613 passing tests and 185 passing required scenarios per environment.
 Raw real-game results remain private. The tests prove the three bounded fixes,
 not arbitrary source-scope correctness, the complete game, or BGA-424 usefulness.
