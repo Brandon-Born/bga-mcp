@@ -125,7 +125,8 @@
           "E2E-AUDIT-DATABASE-ALIASES",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -180,7 +181,10 @@
           "E2E-INSPECT-PROJECT-NESTED-ROOT",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-INSPECT-JSONC-COMPONENTS",
+          "E2E-STATE-DELEGATED-RETURNS",
+          "E2E-CONTRACT-EDITOR-HELPERS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -242,7 +246,9 @@
           "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -303,7 +309,8 @@
           "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -332,7 +339,8 @@
           "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -359,7 +367,9 @@
           "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -388,7 +398,8 @@
           "E2E-VALIDATE-MODERN-DOCUMENTATION-CONFLICT",
           "E2E-TOOLS-REDACTION",
           "E2E-TOOLS-DEFAULT-ROOT",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -454,7 +465,9 @@
           "E2E-RESOURCE-DIAGNOSTICS-UNSUPPORTED",
           "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-CONTRACT-EDITOR-HELPERS",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -476,7 +489,8 @@
           "E2E-RESOURCE-STATES-GENERATIONS",
           "E2E-RESOURCE-LAYOUT-MATRIX",
           "E2E-RESOURCE-REFRESH",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -497,7 +511,9 @@
           "E2E-RESOURCE-IMMUTABLE",
           "E2E-RESOURCE-SUMMARY-BOUNDED",
           "E2E-RESOURCE-LAYOUT-MATRIX",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-INSPECT-JSONC-COMPONENTS",
+          "E2E-STATE-DELEGATED-RETURNS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

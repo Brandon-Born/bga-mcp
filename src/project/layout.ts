@@ -89,7 +89,8 @@ const SIGNALS: readonly SignalDefinition[] = [
   {
     id: 'modern.js-modules',
     description: 'JavaScript or TypeScript client logic under modules/js',
-    match: (path) => path.startsWith('modules/js/') && /\.(?:js|ts)$/u.test(path),
+    match: (path) =>
+      path.startsWith('modules/js/') && /\.(?:js|ts)$/u.test(path) && !path.endsWith('.d.ts'),
   },
   {
     id: 'legacy.metadata',

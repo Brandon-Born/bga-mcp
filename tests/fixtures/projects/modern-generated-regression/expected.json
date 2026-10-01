@@ -1,0 +1,59 @@
+{
+  "layout": "modern",
+  "represents": "Original modern fixture extended for BGA-426 through BGA-428: JSONC configuration, editor helpers, and direct same-state action delegation. No private project source copied.",
+  "files": [
+    "_ide_helper.php",
+    "bga-framework.d.ts",
+    "dbmodel.sql",
+    "gameinfos.jsonc",
+    "gameoptions.jsonc",
+    "gamepreferences.jsonc",
+    "modules/js/Game.js",
+    "modules/php/Game.php",
+    "modules/php/StateConstants.php",
+    "modules/php/States/NextPlayer.php",
+    "modules/php/States/PlayerTurn.php",
+    "stats.jsonc"
+  ],
+  "diagnostics": [],
+  "stateMachine": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "actionContracts": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "notifications": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  },
+  "database": {
+    "status": "passed",
+    "summary": {
+      "errors": 0,
+      "warnings": 0,
+      "information": 0,
+      "unsupported": 0
+    },
+    "codes": []
+  }
+}

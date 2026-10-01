@@ -74,12 +74,12 @@ async function run(directory: string, paths: readonly string[]): Promise<Fixture
   );
   const php = await Promise.all(
     paths
-      .filter((path) => path.endsWith('.php'))
+      .filter((path) => path.endsWith('.php') && path !== '_ide_helper.php')
       .map(async (path) => ({ path, text: await read(path) })),
   );
   const client = await Promise.all(
     paths
-      .filter((path) => /\.(?:js|ts)$/u.test(path))
+      .filter((path) => /\.(?:js|ts)$/u.test(path) && !path.endsWith('.d.ts'))
       .map(async (path) => ({ path, text: await read(path) })),
   );
   const schema = paths.find((path) => path.endsWith('.sql'));
@@ -101,6 +101,7 @@ async function run(directory: string, paths: readonly string[]): Promise<Fixture
 describe('BGA project fixture corpus', () => {
   it.each([
     'modern',
+    'modern-generated-regression',
     'modern-broken',
     'modern-state-classes',
     'modern-unreadable',

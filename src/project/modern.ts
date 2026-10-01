@@ -15,6 +15,7 @@ import {
   returnExpressions,
   splitTopLevel,
   type PhpSource,
+  type PhpMethod,
 } from './php.js';
 import { cancellationCheckpoint } from '../deadline.js';
 
@@ -157,6 +158,48 @@ function redirects(name: string): boolean {
   return name === 'onEnteringState' || name === 'zombie' || /^act[A-Z]/u.test(name);
 }
 
+/**
+ * The state-class page's zombie example returns `$this->actPlayCard(...)`,
+ * and its entering-state example says "return the redirection sent by the action!".
+ * Only direct same-class act… delegation with balanced arguments is expanded.
+ * Parameters are never evaluated/substituted: computed target returns remain
+ * unsupported. Duplicate methods, cycles and a depth limit also remain unknown.
+ * https://en.doc.boardgamearena.com/State_classes:_State_directory
+ */
+function delegatedReturns(methods: readonly PhpMethod[], signal?: AbortSignal): string[] {
+  // Depth alone does not bound a branching delegate graph.
+  let remaining = 256;
+  const expand = (expression: string, visited: readonly string[]): string[] => {
+    cancellationCheckpoint(signal);
+    if (remaining-- <= 0) return [expression];
+    const masked = maskLiterals(expression, signal).trim();
+    const call = /^\$this\s*->\s*(act[A-Z]\w*)\s*\(/u.exec(masked);
+    if (call === null) return [expression];
+    const name = call[1] ?? '';
+    const span = matchBracket(masked, call[0].length - 1, signal);
+    const candidates = methods.filter((method) => method.name === name);
+    if (
+      span?.end !== masked.length - 1 ||
+      candidates.length !== 1 ||
+      visited.includes(name) ||
+      visited.length >= 8
+    ) {
+      return [expression];
+    }
+    const delegate = candidates[0];
+    if (delegate === undefined || delegate.body.trim() === '') return [expression];
+    const returned = returnExpressions(delegate.body, signal);
+    // An absent return is not evidence for a redirect (nor a proven stay).
+    if (returned.length === 0) return [expression];
+    return returned.flatMap((entry) => expand(entry, [...visited, name]));
+  };
+  return methods
+    .filter((method) => redirects(method.name))
+    .flatMap((method) =>
+      returnExpressions(method.body, signal).flatMap((entry) => expand(entry, [method.name])),
+    );
+}
+
 function readClass(
   source: ModernStateSource,
   constants: ReadonlyMap<string, number>,
@@ -239,7 +282,12 @@ function readClass(
     report(`state class ${className} with an unreadable ${construct}`, 'edge');
   }
 
-  const methods = readMethods(source.text, signal);
+  // A helper class beside this state cannot supply a delegated action.
+  const classBody = matchBracket(masked, masked.indexOf('{', declaration.index), signal);
+  const methods = readMethods(
+    classBody === null ? '' : source.text.slice(classBody.start + 1, classBody.end),
+    signal,
+  );
   const conflictingActions = methods.filter(
     (method) =>
       method.attributes.includes('PossibleAction') &&
@@ -260,9 +308,7 @@ function readClass(
       'edge',
     );
   }
-  const returned = methods
-    .filter((method) => redirects(method.name))
-    .flatMap((method) => returnExpressions(method.body, signal));
+  const returned = delegatedReturns(methods, signal);
   const declares = (name: string): string | null =>
     methods.some((method) => method.name === name) ? name : null;
 

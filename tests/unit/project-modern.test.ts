@@ -401,3 +401,94 @@ describe('PHP source reading', () => {
     ]);
   });
 });
+
+describe('bounded state action return delegation', () => {
+  const delegated = (expression: string, extra = '') => ({
+    ...PLAYER_TURN,
+    text: PLAYER_TURN.text
+      .replace("return 'nextPlayer';", `return ${expression};`)
+      .replace(/\n\}\s*$/u, `${extra}\n}`),
+  });
+
+  it('reads zombie and entering-state action delegation to literal target states', () => {
+    const source = delegated('$this->actPlayCard(1, $playerId, [])');
+    const outcome = parseModernStates([source, NEXT_PLAYER], [CONSTANTS]);
+    expect(outcome.unsupported).toEqual([]);
+    expect(outcome.value[0]).toMatchObject({ redirects: [27], edgesResolved: true });
+    const entering = {
+      ...source,
+      text: source.text.replace('return;', 'return $this->actPlayCard(1, $activePlayerId, []);'),
+    };
+    expect(parseModernStates([entering, NEXT_PLAYER], [CONSTANTS]).unsupported).toEqual([]);
+  });
+
+  it.each([
+    '$this->actMissing()',
+    '$this->{$action}()',
+    '$this->actPlayCard(1) . $suffix',
+    '$this->otherHelper()',
+  ])('preserves unsupported delegation: %s', (expression) => {
+    const result = parseModernStates([delegated(expression), NEXT_PLAYER], [CONSTANTS]);
+    expect(result.unsupported.length).toBeGreaterThan(0);
+    expect(result.value[0]?.edgesResolved).toBe(false);
+  });
+
+  it('keeps computed delegate returns unknown without substituting arguments', () => {
+    const source = delegated('$this->actPlayCard(27)').text.replace(
+      'return NextPlayer::class;',
+      'return $cardId;',
+    );
+    const result = parseModernStates([{ ...PLAYER_TURN, text: source }, NEXT_PLAYER], [CONSTANTS]);
+    expect(result.unsupported.length).toBeGreaterThan(0);
+    expect(result.value[0]?.edgesResolved).toBe(false);
+  });
+
+  it.each([
+    ['cycle', 'public function actCycle() { return $this->actCycle(); }'],
+    [
+      'duplicate',
+      'public function actCycle() { return 27; } public function actCycle() { return 99; }',
+    ],
+    ['empty', 'public function actCycle() {}'],
+    ['no-return', 'public function actCycle() { $local = 27; }'],
+  ])('keeps %s delegates unsupported', (_label, extra) => {
+    const result = parseModernStates(
+      [delegated('$this->actCycle()', extra), NEXT_PLAYER],
+      [CONSTANTS],
+    );
+    expect(result.unsupported.length).toBeGreaterThan(0);
+    expect(result.value[0]?.edgesResolved).toBe(false);
+  });
+
+  it('bounds long chains and ignores methods declared by a different class', () => {
+    const extra = Array.from(
+      { length: 10 },
+      (_, i) =>
+        `public function actChain${String(i)}() { return ${i === 9 ? '27' : `$this->actChain${String(i + 1)}()`}; }`,
+    ).join('\n');
+    const limited = parseModernStates(
+      [delegated('$this->actChain0()', extra), NEXT_PLAYER],
+      [CONSTANTS],
+    );
+    expect(limited.unsupported.length).toBeGreaterThan(0);
+    const fanout = Array.from(
+      { length: 7 },
+      (_, i) =>
+        `public function actFan${String(i)}() { ${Array.from(
+          { length: 12 },
+          () => `return ${i === 6 ? '27' : `$this->actFan${String(i + 1)}()`};`,
+        ).join(' ')} }`,
+    ).join('\n');
+    const branched = parseModernStates(
+      [delegated('$this->actFan0()', fanout), NEXT_PLAYER],
+      [CONSTANTS],
+    );
+    expect(branched.unsupported.length).toBeGreaterThan(0);
+    expect(branched.value[0]?.edgesResolved).toBe(false);
+    const separate = delegated('$this->actOther()');
+    separate.text += '\nclass Other { public function actOther() { return 27; } }';
+    const scoped = parseModernStates([separate, NEXT_PLAYER], [CONSTANTS]);
+    expect(scoped.unsupported.length).toBeGreaterThan(0);
+    expect(scoped.value[0]?.edgesResolved).toBe(false);
+  });
+});

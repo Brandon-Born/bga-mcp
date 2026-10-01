@@ -1,6 +1,6 @@
 # Compatibility matrix
 
-Updated: 2026-08-23. Backlog items: BGA-009, BGA-402, BGA-414, and BGA-417 through BGA-420.
+Updated: 2026-10-01. Backlog items: BGA-009, BGA-402, BGA-414, BGA-417 through BGA-420, and BGA-426 through BGA-428.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
 
@@ -26,6 +26,19 @@ BGA migrates a project one file at a time, and the documentation marks the older
 Modern and hybrid support were reopened by the 2026-08-08 installed-package audit, and are restored here. BGA-124 corrected the state semantics, BGA-125 the action tracing, BGA-126 the notification registration and BGA-127 the database reading; BGA-128 then proved every acceptance case of the affected items through the installed server, including every capability against the part-migrated layout and the precedence a state declared in both sources takes.
 
 The 2026-08-23 release audit found narrower correctness gaps without changing which layouts are supported. BGA-417 preserves computed action arguments and notification payloads as unknown through every aggregate consumer. BGA-418 keeps legacy, game-class, and individual state-class action scopes distinct and applies legacy precedence per action. BGA-419 records the conflict between the canonical modern state documentation and the Complete Walkthrough, treating the walkthrough form as unsupported until BGA clarifies it. BGA-420 resolves explicit and implicit SQL output/table aliases before database rules consume references. The four installed-command scenarios are now part of the modern and legacy claim evidence.
+
+BGA-426 through BGA-428 address gaps observed on a real generated template.
+`gameoptions`, `gamepreferences`, and `stats` each accept JSONC, JSON, or their
+legacy PHP file independently. Contract validation excludes the documented root
+`_ide_helper.php` and `.d.ts` declarations; they remain visible in file inventory.
+Git ignore rules, backup folder names, and arbitrary nested PHP helpers do not
+establish runtime scope. State returns can directly delegate to a unique same-class
+`act…` method when its targets are readable; cycles, missing/ambiguous methods,
+computed targets chains longer than eight steps, and graphs over 256 expansion steps remain unsupported. These
+subsets are exercised by the original `modern-generated-regression` fixture and
+`E2E-INSPECT-JSONC-COMPONENTS`, `E2E-CONTRACT-EDITOR-HELPERS`, and
+`E2E-STATE-DELEGATED-RETURNS` through the installed public executable. This adds
+coverage without claiming the whole generated template or game is release-ready.
 
 A layout being inside the compatibility contract is not the same as every capability being release-verified. The manifest now names all three supported layouts on each of the ten project tools and resources, and each supported layout claim independently lists the capabilities and packaged scenarios that prove that exact pairing. `pnpm verify:compatibility` compares those sources and seeds both an omission and an overclaim before accepting the real manifest. Retained evidence also copies layouts and environments from the manifest and rejects drift. BGA-006 and BGA-017 remain `implemented` until exact-commit CI passes this composition change; the semantic readers and compatibility claims remain supported on their existing evidence.
 

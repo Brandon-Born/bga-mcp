@@ -233,9 +233,18 @@ export async function loadProjectContext(
     // One check per file: a deadline that expires during a large read set
     // stops here rather than at the end of it.
     cancellationCheckpoint(options.signal);
+    // The BGA migration guide identifies root _ide_helper.php and
+    // bga-framework.d.ts as IDE support, not game implementations:
+    // https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide#IDE_Support
+    // TypeScript declaration files contain only type information. This does
+    // not infer exclusions from Git ignore rules or arbitrary nested helpers.
     const wanted =
-      (options.withPhpSources === true && file.path.endsWith('.php')) ||
-      (options.withClientSources === true && /\.(?:js|ts)$/u.test(file.path));
+      (options.withPhpSources === true &&
+        file.path.endsWith('.php') &&
+        file.path !== '_ide_helper.php') ||
+      (options.withClientSources === true &&
+        /\.(?:js|ts)$/u.test(file.path) &&
+        !file.path.endsWith('.d.ts'));
     if (!wanted || phpSources.length + clientSources.length >= MAX_SOURCE_FILES) {
       continue;
     }

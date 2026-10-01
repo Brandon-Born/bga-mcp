@@ -123,12 +123,14 @@ const COMPONENT_RULES: readonly ComponentRule[] = [
   },
   {
     id: 'options',
-    match: (path) => path === 'gameoptions.json' || path === 'gameoptions.inc.php',
+    // Both dedicated configuration pages permit JSONC: "you can use jsonc
+    // instead of json, to allow comments in the Json." See BGA-426 sources.
+    match: (path) => /^gameoptions\.(?:jsonc?|inc\.php)$/u.test(path),
     expected: always,
   },
   {
     id: 'preferences',
-    match: (path) => path === 'gamepreferences.json' || path === 'gamepreferences.inc.php',
+    match: (path) => /^gamepreferences\.(?:jsonc?|inc\.php)$/u.test(path),
     // Preferences become their own file only when gameoptions.inc.php is split.
     expected: (detection) => isModern(generationFor(detection, 'metadata')),
   },
@@ -141,7 +143,7 @@ const COMPONENT_RULES: readonly ComponentRule[] = [
   },
   {
     id: 'statistics',
-    match: (path) => path === 'stats.json' || path === 'stats.inc.php',
+    match: (path) => /^stats\.(?:jsonc?|inc\.php)$/u.test(path),
     expected: always,
   },
   { id: 'database', match: (path) => path === 'dbmodel.sql', expected: always },
@@ -157,7 +159,7 @@ const COMPONENT_RULES: readonly ComponentRule[] = [
   {
     id: 'client-logic',
     match: (path, gameKey) =>
-      (path.startsWith('modules/js/') && /\.(?:js|ts)$/u.test(path)) ||
+      (path.startsWith('modules/js/') && /\.(?:js|ts)$/u.test(path) && !path.endsWith('.d.ts')) ||
       (gameKey !== null && path === `${gameKey}.js`),
     expected: always,
   },
