@@ -239,3 +239,10 @@ BGA-403's original rc.5 handoff is complete. BGA-404 must next sign these retain
 bytes without rebuilding; signing selectors still identify historical rc.4.
 The unsigned receipt preserves that observation. No rc.5 signature, public
 evidence distribution, security approval or registry publication is claimed.
+
+BGA-404 subsequently [signed and independently verified the same original rc.5
+files](release-signing-v1.0.0-rc.5.json), with actual cryptographic negatives and
+hosted/macOS fresh-consumer checks. Its exact-signer-source CI passes all six
+jobs. The producer receipt above remains its historical unsigned observation;
+the new signing receipt supplies the distinct signature evidence. BGA-407's
+rc.5 distribution and the remaining candidate-specific release gates are separate.

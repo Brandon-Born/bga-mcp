@@ -209,6 +209,13 @@ verification scripts too, so these signing-only constant changes require another
 explicit eight-source re-admission after clean exact-source CI even though no
 framework reader changed.
 
+**rc.5 confirmation, 2026-10-02 UTC.** Advancing the independently verified
+rc.5 packet again required both script constants and the concurrency group, then
+explicit re-admission of eight unchanged decisions against fresh signer-source
+CI. [The signing receipt](verification/release-signing-v1.0.0-rc.5.json) retains
+that actual guard result. The preparation friction persists; no selection or
+impact-scoped reuse feature has been implemented.
+
 **Wish.** A single reviewed, immutable candidate selection receipt with an
 explanation of the downstream identities that still differ. Any impact-scoped
 review reuse should show which implementation and fixture dependencies changed,

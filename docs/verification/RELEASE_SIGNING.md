@@ -192,3 +192,43 @@ records its historical preparation and observation. Earlier trusted verifier
 commits, candidate tags, original packets and receipts remain available for their
 own versions. No security approval, usefulness carry-forward or registry
 publication follows from selector preparation.
+
+### Observed rc.5 signing and independent verification
+
+[Signing workflow 36991138847](https://github.com/Brandon-Born/bga-mcp/actions/runs/36991138847)
+passes prepare, sign and verify at signer
+`a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`.
+[Attestation 52105162](https://github.com/Brandon-Born/bga-mcp/attestations/52105162)
+binds all seven original subjects with the reviewed custom retention predicate.
+Preparation passes the full gate and original archive/source checks without a
+signing identity; the isolated identity-bearing job installs no dependencies and
+executes no candidate. [Exact-signer-source CI 36991112988](https://github.com/Brandon-Born/bga-mcp/actions/runs/36991112988)
+passes all six platform/Node jobs, each with 674 tests and 209 required scenarios.
+All six downloaded receipts pass trusted schema, clean exact-source, integrity
+and applicable-conformance checks.
+
+[The rc.5 signing receipt](release-signing-v1.0.0-rc.5.json) retains signed
+archive `11219504174`, archive SHA-256
+`0caa25bc34ef52b31793fff41cb5ffa20362092af29ee0b29b27e9fcb3974318`,
+and finite hosted retention through 2026-12-31 at 09:40:31 UTC. Independent
+download verifies that archive digest and an exact nine-file inventory. All seven
+original files match the unsigned producer packet byte for byte; original tarball
+SHA-256 remains `b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`.
+
+Hosted Ubuntu and independent macOS consumers acquire trusted roots separately,
+verify the exact signer/ref/workflow/issuer, match every subject and original
+producer/source-CI predicate, and use the verified original artifact for a fresh
+installation. Modified bytes and wrong signer/workflow identities are actually
+refused by the cryptographic verifier. Discovery, first use, excluded-call refusal,
+unchanged-project hashing, process exit and removal pass. Their sanitized retained
+result documents agree. For the current rc.5 verifier the expected signer is
+`a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`, distinct from original package source
+`286f2bbb1bfff28726378098d9883058f19841e9`.
+
+The eight unchanged previously read framework decisions are explicitly re-admitted
+against the clean signer-source CI; the actual framework release guard passes.
+This retains the broad guard after selector-script changes without weakening it.
+BGA-407 must next distribute this candidate's signed evidence. Earlier candidate
+tags, packets and receipts remain unchanged. Signing does not rebuild a package,
+renew the client matrix, carry forward BGA-424 usefulness, approve security or
+publish to a registry.
