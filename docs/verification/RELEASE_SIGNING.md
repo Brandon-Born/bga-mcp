@@ -102,3 +102,23 @@ package SHA-256 remains `598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5
 [Explicit BGA-424 carry-forward](AGENT_EVALUATION_CARRY_FORWARD.md) subsequently
 repeated the frozen real-project calls on these verified bytes. Original rc.1/rc.2
 receipts remain unchanged. No package was rebuilt during signing or published.
+
+## Current documentation and BGA-432 replacement: rc.4 selection
+
+The main-only prepare/sign/verify workflow now selects the independently checked
+[original rc.4 candidate receipt](release-candidate-v1.0.0-rc.4.json), produced at
+`5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`. Its original tarball SHA-256 is
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`;
+its original archive ID is `11214430454`, archive SHA-256
+`0dadc28b8ff6ecd16736083eb22739f2a5cd34efc97e4adae026752226db689b`.
+Only the reviewed receipt constants and candidate-specific concurrency group
+advance. Every permission, action pin, trusted identity constraint, seven original
+subject check, consumer/refusal probe and prohibition on rebuilding/publishing
+remains in force.
+
+This selection is preparation, not a signature claim. Actual main-only signing,
+independent signature/subject/provenance verification, original-file equality and
+exact-signer-source CI are still required before rc.4 signing is verified.
+Historical rc.1/rc.2/rc.3 instructions use their recorded trusted verifier commits
+and receipts. No prior tag, packet or receipt is replaced, and no publication or
+security approval follows from a new signature.

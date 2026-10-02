@@ -12,7 +12,7 @@ export const SIGNING_REPOSITORY = 'Brandon-Born/bga-mcp';
 export const SIGNING_WORKFLOW = `${SIGNING_REPOSITORY}/.github/workflows/release-signing.yml`;
 export const SIGNING_PREDICATE = `https://github.com/${SIGNING_REPOSITORY}/predicates/release-candidate/v1`;
 const repositoryRoot = resolve(import.meta.dirname, '..');
-const receiptPath = resolve(repositoryRoot, 'docs/verification/release-candidate-v1.0.0-rc.3.json');
+const receiptPath = resolve(repositoryRoot, 'docs/verification/release-candidate-v1.0.0-rc.4.json');
 const execute = promisify(execFile);
 const digest = (bytes: Buffer | string): string =>
   `sha256:${createHash('sha256').update(bytes).digest('hex')}`;

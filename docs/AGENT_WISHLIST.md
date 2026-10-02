@@ -187,3 +187,28 @@ project writes, test execution by the server, or Studio operations.
 ## See release holds across the candidate receipts
 
 **Observed and addressed in BGA-415.** Readiness was spread across the security assessment, private-report lifecycle, framework ledger, client smoke, install-guide, public evidence and usefulness receipts. Comparing their actual candidate digests exposed rc.1 client/public-distribution records alongside rc.3 security/usefulness evidence. `pnpm release:status` now gathers those owned holds and requires candidate-specific receipts before publication. This is repository release tooling; adding a game-inspection MCP tool would not improve this task. The actual registry and publisher setup remain separately unverified.
+
+## Advance one reviewed candidate without scattered selectors
+
+**Observed during rc.4 signing preparation.** Selecting the verified original
+packet requires matching receipt constants in `release-signing.ts` and
+`test-signed-release.ts`, plus the workflow concurrency group. Downstream
+publication, security and evidence owners also retain their own candidate
+identities. I have to audit those separately so a new signature cannot silently
+carry an old candidate's approval. The framework ledger conservatively hashes
+verification scripts too, so these signing-only constant changes require another
+explicit eight-source re-admission after clean exact-source CI even though no
+framework reader changed.
+
+**Wish.** A single reviewed, immutable candidate selection receipt with an
+explanation of the downstream identities that still differ. Any impact-scoped
+review reuse should show which implementation and fixture dependencies changed,
+retain completed exact-source CI, and prove that changes to every actual framework
+reader or applicable test still invalidate its mapped source decisions. An
+arbitrary caller-selected receipt must never reach the identity-bearing job.
+This is repository release tooling, not a game-inspection MCP capability.
+
+**Next evidence.** Compare with the existing BGA-415 readiness report and current
+BGA-404 constants before proposing an executable change. BGA-404 owns signing
+selection, BGA-408 owns framework invalidation, and BGA-415 owns publication holds.
+These observations do not relax the existing broad guard or transfer any approval.
