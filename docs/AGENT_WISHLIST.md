@@ -4,17 +4,40 @@ Started 2026-10-01 at the owner's request. The MCP should make an agent's BGA
 development work easier. This note records work I still have to do around it,
 the result I would like it to provide, and how we could test the benefit.
 
-Observed friction comes from project preparation and the generated-template
-regression runs. The formal [BGA-424 evaluation](AGENT_DEVELOPMENT_PLAN.md) has
-not run. Proposed benefits are hypotheses; no time savings have been measured.
+Observed friction now includes the three executed tasks in the
+[BGA-424 evaluation](verification/AGENT_EVALUATION.md), as well as preparation and
+generated-template regressions. Proposed benefits remain hypotheses; no time
+savings have been measured.
 This is a feedback log, not an executable backlog or a promise of support.
 [BACKLOG.md](BACKLOG.md) remains the implementation queue.
+
+## Read code without treating examples as code
+
+**Observed during diagnosis and review.** Rc.2 reported a comment-only notification
+method as a live handler and a comment-only PHP method in its action trace. I had
+to inspect the actual JavaScript prototype and extract an original installed-command
+reproducer to distinguish executable declarations from examples. A missing-handler
+warning was suppressed; a clean-looking trace was insufficient evidence.
+
+**Wish and owner.** BGA-431 must remove these phantom contracts while preserving
+real supported methods, bindings and lexical contexts. This is a correctness fix
+to existing tools, not a new capability. Its recorded correctness probe currently
+fails and blocks the release. Explicit uncertainty is preferable when a reader
+cannot establish executable context.
+
+## Observations from the executed tasks
+
+| Task      | Observed manual work                                                                                                               | Desired decision support                                                                                                                                                                      |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Diagnosis | Freeze a failing game assertion, inspect source separately, compare unchanged MCP diagnostics, adjudicate a phantom handler.       | Correct executable traces and a clear distinction between framework coverage and game-owned assertions. BGA-431 owns the parser miss; BGA-425 owns test-evidence research.                    |
+| Feature   | Prepare selected roots, bind their digests, compare action/state/payload results and retrieve official framework pages separately. | A source receipt and a compact before/after comparison without hiding changed coverage. Existing action traces already supplied useful argument relationships.                                |
+| Review    | Bind the frozen diff, run independent scoring/end-condition tests, interpret six SQL checks without verdicts.                      | Explain repeated unsupported causes and put independently identified test evidence beside the bounded framework verdict. No measured savings or new report-reading capability is established. |
 
 ## Explain and select the source set
 
 **Observed.** The mixed working folder, tracked export, and production subset
 produce different coverage. I prepared separate roots and recorded selected
-paths and digests manually. BGA-429 fixes outside-source contamination, but
+paths and digests manually, including 17-, 18- and 20-file roots in the formal tasks. BGA-429 fixes outside-source contamination, but
 copies inside `modules/` remain eligible for contract reading.
 
 **Wish.** One readable receipt showing which files supplied each contract, which
@@ -76,7 +99,10 @@ removes repeated manual searching; this is not a claim that tracing is absent.
 
 ## Show what changed after an edit
 
-**Proposed.** After changing a game, I would like a comparison of new, resolved,
+**Observed workaround; proposed improvement.** During diagnosis and feature work I
+compared private call results manually; the reload repair left structural findings
+unchanged, while replacing sample notification sends changed the feature result.
+After changing a game, I would like a comparison of new, resolved,
 and unchanged findings, plus any gained or lost coverage. Bind both sides to
 their source sets and server artifacts so a changed root or parser cannot look
 like a successful game fix.
@@ -87,8 +113,8 @@ baseline; no incremental-analysis capability or savings are established.
 
 ## Bring test evidence into the decision
 
-**Proposed.** Framework checks alone cannot settle scoring, turns, or end
-conditions. I would like a concise view of developer-owned test results beside
+**Proposed.** The formal diagnosis and review confirmed that framework checks alone
+cannot settle scoring, turns, or end conditions. I would like a concise view of developer-owned test results beside
 the diagnostics, identifying the tested revision, assertions, failures, and
 stale or incomplete evidence. The agent would still run the tests.
 

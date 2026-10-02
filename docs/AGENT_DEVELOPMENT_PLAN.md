@@ -1,15 +1,18 @@
 # BGA-424 development evaluation plan
 
 Prepared 2026-10-01. **Primary objective: fix/build the MCP.** Dino Racer is the
-real-project test subject. Formal feature/diagnosis/review tasks have not run;
-preparation exposed MCP defects, and BGA-426 through BGA-428 now own their fixes
-and the same-project regression rerun. Game work is limited to what the MCP
-evaluation needs.
+real-project test subject. The formal feature, diagnosis and review tasks have
+now run against the independently verified signed rc.2 candidate. The
+[observed evaluation](verification/AGENT_EVALUATION.md) records 23 calls, useful
+framework traces, a game-specific miss and a new parser defect. BGA-431 blocks
+candidate advancement and BGA-424 verification; its original installed-command
+reproducer fails correctness assertions. Game work remains bounded to the MCP
+evaluation.
 
 The owner selected **Dino Racer**, published by Underdog Games, and confirmed
 that development starts from scratch. The game will live in a separate local
 repository, now initialized locally with planning documents and a PHP 8.4 test
-environment and a locally tested standalone ranking/scoring core. The 25-file
+environment and locally tested ranking/scoring, persisted round, drafting and race-result helpers. The 25-file
 generated modern Studio baseline has been downloaded unchanged and inventoried;
 the untouched template starts in Studio, but no playable Dino Racer implementation exists. Publisher permission remains
 unconfirmed. A separate owner request authorized Studio setup; the owner submitted
@@ -32,7 +35,7 @@ supply contracts; other local source stays inventoried with explicit unknown sco
 [Source-scope decision and workflow](verification/PROJECT_SOURCE_SCOPE.md) describe
 canonical-root selection without treating Git ignore or backup names as authority.
 [Regression evidence](verification/GENERATED_TEMPLATE_REGRESSIONS.md) separates
-these results from the still-pending BGA-424 task set. Do not advance game features
+these results from the subsequently executed BGA-424 task set. BGA-430 verified the replacement-version smoke correction; BGA-431 now owns the newly discovered comment-parser miss. Do not advance game features
 merely to make progress when the active objective is MCP correctness.
 
 ## First development milestone
@@ -52,20 +55,23 @@ specific project's status before Studio setup. This plan itself authorizes no St
 access, uploads, publisher contact, or public release; any separate owner request
 must be recorded independently of the MCP evaluation.
 
-## Proposed evaluation tasks
+## Executed evaluation tasks
 
-Freeze concrete tasks, acceptance assertions, starting revisions, and independent
-oracles before each task. These proposals are not yet an accepted task set.
+[Frozen task definitions](verification/AGENT_EVALUATION_TASKS.md) replace the initial
+proposals. Their source-backed assertions preceded production changes.
 
-| Task      | Proposed scope                                                                                             | Evidence needed                                                                                                           |
-| --------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| Feature   | Implement drafting, leftover-card movement, and announcer rotation in the real game project.               | Game assertions and a runnable scenario, actual agent MCP calls, framework-source adjudication, and the resulting change. |
-| Diagnosis | Investigate a checkpoint-resolution defect observed in development or supplied independently by the owner. | A reproducible failure, independently established expected behavior, diagnosis, and a passing regression after the fix.   |
-| Review    | Review an actual race-ending/scoring change, including finishing-position ties and finish-line effects.    | The frozen diff, independent assertions, observed findings, misses, and resulting decisions.                              |
+| Task      | Executed scope                                                                                                       | Observed result                                                                                                                           |
+| --------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Feature   | Prepared-offer drafting, leftover movement, announcer rotation, reload and typed state/client/notification wiring.   | Local game and client assertions passed; MCP wiring traces matched reviewed framework sources.                                            |
+| Diagnosis | A genuine persisted drafting representation without its required revealed offer.                                     | Frozen assertion failed before repair and passed afterward; MCP supplied structural context but did not locate this game-specific defect. |
+| Review    | Frozen race-ending/scoring helper diff with finish, deck exhaustion, discard, announcer and lane/scoring assertions. | Local assertions passed; MCP review remained structurally useful and SQL-partial.                                                         |
 
-An agent knowingly inserting and then rediscovering its own bug does not establish
-independent diagnostic usefulness. Disclose reviewer familiarity with the change.
-Do not claim that MCP framework checks validate game-specific scoring or gameplay.
+The same agent authored and reviewed the game changes; neither task is blind.
+No defect was knowingly inserted for rediscovery. The baseline checkpoint proposal
+was not manufactured when the genuine reload failure provided the frozen diagnosis.
+The [report and ledger](verification/AGENT_EVALUATION.md) bind actual revisions,
+artifact identity and limits. BGA-431, rather than further game development, is
+now the next MCP implementation item.
 
 ## Evaluation procedure
 

@@ -1,5 +1,12 @@
 # BGA-424 frozen development tasks
 
+```verification-record
+{
+  "kind": "review",
+  "scope": "Frozen BGA-424 task definitions and source-backed oracles for the identified rc.2 development evaluation"
+}
+```
+
 Defined 2026-10-01 before evaluated edits. The primary deliverable is MCP
 usefulness evidence; Dino Racer is the authorized private test project.
 
@@ -8,8 +15,9 @@ usefulness evidence; Dino Racer is the authorized private test project.
 - Candidate: `v1.0.0-rc.2`, source `f5f5297c6d98fd0d0aadc3ce98ca01536ed75c74`.
 - Original tarball: SHA-256 `f8d589613396222078578784dc4c5f71f69107709704c1dcc629506ab02d3c82`.
 - [Candidate receipt](release-candidate-v1.0.0-rc.2.json) binds production,
-  reconstruction, independent download and six-platform CI. Signing is pending;
-  evaluated calls begin only after independent signature verification.
+  reconstruction, independent download and six-platform CI. The
+  [signing receipt](release-signing-v1.0.0-rc.2.json) records completed independent
+  signature verification before evaluated calls.
 - Actual agent: the owner-directed Codex desktop agent selecting calls during
   this development session. Calls use the actual `codex-cli 0.159.2` app-server
   MCP stack through the controlled bridge, on macOS arm64 / Node 22.17.1.
@@ -23,7 +31,9 @@ usefulness evidence; Dino Racer is the authorized private test project.
 
 ## Feature
 
-Starting game revision: `532ff8a5e00aa7c59c83040c2a6796452e60a3d5`.
+Initial game foundation: `532ff8a5e00aa7c59c83040c2a6796452e60a3d5`.
+The diagnosis ran first. Feature edits start from the committed repair `10d9f2b`;
+the feature's acceptance assertions below are unchanged.
 The foundation contains generated BGA wiring, a tested persistable round model,
 ordinary reveal movement, and standalone ranking/scoring. It is not a playable
 base game. Setup and consumer smoke are excluded from evaluated tasks.
@@ -84,6 +94,11 @@ MCP framework checks cannot establish these gameplay assertions. No checkpoint
 inventory, complete game victory rule, hidden variant or live Studio claim follows.
 
 ## Results and limits
+
+All three tasks ran. [Observed evaluation](AGENT_EVALUATION.md) and its sanitized
+ledger record limited usefulness, the game-specific diagnosis, and the BGA-431
+parser miss that prevents this candidate advancing. Task oracles above remain
+frozen; this result note does not redefine their original acceptance.
 
 Retain actual call identities, decisions, independent assertions, false positives,
 misses, unsupported syntax, setup errors and cleanup. New parser defects receive

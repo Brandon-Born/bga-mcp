@@ -57,4 +57,26 @@ producer/source CI, original archive digest and seven material files are distinc
 from rc.1. The receipt selector is a reviewed source constant, not caller input.
 Historical rc.1 verification uses its recorded trusted verifier commit and
 receipt; no rc.1 bytes, tags or receipts are replaced. Rc.2 signing and independent
-cryptographic verification are pending until actual workflow evidence is recorded.
+cryptographic verification completed before evaluated calls, as recorded below.
+
+## Replacement verification, 2026-10-02 UTC
+
+[Signing workflow 36946659442](https://github.com/Brandon-Born/bga-mcp/actions/runs/36946659442)
+passed at signer `2727208dee9a479ac0f4eca7fb15ed0e262552f9`.
+[Attestation 52006599](https://github.com/Brandon-Born/bga-mcp/attestations/52006599)
+binds the seven original rc.2 subjects. Its independently downloaded archive
+matches `sha256:e9cf82299a09a9f630b9d0a03d8390ffcbe89226683201b404a5fa4c4140dda4`;
+all signed packet files matched the downloaded archive, and all seven originals
+matched the independently retained unsigned candidate byte for byte.
+
+The [rc.2 signing receipt](release-signing-v1.0.0-rc.2.json) records the hosted
+and independent macOS cryptographic consumers, exact signer/workflow refusals,
+modified-tarball refusal, installation, discovery, first use, unchanged project,
+clean exit and removal. [Exact signer-source CI 36946547409](https://github.com/Brandon-Born/bga-mcp/actions/runs/36946547409)
+passed all six jobs with 618 tests and 188 required scenarios each. Retention of
+the signed archive ends `2026-12-31T00:34:20Z`; this is distinct from durable
+per-release distribution. No package was published or original candidate rebuilt.
+
+The [real development evaluation](AGENT_EVALUATION.md) subsequently found BGA-431.
+Cryptographic verification remains valid, but does not clear that release blocker
+or transfer usefulness claims to a future replacement artifact.

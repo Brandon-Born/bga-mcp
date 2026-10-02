@@ -1,0 +1,40 @@
+{
+  "owner": "BGA-431",
+  "recordedAt": "2026-10-02T01:15:19.583Z",
+  "fixtureDigest": "sha256:ce7ffef66d95260da67a375f4ea4a1dbde585f1fb7b11afebe8c73488102f04a",
+  "runnerDigest": "sha256:d330a5b16c060a7b8ba1835b77b4a9591c6342d4831d7c2f05dc249cc0c62131",
+  "liveHandlers": [],
+  "failures": [
+    "comment-only notification method reported as live",
+    "missing-handler diagnostic suppressed",
+    "comment-only PHP method reported as live"
+  ],
+  "projectUnchanged": true,
+  "serverExited": true,
+  "schemaVersion": 1,
+  "candidateTag": "v1.0.0-rc.2",
+  "candidateSourceCommit": "f5f5297c6d98fd0d0aadc3ce98ca01536ed75c74",
+  "artifactDigest": "sha256:f8d589613396222078578784dc4c5f71f69107709704c1dcc629506ab02d3c82",
+  "client": "MCP SDK real stdio client through installed public command",
+  "commandExitCode": 1,
+  "correctness": "failed; defect observed, not repaired",
+  "rawObservationDigest": "sha256:f71ab368d522a4ed60c45a25d150c741f2e4e3994fd40eda12228c2d99ca1d4d",
+  "tools": [
+    "validate_notifications",
+    "validate_action_contracts",
+    "validate_project",
+    "run_pre_release_audit"
+  ],
+  "resources": ["bga://project/diagnostics", "bga://project/summary"],
+  "trace": {
+    "handlers": [
+      {
+        "name": "markerChanged",
+        "binding": "method",
+        "payloadKeys": ["marker"],
+        "source": "modules/js/Game.js"
+      }
+    ],
+    "gameMethods": ["changeMarker", "exampleOnlyMethod"]
+  }
+}

@@ -1,0 +1,427 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-424",
+  "recordedAt": "2026-10-02",
+  "conclusion": "limited usefulness; release blocked by BGA-431",
+  "status": "implemented",
+  "candidate": {
+    "tag": "v1.0.0-rc.2",
+    "commit": "f5f5297c6d98fd0d0aadc3ce98ca01536ed75c74",
+    "artifactDigest": "sha256:f8d589613396222078578784dc4c5f71f69107709704c1dcc629506ab02d3c82",
+    "signingReceipt": "release-signing-v1.0.0-rc.2.json"
+  },
+  "client": {
+    "name": "Codex desktop agent via codex-cli app-server MCP stack",
+    "version": "codex-cli 0.159.2",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "node": "v22.17.1",
+    "guiDiscoveryEvaluated": false,
+    "additionalInferenceTurnStarted": false,
+    "binaryDigest": "sha256:50ac633af64851511f9bbc71032cdae7f1ba20b3234c189687d61ba846c354c5"
+  },
+  "runs": [
+    {
+      "label": "diagnosis-before",
+      "recordedAt": "2026-10-02T00:39:09.371Z",
+      "gameRevision": "532ff8a5e00aa7c59c83040c2a6796452e60a3d5",
+      "gameTreeDirty": true,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:fbe2839adb56ff5735f280bfd4148cc6177d164631224aa79052c1377c555572",
+      "runnerDigest": "sha256:c0661aa532057942ad08df5c0a06ab03275b2854c6577332c09d4acbd475fc56",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": [
+            "database.audit.unavailable",
+            "database.unsupported-syntax",
+            "notification.sent.not-handled"
+          ],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled"],
+          "auditCounts": null
+        },
+        {
+          "tool": "audit_database_usage",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "auditCounts": null
+        }
+      ],
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true
+    },
+    {
+      "label": "diagnosis-after",
+      "recordedAt": "2026-10-02T00:40:33.801Z",
+      "gameRevision": "10d9f2b98e53db87284a068e0a5072454942afec",
+      "gameTreeDirty": false,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:a53bdef495c7fc15cc2986a4042ea198b0559675a226c5a186753ae6d334462d",
+      "runnerDigest": "sha256:c0661aa532057942ad08df5c0a06ab03275b2854c6577332c09d4acbd475fc56",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "calls": [
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": [
+            "database.audit.unavailable",
+            "database.unsupported-syntax",
+            "notification.sent.not-handled"
+          ],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled"],
+          "auditCounts": null
+        }
+      ],
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true
+    },
+    {
+      "label": "feature-before",
+      "recordedAt": "2026-10-02T00:43:59.530Z",
+      "gameRevision": "10d9f2b98e53db87284a068e0a5072454942afec",
+      "gameTreeDirty": false,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:de94992acb2a25adae81cbb2a239267a19ce45e01a24f83c38f63bcc5658a918",
+      "runnerDigest": "sha256:c0661aa532057942ad08df5c0a06ab03275b2854c6577332c09d4acbd475fc56",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "calls": [
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled"],
+          "auditCounts": null
+        }
+      ],
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true
+    },
+    {
+      "label": "feature-after",
+      "recordedAt": "2026-10-02T00:48:45.473Z",
+      "gameRevision": "e14116b8bfa38b5fa439b95d3c31cc09cd6a2a17",
+      "gameTreeDirty": false,
+      "selectedFiles": 18,
+      "rawReceiptDigest": "sha256:dc6da48b109f5eb0d7b67d32c7d2a4577ada5ad457bfd14183efa7ccae5d1393",
+      "runnerDigest": "sha256:c0661aa532057942ad08df5c0a06ab03275b2854c6577332c09d4acbd475fc56",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "auditCounts": null
+        }
+      ],
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true
+    },
+    {
+      "label": "review-after",
+      "recordedAt": "2026-10-02T00:52:27.141Z",
+      "gameRevision": "8b5f6286a2fbd763c516d789c5865bbe2b4998a9",
+      "gameTreeDirty": false,
+      "selectedFiles": 20,
+      "rawReceiptDigest": "sha256:c1505f4cb2dff4dc9e147a19039b7d370f80baac637ee6cd0f42dc8ac7ee930e",
+      "runnerDigest": "sha256:c0661aa532057942ad08df5c0a06ab03275b2854c6577332c09d4acbd475fc56",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "auditCounts": null
+        },
+        {
+          "tool": "audit_database_usage",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "auditCounts": null
+        },
+        {
+          "tool": "run_pre_release_audit",
+          "status": null,
+          "diagnosticSummary": null,
+          "findingCodes": [],
+          "auditCounts": {
+            "passed": 26,
+            "failed": 1,
+            "unsupported": 6,
+            "manual-required": 8
+          }
+        }
+      ],
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true
+    }
+  ],
+  "evaluatedCalls": 23,
+  "comparableEffortBaseline": null,
+  "reviewDiffDigest": "sha256:f81486c0a759c87ab84db26740a9803ae5fb6ca32f49ec12df0d61b4c2b58cd5",
+  "gameChecks": {
+    "foundation": {
+      "phpTests": 27,
+      "assertions": 58
+    },
+    "diagnosisBefore": {
+      "phpTests": 1,
+      "assertions": 1,
+      "failures": 1
+    },
+    "diagnosisAfter": {
+      "phpTests": 28,
+      "assertions": 59
+    },
+    "featureAfter": {
+      "phpTests": 34,
+      "assertions": 94,
+      "javascriptTests": 2
+    },
+    "reviewAfter": {
+      "phpTests": 39,
+      "assertions": 105,
+      "javascriptTests": 2
+    }
+  },
+  "blockers": ["BGA-431"],
+  "runtimeStudioEvaluated": false,
+  "privateSourceRetainedInMcpRepository": false,
+  "cleanup": {
+    "temporaryInstallationRemoved": true,
+    "publicCommandAbsent": true,
+    "selectedTemporaryRootsRemoved": true,
+    "privateEvidenceRetained": true,
+    "originalCandidatePacketsRetainedIgnored": true
+  }
+}

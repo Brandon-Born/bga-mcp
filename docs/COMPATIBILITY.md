@@ -115,3 +115,13 @@ BGA-407 distributes signed candidate verification metadata with exact frozen loc
 BGA-400 extends CLAIM-CLIENT-SDK evidence: the generic stdio guide is exercised with the reference client on the CI platforms. This is not named coding-client support. The signed original candidate is separately evaluated through the same guide; only repeat installation, not cross-version upgrade, is currently measurable.
 
 BGA-401 adds E2E-CLIENT-SDK-SMOKE and GATE-CLIENT-MATRIX to transport evidence. The gate refuses missing/version/environment/scenario claims and rejects changed controlled runners or candidate identities.
+
+## Open real-development counterexample
+
+[BGA-424](verification/AGENT_EVALUATION.md) evaluated the signed rc.2 original on
+three actual development tasks. BGA-431 reproduces phantom notification handlers
+and PHP methods from comments through the installed public command. Existing
+passing fixture claims do not establish correct executable-context handling for
+that case. Candidate advancement is blocked pending repair, passing original
+packaged regressions and explicit replacement-artifact carry-forward. Unsupported
+computed SQL and game-owned rules also remain outside a clean verdict.
