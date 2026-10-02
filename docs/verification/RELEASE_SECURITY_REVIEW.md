@@ -133,3 +133,12 @@ receipts. This changes no public support claim or permission. Those reference
 updates require their own clean CI/framework re-admission under the existing
 broad guard before a new candidate may be created. Publisher selection/setup
 remains null; historical audit validity is not renewed approval.
+
+[Clean reference-source CI 36986917716](rc4-clean-security-ci.json) passed all
+six platform/Node jobs at `49a32348bc1d7bf2f77df1c5c9cf65accad7ff48`, each with
+674 tests and 209 required scenarios. All downloaded records passed schema,
+clean exact-source, integrity and applicable-conformance checks. This proves
+the clean rc.4 receipt references and their refusal controls; it does not
+approve rc.4 or cover the later rc.5 version preparation. Framework admission
+for the replacement candidate will use its own final preparation CI, avoiding
+an intermediate admission that the version change would immediately invalidate.

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-405",
+  "recordedAt": "2026-10-02T09:04:27.444714+00:00",
+  "sourceCommit": "49a32348bc1d7bf2f77df1c5c9cf65accad7ff48",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36986917716",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:d5250ff9c0c6310d326df83ee7b26f6f871e236c2ce375b43ffc79f5ed19590d",
+      "packageDigest": "sha256:a865f7c8c4fb82f37dcd0a0ddb4658d86e927ed392aac4e26a3101efec2ef2e2",
+      "generatedAt": "2026-10-02T09:00:28.376Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:488b650ed103919d9a0fc552f1414a852b20410b414e39436015066c2d092091",
+      "packageDigest": "sha256:a865f7c8c4fb82f37dcd0a0ddb4658d86e927ed392aac4e26a3101efec2ef2e2",
+      "generatedAt": "2026-10-02T09:01:40.098Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:366e2c29d237c930d455ec7a3ac8c542b67104d8dc5a434a8cdd45df7c05d047",
+      "packageDigest": "sha256:5e993e68d69aab7b8cc5b6adbd26864e97fae88ef01031c45267d107c7eea4db",
+      "generatedAt": "2026-10-02T08:59:26.912Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:e045691a6f76ec3cbc0aca1cd81fac994aaa4da66083ffef15fbfcbf3528dd8f",
+      "packageDigest": "sha256:5e993e68d69aab7b8cc5b6adbd26864e97fae88ef01031c45267d107c7eea4db",
+      "generatedAt": "2026-10-02T08:59:52.413Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:9f086fb9af217d7b5b6ee83a4548cb4c05e50ba76be47cd85af8ef3149b37810",
+      "packageDigest": "sha256:9621b9165c45c7c4fbeb9c3ee991ee690113d9a7f77566ae0bd7b6bac17ed068",
+      "generatedAt": "2026-10-02T09:03:19.759Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:701adb74d4304713d1704df347330d03fb55c6d32e369bfde81bfa7e7b09a5b5",
+      "packageDigest": "sha256:9621b9165c45c7c4fbeb9c3ee991ee690113d9a7f77566ae0bd7b6bac17ed068",
+      "generatedAt": "2026-10-02T09:00:45.336Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    }
+  ],
+  "scope": "Clean exact-source CI for rc.4 clean security/native-client prerequisite references and their identity/refusal controls. Not final security approval, rc.5 version evidence or framework admission for a later implementation."
+}

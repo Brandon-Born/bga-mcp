@@ -164,3 +164,22 @@ and passed independent cryptographic verification. The unsigned producer receipt
 above remains its historical observation. [The explicit frozen-task repeat](AGENT_EVALUATION_CARRY_FORWARD.md#signed-rc4-frozen-task-repeat)
 uses those signed bytes; it is separate from the current-project source-scope
 comparison and does not establish general game correctness or publication.
+
+## Versioned-guide replacement: rc.5 preparation
+
+Package, runtime version and manifest identify `1.0.0-rc.5`. This distinct
+candidate is intended to include README/INSTALL's corrected historical-example
+wording after the clean rc.4 security assessment identified those two guide
+mismatches. The guide no longer needs to change just because a newer candidate
+exists. No public tool, resource, schema, protocol/support contract or BGA reader
+behavior changes with this version metadata.
+
+The current retained rc.4 candidate, signature, security review and all four
+publication prerequisites remain original-byte evidence, not proof of rc.5.
+Version preparation must first pass the full local gate and clean exact-source
+CI. The existing broad implementation digest also requires explicit framework
+re-admission against that passing final preparation source before a clean new
+tag can enter the non-publishing producer. Prior clean-reference CI is retained
+separately, not reused to cover the new version metadata. Original candidate
+creation, independent consumer checks, signing, public evidence, usefulness,
+security and owned external release gates still require rc.5-specific proof.
