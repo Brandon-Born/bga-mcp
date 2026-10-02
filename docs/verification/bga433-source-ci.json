@@ -39,11 +39,156 @@
     "log": "bga433-handoff-check.log"
   },
   "sourceCi": {
-    "status": "pending"
+    "status": "passed",
+    "commit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+    "workflow": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:afa3876f975f2d0cac34ce7f65f6fde473196b55af0644034d3beaf6366188da",
+        "packageDigest": "sha256:66c71f22f9b9a9af547d5b3a6e997d97e8d911eb7b4dae560cba461330e12306",
+        "generatedAt": "2026-10-02T15:08:55.189Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:20b9462a20554ae0c0e338747fc1ba4b067e4d27956322ab3f5d39a1ee7831e7",
+        "packageDigest": "sha256:66c71f22f9b9a9af547d5b3a6e997d97e8d911eb7b4dae560cba461330e12306",
+        "generatedAt": "2026-10-02T15:07:50.903Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "packageDigest": "sha256:405b0770da0c7300165cefa28cbf9242f45e755248101cd7c07da8d3a978fbd4",
+        "generatedAt": "2026-10-02T15:07:32.317Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:bb5040aa6c3a9a268a16d4c1a19121bc34356c473446f595657598252dbfab9a",
+        "packageDigest": "sha256:405b0770da0c7300165cefa28cbf9242f45e755248101cd7c07da8d3a978fbd4",
+        "generatedAt": "2026-10-02T15:07:22.203Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:2864f5a1927431d008634511f85f2b657353ae343628f250d35493dc7d8cda76",
+        "packageDigest": "sha256:9d790900a4c78713efe5bbc6276675e6797aba2fac63c69c6d2db3987c356442",
+        "generatedAt": "2026-10-02T15:10:16.108Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:eab63263918398457026096284222c436e8cce0a3a3fa58e2df7b74e1c3837e3",
+        "packageDigest": "sha256:9d790900a4c78713efe5bbc6276675e6797aba2fac63c69c6d2db3987c356442",
+        "generatedAt": "2026-10-02T15:07:10.040Z",
+        "testsPassed": 732,
+        "scenariosPassed": 209,
+        "capabilities": 17,
+        "retainedClaims": 102
+      }
+    ]
   },
   "scopedAdmission": {
-    "status": "pending",
-    "legacyReuse": false
+    "status": "passed",
+    "ledgerSchemaVersion": 2,
+    "holds": 0,
+    "legacyReuse": false,
+    "legacyArchiveDigest": "sha256:7255edb2563bbfd222ec80dd4479166eea07afa61c1dc833a89109c16062c62e",
+    "legacyArchiveMatchesOriginalBytes": true,
+    "pages": [
+      {
+        "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "semanticDigest": "sha256:794e174fc626c1b40bdd2703293b4bd05529624d230b43127b62da1cbc775e67",
+        "proofDigest": "sha256:83a51a88db59f5ef0a49a77785f2ac097d8fd4333482ca87df0a36544a737313",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "semanticDigest": "sha256:315b8101183f637edec028402756161da526d051c1254092499b72b213e43782",
+        "proofDigest": "sha256:016091965318380ca2ed7717277424f05dda38c35a3f676059d5c9b248ecd065",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "semanticDigest": "sha256:45fd84974fff425bf4ddb3db5fe1b75ddf6e50bd15df7c7a7c2d547b27121249",
+        "proofDigest": "sha256:5128698301332fe64c939d9dbafc20200e578fa7315ce6d7caa42036923de3ad",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "semanticDigest": "sha256:54ad4ae5aac9585805924b0e0ad9d82eb395d9e86ef0fd46e5402121c7d808e3",
+        "proofDigest": "sha256:3e22d30af0bc29dd946b92689ca879283614d800813b1df44ec87400c87bf233",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "semanticDigest": "sha256:10d3752c4bdda47653f5ebac76833efac9abbe2b234518316c0437be420dca2b",
+        "proofDigest": "sha256:4c840befb921155c8cbc727edc001046bf833256c4e608428807d5979a8f821f",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio",
+        "semanticDigest": "sha256:d8258216c424bb3c78e2ae2be00d510f2cc21db0900f0c540804ede7b4d4f6c7",
+        "proofDigest": "sha256:7c695d9adc155783b9441e9e888890e7308a3960c5fceb9b099218eaae982b72",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "semanticDigest": "sha256:50603089363f9eaab37f87122c0a4a871dce34b3d07d40365df1c697e9bf4201",
+        "proofDigest": "sha256:8eeaec079b0822a3071c64269b9528e308820a9db4d9ded59c9d282845065d5e",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+        "semanticDigest": "sha256:5a3adc3894f914220d3bc77738a1d208b6054e0e72ea4a1008f5cac160988d4a",
+        "proofDigest": "sha256:33e4a9e1bd4b94745e04c351c4ca4442dc8c4414b564bf2d5cd4c95926dcc8f4",
+        "interpretationEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "proofEvidenceCommit": "1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e",
+        "evidenceDigest": "sha256:1401add4b4dd0c66bb2fa0a357e18bd727020befae61fbb9f321371fe2c58089",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37024199811"
+      }
+    ]
   },
-  "evidenceCommitIsExactMetadataHead": false
+  "evidenceCommitIsExactMetadataHead": false,
+  "recordedAt": "2026-10-02T15:14:25.074Z",
+  "implementationVerification": "passed for source 1edfb1b9e52a2a2df51cabc5b3c1a2dd491fa23e; metadata-only handoff does not claim exact-HEAD CI",
+  "independentApprovalsTransferred": false
 }
