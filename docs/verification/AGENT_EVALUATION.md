@@ -1,5 +1,11 @@
 # BGA-424 real development evaluation
 
+## rc.6 frozen-task repeat preparation — 2026-10-02 UTC
+
+Before execution, freeze the same 23 original MCP calls across `diagnosis-before`, `diagnosis-after`, `feature-before`, `feature-after` and `review-after`, their original selected-file hashes/revisions and the same independent persistence/scoring/client checks. No task definition, expected result or threshold changes. The subject is the independently authenticated signed original `v1.0.0-rc.6`, source `36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1`, tarball `sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea`, signed at `882859f`. Codex 0.159.2 is invoked from an explicitly pinned temporary installation.
+
+Replay original game-owned snapshots in isolated temporary directories, preserve the actual Dino Racer checkout and private sources, and retain only sanitized identities/outcomes in this repository. This is BGA-424's bounded frozen-task carry-forward, not new game development, live Studio testing, a blind author sample or measured productivity. Existing computed-SQL, manual source selection and game-owned assertion limits remain applicable. Actual results and clean source verification are still pending at this preparation record.
+
 ```verification-record
 {
   "kind": "review",

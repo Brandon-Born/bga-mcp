@@ -1,0 +1,650 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-424",
+  "originalEvaluation": "agent-evaluation-v1.0.0-rc.2.json",
+  "carryForwardKind": "explicit repeat of all prior MCP calls and frozen independent checks, not three newly implemented tasks",
+  "evaluatedCallsRepeated": 23,
+  "additionalConsumerCalls": 7,
+  "additionalExplicitResourceReads": 2,
+  "additionalConsumerResourceReads": 3,
+  "comparableEffortBaseline": null,
+  "remainingReleaseBlockersFromThisEvaluation": [],
+  "remainingCoverageLimits": [
+    "Computed generated setup SQL remains unsupported; six pre-release checks have no verdict",
+    "Source selection still requires explicitly inventoried caller-created snapshots; the mixed checkout remains inconclusive",
+    "Game-specific persistence and scoring correctness requires game-owned assertions",
+    "No live Studio gameplay, GUI discovery, blind author sample or measured productivity claim"
+  ],
+  "runtimeStudioEvaluated": false,
+  "privateSourceRetainedInMcpRepository": false,
+  "recordedAt": "2026-10-02T22:34:00.656690Z",
+  "status": "implemented",
+  "conclusion": "actual bounded frozen-task repeat on original signed rc.6; integrated full gate and exact-source CI pending",
+  "priorCarryForward": "agent-evaluation-v1.0.0-rc.5.json",
+  "candidate": {
+    "tag": "v1.0.0-rc.6",
+    "commit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+    "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "signingReceipt": "release-signing-v1.0.0-rc.6.json"
+  },
+  "runs": [
+    {
+      "label": "diagnosis-before",
+      "recordedAt": "2026-10-02T22:22:51.475Z",
+      "gameRevision": "532ff8a5e00aa7c59c83040c2a6796452e60a3d5",
+      "originalRunDigest": "sha256:fbe2839adb56ff5735f280bfd4148cc6177d164631224aa79052c1377c555572",
+      "runnerDigest": "sha256:5d9f09d45868d01df82345ec2701ea782d46035c7c201016145de818a4d9d2fe",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "productionMatchesOriginalSnapshot": true,
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:877aa0b869592f11945dbcde22e0a87066e8fa7ced80e11ed803f136e16418f5",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 2,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": [
+            "database.audit.unavailable",
+            "database.unsupported-syntax",
+            "notification.sent.not-handled",
+            "notification.sent.not-handled"
+          ],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": 14,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 2,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled", "notification.sent.not-handled"],
+          "reportedHandlerCount": 0,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "audit_database_usage",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        }
+      ],
+      "scopedFindingsMatchPriorCarryForward": true,
+      "stderrDiagnosticsObserved": true,
+      "consumerLifecycle": {
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true
+      }
+    },
+    {
+      "label": "diagnosis-after",
+      "recordedAt": "2026-10-02T22:22:51.962Z",
+      "gameRevision": "10d9f2b98e53db87284a068e0a5072454942afec",
+      "originalRunDigest": "sha256:a53bdef495c7fc15cc2986a4042ea198b0559675a226c5a186753ae6d334462d",
+      "runnerDigest": "sha256:5d9f09d45868d01df82345ec2701ea782d46035c7c201016145de818a4d9d2fe",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "productionMatchesOriginalSnapshot": true,
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:896132b9dd871076cf5b7ad5a173b3552c732ff352c5837829c6ea04a2090f28",
+      "calls": [
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 2,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": [
+            "database.audit.unavailable",
+            "database.unsupported-syntax",
+            "notification.sent.not-handled",
+            "notification.sent.not-handled"
+          ],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": 14,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 2,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled", "notification.sent.not-handled"],
+          "reportedHandlerCount": 0,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        }
+      ],
+      "scopedFindingsMatchPriorCarryForward": true,
+      "stderrDiagnosticsObserved": true
+    },
+    {
+      "label": "feature-before",
+      "recordedAt": "2026-10-02T22:22:52.461Z",
+      "gameRevision": "10d9f2b98e53db87284a068e0a5072454942afec",
+      "originalRunDigest": "sha256:de94992acb2a25adae81cbb2a239267a19ce45e01a24f83c38f63bcc5658a918",
+      "runnerDigest": "sha256:5d9f09d45868d01df82345ec2701ea782d46035c7c201016145de818a4d9d2fe",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "productionMatchesOriginalSnapshot": true,
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true,
+      "selectedFiles": 17,
+      "rawReceiptDigest": "sha256:0736e4ddd1891068dd7acf8af01696932c009ba8ed94d3383bbb0f954c0d6d09",
+      "calls": [
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": 14,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 2,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": ["notification.sent.not-handled", "notification.sent.not-handled"],
+          "reportedHandlerCount": 0,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        }
+      ],
+      "scopedFindingsMatchPriorCarryForward": true,
+      "stderrDiagnosticsObserved": true
+    },
+    {
+      "label": "feature-after",
+      "recordedAt": "2026-10-02T22:22:52.957Z",
+      "gameRevision": "e14116b8bfa38b5fa439b95d3c31cc09cd6a2a17",
+      "originalRunDigest": "sha256:dc6da48b109f5eb0d7b67d32c7d2a4577ada5ad457bfd14183efa7ccae5d1393",
+      "runnerDigest": "sha256:5d9f09d45868d01df82345ec2701ea782d46035c7c201016145de818a4d9d2fe",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "productionMatchesOriginalSnapshot": true,
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true,
+      "selectedFiles": 18,
+      "rawReceiptDigest": "sha256:7445f012655b9c6ea1a507121b7e5ce3b0c29e8eb5dd0e44d21eb2285a357b44",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": 19,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": 1,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        }
+      ],
+      "scopedFindingsMatchPriorCarryForward": true,
+      "stderrDiagnosticsObserved": true
+    },
+    {
+      "label": "review-after",
+      "recordedAt": "2026-10-02T22:22:53.477Z",
+      "gameRevision": "8b5f6286a2fbd763c516d789c5865bbe2b4998a9",
+      "originalRunDigest": "sha256:c1505f4cb2dff4dc9e147a19039b7d370f80baac637ee6cd0f42dc8ac7ee930e",
+      "runnerDigest": "sha256:5d9f09d45868d01df82345ec2701ea782d46035c7c201016145de818a4d9d2fe",
+      "bridgeDigest": "sha256:d1fbfc3b69c6025e1e44f40ff3b23ef20511405e332e1fda59896516ddab0988",
+      "productionMatchesOriginalSnapshot": true,
+      "projectUnchanged": true,
+      "userConfigurationUnchanged": true,
+      "appServerExited": true,
+      "serverProcessesExited": true,
+      "selectedFiles": 20,
+      "rawReceiptDigest": "sha256:77fa158f775c7c49fdf39e6255bf31c272e2ebc5b61454c544a2bd5ec2637955",
+      "calls": [
+        {
+          "tool": "inspect_project",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_state_machine",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_action_contracts",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": 23,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_notifications",
+          "status": "passed",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCodes": [],
+          "reportedHandlerCount": 1,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "audit_database_usage",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "validate_project",
+          "status": "findings",
+          "diagnosticSummary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 1
+          },
+          "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": null
+        },
+        {
+          "tool": "run_pre_release_audit",
+          "status": null,
+          "diagnosticSummary": null,
+          "findingCodes": [],
+          "reportedHandlerCount": null,
+          "reportedGameMethodCount": null,
+          "auditCounts": {
+            "passed": 26,
+            "failed": 1,
+            "unsupported": 6,
+            "manual-required": 8
+          }
+        }
+      ],
+      "scopedFindingsMatchPriorCarryForward": true,
+      "stderrDiagnosticsObserved": true
+    }
+  ],
+  "adjudication": {
+    "rows": [
+      {
+        "label": "diagnosis-before",
+        "revision": "532ff8a5e00aa7c59c83040c2a6796452e60a3d5",
+        "livePrototypeHandlerCount": 0,
+        "reportedHandlerCount": 0,
+        "handlerTraceMatchesActualPrototype": true,
+        "gameMethodCount": 14,
+        "methodTraceMatchesZendLexer": true,
+        "notificationWarningCount": 2
+      },
+      {
+        "label": "diagnosis-after",
+        "revision": "10d9f2b98e53db87284a068e0a5072454942afec",
+        "livePrototypeHandlerCount": 0,
+        "reportedHandlerCount": 0,
+        "handlerTraceMatchesActualPrototype": true,
+        "gameMethodCount": 14,
+        "methodTraceMatchesZendLexer": true,
+        "notificationWarningCount": 2
+      },
+      {
+        "label": "feature-before",
+        "revision": "10d9f2b98e53db87284a068e0a5072454942afec",
+        "livePrototypeHandlerCount": 0,
+        "reportedHandlerCount": 0,
+        "handlerTraceMatchesActualPrototype": true,
+        "gameMethodCount": 14,
+        "methodTraceMatchesZendLexer": true,
+        "notificationWarningCount": 2
+      },
+      {
+        "label": "feature-after",
+        "revision": "e14116b8bfa38b5fa439b95d3c31cc09cd6a2a17",
+        "livePrototypeHandlerCount": 1,
+        "reportedHandlerCount": 1,
+        "handlerTraceMatchesActualPrototype": true,
+        "gameMethodCount": 19,
+        "methodTraceMatchesZendLexer": true,
+        "notificationWarningCount": 0
+      },
+      {
+        "label": "review-after",
+        "revision": "8b5f6286a2fbd763c516d789c5865bbe2b4998a9",
+        "livePrototypeHandlerCount": 1,
+        "reportedHandlerCount": 1,
+        "handlerTraceMatchesActualPrototype": true,
+        "gameMethodCount": 23,
+        "methodTraceMatchesZendLexer": true,
+        "notificationWarningCount": 0
+      }
+    ],
+    "phpVersion": "8.4.26",
+    "phpOracleDigest": "sha256:5f8d11645c2a4c67a582615877a3ad97cb26338b8f9a8cc95ed7aa9f9e314723",
+    "runnerDigest": "sha256:d5434401d19333ef95e71e499587c59485f8753098593dc9c507ea22b7cb7b17",
+    "projectCodeExecutedByMcp": false,
+    "agentPrototypeOracleUsesAuthorizedGameModules": true
+  },
+  "gameChecksReexecution": {
+    "runs": [
+      {
+        "label": "diagnosis-negative",
+        "revision": "532ff8a5e00aa7c59c83040c2a6796452e60a3d5",
+        "exitCode": 1,
+        "phpOutputDigest": "sha256:6296b038a2e530933d3d5654969b7a2829ab0c609dcffdca89b2a38837c5a2e0",
+        "clientOutputDigest": null,
+        "originalNegativeAssertionReplayed": true
+      },
+      {
+        "label": "diagnosis-after",
+        "revision": "10d9f2b98e53db87284a068e0a5072454942afec",
+        "exitCode": 0,
+        "phpOutputDigest": "sha256:5ea9f1b7c73d0f7132f52d12d61d4c53bbe8474d08d9d4e3245bac18012a7b06",
+        "clientOutputDigest": null,
+        "originalNegativeAssertionReplayed": false
+      },
+      {
+        "label": "feature-after",
+        "revision": "e14116b8bfa38b5fa439b95d3c31cc09cd6a2a17",
+        "exitCode": 0,
+        "phpOutputDigest": "sha256:0724f51365c41f5024d8d77fd6ab8f26d3fb6955ff12ecdc3a7be98e34756996",
+        "clientOutputDigest": "sha256:9e05b8eb691fb2b1b4a27ca7ad5ce33522174b3d5faec67d235be8d84727f089",
+        "originalNegativeAssertionReplayed": false
+      },
+      {
+        "label": "review-after",
+        "revision": "8b5f6286a2fbd763c516d789c5865bbe2b4998a9",
+        "exitCode": 0,
+        "phpOutputDigest": "sha256:4af40cc980ed21d02ec91d3dd7c41bf2d99d7d9c00b9de3336650f9fa565bd7a",
+        "clientOutputDigest": "sha256:9a7e354e539a8673e36778446ab63ee87f6ad16dd5a030e1519a1ffa5c42ecbc",
+        "originalNegativeAssertionReplayed": false
+      }
+    ],
+    "phpunitDigest": "sha256:a0fde0c8d85ecb2a17ff73ba45f6a0242b1f82e95137674ed8df7acbb5293e60",
+    "runnerDigest": "sha256:26d6abeba64c6e507aa96e077b6b4f23f36229c6f6dc9f21e85e461150a342cf",
+    "gameProductionUnchanged": true,
+    "temporaryRootsRemoved": true
+  },
+  "gameChecks": {
+    "diagnosisBefore": {
+      "phpTests": 1,
+      "assertions": 1,
+      "failures": 1
+    },
+    "diagnosisAfter": {
+      "phpTests": 28,
+      "assertions": 59
+    },
+    "featureAfter": {
+      "phpTests": 34,
+      "assertions": 94,
+      "javascriptTests": 2
+    },
+    "reviewAfter": {
+      "phpTests": 39,
+      "assertions": 105,
+      "javascriptTests": 2
+    }
+  },
+  "privateRawReceiptStorage": "isolated reviewer temporary storage; no private source or transcripts copied into the MCP repository",
+  "evaluationInstallationRemoved": true,
+  "published": false,
+  "client": {
+    "name": "Codex desktop agent via codex-cli app-server MCP stack",
+    "version": "codex-cli 0.159.2",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "node": "v22.17.1",
+    "guiDiscoveryEvaluated": false,
+    "additionalInferenceTurnStarted": false,
+    "binaryDigest": "sha256:16593cc2f422d5f398a8e40f550ebbaf1245392528957be342c295920a300704"
+  },
+  "signaturePrerequisite": {
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.6",
+    "candidateCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+    "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false,
+    "verifiedBeforeInstallAndCalls": true,
+    "resultDigest": "sha256:1de6b5eee9d173396a290fa7967af70926297189298c5abf71f4498dbddf94f2"
+  },
+  "publicCommandProbe": {
+    "receipt": "bga431-fixed-v1.0.0-rc.6.json",
+    "fixtureDigest": "sha256:ce7ffef66d95260da67a375f4ea4a1dbde585f1fb7b11afebe8c73488102f04a",
+    "runnerDigest": "sha256:d330a5b16c060a7b8ba1835b77b4a9591c6342d4831d7c2f05dc249cc0c62131",
+    "assertionsPassed": 3,
+    "projectUnchanged": true,
+    "serverExited": true
+  },
+  "integratedLocalGate": {
+    "sourceCommit": "0a542e679d5d6957d465d3fc80bf0a3b25bce619",
+    "sourceClean": false,
+    "testsPassed": 768,
+    "scenariosPassed": 234,
+    "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+    "evidenceDigest": "sha256:d61eb4ca6de6178dc77f3cd0959aaa314e4946f1e32a9fdef1153e9e8ae160f7",
+    "logDigest": "sha256:8221eaf95229a9a9943a909da6d874313d4203d6b352cd442358afa305580e60",
+    "conformance": "passed",
+    "initialFailure": "Premature publication reference to absent rc.6 public-evidence receipt; deferred reference, passing 8-test boundary repeat, then passing full gate",
+    "scope": "Integrated reviewer tree; original signed candidate remains unchanged; exact-source CI pending"
+  }
+}

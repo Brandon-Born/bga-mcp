@@ -14,6 +14,7 @@ import { runCommand } from '../tests/helpers/process.js';
 const userConfig = resolve(homedir(), '.codex/config.toml');
 const configBefore = await readFile(userConfig);
 const repository = resolve(import.meta.dirname, '..');
+const clientExecutable = process.env.BGA_MCP_CODEX_CLIENT ?? 'codex';
 const packet = process.env.BGA_MCP_SIGNED_CANDIDATE;
 assert(
   packet && process.platform === 'darwin',
@@ -21,7 +22,7 @@ assert(
 );
 const receipt = JSON.parse(
   await readFile(
-    resolve(repository, 'docs/verification/release-candidate-v1.0.0-rc.5.json'),
+    resolve(repository, 'docs/verification/release-candidate-v1.0.0-rc.6.json'),
     'utf8',
   ),
 ) as unknown;
@@ -55,8 +56,8 @@ try {
   const inventory = JSON.parse(
     await readFile(resolve(install, 'node_modules/bga-mcp/config/release.json'), 'utf8'),
   ) as { capabilities: { tools: string[]; resources: string[] } };
-  const version = await runCommand('codex', ['--version']);
-  const binary = await runCommand('which', ['codex']);
+  const version = await runCommand(clientExecutable, ['--version']);
+  const binary = await runCommand('which', [clientExecutable]);
   assert.equal(binary.exitCode, 0);
   const binaryDigest = `sha256:${createHash('sha256')
     .update(await readFile(binary.stdout.trim()))
@@ -66,9 +67,17 @@ try {
   assert.equal(runnerCommit.exitCode, 0);
   assert.equal(runnerStatus.exitCode, 0);
   assert.equal(version.exitCode, 0);
+  const clientMatrix = JSON.parse(
+    await readFile(resolve(repository, 'config/client-smoke.json'), 'utf8'),
+  ) as { clients: { id: string; version: string | null }[] };
+  const evaluatedClient = clientMatrix.clients.find(
+    (client) => client.id === 'CLIENT-CODEX-APP-SERVER',
+  );
+  assert(evaluatedClient?.version, 'The evaluated Codex client must be version-pinned');
+  assert.equal(version.stdout.trim(), `codex-cli ${evaluatedClient.version}`);
   const before = await digestDirectory(project);
   const connection = await connectCodexSmoke(
-    'codex',
+    clientExecutable,
     resolve(install, 'node_modules/.bin/bga-mcp'),
     project,
   );
@@ -90,7 +99,7 @@ try {
     'User configuration changed during controlled smoke',
   );
   const restarted = await connectCodexSmoke(
-    'codex',
+    clientExecutable,
     resolve(install, 'node_modules/.bin/bga-mcp'),
     project,
   );

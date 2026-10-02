@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "packageVersion": "1.0.0-rc.6",
+  "guideDigest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+  "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+  "platform": "darwin",
+  "node": "v22.17.1",
+  "install": "passed",
+  "discovery": "matched installed inventory",
+  "firstUse": "passed",
+  "unconfiguredRoot": "refused",
+  "repeatInstall": "passed",
+  "crossVersionUpgrade": "not evaluated: repeated same candidate",
+  "projectUnchanged": true,
+  "serverExited": true,
+  "removal": "passed",
+  "candidateCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+  "candidateTag": "v1.0.0-rc.6",
+  "signaturePrerequisite": {
+    "receipt": "release-signing-v1.0.0-rc.6.json",
+    "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+    "resultDigest": "sha256:1de6b5eee9d173396a290fa7967af70926297189298c5abf71f4498dbddf94f2",
+    "verifiedBeforeInstall": true
+  },
+  "rebuilt": false,
+  "owner": "BGA-400",
+  "recordedAt": "2026-10-02T22:19:47.587972Z",
+  "scope": "marked recipes against independently authenticated signed original rc.6; no registry acquisition or publication"
+}

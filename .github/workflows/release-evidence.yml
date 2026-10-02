@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: release-evidence-v1.0.0-rc.5
+  group: release-evidence-v1.0.0-rc.6
   cancel-in-progress: false
 
 jobs:

@@ -10,12 +10,12 @@
       "observedAt": "2026-10-02T21:08:58.304Z",
       "review": {
         "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-        "implementationDigest": "sha256:dd8e6240b7de291283e1d4f3a230f6b479f8c2f173fa2cd97fb6c36b9d4a397e",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:0fdad2fdfb0c8fa109d17fabaeecb505f43416b687da8cfaeaae876f75db0a04",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:15.898Z",
+        "reviewedAt": "2026-10-02T22:06:17.522Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -98,7 +98,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:dd8e6240b7de291283e1d4f3a230f6b479f8c2f173fa2cd97fb6c36b9d4a397e",
+          "semanticDigest": "sha256:0fdad2fdfb0c8fa109d17fabaeecb505f43416b687da8cfaeaae876f75db0a04",
           "proofDigest": "sha256:9bc519cfc33f4b6afb2e77b132eb18e4d49ffcdf8ffc4ae1509694c91fc3acdb",
           "semantic": [
             {
@@ -148,7 +148,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2313,10 +2313,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:9bc519cfc33f4b6afb2e77b132eb18e4d49ffcdf8ffc4ae1509694c91fc3acdb",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:15.899Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:17.523Z"
         }
       },
       "needsReview": false
@@ -2327,12 +2327,12 @@
       "observedAt": "2026-10-02T21:09:13.299Z",
       "review": {
         "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-        "implementationDigest": "sha256:793d2eb29ca45b010d69bc29d703d72cae9b64c43929758540b9893fd6e1dcf9",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:350f8eff16c08f6c75860192fcd7764549310d803964646832f353fa8dca3804",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:20.291Z",
+        "reviewedAt": "2026-10-02T22:06:18.302Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -2408,7 +2408,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:793d2eb29ca45b010d69bc29d703d72cae9b64c43929758540b9893fd6e1dcf9",
+          "semanticDigest": "sha256:350f8eff16c08f6c75860192fcd7764549310d803964646832f353fa8dca3804",
           "proofDigest": "sha256:306443965a081eb87966036e654bedd69a9542c0992ae580c79107712c10feab",
           "semantic": [
             {
@@ -2458,7 +2458,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -4598,10 +4598,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:306443965a081eb87966036e654bedd69a9542c0992ae580c79107712c10feab",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:20.292Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:18.302Z"
         }
       },
       "needsReview": false
@@ -4612,12 +4612,12 @@
       "observedAt": "2026-10-02T21:09:26.561Z",
       "review": {
         "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
-        "implementationDigest": "sha256:03d5788ca7ca27e8aa7d5550d2fdcb331ec3fc5cbb0e92d77f9e83bfd66d6219",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:e5701dcb7cd9024ecd83a4dc79cac50e725749d63e90ca3cca9f105a81309ec2",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:25.891Z",
+        "reviewedAt": "2026-10-02T22:06:19.055Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -4700,7 +4700,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:03d5788ca7ca27e8aa7d5550d2fdcb331ec3fc5cbb0e92d77f9e83bfd66d6219",
+          "semanticDigest": "sha256:e5701dcb7cd9024ecd83a4dc79cac50e725749d63e90ca3cca9f105a81309ec2",
           "proofDigest": "sha256:4984a21fb76fb44edd346039f9a242db79d6eb19c562eeb0275bb8d48a2c1631",
           "semantic": [
             {
@@ -4750,7 +4750,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -6915,10 +6915,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:4984a21fb76fb44edd346039f9a242db79d6eb19c562eeb0275bb8d48a2c1631",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:25.892Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:19.055Z"
         }
       },
       "needsReview": false
@@ -6929,12 +6929,12 @@
       "observedAt": "2026-10-02T21:09:41.062Z",
       "review": {
         "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
-        "implementationDigest": "sha256:ceea2578fbe53688552722299e74e468747900393a61663740d08ab5c3a49833",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:dfed05242252935b98d05304bae55846864c4a8ef50b82bb234e085a6dc1ba7d",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:30.235Z",
+        "reviewedAt": "2026-10-02T22:06:19.752Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -7017,7 +7017,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:ceea2578fbe53688552722299e74e468747900393a61663740d08ab5c3a49833",
+          "semanticDigest": "sha256:dfed05242252935b98d05304bae55846864c4a8ef50b82bb234e085a6dc1ba7d",
           "proofDigest": "sha256:40837e808293a0576fdac4f14777f09714b775d678b02d74e8f58ba138611b25",
           "semantic": [
             {
@@ -7067,7 +7067,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -9232,10 +9232,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:40837e808293a0576fdac4f14777f09714b775d678b02d74e8f58ba138611b25",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:30.236Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:19.752Z"
         }
       },
       "needsReview": false
@@ -9246,12 +9246,12 @@
       "observedAt": "2026-10-02T21:09:57.274Z",
       "review": {
         "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-        "implementationDigest": "sha256:eda7a0c4708786c6f10cbcf4f4e810c41ccc2d70438e1cdf232f096f4d97b7eb",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:8a0a9e50262f35fb5007f4b13ef58b3586f7e51cb65a092eecb05eb27930f43a",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:35.667Z",
+        "reviewedAt": "2026-10-02T22:06:20.444Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -9334,7 +9334,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:eda7a0c4708786c6f10cbcf4f4e810c41ccc2d70438e1cdf232f096f4d97b7eb",
+          "semanticDigest": "sha256:8a0a9e50262f35fb5007f4b13ef58b3586f7e51cb65a092eecb05eb27930f43a",
           "proofDigest": "sha256:5374f064fad5f72a695b73c3c7c1b4c3d079d4583dd8a2ca3007b8080b54160d",
           "semantic": [
             {
@@ -9384,7 +9384,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -11549,10 +11549,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:5374f064fad5f72a695b73c3c7c1b4c3d079d4583dd8a2ca3007b8080b54160d",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:35.668Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:20.444Z"
         }
       },
       "needsReview": false
@@ -11563,12 +11563,12 @@
       "observedAt": "2026-10-02T21:10:17.239Z",
       "review": {
         "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-        "implementationDigest": "sha256:31c4b04b1ead3527777919430a2596b6f0d38fbf875984c1493c7d9fedff765a",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:706ce36fd338d267c33e236286f14f47cae0324ee1d27f6e68fdc3474d21bc04",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:44.650Z",
+        "reviewedAt": "2026-10-02T22:06:21.171Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -11651,7 +11651,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:31c4b04b1ead3527777919430a2596b6f0d38fbf875984c1493c7d9fedff765a",
+          "semanticDigest": "sha256:706ce36fd338d267c33e236286f14f47cae0324ee1d27f6e68fdc3474d21bc04",
           "proofDigest": "sha256:a2760c4083181bb1cf9c169e7582821828824734c92fa9ad6c7b59508b0a80f3",
           "semantic": [
             {
@@ -11701,7 +11701,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -13866,10 +13866,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:a2760c4083181bb1cf9c169e7582821828824734c92fa9ad6c7b59508b0a80f3",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:44.651Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:21.171Z"
         }
       },
       "needsReview": false
@@ -13880,12 +13880,12 @@
       "observedAt": "2026-10-02T21:08:53.985Z",
       "review": {
         "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-        "implementationDigest": "sha256:8838f70f6c228ad7ffad18d25de73b0031e8ae2b13516b778030d74124ec0e68",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:5dd2d85b7bec5928d8d1e68195240de6ae9bf5a0666809e2717b4cb1b5c7a264",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:11.337Z",
+        "reviewedAt": "2026-10-02T22:06:21.905Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -13968,7 +13968,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:8838f70f6c228ad7ffad18d25de73b0031e8ae2b13516b778030d74124ec0e68",
+          "semanticDigest": "sha256:5dd2d85b7bec5928d8d1e68195240de6ae9bf5a0666809e2717b4cb1b5c7a264",
           "proofDigest": "sha256:3fe52c6aff91122073ba3d8a1152e675a6b49b6065ed3f8abe621f719933a1d7",
           "semantic": [
             {
@@ -14018,7 +14018,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -16183,10 +16183,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:3fe52c6aff91122073ba3d8a1152e675a6b49b6065ed3f8abe621f719933a1d7",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:11.340Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:21.905Z"
         }
       },
       "needsReview": false
@@ -16197,12 +16197,12 @@
       "observedAt": "2026-10-02T21:10:21.235Z",
       "review": {
         "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-        "implementationDigest": "sha256:6e9a782f3dba8dbf1b4dc4dcab252e008e4e56f7a2732461da0107393dc8db43",
-        "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-        "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+        "implementationDigest": "sha256:113275b61df52983bc72af86666d058c6ea8c2684b6b2bd4f1f163efbbc8a552",
+        "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+        "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-02T21:28:51.976Z",
+        "reviewedAt": "2026-10-02T22:06:22.621Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -16278,7 +16278,7 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:6e9a782f3dba8dbf1b4dc4dcab252e008e4e56f7a2732461da0107393dc8db43",
+          "semanticDigest": "sha256:113275b61df52983bc72af86666d058c6ea8c2684b6b2bd4f1f163efbbc8a552",
           "proofDigest": "sha256:89c6930e7e1f442bffef66608168b0fecdf0036f7aa6f21360f9c2a6090e4f70",
           "semantic": [
             {
@@ -16328,7 +16328,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:d98642eda0cef053ecb91dd35427d58f22ff3e5d453b07ae170971903520effc",
+              "digest": "sha256:1337e9a117e8244dea2215f5a69665f5fdb7f6c9ac958f617ef4c48da941817a",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -18468,10 +18468,10 @@
         },
         "proof": {
           "dependencyDigest": "sha256:89c6930e7e1f442bffef66608168b0fecdf0036f7aa6f21360f9c2a6090e4f70",
-          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
-          "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
-          "recordedAt": "2026-10-02T21:28:51.976Z"
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+          "recordedAt": "2026-10-02T22:06:22.621Z"
         }
       },
       "needsReview": false

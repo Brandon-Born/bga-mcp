@@ -212,3 +212,7 @@ policy. Local public copies are ignored under
 receipts remain unchanged. BGA-400/401/424/405/415 still own this candidate's
 installation, client breadth, usefulness, security approval and registry release.
 No installable package was distributed or rebuilt by this workflow.
+
+## rc.6 distribution preparation — 2026-10-02 UTC
+
+The evidence workflow now selects the actual original rc.6 producer and signing receipts. The signed original has been independently verified; selectors and focused packet/refusal tests are prepared for the integrated handoff. No rc.6 public metadata assets have been published yet. This workflow distributes authenticated metadata only; BGA-415 retains installable-package publication and its reporting/security/publisher gates. Historical rc.5 evidence remains intact.
