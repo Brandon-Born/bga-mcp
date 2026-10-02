@@ -34,3 +34,16 @@ This refresh does not transfer native-client evidence to rc.2 bytes.
 ## BGA-411 helper refresh
 
 The [new controlled receipt](codex-client-bga411-refresh.json) repeats the same native Codex 0.159.2 macOS arm64 / Node 22 smoke on immutable signed rc.1 after installation-guide helper changes. All seven tools and three resources, refusals, restart, unchanged project/configuration, process exit and removal passed. It records the runner commit and explicitly dirty implementation tree plus exact helper digests. Original receipts remain unchanged. This refresh does not transfer named-client compatibility to a rebuilt documentation package or establish GUI interaction, inference, productivity or game correctness.
+
+## Original rc.4 controlled refresh, 2026-10-02 UTC
+
+[The preparation receipt](codex-client-v1.0.0-rc.4-preparation.json) records an
+actual native Codex 0.159.2 macOS arm64 / Node 22 repeat on independently
+authenticated original signed rc.4. Discovery matches all seven tools and three
+resources; all calls, schema/outside-root/excluded-tool refusals, restart,
+unchanged project/configuration, server exit and removal passed. The initial
+runner tree was dirty and its exact runner digests are retained. The matrix and
+its independent candidate pin now select this actual candidate, and controls
+refuse historical candidate identities even when runner digests match.
+Historical receipts are preserved. This is a bounded app-server observation,
+not a new general supported-client claim, GUI or inference evaluation.

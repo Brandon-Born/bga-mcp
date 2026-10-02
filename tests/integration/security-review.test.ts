@@ -25,7 +25,7 @@ function control(): SecurityReview {
     owner: 'BGA-405',
     reviewedAt: stamp,
     status: 'held',
-    candidate: { tag: 'v1.0.0-rc.3', sourceCommit: source, artifactDigest: hash },
+    candidate: { tag: plan.reviewedCandidate.tag, sourceCommit: source, artifactDigest: hash },
     reviewer: { sourceCommit: source, sourceClean: true, harnessDigest: hash },
     signature: {
       verified: true,
@@ -81,6 +81,7 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
   expect(verifyReviewRecord(sealed(substituted), plan).failed).toBe(true);
   expect(verifyReviewRecord({ ...review, reviewedAt: 'invalid' }, plan).failed).toBe(true);
   for (const changed of [
+    { ...review, candidate: { ...review.candidate, tag: 'v1.0.0-rc.3' } },
     { ...review, tests: { ...review.tests, artifactDigest: `sha256:${'c'.repeat(64)}` } },
     {
       ...review,

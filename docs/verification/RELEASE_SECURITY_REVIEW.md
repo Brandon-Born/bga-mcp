@@ -1,7 +1,7 @@
 # BGA-405 exact-candidate security review
 
 ```verification-record
-{"kind":"review","scope":"BGA-405 authenticated original rc.3 security replay, fresh exact-source dependency assessment and owned publication holds; no final security approval"}
+{"kind":"review","scope":"BGA-405 authenticated original rc.3 and rc.4 security replays, fresh exact-source dependency assessments and owned publication holds; no final security approval"}
 ```
 
 The [retained assessment](security-review-v1.0.0-rc.3.json) applies to original signed `v1.0.0-rc.3`, source `c7ad5c2962e608a82b532dd0d1882040d1ba31ea`, tarball `sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3`. It does not transfer to a newly packed checkout. The review authenticates the original packet with refreshed independent trusted roots and BGA-404's exact repository/workflow/signer/provenance constraints before installation. The tarball and its signed packet remain unchanged.
@@ -46,3 +46,55 @@ The full local gate passes 664 tests and 205 required scenarios, including packa
 ## Sources
 
 [GitHub CLI](https://cli.github.com/manual/gh_attestation_verify) documents exact signer identity and local-bundle verification; [pnpm audit](https://pnpm.io/cli/audit) documents JSON and separate `--prod` assessment. These sources were fetched 2026-10-02 UTC. BGA-404 and BGA-422 retain their original signature and audit trust policies. This change introduces no BGA parsing rule or game-project mutation.
+
+## rc.4 review preparation, 2026-10-02 UTC
+
+The current plan and offline verifier select the independently authenticated
+original rc.4 receipt, source `5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`,
+tarball SHA-256 `662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`
+and signer `b593b76dc56fbb6affc1264b3b5ee53a338c209b`. The native Codex
+client recipe also selects this original candidate; its separate initial repeat
+passed the bounded controlled flow, with the dirty runner recorded explicitly. Historical rc.3 assessments and all original signed packets remain
+unchanged. No candidate selector transfers approval.
+
+[The initial rc.4 assessment](security-review-v1.0.0-rc.4.json) independently
+verified signature, issuer, workflow, signer, provenance and original subjects.
+A clean isolated checkout of the exact original source supplied a fresh
+registry-backed production/full-graph audit with zero advisory findings. The
+existing eight security suites installed the unchanged original tarball and
+passed 27 tests / 11 required scenarios; 274 packaged text files passed scanning.
+The initial reviewer tree was dirty and cannot supply approval. The broad
+framework guard also holds until clean exact-source CI and explicit re-admission.
+
+README and the installation guide now identify rc.3 as an immutable versioned
+example rather than the latest candidate. Its acquisition commands, verifier,
+signer, digest and finite retention remain bound to that historical example.
+For another version, a reader must use its verified candidate-specific receipt
+and matching trusted verifier, never just substitute a tag into the commands.
+These two corrected packaged guides differ from rc.4, so a distinct replacement
+candidate is required; the original cannot be overwritten. BGA-406's independent
+harmless-report lifecycle remains unobserved. Clean reviewer replay and
+candidate-specific prerequisite refresh still precede any approval decision.
+
+The candidate-specific publication prerequisites now reference actual rc.4
+installation, native-client, public-evidence and frozen-task receipts. The
+[signature-authenticated current guide repeat](install-guide-v1.0.0-rc.4-signed.json)
+passed install, discovery, first use, unconfigured-root refusal, repeat install,
+unchanged project, server exit and removal. Candidate-specific prerequisite
+alignment is distinct from approval: the initial security assessment is held,
+the private-report lifecycle is null, and publisher selection/setup remains null.
+
+During preparation the full gate correctly refused a changed native runner
+without re-execution; the actual rc.4 repeat and independently pinned matrix
+now supply that evidence. A later full suite observed installed-server startup
+failures including a missing dependency file. All six affected suites then
+passed separately (61 tests). The underlying cause is not established; only a
+subsequent complete passing gate can close the preparation check.
+
+The subsequent standalone full gate passed all 674 tests and 209 required
+scenarios, plus package, applicable official conformance, safety and acceptance
+checks. No startup-failure test was skipped or relaxed. Readiness now verifies
+all four rc.4 prerequisite identities and current guide digest without the
+former cross-candidate hold; dirty-reviewer, guide replacement, private-report,
+framework re-admission and null publisher decision still hold approval. Clean
+committed-source CI and repeat assessment remain separate next steps.

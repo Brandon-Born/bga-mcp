@@ -6,9 +6,9 @@ The public `bga-mcp` command uses the frozen local release profile on stdio, pro
 
 ## Install and use
 
-Follow the packaged [installation guide](docs/INSTALL.md) for authenticated candidate acquisition, installation, client configuration, updating, removal and troubleshooting. No registry package has been published. The latest independently verified candidate is signed `v1.0.0-rc.3`; [its original-byte signing receipt](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/verification/release-signing-v1.0.0-rc.3.json) identifies the package digest and finite artifact retention.
+Follow the packaged [installation guide](docs/INSTALL.md) for authenticated candidate acquisition, installation, client configuration, updating, removal and troubleshooting. No registry package has been published. The installation guide retains signed `v1.0.0-rc.3` as a verified, versioned evaluation example; [its original-byte signing receipt](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/verification/release-signing-v1.0.0-rc.3.json) identifies the package digest and finite artifact retention.
 
-This checkout's documentation changes are newer than that immutable candidate. Packing this checkout produces a new artifact; it does not replace the signed rc.3 bytes or transfer their signature to a rebuilt tarball. Candidate signing and package publication remain separate steps.
+The guide example does not identify the latest candidate or approve a release. Use the independently verified candidate-specific receipt and matching trusted verifier for another version. Packing a checkout produces a new artifact and requires its own signature; it cannot replace or inherit the signature of an existing candidate. Candidate signing and package publication remain separate steps.
 
 Configure an absolute, authorized project root and start with `inspect_project`. Review explicit unsupported findings before drawing conclusions. `validate_project` combines selected validators; `run_pre_release_audit` distinguishes passed, failed, unsupported and manual-required checks. A clean result cannot establish game correctness outside the syntax and checks the server reads.
 

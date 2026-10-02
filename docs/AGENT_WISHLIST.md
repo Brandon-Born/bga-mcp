@@ -227,3 +227,12 @@ prove both useful stage attribution and redaction before implementation.
 BGA-407 owns this publication path; this is repository tooling, not a missing
 game-inspection MCP capability. Existing identity and conflict refusals must
 remain intact.
+
+**Candidate guide observation, 2026-10-02 UTC.** The verified rc.4 packet still
+carried a README calling rc.3 the latest candidate. Updating that phrase after
+each signing would force another immutable candidate because shipped-guide
+freshness compares exact bytes. BGA-411 now uses an explicitly versioned verified
+acquisition example and asks readers to obtain another version's independent
+receipt and matching verifier. The correction requires one new candidate;
+future candidate creation alone need not rewrite this historical example.
+This is documentation/release maintenance, not a new MCP inspection tool.

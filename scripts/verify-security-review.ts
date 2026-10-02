@@ -12,7 +12,7 @@ const plan = SecurityReviewPlanSchema.parse(
   JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
 );
 const review = JSON.parse(
-  await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.3.json'), 'utf8'),
+  await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.4.json'), 'utf8'),
 ) as SecurityReview;
 const record = verifyReviewRecord(review, plan);
 const candidate = JSON.parse(await readFile(resolve(root, plan.candidateReceipt), 'utf8')) as {
