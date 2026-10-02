@@ -240,3 +240,7 @@ applicable conformance. Platform package digests match their prior baselines;
 the Linux digest still matches the original rc.5. This is checkout verification
 of the clean reviewer; the separate assessment above proves the original
 candidate security replay. Neither scope supplies approval or registry evidence.
+
+## Original rc.6 preparation assessment — 2026-10-02 UTC
+
+[The preparation assessment](security-review-v1.0.0-rc.6.json) independently verifies the actual signed rc.6 original against newly acquired roots, then audits its clean exact source and tests the immutable tarball. Both dependency audit scopes have zero findings and no exceptions. All 68 tests / 11 required security scenarios pass; 274 text files pass scanning. Candidate packed guides and the actual framework release guard pass. The reviewer preparation is explicitly dirty and remains held. A separate clean committed replay is required; BGA-406's independent benign-report lifecycle remains the final external security gate. Old assessments and signed packets remain unchanged.

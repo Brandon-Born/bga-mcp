@@ -1,5 +1,13 @@
 # Original candidate signing — BGA-404
 
+## rc.6 signing and independent verification — 2026-10-02 UTC
+
+The [original candidate receipt](release-candidate-v1.0.0-rc.6.json) records clean tagged source `36a7d86`, producer `37067227890` and all-six-jobs exact-tag CI `37067230778`. The original tarball remains `sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea`.
+
+[Signing run 37070595289](https://github.com/Brandon-Born/bga-mcp/actions/runs/37070595289) passes prepare, isolated signing and independent verification at main source `882859f6c13643efdb7aca90d7405d2339ab9534`. [Attestation 52301881](https://github.com/Brandon-Born/bga-mcp/attestations/52301881) binds all seven original subjects. [The signing receipt](release-signing-v1.0.0-rc.6.json) records the hosted archive identity and digest, retained original bytes, exact-signer-source CI, independently acquired roots and cryptographic controls. Hosted Ubuntu and independent macOS verification results agree: signatures, original source/producer provenance and all subjects match; modified artifact bytes, wrong signer commit and wrong workflow are refused. Fresh installation, discovery, first use, unchanged project, exit and removal pass. No package is rebuilt or published.
+
+Identity permission remains confined to the main-only dependency-free signing job. Exact-source signing-handoff CI `37069653529` and main-signer CI `37070468097` pass all six jobs at their own source commits, each with 768 tests and 234 required scenarios. The actual framework release guard passes after explicit scoped admissions. Signing supplies no security approval, public distribution or usefulness claim; those candidate-specific evaluations are retained separately. Historical packets and receipts remain unchanged.
+
 ## rc.6 signing preparation — 2026-10-02 UTC
 
 The signing workflow and its signed-artifact/installation harnesses select the actual [original rc.6 producer receipt](release-candidate-v1.0.0-rc.6.json). It records clean tagged source `36a7d86`, successful producer `37067227890`, all-six-jobs exact-tag CI `37067230778`, archive `sha256:81e509db2f451e4ed4a2bed975c0cb2f0db1e3ff62444350c6fbbd75eb72fc97` and tarball `sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea`. The actual read-only signing preflight independently downloads and validates the named hosted archive, producer, source CI and tag, then verifies original subjects and retention material. It succeeds without signing, rebuilding or publication.

@@ -117,7 +117,7 @@ export async function verifyClientMatrix(
           (await read<Record<string, unknown>>(client.receipt ?? ''));
         const candidate = await read<{
           candidate: { sourceTag: string; sourceCommit: string; digests: { artifact: string } };
-        }>('docs/verification/release-candidate-v1.0.0-rc.5.json');
+        }>('docs/verification/release-candidate-v1.0.0-rc.6.json');
         report.require(
           typeof receipt.clientBinaryDigest === 'string' &&
             /^sha256:[0-9a-f]{64}$/u.test(receipt.clientBinaryDigest) &&

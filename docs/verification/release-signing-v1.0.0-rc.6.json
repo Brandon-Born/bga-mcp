@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T22:17:13.090443Z",
+  "owner": "BGA-404",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.6.json",
+  "candidateTag": "v1.0.0-rc.6",
+  "candidateSourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+  "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+  "signer": {
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-signing.yml",
+    "commit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+    "ref": "refs/heads/main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "hostedRunnersOnly": true
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37070595289",
+    "conclusion": "success",
+    "artifactId": 11254872558,
+    "artifactName": "signed-candidate-37070595289",
+    "archiveDigest": "sha256:7f1cbd2c19c68eec3d906fd68944866e31c817cb8e313c1715dbcb7dd01cf590",
+    "expiresAt": "2026-12-31T22:05:38Z"
+  },
+  "attestation": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/attestations/52301881",
+    "transparencyLogUrl": "https://search.sigstore.dev?logIndex=3062873094",
+    "predicateType": "https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1",
+    "signedSubjects": 7,
+    "bundleDigest": "sha256:7e207d0990e3d85f6b26f7e2cab53cd80464dbc0a0d8b54d03e50271e16bcc88",
+    "predicateCopyDigest": "sha256:adac85035a95b83e2073e28187c9e052cc283558223fae572e2a959f8adadace"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37070468097",
+    "commit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:55f9de8f4b272f9f184277929392d4992a6db994a2db58697627c3c7d59e56ec",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T22:10:23.531Z",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:c27a4267bbba83293d0bf05e35eca94fabc29bee6199c5256bc4426f7155266e",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T22:09:16.449Z",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:0263debd95169b7cf141e152b5920e308154f315425d8372024a869e5fa44aa9",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T22:09:01.890Z",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:024dee6376135fdb61370691758c36b2590ddbccaf6f3605a797ddb669350fad",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T22:08:57.394Z",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:d835be4713e77638fa256170e7f9bee9c1a6dcf816ff6c588b98204d3fd09387",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T22:11:28.043Z",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:9486413a5338fec60fdf480d41f25f677715321e3faf79faa11e15d9b6c3187c",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T22:10:38.262Z",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      }
+    ]
+  },
+  "verification": {
+    "hosted": {
+      "resultDigest": "sha256:1de6b5eee9d173396a290fa7967af70926297189298c5abf71f4498dbddf94f2",
+      "result": {
+        "schemaVersion": 1,
+        "candidateTag": "v1.0.0-rc.6",
+        "candidateCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+        "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+        "signature": "verified",
+        "provenance": "matched reviewed candidate and original producer",
+        "modifiedArtifact": "refused by cryptographic verifier",
+        "wrongSignerCommit": "refused",
+        "wrongSignerWorkflow": "refused",
+        "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+        "freshInstall": "passed",
+        "firstUse": "passed",
+        "projectUnchanged": true,
+        "serverExited": true,
+        "removal": "passed",
+        "rebuilt": false,
+        "published": false
+      }
+    },
+    "independentMacos": {
+      "resultDigest": "sha256:1de6b5eee9d173396a290fa7967af70926297189298c5abf71f4498dbddf94f2",
+      "result": {
+        "schemaVersion": 1,
+        "candidateTag": "v1.0.0-rc.6",
+        "candidateCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+        "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+        "signature": "verified",
+        "provenance": "matched reviewed candidate and original producer",
+        "modifiedArtifact": "refused by cryptographic verifier",
+        "wrongSignerCommit": "refused",
+        "wrongSignerWorkflow": "refused",
+        "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+        "freshInstall": "passed",
+        "firstUse": "passed",
+        "projectUnchanged": true,
+        "serverExited": true,
+        "removal": "passed",
+        "rebuilt": false,
+        "published": false
+      }
+    }
+  },
+  "originalFilesByteIdentical": true,
+  "rebuilt": false,
+  "published": false,
+  "localRetention": ".artifacts/signed-release-candidates/v1.0.0-rc.6",
+  "frameworkReadmission": {
+    "schemaVersion": 2,
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+    "ciRun": "37069653529",
+    "releaseGuard": "passed",
+    "scope": "unchanged bounded official wording; changed bookkeeping map explicitly reviewed against clean post-observation CI; no security or publication approval"
+  }
+}
