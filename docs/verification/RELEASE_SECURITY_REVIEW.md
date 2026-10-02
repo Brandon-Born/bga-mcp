@@ -208,3 +208,25 @@ granted. The offline security verifier still validates the separately retained
 rc.5 preparation record structurally, which is not an approval check. BGA-415
 must select its own matching current prerequisites and clean assessment before
 admission, in addition to a real reporting lifecycle and publisher decision.
+
+## Clean rc.5 assessment with final filesystem probes
+
+The [separate final-probe assessment](security-review-v1.0.0-rc.5-final-probes.json)
+records clean committed reviewer `b07ea15fe885cc3625e6542e5fe69d1d080c36e6`
+and harness digest `sha256:7cfa3c5456a1ffb3004f9006c5b1f3691cbf4ef8c68276be9a9316a2fefaf85d`.
+It repeats independent signature, original subjects and producer provenance
+verification before testing the same immutable rc.5 tarball. The fresh audit at
+2026-10-02T13:45:27.621Z matches the clean exact candidate source and signed
+configuration, with zero production and full-graph findings. All 27 tests and
+11 required security scenarios pass; all 274 packaged text files pass scanning.
+
+The filesystem cases now use the [final issued-I/O probes](FILESYSTEM_DEADLINE_PROBES.md),
+including both cleanup-await removal controls and restoration of the installed
+module. The complete native filesystem matrix and operating-system cancellation
+remain outside this evidence. The original tarball, original signed packet and
+all preceding assessments remain unchanged. Current packed-guide and framework
+guards pass; the independent private-report lifecycle remains the sole blocking
+assessment risk. Status stays `held`, without explicit security approval or
+publication. BGA-415's selected receipt is still the earlier clean assessment
+until its separate reference handoff; retaining this evidence does not alter
+publisher setup or waive its admission checks.
