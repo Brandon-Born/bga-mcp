@@ -169,6 +169,31 @@ and live evaluation, while BGA-411 owns accurate public and agent documentation.
 Record whether retrieval actually answers the development question before
 proposing diagnostic integration or expanding the release inventory.
 
+**BGA-211 preparation, 2026-10-02 UTC.** A direct retrieval/cache probe on
+BGA-423 source `e20e866`, using only original synthetic text, reproduces two
+limitations: a warm lookup for a second question returns the first question's
+passage although a cold lookup finds the second passage; a warm 1,200-character
+request returns the 1,507-character excerpt previously selected at a 2,000-character
+limit. The cache records page URL alone. This is supporting component evidence,
+not an installed MCP result or a captured-page relevance evaluation. BGA-211's
+next bounded step is an installed same-client, same-page two-question regression
+and independent search/topic budget checks, followed by its reviewed minimal
+captures and unchanged scoring thresholds. Search and resources currently have
+separate caches and fixed per-reader limits; the component budget probe does not
+establish a public cross-reader cache leak. Preserve page authority, retention,
+untrusted labelling and the existing no-full-text storage boundary.
+
+**Installed follow-up, 2026-10-02 UTC.** On clean source `0ac0055`, the actual
+installed development MCP discovers search and reproduces the query-change miss
+with original HTML/API responses: the same client asks `quasar navigation` then
+`nebula orbital` for one page, and the second cached passage omits `orbital`; a
+fresh client selects the passage containing it. Both clients exit with empty
+stderr. The [bounded preparation receipt](verification/bga423-source-ci.json)
+binds the unchanged package digest and source. This proves the warm-query defect
+through installed stdio, not captured BGA relevance, live DNS/TLS or a public
+documentation capability. BGA-211 still needs its regression, reviewed captures,
+A/B scoring and live acceptance; no implementation or threshold change follows.
+
 **Framework review observation, 2026-10-02 UTC.** The BGA-408 live baseline still
 required a separate read of the Complete Walkthrough beside the canonical state
 page to establish that BGA-419's conflict remains unresolved. A source link alone
@@ -176,6 +201,18 @@ does not answer which wording governs a finding. Preserve competing sources and
 the unsupported decision together when considering this wish; the current
 baseline maps eight catalog/foundational pages, not the entire wiki. No new
 retrieval or supported-form claim follows from this review.
+
+**BGA-211 implementation, 2026-10-02.** The installed development MCP now
+separates cached excerpt selections by question, budget and final source; uses
+reviewed paragraph/section hints; excludes navigation; and scores failed lookups
+as failures even for no-answer cases. A deliberate installed live run passes all
+nine unchanged questions and seven topics. Minimal attributed captures and an
+installed negative control make the development loop offline. The original
+historical five-question/three-topic replay remains unproven: the real old
+package has a different failure set against current minimal captures. The next
+bounded step is a reviewed historical source/ranking replay, retaining actual
+source revisions and refusing invented evidence. Full source gates and separate
+release admission still apply. See [relevance scope](verification/DOCUMENTATION_RELEVANCE.md).
 
 ## Capture wishes during real work
 
@@ -334,6 +371,26 @@ before I/O, pending completion, cleanup-ceiling and minimum-output-budget cases.
 
 **Observed, 2026-10-02.** A missing-root Studio preflight bypassed the normal startup handler and printed an absolute path, Node stack and nested filesystem cause. The pinned stdio router also reports some startup/cleanup failures through callbacks, making a successful-looking close insufficient evidence. An agent reading these terminals needs an actionable stable refusal without private diagnostic data.
 
-**Bounded next step and owner.** BGA-421 now supplies a common runner boundary, dependency-loading fallback, live credential registry and installed fault probes for both profiles. Its full handoff and exact-source CI are pending. The process probes keep stdin open and use boolean leak assertions, so debugging a regression does not retain the seeded private transcript. This changes no BGA grammar or live Studio capability; a future terminal path must join the same boundary and fault suite.
+**Bounded next step and owner.** BGA-421 now supplies a common runner boundary, dependency-loading fallback, live credential registry and installed fault probes for both profiles. Its [bounded receipt](verification/bga421-source-ci.json) now records the passing full handoff and all six exact-source CI jobs on `4b9f889`, including every executable fault scenario. The process probes keep stdin open and use boolean leak assertions, so debugging a regression does not retain the seeded private transcript. This changes no BGA grammar or live Studio capability; a future terminal path must join the same boundary and fault suite.
 
 **Observed CI diagnostic gap, 2026-10-02.** The post-BGA-433 metadata run `37025759118` failed Windows/Node 24's resource-root scenario because Node reported FileHandle garbage-collection cleanup. This run is not passing evidence. The current policy closes project/session descriptors in finally blocks, but that alone does not explain the observed warning. BGA-326's bounded follow-up is descriptor creation/explicit-close tracing in the installed resource scenario, with warning/leftover-handle controls and sanitized evidence. Do not suppress the warning or use an unchanged replay as proof of repair. This is lifecycle diagnosis, not a new game-inspection feature.
+
+**Observed documentation authority gap, 2026-10-02.** During BGA-423 inspection, both the catalog and search independently classified pages by a raw URL prefix, and the policy returned the original source after redirects. An agent could therefore receive a neighbour's content labelled with Cookbook authority and retention, or a redirect destination with its starting source. Desired help is one final-page decision shared by requests, citations and caches. BGA-423 verifies that bounded correction with original installed network fixtures, raw-prefix refusal controls and [all six source-CI jobs](verification/bga423-source-ci.json) on `7a84f79` at 752 tests / 223 required scenarios. BGA-211 relevance and the remaining lifecycle scope stay open. Alias routing remains unreviewed rather than inferred.
+
+## Avoid a full documentation fetch before a matching cache lookup
+
+**Observed need, BGA-211, 2026-10-02.** Search and fixed-topic resources fetch a
+page through policy before calling excerpt retrieval. A warm `cached: true`
+selection therefore still incurs the upstream request. The corrected cache
+prevents another question's excerpt from leaking into the answer; it does not
+currently reduce those page requests or make an unreachable upstream available
+through MCP readers.
+
+**Wish and next bounded step.** Under BGA-203/BGA-211's existing cache-lifecycle
+scope, design an installed test for warm request counts, conditional refresh,
+expiry and unavailable-upstream fallback without guessing redirect destinations
+or carrying an old page's authority to a new page. Keep final-source policy,
+explicit dates, per-source retention and no full-page storage. This is a new
+observed gap, not a claim that this behavior is already implemented.
+
+**Implementation, 2026-10-02.** The [bounded reader lifecycle](verification/DOCUMENTATION_CACHE_LIFECYCLE.md) now checks exact final-page excerpts before page requests and covers refresh, outage fallback, question separation, final authority and refusal/deadline behavior through installed MCP. Redirect aliases remain live requests because their destinations are unknown; search API discovery also stays live. The unconditional-fetch control reproduces the warm request-count defect. No full-page or persistent cache is added. The complete local gate passes 768 tests / 234 scenarios, and the changed installed tarball passes live relevance at 9/9 questions and 7/7 topics. All six exact-source CI jobs pass on `e75be74a24de80b412cecaa9198dfdbfbcc3c6e9`; the [receipt](verification/bga208-cache-lifecycle.json) retains independently validated records and the earlier cancellation-observer failure/correction. The historical BGA-211 replay requirement remains open. Next bounded lifecycle work would require an observed API-discovery outage need; broader search-result caching would need separate ranking/freshness design rather than retaining API responses implicitly.

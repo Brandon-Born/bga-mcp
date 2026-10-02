@@ -31,3 +31,16 @@ The remaining cases in [`tests/unit/framework-versions.test.ts`](../../unit/fram
 — a table of contents moved after the section, a missing section, an emptied
 section, an added duplicate — are derived from these captures inside the test,
 so what they change is written down beside the assertion that depends on it.
+
+## BGA-211 relevance fragments, 2026-10-02
+
+[`relevance/expectations.json`](relevance/expectations.json) records all seven
+fixed-topic pages and all nine original evaluation questions, including explicit
+required/forbidden facts and no-answer expectations. Each fragment retains at
+most 25 quoted words from a deliberately fetched page. Its URL, authority,
+source-policy reference, retrieval date, exact revision and SHA-256 digest are
+recorded. Original wrappers make the selected paragraph, heading or navigation
+example observable; they do not reconstruct the omitted page or its API ranking.
+No capture is shipped or served by the MCP. Refresh requires explicit review,
+never automatic evaluation repair. See the [relevance scope and remaining
+historical replay gap](../../../docs/verification/DOCUMENTATION_RELEVANCE.md).

@@ -1,5 +1,5 @@
 import { createServer, type Server, type ServerResponse } from 'node:http';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { link, mkdir, readFile, readdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
@@ -101,10 +101,18 @@ async function filesystemMatrixProbe(
     async (client) => {
       const response = await callTool(client, 'inspect_project', {}, 30_000);
       const atSettlement = await readFile(log, 'utf8');
-      await new Promise<void>((ready) => {
-        setTimeout(ready, 700);
-      });
-      const afterWait = await readFile(log, 'utf8');
+      // Observe completion rather than assume a nominal injected delay bounds
+      // native cleanup on a loaded runner. This parent-side observation never
+      // extends the production cleanup ceiling or turns a leak into a pass.
+      const observationDeadline = performance.now() + 5_000;
+      let afterWait = atSettlement;
+      while (!matrixCleanupObserved(matrixEvents(afterWait), target)) {
+        if (performance.now() >= observationDeadline) break;
+        await new Promise<void>((ready) => {
+          setTimeout(ready, 25);
+        });
+        afterWait = await readFile(log, 'utf8');
+      }
       await new Promise<void>((ready) => {
         setTimeout(ready, 100);
       });
@@ -128,6 +136,34 @@ async function filesystemMatrixProbe(
   return { ...result, stderr };
 }
 
+function matrixCleanupObserved(events: readonly FilesystemMatrixEvent[], target: string): boolean {
+  const issued = events.findIndex((event) => event.event === 'selected:issued');
+  const completed = events.some(
+    (event, index) =>
+      index > issued &&
+      (event.event === 'work:end' || event.event === 'cleanup:end') &&
+      event.operation === target,
+  );
+  const last = events.at(-1);
+  return (
+    issued >= 0 &&
+    completed &&
+    last?.files === 0 &&
+    last.directories === 0 &&
+    events.filter((event) => event.event === 'work:start').length ===
+      events.filter((event) => event.event === 'work:end').length &&
+    events.filter((event) => event.event === 'cleanup:start').length ===
+      events.filter((event) => event.event === 'cleanup:end').length &&
+    // Iterator return releases the native directory, but the policy's finally
+    // still awaits close(). Observe that terminal cleanup too; an intermediate
+    // balanced transcript is not proof that no further cleanup will start.
+    events.filter((event) => event.event === 'directory:acquired').length ===
+      events.filter(
+        (event) => event.event === 'cleanup:end' && event.operation === 'walk:dir-close',
+      ).length
+  );
+}
+
 function expectMatrixQuiescence(result: Awaited<ReturnType<typeof filesystemMatrixProbe>>) {
   expect(result.response.isError, result.response.text).toBe(true);
   expect(result.response.text).toContain('policy.timeout.exceeded');
@@ -141,7 +177,7 @@ function expectMatrixQuiescence(result: Awaited<ReturnType<typeof filesystemMatr
   const expired = events.findIndex((event) => event.event === 'deadline:expire');
   expect(expired).toBeGreaterThan(issued);
   expect(events.filter((event) => event.event === 'work:start' && event.expired)).toEqual([]);
-  expect(events.at(-1)).toMatchObject({ files: 0, directories: 0 });
+  expect(events.at(-1), JSON.stringify(events)).toMatchObject({ files: 0, directories: 0 });
   expect(result.afterQuiescence).toBe(result.afterWait);
   return events;
 }
@@ -152,6 +188,7 @@ function expectMatrixDeadlineOrder(
   completionMs: number,
 ): void {
   const events = expectMatrixQuiescence(result);
+  expect(matrixCleanupObserved(events, target)).toBe(true);
   const published = events.findIndex((event) => event.event === 'response:timeout');
   const expired = events.findIndex((event) => event.event === 'deadline:expire');
   const completed = events.findIndex(
@@ -180,16 +217,23 @@ function expectMatrixDeadlineOrder(
   if (completionMs === 600) expect(completed).toBeGreaterThan(published);
 }
 
+/** Replace a directory entry, never the bytes shared by pnpm store hardlinks. */
+async function replaceInstalledModule(path: string, source: string): Promise<void> {
+  const temporary = path + '.cancellation-probe';
+  await writeFile(temporary, source);
+  await rename(temporary, path);
+}
+
 async function matrixMutation(target: string, replace: (source: string) => string) {
   const path = resolve(dirname(server.cli), 'policy.js');
   const original = await readFile(path, 'utf8');
   const modified = replace(original);
   expect(modified).not.toBe(original);
   try {
-    await writeFile(path, modified);
+    await replaceInstalledModule(path, modified);
     return await filesystemMatrixProbe(target, 1, 150);
   } finally {
-    await writeFile(path, original);
+    await replaceInstalledModule(path, original);
     expect(await readFile(path, 'utf8')).toBe(original);
   }
 }
@@ -362,10 +406,10 @@ async function filesystemCleanupControl(root: string, operation: 'lstat' | 'hand
     original,
   );
   try {
-    await writeFile(policyModule, neutralized);
+    await replaceInstalledModule(policyModule, neutralized);
     return await filesystemProbe(root, operation);
   } finally {
-    await writeFile(policyModule, original);
+    await replaceInstalledModule(policyModule, original);
     expect(await readFile(policyModule, 'utf8')).toBe(original);
   }
 }
@@ -534,6 +578,25 @@ afterAll(async () => {
 });
 
 describe('packaged operation deadlines', () => {
+  it('[E2E-FILESYSTEM-CANCELLATION] isolates installed mutation controls from a hardlinked peer', async () => {
+    const path = resolve(dirname(server.cli), 'policy.js');
+    const peer = resolve(server.temporaryRoot, 'hardlinked-policy-peer.js');
+    const original = await readFile(path, 'utf8');
+    const modified = original.replace('await handle.close();', 'void handle;');
+    expect(modified).not.toBe(original);
+    await link(path, peer);
+    try {
+      await replaceInstalledModule(path, modified);
+      expect(await readFile(path, 'utf8')).toBe(modified);
+      expect(await readFile(peer, 'utf8')).toBe(original);
+    } finally {
+      await replaceInstalledModule(path, original);
+      expect(await readFile(path, 'utf8')).toBe(original);
+      expect(await readFile(peer, 'utf8')).toBe(original);
+      await unlink(peer);
+    }
+  });
+
   it.each(
     filesystemStages.flatMap(([target, occurrence]) =>
       [150, 600].map((completionMs) => ({ target, occurrence, completionMs })),
@@ -543,14 +606,29 @@ describe('packaged operation deadlines', () => {
     async ({ target, occurrence, completionMs }) => {
       const result = await filesystemMatrixProbe(target, occurrence, completionMs);
       expectMatrixDeadlineOrder(result, target, completionMs);
+      if (target === 'walk:dir-next') {
+        const events = matrixEvents(result.afterWait);
+        const returned = events.findIndex(
+          (event) => event.event === 'cleanup:end' && event.operation === 'walk:dir-return',
+        );
+        expect(returned).toBeGreaterThan(0);
+        // Reproduce the intermediate snapshot from macOS/Node 22 CI: released
+        // resources and balanced starts/ends must still wait for final close.
+        expect(matrixCleanupObserved(events.slice(0, returned + 1), target)).toBe(false);
+        expect(matrixCleanupObserved(events, target)).toBe(true);
+      }
     },
     180_000,
   );
 
-  it.each(['walk:opendir', 'readProjectFile:open'])(
-    '[E2E-FILESYSTEM-CANCELLATION] bounds delayed handle cleanup after %s expiry',
-    async (target) => {
-      const result = await filesystemMatrixProbe(target, 1, 150, 400);
+  it.each(
+    ['walk:opendir', 'readProjectFile:open'].flatMap((target) =>
+      [400, 1_100].map((cleanupMs) => ({ target, cleanupMs })),
+    ),
+  )(
+    '[E2E-FILESYSTEM-CANCELLATION] bounds $cleanupMs ms handle cleanup after $target expiry',
+    async ({ target, cleanupMs }) => {
+      const result = await filesystemMatrixProbe(target, 1, 150, cleanupMs);
       expectMatrixDeadlineOrder(result, target, 150);
       const events = matrixEvents(result.afterWait);
       const published = events.findIndex((event) => event.event === 'response:timeout');
@@ -907,7 +985,7 @@ describe('packaged operation deadlines', () => {
     expect(neutralized, 'the mutation control did not find the installed checkpoint').not.toBe(
       original,
     );
-    await writeFile(deadlineModule, neutralized);
+    await replaceInstalledModule(deadlineModule, neutralized);
     try {
       const control = await parserDeadlineProbe(root, 'neutralized');
       const controlEvents = parserEvents(control.atSettlement);
@@ -919,7 +997,7 @@ describe('packaged operation deadlines', () => {
       expect(control.stderr).not.toContain(PARSER_MARKER);
       expect(control.stderr).not.toContain('Unhandled');
     } finally {
-      await writeFile(deadlineModule, original);
+      await replaceInstalledModule(deadlineModule, original);
     }
   }, 180_000);
 

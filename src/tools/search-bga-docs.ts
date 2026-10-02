@@ -1,10 +1,11 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
+import { documentationRequestUrl, assertDocumentationRequestContent } from '../docs/request.js';
 import { DocumentationCache } from '../docs/cache.js';
-import { UNTRUSTED_NOTICE, provenanceOf, retrieveDocumentation } from '../docs/retrieve.js';
+import { UNTRUSTED_NOTICE, provenanceOf, readDocumentationPage } from '../docs/retrieve.js';
 import { readSearchResponse, searchParams } from '../docs/search.js';
-import { topicForQuery } from '../docs/topics.js';
+import { topicForQuery, documentationPassageQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
@@ -234,6 +235,9 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             );
           }
 
+          policy.assertNetworkAllowed('documentation');
+          assertDocumentationRequestContent(query, policy.projectRoots, sourceId);
+
           const results: z.infer<typeof ResultSchema>[] = [];
           const seen = new Set<string>();
           // What was asked of whom, and what came back. Every exit from here
@@ -253,10 +257,20 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           // A matched topic knows the words that matter for its subject, which
           // the developer's question usually does not contain: "where does the
           // client logic live" never says "modules/js".
-          const topicMatch = sourceId === undefined ? topicForQuery(query, signal) : null;
-          // Filtering these to the distinctive keywords was tried on
-          // 2026-08-08 and measured worse, so all of them are used.
-          const excerptQuery = [query, ...(topicMatch?.keywords ?? [])].join(' ');
+          const instructionInsteadOfQuestion =
+            /\bignore (?:all |the |any )?previous instructions\b/iu.test(query) ||
+            /\b(?:list|read|show)\b.*\b(?:every|all)\b.*\bfiles?\b.*\b(?:this|my|local) (?:machine|computer)\b/iu.test(
+              query,
+            );
+          const topicMatch =
+            sourceId === undefined && !instructionInsteadOfQuestion
+              ? topicForQuery(query, signal)
+              : null;
+          // Narrow instruction-shaped local requests have no documentation answer.
+          // This is a heuristic for these shapes, not a prompt-injection detector.
+          // Still execute the source lookup below so an outage cannot masquerade
+          // as a successful empty answer.
+          const excerptQuery = documentationPassageQuery(topicMatch, query);
 
           const addPage = async (
             source: (typeof sources)[number],
@@ -265,45 +279,44 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             lastEdited: string | null,
           ): Promise<void> => {
             attempted.add(source.id);
-            const page = await policy.fetchDocumentation({ sourceId: source.id, path }, { signal });
-            // The page was read. Whether it turns out to match is a separate
-            // question from whether this source was successfully searched.
-            searched.add(source.id);
-            if (seen.has(page.url)) {
-              return;
-            }
-            seen.add(page.url);
-            // The catalog decides authority by page, so a community page keeps
-            // its own provenance even when the search reached it through the
-            // site-wide source.
-            const owning =
-              (await policy.documentationSources()).find(
-                (candidate) =>
-                  candidate.canonicalUrl.length > source.canonicalUrl.length &&
-                  page.url.startsWith(candidate.canonicalUrl),
-              ) ?? source;
-            const retrieved = await retrieveDocumentation(
-              owning,
+            const requestedUrl = documentationRequestUrl(source, { path }).href;
+            const retrieved = await readDocumentationPage(
+              policy,
               cache,
-              { url: page.url, query: excerptQuery, maxExcerptChars: MAX_EXCERPT_CHARS },
-              () =>
-                Promise.resolve({
-                  url: page.url,
-                  body: page.body,
-                  retrievedAt: page.retrievedAt,
-                  lastModified: page.lastModified,
-                }),
-              undefined,
+              {
+                sourceId: source.id,
+                path,
+                query: excerptQuery,
+                question: query,
+                maxExcerptChars: MAX_EXCERPT_CHARS,
+              },
               signal,
             );
-            if (!mentionsQuery(retrieved.title, retrieved.excerpt, query)) {
+            // Reading a dated cached excerpt still processes this source's content.
+            attempted.add(retrieved.sourceId);
+            searched.add(retrieved.sourceId);
+            if (retrieved.stale) {
+              record(source.id, 'page', { code: ERROR_CODES.policyDocFetchFailed });
+            }
+            if (seen.has(retrieved.url)) return;
+            seen.add(retrieved.url);
+            const selectedReviewedPassage =
+              topicMatch !== null &&
+              new URL(retrieved.url).pathname ===
+                new URL(topicMatch.path, source.canonicalUrl).pathname &&
+              mentionsQuery(retrieved.title, retrieved.excerpt, excerptQuery);
+            if (
+              instructionInsteadOfQuestion ||
+              (!selectedReviewedPassage &&
+                !mentionsQuery(retrieved.title, retrieved.excerpt, query))
+            ) {
               // A page that never mentions what was asked is noise, and
               // returning noise makes "the documentation cannot answer this"
               // impossible to say.
               return;
             }
             results.push({
-              title: retrieved.title === owning.title ? fallbackTitle : retrieved.title,
+              title: retrieved.title === retrieved.sourceTitle ? fallbackTitle : retrieved.title,
               url: retrieved.url,
               sourceId: retrieved.sourceId,
               sourceTitle: retrieved.sourceTitle,
@@ -311,7 +324,8 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               provenance: provenanceOf(retrieved.authority),
               retrievedAt: retrieved.retrievedAt,
               lastModified: retrieved.lastModified,
-              lastEdited,
+              // A search hit dates its original page, not a redirect target.
+              lastEdited: !retrieved.cached && retrieved.url === requestedUrl ? lastEdited : null,
               ageDays: retrieved.ageDays,
               stale: retrieved.stale,
               cached: retrieved.cached,
@@ -428,7 +442,18 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
         return publishResult(
           policy,
           SEARCH_BGA_DOCS_TOOL,
-          SearchBgaDocsOutputSchema,
+          {
+            parse(value: unknown) {
+              const result = SearchBgaDocsOutputSchema.parse(value);
+              return {
+                ...result,
+                results: result.results.map((entry) => ({
+                  ...entry,
+                  excerpt: entry.excerpt.slice(0, MAX_EXCERPT_CHARS),
+                })),
+              };
+            },
+          },
           structuredContent,
           summarizeSearch,
         );

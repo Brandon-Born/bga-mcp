@@ -1,5 +1,13 @@
 # Release-candidate verification — BGA-403
 
+## rc.6 preparation — 2026-10-02 UTC
+
+The first-release scope remains the existing `first-local-only` inventory: seven local tools, three project resources, stdio and protocol `2025-11-25`. Package, metadata and capability-manifest versions now select `1.0.0-rc.6`. The public executable and contract are unchanged. This candidate will include the integrated correctness and lifecycle changes after rc.5; no existing rc.5 signature, installation, client, usefulness or security receipt is evidence for these new bytes.
+
+Before tagging, the integrated gate and fresh exact-source CI must pass, and all affected framework pages must be explicitly admitted against that post-observation evidence. The existing producer must then retain one original tarball, prove its frozen-lockfile reconstruction, and record exact source, audit, manifest and checksums. Independent consumers, signing, public evidence and security review must consume that original artifact without rebuilding it. Candidate-specific selectors advance only when their actual replacement receipts exist. The unresolved `main` integration approval, independent reporting lifecycle and publisher setup remain separate holds; no candidate or publication is claimed by this preparation.
+
+The integrated local `corepack pnpm check` passes at dirty preparation based on `1fd29af1792ad7a8b3b6b1bc7afd67a0dc5ba9bd`: 768 tests, 234 required scenarios, 103 retained claims and 17 capabilities; packaging, official applicable conformance and safety pass. The observed test package is `sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906`; sealed evidence at `2026-10-02T21:16:36.460Z` hashes to `sha256:b7c6eb062978e5c11ff8f79a02f9df2cd763e0d90bbdd20137668cc76e6a5d73`, and the full log hashes to `sha256:3cb6084368212dd421fbd5c867026c4b57ad9637098c4d679dd3d320f8e295e7`. These are local preparation results, not an original tagged producer artifact or clean CI admission. The later workflow-only instruction placing the independent report last received formatting and diff checks; it changes no acceptance requirement or package bytes.
+
 ```verification-record
 {
   "kind": "review",

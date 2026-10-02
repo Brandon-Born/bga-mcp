@@ -1,0 +1,599 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-208/BGA-211",
+  "scope": "Installed development documentation exact-page cache lifecycle; historical relevance replay remains open",
+  "status": "implemented-historical-relevance-replay-open",
+  "sourceBase": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+  "sourceClean": false,
+  "initialIntegratedAttempt": {
+    "status": "failed",
+    "testsPassed": 757,
+    "testsFailed": 8,
+    "testsTotal": 765,
+    "log": "bga-cache-lifecycle-check.log",
+    "findings": [
+      "New internal helper altered frozen declaration inventory",
+      "Network permission check moved ahead of invalid-source refusal",
+      "New proof/review paths lacked explicit framework dependency mapping"
+    ],
+    "corrections": [
+      "Internal helper moved to existing retrieval module and stripped from declarations; all original declaration bytes compare equal",
+      "Existing source validation order retained; permission/content checks still run before cache",
+      "New semantic review and proof files explicitly mapped without bypassing framework holds"
+    ]
+  },
+  "focused": {
+    "status": "passed",
+    "tests": 38,
+    "suites": 6,
+    "scope": "Cache/relevance, output-budget, frozen installed contract and framework dependency/lifecycle regressions"
+  },
+  "fullGate": {
+    "status": "passed",
+    "sourceBase": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T19:30:15.380Z",
+    "testsPassed": 768,
+    "testsFailed": 0,
+    "requiredScenarios": 234,
+    "scenariosPassed": 234,
+    "claims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+    "evidenceDigest": "sha256:26b9130b9175ca94c3b8cada14d89631995ec2e15ad007562330201b5a5a4a40",
+    "log": "bga-cache-lifecycle-complete-check.log",
+    "coverage": {
+      "statements": 91.42,
+      "branches": 81.56,
+      "functions": 92.44,
+      "lines": 91.51
+    }
+  },
+  "sourceCi": {
+    "status": "passed",
+    "id": 37056579093,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37056579093",
+    "commit": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+    "jobsValidated": 6,
+    "jobs": [
+      {
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:54:07.650Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+        "evidenceDigest": "sha256:bdb24d1930ac4a3ba1b4b5cfa22fba3b08863c7ff7aac38ea35ff21b8c6fa56d",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:53:19.507Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+        "evidenceDigest": "sha256:b996112caf7a25851ff360200bc8b6e317f7e5af722677f63c468d7fdc9f9922",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "linux",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:53:38.322Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:b6dcb7f7e355baff3f11ecbb4e9ff9a151df02b36f2f85c5f91627f090de6e16",
+        "evidenceDigest": "sha256:1a9aa2ee80dfca78e7aed5896f1fb918ace48b18749aeba38e395077eba70c76",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "linux",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:52:02.624Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:b6dcb7f7e355baff3f11ecbb4e9ff9a151df02b36f2f85c5f91627f090de6e16",
+        "evidenceDigest": "sha256:9b0db2d79afa60bd8c395342e33059f8bb63b86b89daeb923a9ca274bd36b599",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "win32",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:56:36.521Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:1c696a6af068e98187e34fe1f3d4f52cf701a0aadfb6d8c414b5371698d2f374",
+        "evidenceDigest": "sha256:aeb4aa74de278110cf0bddc334dd8d9621ce8e6b88535f613b4f6dba2e38fd74",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "win32",
+        "source": "e75be74a24de80b412cecaa9198dfdbfbcc3c6e9",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T19:54:23.050Z",
+        "tests": 768,
+        "scenarios": 234,
+        "claims": 103,
+        "capabilities": 17,
+        "artifactDigest": "sha256:1c696a6af068e98187e34fe1f3d4f52cf701a0aadfb6d8c414b5371698d2f374",
+        "evidenceDigest": "sha256:baa4bcac0708f93dad6841bd0c07f4ee603eb5924fb6fdd2ca4f1ed790d937f7",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "installedArtifactConsistencyValidated": true,
+        "cacheAndContractScenariosValidated": true,
+        "conformance": "passed"
+      }
+    ]
+  },
+  "liveEvaluation": {
+    "schemaVersion": 1,
+    "mode": "live-installed",
+    "evaluatedAt": "2026-10-02T19:31:31.869Z",
+    "harnessSourceCommit": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+    "artifactSource": "original-bytes-source-not-inferred",
+    "sourceDirty": true,
+    "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+    "thresholds": {
+      "minAnswered": 0.8,
+      "minAttributed": 1,
+      "maxExcerptChars": 1200
+    },
+    "rankingQuality": {
+      "questions": [
+        {
+          "id": "states-where",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "game-class-location",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client-entry-point",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration-states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "software-versions",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "community-recipes",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "no-answer",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "topics": [
+        {
+          "id": "game-logic",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "studio",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "cookbook",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "summary": {
+        "total": 9,
+        "answerable": 9,
+        "answered": 9,
+        "attributed": 9,
+        "answeredRate": 1,
+        "attributedRate": 1,
+        "passed": true
+      },
+      "observations": [
+        {
+          "id": "states-where",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T19:31:10.981Z"]
+        },
+        {
+          "id": "game-class-location",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+            "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"
+          ],
+          "retrievedAt": ["2026-10-02T19:31:13.851Z", "2026-10-02T19:31:14.700Z"]
+        },
+        {
+          "id": "client-entry-point",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+            "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
+          ],
+          "retrievedAt": ["2026-10-02T19:31:15.388Z", "2026-10-02T19:31:16.876Z"]
+        },
+        {
+          "id": "migration-states",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T19:31:17.473Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Studio_file_reference",
+            "https://en.doc.boardgamearena.com/Using_Typescript_and_Scss",
+            "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started"
+          ],
+          "retrievedAt": [
+            "2026-10-02T19:31:20.381Z",
+            "2026-10-02T19:31:22.056Z",
+            "2026-10-02T19:31:22.842Z"
+          ]
+        },
+        {
+          "id": "software-versions",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Studio",
+            "https://en.doc.boardgamearena.com/Testing_by_developer",
+            "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started",
+            "https://en.doc.boardgamearena.com/Setting_up_BGA_Development_environment_using_VSCode",
+            "https://en.doc.boardgamearena.com/BGA_Type_Safe_Template:_Tutorials"
+          ],
+          "retrievedAt": [
+            "2026-10-02T19:31:23.438Z",
+            "2026-10-02T19:31:24.194Z",
+            "2026-10-02T19:31:24.768Z",
+            "2026-10-02T19:31:25.252Z",
+            "2026-10-02T19:31:25.795Z"
+          ]
+        },
+        {
+          "id": "community-recipes",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T19:31:26.456Z"]
+        },
+        {
+          "id": "no-answer",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "game-logic",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T19:31:28.307Z"]
+        },
+        {
+          "id": "client",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T19:31:28.988Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T19:31:29.479Z"]
+        },
+        {
+          "id": "states",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T19:31:30.098Z"]
+        },
+        {
+          "id": "migration",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T19:31:30.674Z"]
+        },
+        {
+          "id": "studio",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T19:31:31.187Z"]
+        },
+        {
+          "id": "cookbook",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T19:31:31.850Z"]
+        }
+      ],
+      "passed": true
+    },
+    "sourceReview": {
+      "captureReviewedAt": "2026-10-02",
+      "captures": [
+        {
+          "topic": "game-logic",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+          "revision": 31673
+        },
+        {
+          "topic": "client",
+          "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+          "revision": 30727
+        },
+        {
+          "topic": "file-reference",
+          "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+          "revision": 29484
+        },
+        {
+          "topic": "states",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+          "revision": 29634
+        },
+        {
+          "topic": "migration",
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+          "revision": 30903
+        },
+        {
+          "topic": "studio",
+          "url": "https://en.doc.boardgamearena.com/Studio",
+          "revision": 31262
+        },
+        {
+          "topic": "cookbook",
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+          "revision": 31647
+        }
+      ],
+      "driftStatus": "not-inferred-from-ranking",
+      "note": "Changed or missing facts require a separate official-page drift review. Captures are never rewritten by this command."
+    },
+    "publicReleaseEvaluated": false
+  },
+  "historicalReplayAcceptance": "unproven-original-requirement-preserved",
+  "publicInventoryChanged": false,
+  "projectMutation": false,
+  "coverageAttempt": {
+    "status": "failed",
+    "testsPassed": 765,
+    "testsFailed": 0,
+    "log": "bga-cache-lifecycle-final-check.log",
+    "coverage": {
+      "lines": 89.7,
+      "statements": 89.54,
+      "branches": 79.15,
+      "functions": 90.48
+    },
+    "correction": "Add supporting in-process integration coverage for reader/cache/metadata composition and refusal paths; installed subprocess scenarios remain primary capability evidence; thresholds unchanged"
+  },
+  "supportingIntegrationAttempt": {
+    "status": "failed",
+    "testsPassed": 767,
+    "testsFailed": 1,
+    "log": "bga-cache-lifecycle-integrated-check.log",
+    "finding": "New integration assertion expected a rendered public error prefix from an internal error object",
+    "correction": "Assert the internal stable error code; no production change"
+  },
+  "focusedSupportingIntegration": {
+    "status": "passed",
+    "tests": 3
+  },
+  "realProject": {
+    "mode": "installed-public-inspection",
+    "evaluatedAt": "2026-10-02T19:31:11.622Z",
+    "harnessSourceBase": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+    "harnessSourceClean": false,
+    "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+    "projectBefore": {
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:1b2739de0ff4e89dd9390579fbbf713e53837cabfa21f2675e09d55aa9dbd9bf",
+      "clean": true
+    },
+    "projectAfter": {
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:1b2739de0ff4e89dd9390579fbbf713e53837cabfa21f2675e09d55aa9dbd9bf",
+      "clean": true
+    },
+    "stderrEmpty": true,
+    "processExited": true,
+    "result": {
+      "layout": "modern",
+      "fileCount": 308,
+      "diagnostics": {
+        "errors": 0,
+        "warnings": 0,
+        "information": 0,
+        "unsupported": 1
+      },
+      "unsupportedCodes": ["project.source.unsupported-syntax"]
+    },
+    "gameplayVerified": false,
+    "usefulnessEvaluationRepeated": false
+  },
+  "failedSourceCi": {
+    "id": 37055009310,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37055009310",
+    "commit": "6bf9487e84df2c03a7bdab020526270b555a6829",
+    "status": "failure",
+    "jobs": [
+      {
+        "id": 110997447351,
+        "name": "windows-latest / Node 22",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447636,
+        "name": "macos-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447642,
+        "name": "windows-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447664,
+        "name": "ubuntu-latest / Node 22",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447750,
+        "name": "ubuntu-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447790,
+        "name": "macos-latest / Node 22",
+        "conclusion": "failure"
+      }
+    ],
+    "failure": {
+      "test": "E2E-FILESYSTEM-CANCELLATION walk:dir-next occurrence 1 with 600 ms completion",
+      "platform": "macos-latest / Node 22",
+      "testsPassed": 767,
+      "testsFailed": 1,
+      "log": "bga-cache-ci-macos22-failure.log",
+      "logDigest": "sha256:c768ed1dc1f6eaa4bd349b7735c94f6b8ad204a14180738d1be50ced84514d5a",
+      "observation": "Snapshot ended at iterator-return cleanup; final directory close appeared in the quiet-check snapshot",
+      "correction": "Require final walk:dir-close cleanup for each directory acquisition before declaring observed completion; both directory-next cases reject an intermediate return-only snapshot. Resource, work-start, deadline, unchanged-transcript and mutation controls remain."
+    }
+  },
+  "terminalCleanupFocused": {
+    "status": "passed",
+    "tests": 53,
+    "suites": 1,
+    "log": "bga-cache-ci-cancellation-fix.log"
+  },
+  "terminalCleanupFullGate": {
+    "status": "passed",
+    "sourceBase": "6bf9487e84df2c03a7bdab020526270b555a6829",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T19:47:49.484Z",
+    "testsPassed": 768,
+    "testsFailed": 0,
+    "requiredScenarios": 234,
+    "scenariosPassed": 234,
+    "claims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+    "evidenceDigest": "sha256:01d90d7da91ddbdf8cdf67f5555ae899a5e2aa612dcfd062d4bb8338a7bbcbf7",
+    "log": "bga-cache-terminal-cleanup-check.log",
+    "coverage": {
+      "statements": 91.42,
+      "branches": 81.56,
+      "functions": 92.44,
+      "lines": 91.51
+    }
+  }
+}

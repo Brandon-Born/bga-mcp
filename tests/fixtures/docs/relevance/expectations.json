@@ -1,0 +1,173 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-02",
+  "refreshPolicy": "Explicit review only; drift never rewrites captures or expectations.",
+  "captures": [
+    {
+      "topic": "game-logic",
+      "file": "game-logic.html",
+      "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 31673,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "ae03d26cee68f219cea5e6a93772aa443196679a6afbe0d6a5e3fa2914184ee3",
+      "quotedWords": 22,
+      "requiredTerms": ["modules/php", "Game.php"],
+      "forbiddenTerms": ["data across all tables"]
+    },
+    {
+      "topic": "client",
+      "file": "client.html",
+      "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 30727,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "e296e562faabf923e56576eb649708afe8814593362a2480f039880ea88b4450",
+      "quotedWords": 17,
+      "requiredTerms": ["modules/js", "Game.js"],
+      "forbiddenTerms": []
+    },
+    {
+      "topic": "file-reference",
+      "file": "file-reference.html",
+      "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 29484,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "8429d8c64f59e7eb256144230bf558fbbdf86e5f3b0c7ea0af4de349f9a8e786",
+      "quotedWords": 14,
+      "requiredTerms": [
+        "dbmodel.sql",
+        "modules/php/Game.php",
+        "modules/js/Game.js",
+        "states.inc.php"
+      ],
+      "forbiddenTerms": ["Contents"]
+    },
+    {
+      "topic": "states",
+      "file": "states.html",
+      "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 29634,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "512a575cf5295645ba39fd99f1652b520934b0350e9f25845758862c35bb7751",
+      "quotedWords": 14,
+      "requiredTerms": ["modules/php/States"],
+      "forbiddenTerms": []
+    },
+    {
+      "topic": "migration",
+      "file": "migration.html",
+      "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 30903,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "a9552f9982bded5bec80144f5a99a907407bcb0946df6d75174d1b720caa5607",
+      "quotedWords": 20,
+      "requiredTerms": ["states.inc.php", "When all classes are migrated"],
+      "forbiddenTerms": []
+    },
+    {
+      "topic": "studio",
+      "file": "studio.html",
+      "url": "https://en.doc.boardgamearena.com/Studio",
+      "authority": "official-maintained",
+      "retrievedAt": "2026-10-02",
+      "revision": 31262,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-framework-reference",
+      "sha256": "dd424357830056a475a5539e92e3b137b96226681b3fe22c7d36b6f356af9d42",
+      "quotedWords": 8,
+      "requiredTerms": ["Software Versions", "PHP: 8.4"],
+      "forbiddenTerms": ["Contents"]
+    },
+    {
+      "topic": "cookbook",
+      "file": "cookbook.html",
+      "url": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+      "authority": "official-host-community-edited",
+      "retrievedAt": "2026-10-02",
+      "revision": 31647,
+      "sourcePolicy": "config/doc-sources.json#bga-studio-community-pages",
+      "sha256": "75c88270257f6e51a552e3b5e147a3a12bb3aebf952047a229d22a7870b554b7",
+      "quotedWords": 17,
+      "requiredTerms": ["recipes", "BGA Studio framework"],
+      "forbiddenTerms": []
+    }
+  ],
+  "questions": [
+    {
+      "id": "states-where",
+      "expectedPage": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+      "requiredTerms": ["modules/php/States"],
+      "forbiddenTerms": [],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "game-class-location",
+      "expectedPage": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+      "requiredTerms": ["modules/php", "Game.php"],
+      "forbiddenTerms": ["data across all tables"],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "client-entry-point",
+      "expectedPage": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+      "requiredTerms": ["modules/js", "Game.js"],
+      "forbiddenTerms": [],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "migration-states",
+      "expectedPage": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "requiredTerms": ["states.inc.php", "When all classes are migrated"],
+      "forbiddenTerms": [],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "file-reference",
+      "expectedPage": "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "requiredTerms": [
+        "dbmodel.sql",
+        "modules/php/Game.php",
+        "modules/js/Game.js",
+        "states.inc.php"
+      ],
+      "forbiddenTerms": ["Contents"],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "software-versions",
+      "expectedPage": "https://en.doc.boardgamearena.com/Studio",
+      "requiredTerms": ["PHP", "Software Versions", "PHP: 8.4"],
+      "forbiddenTerms": ["Contents"],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "community-recipes",
+      "expectedPage": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+      "requiredTerms": ["recipes", "BGA Studio framework"],
+      "forbiddenTerms": [],
+      "expectNoAnswer": false
+    },
+    {
+      "id": "no-answer",
+      "expectedPage": null,
+      "requiredTerms": [],
+      "forbiddenTerms": [],
+      "expectNoAnswer": true
+    },
+    {
+      "id": "adversarial-instruction",
+      "expectedPage": null,
+      "requiredTerms": [],
+      "forbiddenTerms": [],
+      "expectNoAnswer": true
+    }
+  ]
+}

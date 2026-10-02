@@ -31,6 +31,7 @@
         "docs/verification/AGGREGATE_VALIDATION.md",
         "docs/verification/DATABASE_AUDIT.md",
         "docs/verification/DATABASE_QUERY_SOURCES.md",
+        "docs/verification/DOCUMENTATION_AUTHORITY.md",
         "docs/verification/EXECUTABLE_CONTRACTS.md",
         "docs/verification/FRAMEWORK_DEPENDENCIES.md",
         "docs/verification/GENERATED_TEMPLATE_REGRESSIONS.md",
@@ -112,7 +113,9 @@
         "src/tools/validate-action-contracts.ts",
         "src/tools/validate-notifications.ts",
         "src/tools/validate-project.ts",
-        "src/tools/validate-state-machine.ts"
+        "src/tools/validate-state-machine.ts",
+        "docs/verification/DOCUMENTATION_RELEVANCE.md",
+        "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md"
       ]
     },
     {
@@ -149,6 +152,10 @@
         "tests/e2e/client-smoke.test.ts",
         "tests/e2e/dns-stub.ts",
         "tests/e2e/doc-network-stub.ts",
+        "tests/e2e/doc-cache-clock.ts",
+        "tests/e2e/docs-cache-lifecycle.test.ts",
+        "tests/integration/doc-cache-readers.test.ts",
+        "tests/e2e/docs-authority.test.ts",
         "tests/e2e/docs-network.test.ts",
         "tests/e2e/documentation.test.ts",
         "tests/e2e/framework-change.test.ts",
@@ -226,7 +233,19 @@
         "tests/unit/uncertainty.test.ts",
         "tsconfig.build.json",
         "tsconfig.json",
-        "vitest.config.ts"
+        "vitest.config.ts",
+        "tests/e2e/docs-relevance.test.ts",
+        "tests/unit/doc-relevance.test.ts",
+        "scripts/lib/documentation-evaluation.ts",
+        "scripts/lib/install-documentation-artifact.ts",
+        "tests/fixtures/docs/relevance/expectations.json",
+        "tests/fixtures/docs/relevance/cookbook.html",
+        "tests/fixtures/docs/relevance/client.html",
+        "tests/fixtures/docs/relevance/studio.html",
+        "tests/fixtures/docs/relevance/game-logic.html",
+        "tests/fixtures/docs/relevance/states.html",
+        "tests/fixtures/docs/relevance/migration.html",
+        "tests/fixtures/docs/relevance/file-reference.html"
       ]
     },
     {
@@ -337,6 +356,7 @@
         "docs/verification/bga415-rc5-dry-run.json",
         "docs/verification/bga415-source-ci.json",
         "docs/verification/bga421-source-ci.json",
+        "docs/verification/bga423-source-ci.json",
         "docs/verification/bga431-fixed-v1.0.0-rc.3.json",
         "docs/verification/bga431-fixed-v1.0.0-rc.4.json",
         "docs/verification/bga431-fixed-v1.0.0-rc.5.json",
@@ -461,7 +481,9 @@
         "tests/unit/doc-evaluation.test.ts",
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
-        "tests/unit/version-policy.test.ts"
+        "tests/unit/version-policy.test.ts",
+        "docs/verification/bga211-source-evaluation.json",
+        "docs/verification/bga208-cache-lifecycle.json"
       ]
     }
   ],

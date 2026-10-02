@@ -1,0 +1,1557 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-211",
+  "status": "implemented-historical-replay-open",
+  "recordedAt": "2026-10-02T18:40:51.188Z",
+  "sourcePreparation": {
+    "commit": "795d4526429e3e69bba23c6628c201a56172809c",
+    "clean": false
+  },
+  "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+  "thresholds": {
+    "minAnswered": 0.8,
+    "minAttributed": 1,
+    "maxExcerptChars": 1200
+  },
+  "before": {
+    "evaluatedAt": "2026-10-02T18:31:35.285Z",
+    "mode": "installed-captured-replay",
+    "baselineSource": "795d4526429e3e69bba23c6628c201a56172809c",
+    "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+    "sourceConditions": "Seven minimal actual-page fragments; original empty API envelope; scripted old-name redirects. Not historical wiki ranking, TLS or DNS.",
+    "thresholds": {
+      "minAnswered": 0.8,
+      "minAttributed": 1,
+      "maxExcerptChars": 1200
+    },
+    "result": {
+      "questions": [
+        {
+          "id": "states-where",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "game-class-location",
+          "answered": false,
+          "attributed": true,
+          "failures": ["unrelated passage includes \"data across all tables\""]
+        },
+        {
+          "id": "client-entry-point",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration-states",
+          "answered": false,
+          "attributed": false,
+          "failures": [
+            "no result came from the expected page (Migration_Guide)",
+            "no answer from the reviewed canonical page"
+          ]
+        },
+        {
+          "id": "file-reference",
+          "answered": false,
+          "attributed": false,
+          "failures": [
+            "no result came from the expected page (Studio_file_reference)",
+            "no answer from the reviewed canonical page"
+          ]
+        },
+        {
+          "id": "software-versions",
+          "answered": false,
+          "attributed": true,
+          "failures": ["unrelated passage includes \"Contents\""]
+        },
+        {
+          "id": "community-recipes",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "no-answer",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "answered": false,
+          "attributed": false,
+          "failures": ["the documentation cannot answer this and something was returned anyway"]
+        }
+      ],
+      "topics": [
+        {
+          "id": "game-logic",
+          "answered": false,
+          "attributed": true,
+          "failures": ["unrelated passage includes \"data across all tables\""]
+        },
+        {
+          "id": "client",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": false,
+          "attributed": true,
+          "failures": ["unrelated passage includes \"Contents\""]
+        },
+        {
+          "id": "states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "studio",
+          "answered": false,
+          "attributed": true,
+          "failures": ["unrelated passage includes \"Contents\""]
+        },
+        {
+          "id": "cookbook",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "summary": {
+        "total": 9,
+        "answerable": 9,
+        "answered": 4,
+        "attributed": 6,
+        "answeredRate": 0.4444444444444444,
+        "attributedRate": 0.6666666666666666,
+        "passed": false
+      },
+      "observations": [
+        {
+          "id": "states-where",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:31:35.257Z"]
+        },
+        {
+          "id": "game-class-location",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T18:31:35.264Z"]
+        },
+        {
+          "id": "client-entry-point",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T18:31:35.266Z"]
+        },
+        {
+          "id": "migration-states",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "file-reference",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "software-versions",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T18:31:35.272Z"]
+        },
+        {
+          "id": "community-recipes",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:31:35.274Z"]
+        },
+        {
+          "id": "no-answer",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T18:31:35.270Z"]
+        },
+        {
+          "id": "game-logic",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T18:31:35.278Z"]
+        },
+        {
+          "id": "client",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T18:31:35.279Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T18:31:35.279Z"]
+        },
+        {
+          "id": "states",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:31:35.280Z"]
+        },
+        {
+          "id": "migration",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T18:31:35.280Z"]
+        },
+        {
+          "id": "studio",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T18:31:35.280Z"]
+        },
+        {
+          "id": "cookbook",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:31:35.281Z"]
+        }
+      ],
+      "passed": false
+    }
+  },
+  "after": {
+    "evaluatedAt": "2026-10-02T18:31:36.113Z",
+    "mode": "installed-captured-replay",
+    "baselineSource": null,
+    "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+    "sourceConditions": "Seven minimal actual-page fragments; original empty API envelope; scripted old-name redirects. Not historical wiki ranking, TLS or DNS.",
+    "thresholds": {
+      "minAnswered": 0.8,
+      "minAttributed": 1,
+      "maxExcerptChars": 1200
+    },
+    "result": {
+      "questions": [
+        {
+          "id": "states-where",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "game-class-location",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client-entry-point",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration-states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "software-versions",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "community-recipes",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "no-answer",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "topics": [
+        {
+          "id": "game-logic",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "studio",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "cookbook",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "summary": {
+        "total": 9,
+        "answerable": 9,
+        "answered": 9,
+        "attributed": 9,
+        "answeredRate": 1,
+        "attributedRate": 1,
+        "passed": true
+      },
+      "observations": [
+        {
+          "id": "states-where",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:31:36.085Z"]
+        },
+        {
+          "id": "game-class-location",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T18:31:36.092Z"]
+        },
+        {
+          "id": "client-entry-point",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T18:31:36.094Z"]
+        },
+        {
+          "id": "migration-states",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T18:31:36.095Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T18:31:36.098Z"]
+        },
+        {
+          "id": "software-versions",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T18:31:36.099Z"]
+        },
+        {
+          "id": "community-recipes",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:31:36.100Z"]
+        },
+        {
+          "id": "no-answer",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "game-logic",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T18:31:36.104Z"]
+        },
+        {
+          "id": "client",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T18:31:36.105Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T18:31:36.106Z"]
+        },
+        {
+          "id": "states",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:31:36.106Z"]
+        },
+        {
+          "id": "migration",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T18:31:36.107Z"]
+        },
+        {
+          "id": "studio",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T18:31:36.107Z"]
+        },
+        {
+          "id": "cookbook",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:31:36.108Z"]
+        }
+      ],
+      "passed": true
+    }
+  },
+  "live": {
+    "schemaVersion": 1,
+    "mode": "live-installed",
+    "evaluatedAt": "2026-10-02T18:40:51.188Z",
+    "harnessSourceCommit": "795d4526429e3e69bba23c6628c201a56172809c",
+    "artifactSource": "original-bytes-source-not-inferred",
+    "sourceDirty": true,
+    "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+    "thresholds": {
+      "minAnswered": 0.8,
+      "minAttributed": 1,
+      "maxExcerptChars": 1200
+    },
+    "rankingQuality": {
+      "questions": [
+        {
+          "id": "states-where",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "game-class-location",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client-entry-point",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration-states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "software-versions",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "community-recipes",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "no-answer",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "topics": [
+        {
+          "id": "game-logic",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "client",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "file-reference",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "states",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "migration",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "studio",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        },
+        {
+          "id": "cookbook",
+          "answered": true,
+          "attributed": true,
+          "failures": []
+        }
+      ],
+      "summary": {
+        "total": 9,
+        "answerable": 9,
+        "answered": 9,
+        "attributed": 9,
+        "answeredRate": 1,
+        "attributedRate": 1,
+        "passed": true
+      },
+      "observations": [
+        {
+          "id": "states-where",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:40:28.259Z"]
+        },
+        {
+          "id": "game-class-location",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+            "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"
+          ],
+          "retrievedAt": ["2026-10-02T18:40:31.360Z", "2026-10-02T18:40:32.091Z"]
+        },
+        {
+          "id": "client-entry-point",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+            "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
+          ],
+          "retrievedAt": ["2026-10-02T18:40:33.457Z", "2026-10-02T18:40:35.583Z"]
+        },
+        {
+          "id": "migration-states",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T18:40:36.161Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Studio_file_reference",
+            "https://en.doc.boardgamearena.com/Using_Typescript_and_Scss",
+            "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started"
+          ],
+          "retrievedAt": [
+            "2026-10-02T18:40:39.923Z",
+            "2026-10-02T18:40:41.831Z",
+            "2026-10-02T18:40:42.280Z"
+          ]
+        },
+        {
+          "id": "software-versions",
+          "kind": "question",
+          "urls": [
+            "https://en.doc.boardgamearena.com/Studio",
+            "https://en.doc.boardgamearena.com/Testing_by_developer",
+            "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started",
+            "https://en.doc.boardgamearena.com/Setting_up_BGA_Development_environment_using_VSCode",
+            "https://en.doc.boardgamearena.com/BGA_Type_Safe_Template:_Tutorials"
+          ],
+          "retrievedAt": [
+            "2026-10-02T18:40:42.778Z",
+            "2026-10-02T18:40:43.381Z",
+            "2026-10-02T18:40:43.907Z",
+            "2026-10-02T18:40:44.424Z",
+            "2026-10-02T18:40:44.872Z"
+          ]
+        },
+        {
+          "id": "community-recipes",
+          "kind": "question",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:40:45.536Z"]
+        },
+        {
+          "id": "no-answer",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "adversarial-instruction",
+          "kind": "question",
+          "urls": [],
+          "retrievedAt": []
+        },
+        {
+          "id": "game-logic",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+          "retrievedAt": ["2026-10-02T18:40:47.344Z"]
+        },
+        {
+          "id": "client",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+          "retrievedAt": ["2026-10-02T18:40:48.127Z"]
+        },
+        {
+          "id": "file-reference",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+          "retrievedAt": ["2026-10-02T18:40:48.588Z"]
+        },
+        {
+          "id": "states",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+          "retrievedAt": ["2026-10-02T18:40:49.136Z"]
+        },
+        {
+          "id": "migration",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+          "retrievedAt": ["2026-10-02T18:40:49.916Z"]
+        },
+        {
+          "id": "studio",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/Studio"],
+          "retrievedAt": ["2026-10-02T18:40:50.426Z"]
+        },
+        {
+          "id": "cookbook",
+          "kind": "topic",
+          "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+          "retrievedAt": ["2026-10-02T18:40:51.168Z"]
+        }
+      ],
+      "passed": true
+    },
+    "sourceReview": {
+      "captureReviewedAt": "2026-10-02",
+      "captures": [
+        {
+          "topic": "game-logic",
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+          "revision": 31673
+        },
+        {
+          "topic": "client",
+          "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+          "revision": 30727
+        },
+        {
+          "topic": "file-reference",
+          "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+          "revision": 29484
+        },
+        {
+          "topic": "states",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+          "revision": 29634
+        },
+        {
+          "topic": "migration",
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+          "revision": 30903
+        },
+        {
+          "topic": "studio",
+          "url": "https://en.doc.boardgamearena.com/Studio",
+          "revision": 31262
+        },
+        {
+          "topic": "cookbook",
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+          "revision": 31647
+        }
+      ],
+      "driftStatus": "not-inferred-from-ranking",
+      "note": "Changed or missing facts require a separate official-page drift review. Captures are never rewritten by this command."
+    },
+    "publicReleaseEvaluated": false
+  },
+  "realProject": {
+    "evaluatedAt": "2026-10-02T18:32:03.890Z",
+    "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+    "projectSource": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "projectCleanBefore": true,
+    "projectCleanAfter": true,
+    "stderrEmpty": true,
+    "result": {
+      "layout": "modern",
+      "diagnostics": {
+        "schemaVersion": 1,
+        "status": "unsupported",
+        "summary": {
+          "errors": 0,
+          "warnings": 0,
+          "information": 0,
+          "unsupported": 1
+        },
+        "findings": [
+          {
+            "kind": "unsupported-syntax",
+            "code": "project.source.unsupported-syntax",
+            "message": "Execution scope is unknown for 23 local source file(s); they are inventoried but do not supply production game contracts.",
+            "locations": [
+              {
+                "uri": "private/mcp/evaluation-rc3/bga431-php-oracle.php"
+              },
+              {
+                "uri": "private/mcp/evaluation-rc4/bga431-php-oracle.php"
+              },
+              {
+                "uri": "private/mcp/evaluation-rc5/bga431-php-oracle.php"
+              },
+              {
+                "uri": "private/studio-baseline/_ide_helper.php"
+              },
+              {
+                "uri": "private/studio-baseline/modules/js/Game.js"
+              },
+              {
+                "uri": "private/studio-baseline/modules/php/Game.php"
+              },
+              {
+                "uri": "private/studio-baseline/modules/php/States/EndScore.php"
+              },
+              {
+                "uri": "private/studio-baseline/modules/php/States/NextPlayer.php"
+              },
+              {
+                "uri": "private/studio-baseline/modules/php/States/PlayerTurn.php"
+              },
+              {
+                "uri": "private/studio-baseline/src-disabled/ts/Game.ts"
+              },
+              {
+                "uri": "private/studio-baseline/src-disabled/ts/libs.ts"
+              },
+              {
+                "uri": "private/studio-baseline/src-disabled/ts/States/PlayerTurn.ts"
+              },
+              {
+                "uri": "scripts/lint.php"
+              },
+              {
+                "uri": "src-disabled/ts/Game.ts"
+              },
+              {
+                "uri": "src-disabled/ts/libs.ts"
+              },
+              {
+                "uri": "src-disabled/ts/States/PlayerTurn.ts"
+              },
+              {
+                "uri": "tests/DraftingTest.php"
+              },
+              {
+                "uri": "tests/EnvironmentTest.php"
+              },
+              {
+                "uri": "tests/FrameworkDoubles.php"
+              },
+              {
+                "uri": "tests/GameIntegrationTest.php"
+              },
+              {
+                "uri": "tests/RaceResultTest.php"
+              },
+              {
+                "uri": "tests/RoundTest.php"
+              },
+              {
+                "uri": "tests/StandingsTest.php"
+              }
+            ],
+            "evidence": [
+              {
+                "kind": "source",
+                "message": "Unsupported construct: source outside documented production code locations"
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Confirm the intended source set. Keep runtime modules under modules/, or inspect a separately identified canonical project root; Git ignore rules do not select game code."
+              }
+            ],
+            "certainty": "certain",
+            "syntax": {
+              "language": "project-source",
+              "construct": "source outside documented production code locations"
+            }
+          }
+        ]
+      },
+      "publicTools": [
+        "inspect_project",
+        "validate_state_machine",
+        "validate_action_contracts",
+        "validate_notifications",
+        "audit_database_usage",
+        "validate_project",
+        "run_pre_release_audit"
+      ]
+    },
+    "scope": "Public MCP inspection only; not gameplay or BGA-424 usefulness completion"
+  },
+  "localGate": {
+    "command": "corepack pnpm check",
+    "commandExit": 0,
+    "log": "/tmp/bga211-final-complete-check.log",
+    "source": {
+      "commit": "795d4526429e3e69bba23c6628c201a56172809c",
+      "clean": false
+    },
+    "runtimeTestsPassed": 760,
+    "requiredScenariosPassed": 229,
+    "claims": 103,
+    "capabilities": 17,
+    "package": "passed",
+    "safety": "passed",
+    "applicableConformance": "passed",
+    "subsequentHarnessCheck": {
+      "testsPassed": 7,
+      "lint": "passed",
+      "types": "passed",
+      "scope": "Installed degraded no-answer rejection; package bytes unchanged; entire exact-source CI pending."
+    }
+  },
+  "sourceCi": {
+    "status": "passed",
+    "id": 37049613335,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37049613335",
+    "commit": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+    "jobsValidated": 6,
+    "jobs": [
+      {
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:50:42.063Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+        "evidenceDigest": "sha256:8646e90461490154bcb5aabcc3340e5987d3e760783156cd55c06eda9669f8cb",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:50:40.521Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:d3e2699f6900780bd68100b9a9872af9ef1d022d0c5a17c091e95c946af46639",
+        "evidenceDigest": "sha256:0be6c668784576ed488709ec185258d17ad0f3006efdf98087e1d4683fd5c820",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "linux",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:50:18.424Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:05c5298186ef73add5dc87ca243c526247de0679e413e019e7d6e4dc60d8da2f",
+        "evidenceDigest": "sha256:4c7aacff7bc99c8b0d31c1cfb638d322bc86dd719802d81c91bc4132b8467617",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "linux",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:50:06.041Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:05c5298186ef73add5dc87ca243c526247de0679e413e019e7d6e4dc60d8da2f",
+        "evidenceDigest": "sha256:ae5ea8847fca7fbdcdade64fce6dc0d87fb0ab08054d5e5a9dfc88c934009117",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "win32",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:52:44.312Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:b03507b81ebcfa7600db6cc3a6e3eea859e6c4d2be733af9299a0c00bd4d527c",
+        "evidenceDigest": "sha256:be60d9ac2b1cabaf48cde33b9ac1ca49756f8e77c945c4c9311bd15633442c89",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "win32",
+        "source": "6f1d01d8cf819ed3f716150c21906c6909fc9ec1",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T18:51:58.883Z",
+        "tests": 760,
+        "scenarios": 229,
+        "claims": 103,
+        "artifactDigest": "sha256:b03507b81ebcfa7600db6cc3a6e3eea859e6c4d2be733af9299a0c00bd4d527c",
+        "evidenceDigest": "sha256:ec6c23e515459d46abd32769937e87977b0a765f49d8a6420aafc797a43561f5",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "relevanceScenariosValidated": true,
+        "conformance": "passed"
+      }
+    ]
+  },
+  "remaining": [
+    "Exact historical five-question/three-topic failure identities are not reproduced by current minimal captures.",
+    "Warm MCP readers still fetch before consulting the matching excerpt cache.",
+    "Framework freshness and documentation release admission remain separate."
+  ],
+  "approvalsTransferred": false,
+  "preparation": {
+    "artifactDigest": "sha256:53ee7d6b134b222b96147b718fb75f9089590088d4d7be9713729a2cfdf9b375",
+    "after": {
+      "evaluatedAt": "2026-10-02T18:15:32.206Z",
+      "mode": "installed-captured-replay",
+      "baselineSource": null,
+      "artifactDigest": "sha256:53ee7d6b134b222b96147b718fb75f9089590088d4d7be9713729a2cfdf9b375",
+      "sourceConditions": "Seven minimal actual-page fragments; original empty API envelope; scripted old-name redirects. Not historical wiki ranking, TLS or DNS.",
+      "thresholds": {
+        "minAnswered": 0.8,
+        "minAttributed": 1,
+        "maxExcerptChars": 1200
+      },
+      "result": {
+        "questions": [
+          {
+            "id": "states-where",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "game-class-location",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "client-entry-point",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "migration-states",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "file-reference",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "software-versions",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "community-recipes",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "no-answer",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "adversarial-instruction",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          }
+        ],
+        "topics": [
+          {
+            "id": "game-logic",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "client",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "file-reference",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "states",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "migration",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "studio",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "cookbook",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          }
+        ],
+        "summary": {
+          "total": 9,
+          "answerable": 9,
+          "answered": 9,
+          "attributed": 9,
+          "answeredRate": 1,
+          "attributedRate": 1,
+          "passed": true
+        },
+        "observations": [
+          {
+            "id": "states-where",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+            "retrievedAt": ["2026-10-02T18:15:32.179Z"]
+          },
+          {
+            "id": "game-class-location",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+            "retrievedAt": ["2026-10-02T18:15:32.185Z"]
+          },
+          {
+            "id": "client-entry-point",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+            "retrievedAt": ["2026-10-02T18:15:32.187Z"]
+          },
+          {
+            "id": "migration-states",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+            "retrievedAt": ["2026-10-02T18:15:32.189Z"]
+          },
+          {
+            "id": "file-reference",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+            "retrievedAt": ["2026-10-02T18:15:32.191Z"]
+          },
+          {
+            "id": "software-versions",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/Studio"],
+            "retrievedAt": ["2026-10-02T18:15:32.194Z"]
+          },
+          {
+            "id": "community-recipes",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+            "retrievedAt": ["2026-10-02T18:15:32.195Z"]
+          },
+          {
+            "id": "no-answer",
+            "kind": "question",
+            "urls": [],
+            "retrievedAt": []
+          },
+          {
+            "id": "adversarial-instruction",
+            "kind": "question",
+            "urls": [],
+            "retrievedAt": []
+          },
+          {
+            "id": "game-logic",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+            "retrievedAt": ["2026-10-02T18:15:32.198Z"]
+          },
+          {
+            "id": "client",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+            "retrievedAt": ["2026-10-02T18:15:32.199Z"]
+          },
+          {
+            "id": "file-reference",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+            "retrievedAt": ["2026-10-02T18:15:32.199Z"]
+          },
+          {
+            "id": "states",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+            "retrievedAt": ["2026-10-02T18:15:32.200Z"]
+          },
+          {
+            "id": "migration",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+            "retrievedAt": ["2026-10-02T18:15:32.200Z"]
+          },
+          {
+            "id": "studio",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Studio"],
+            "retrievedAt": ["2026-10-02T18:15:32.201Z"]
+          },
+          {
+            "id": "cookbook",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+            "retrievedAt": ["2026-10-02T18:15:32.201Z"]
+          }
+        ],
+        "passed": true
+      }
+    },
+    "live": {
+      "schemaVersion": 1,
+      "mode": "live-installed",
+      "evaluatedAt": "2026-10-02T18:16:15.343Z",
+      "harnessSourceCommit": "795d4526429e3e69bba23c6628c201a56172809c",
+      "artifactSource": "original-bytes-source-not-inferred",
+      "sourceDirty": true,
+      "artifactDigest": "sha256:53ee7d6b134b222b96147b718fb75f9089590088d4d7be9713729a2cfdf9b375",
+      "thresholds": {
+        "minAnswered": 0.8,
+        "minAttributed": 1,
+        "maxExcerptChars": 1200
+      },
+      "rankingQuality": {
+        "questions": [
+          {
+            "id": "states-where",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "game-class-location",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "client-entry-point",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "migration-states",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "file-reference",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "software-versions",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "community-recipes",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "no-answer",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "adversarial-instruction",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          }
+        ],
+        "topics": [
+          {
+            "id": "game-logic",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "client",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "file-reference",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "states",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "migration",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "studio",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          },
+          {
+            "id": "cookbook",
+            "answered": true,
+            "attributed": true,
+            "failures": []
+          }
+        ],
+        "summary": {
+          "total": 9,
+          "answerable": 9,
+          "answered": 9,
+          "attributed": 9,
+          "answeredRate": 1,
+          "attributedRate": 1,
+          "passed": true
+        },
+        "observations": [
+          {
+            "id": "states-where",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+            "retrievedAt": ["2026-10-02T18:15:51.649Z"]
+          },
+          {
+            "id": "game-class-location",
+            "kind": "question",
+            "urls": [
+              "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+              "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"
+            ],
+            "retrievedAt": ["2026-10-02T18:15:54.968Z", "2026-10-02T18:15:55.915Z"]
+          },
+          {
+            "id": "client-entry-point",
+            "kind": "question",
+            "urls": [
+              "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+              "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"
+            ],
+            "retrievedAt": ["2026-10-02T18:15:57.374Z", "2026-10-02T18:15:59.612Z"]
+          },
+          {
+            "id": "migration-states",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+            "retrievedAt": ["2026-10-02T18:16:00.425Z"]
+          },
+          {
+            "id": "file-reference",
+            "kind": "question",
+            "urls": [
+              "https://en.doc.boardgamearena.com/Studio_file_reference",
+              "https://en.doc.boardgamearena.com/Using_Typescript_and_Scss",
+              "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started"
+            ],
+            "retrievedAt": [
+              "2026-10-02T18:16:03.909Z",
+              "2026-10-02T18:16:05.781Z",
+              "2026-10-02T18:16:06.331Z"
+            ]
+          },
+          {
+            "id": "software-versions",
+            "kind": "question",
+            "urls": [
+              "https://en.doc.boardgamearena.com/Studio",
+              "https://en.doc.boardgamearena.com/Testing_by_developer",
+              "https://en.doc.boardgamearena.com/I_wish_I_knew_this_when_I_started",
+              "https://en.doc.boardgamearena.com/Setting_up_BGA_Development_environment_using_VSCode",
+              "https://en.doc.boardgamearena.com/BGA_Type_Safe_Template:_Tutorials"
+            ],
+            "retrievedAt": [
+              "2026-10-02T18:16:06.876Z",
+              "2026-10-02T18:16:07.622Z",
+              "2026-10-02T18:16:08.210Z",
+              "2026-10-02T18:16:08.675Z",
+              "2026-10-02T18:16:09.273Z"
+            ]
+          },
+          {
+            "id": "community-recipes",
+            "kind": "question",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+            "retrievedAt": ["2026-10-02T18:16:09.938Z"]
+          },
+          {
+            "id": "no-answer",
+            "kind": "question",
+            "urls": [],
+            "retrievedAt": []
+          },
+          {
+            "id": "adversarial-instruction",
+            "kind": "question",
+            "urls": [],
+            "retrievedAt": []
+          },
+          {
+            "id": "game-logic",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Main_game_logic:_Game.php"],
+            "retrievedAt": ["2026-10-02T18:16:11.624Z"]
+          },
+          {
+            "id": "client",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js"],
+            "retrievedAt": ["2026-10-02T18:16:12.359Z"]
+          },
+          {
+            "id": "file-reference",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Studio_file_reference"],
+            "retrievedAt": ["2026-10-02T18:16:12.815Z"]
+          },
+          {
+            "id": "states",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/State_classes:_State_directory"],
+            "retrievedAt": ["2026-10-02T18:16:13.482Z"]
+          },
+          {
+            "id": "migration",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide"],
+            "retrievedAt": ["2026-10-02T18:16:14.090Z"]
+          },
+          {
+            "id": "studio",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/Studio"],
+            "retrievedAt": ["2026-10-02T18:16:14.605Z"]
+          },
+          {
+            "id": "cookbook",
+            "kind": "topic",
+            "urls": ["https://en.doc.boardgamearena.com/BGA_Studio_Cookbook"],
+            "retrievedAt": ["2026-10-02T18:16:15.325Z"]
+          }
+        ],
+        "passed": true
+      },
+      "sourceReview": {
+        "captureReviewedAt": "2026-10-02",
+        "captures": [
+          {
+            "topic": "game-logic",
+            "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+            "revision": 31673
+          },
+          {
+            "topic": "client",
+            "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+            "revision": 30727
+          },
+          {
+            "topic": "file-reference",
+            "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+            "revision": 29484
+          },
+          {
+            "topic": "states",
+            "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+            "revision": 29634
+          },
+          {
+            "topic": "migration",
+            "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+            "revision": 30903
+          },
+          {
+            "topic": "studio",
+            "url": "https://en.doc.boardgamearena.com/Studio",
+            "revision": 31262
+          },
+          {
+            "topic": "cookbook",
+            "url": "https://en.doc.boardgamearena.com/BGA_Studio_Cookbook",
+            "revision": 31647
+          }
+        ],
+        "driftStatus": "not-inferred-from-ranking",
+        "note": "Changed or missing facts require a separate official-page drift review. Captures are never rewritten by this command."
+      },
+      "publicReleaseEvaluated": false
+    },
+    "localGate": {
+      "command": "corepack pnpm check",
+      "runtimeTestsPassed": 759,
+      "requiredScenariosPassed": 229,
+      "claims": 103,
+      "capabilities": 17,
+      "applicableConformance": "passed",
+      "package": "passed",
+      "safety": "passed",
+      "commandExit": 1,
+      "lastFailure": "Final evidence verifier refused the new review document without a typed marker; scoped retry then acceptance-map refused a unit scenario in a packaged case.",
+      "scopedCompletion": [
+        "verify:evidence",
+        "verify:acceptance-map",
+        "verify:documentation",
+        "verify:framework-change",
+        "git diff --check"
+      ],
+      "scope": "The final verification-marker and acceptance-case metadata corrections do not change the tested runtime or tarball. This is not an assertion that the original command exited zero."
+    },
+    "scope": "Earlier narrower file passage and pre-visibility/partial-failure harness preparation; not the final artifact or oracle."
+  },
+  "reviewedExpectationsDigest": "sha256:d23c8351cca5eecdf188acb0e6fcdb2105df45d1c107c067584480ffe04ba6b9"
+}

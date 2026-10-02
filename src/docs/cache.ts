@@ -78,25 +78,48 @@ export class DocumentationCache {
    * it either way.
    */
   read(url: string, maxCacheDays: number, now: Date = new Date()): CachedDocumentation | null {
-    const entry = this.#entries.get(url);
+    return this.#read(url, maxCacheDays, now);
+  }
+
+  /** @internal Query, budget and source identity bind a cached selection. */
+  readSelected(
+    url: string,
+    selection: string,
+    maxCacheDays: number,
+    now: Date,
+  ): CachedDocumentation | null {
+    return this.#read(JSON.stringify([url, selection]), maxCacheDays, now);
+  }
+
+  #read(key: string, maxCacheDays: number, now: Date): CachedDocumentation | null {
+    const entry = this.#entries.get(key);
     if (entry === undefined) {
       return null;
     }
     const ageDays = ageInDays(entry.retrievedAt, now);
     // Refresh recency on use, so the bound evicts what nobody reads.
-    this.#entries.delete(url);
-    this.#entries.set(url, entry);
+    this.#entries.delete(key);
+    this.#entries.set(key, entry);
     return { ...entry, ageDays, stale: ageDays > maxCacheDays };
   }
 
   /** Stores an excerpt, truncating to the limit and evicting the oldest use. */
   write(entry: DocumentationEntry): DocumentationEntry {
+    return this.#write(entry.url, entry);
+  }
+
+  /** @internal Shares the same global LRU and size bounds as unselected entries. */
+  writeSelected(entry: DocumentationEntry, selection: string): DocumentationEntry {
+    return this.#write(JSON.stringify([entry.url, selection]), entry);
+  }
+
+  #write(key: string, entry: DocumentationEntry): DocumentationEntry {
     const stored: DocumentationEntry = {
       ...entry,
       excerpt: entry.excerpt.slice(0, this.#limits.maxExcerptChars),
     };
-    this.#entries.delete(stored.url);
-    this.#entries.set(stored.url, stored);
+    this.#entries.delete(key);
+    this.#entries.set(key, stored);
     while (this.#entries.size > this.#limits.maxEntries) {
       const oldest = this.#entries.keys().next();
       if (oldest.done === true) {
@@ -109,7 +132,9 @@ export class DocumentationCache {
 
   /** Drops an entry, used when a refetch supersedes it or a source is removed. */
   forget(url: string): void {
-    this.#entries.delete(url);
+    for (const [key, entry] of this.#entries) {
+      if (entry.url === url) this.#entries.delete(key);
+    }
   }
 
   clear(): void {

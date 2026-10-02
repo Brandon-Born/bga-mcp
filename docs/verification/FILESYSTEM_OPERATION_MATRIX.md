@@ -84,6 +84,91 @@ headers are updated to the observed 712 total; dated observations, source CI
 records and original candidate evidence are not rewritten. The integrated full
 gate must pass before the handoff is called done.
 
+## Bounded completion observation, 2026-10-02 UTC
+
+BGA-423 CI on `e20e866` passed five jobs; Windows Node 22 failed the
+600 ms `walk:opendir` case because a directory remained acquired at the fixed
+700 ms observation. The log proves that failed observation, not an eventual
+leak or eventual release. The new parent-side observer polls for selected
+completion, balanced work/cleanup events and zero resources for at most five
+seconds, then retains the same quiet transcript and same-client checks. Reaching
+that observation limit cannot pass the ordering/resource oracle. The production
+250 ms cleanup ceiling is unchanged, and late completion still requires its
+actual event before timeout publication.
+
+Two additional installed cases hold cleanup for 1,100 ms on the file and directory
+paths, deliberately outlasting the old fixed observation. The earlier 400 ms
+cases and removed-wait/checkpoint/close controls remain. Historical rc.5 and CI
+receipts above retain their original harness and counts; this changed observer
+passes all 59 focused cancellation/authority tests and the fresh integrated
+`pnpm check` at 751 tests / 223 required scenarios; exact-source CI remains
+required before its handoff is verified. The [BGA-423 receipt](bga423-source-ci.json) records the
+failed attempt and subsequent proof separately.
+
+## Installed mutation isolation, 2026-10-02 UTC
+
+The next CI on `0ac0055` passed the cleanup matrix in all six jobs, but
+Windows Node 24's existing delegated-state test reported FileHandle GC-close
+warnings. Some cancellation controls wrote modified policy/deadline modules
+in place. When installations share pnpm hardlinks, removing descriptor close
+in one control can affect other suites reading that same file. All three
+cancellation mutation paths now replace and restore the individual directory
+entry, as the authority and executable-failure controls already do. An original
+installed hardlinked-peer case requires modified bytes at the selected path,
+unchanged bytes at the peer, and restored original bytes at both afterward.
+
+This is a deterministic isolation correction; the failed child's warning was
+not retrospectively traced to a particular writer. No warning is suppressed,
+production descriptor cleanup is unchanged, and the prior failed run remains
+in the bounded receipt. All 64 affected tests and the fresh integrated `pnpm check` pass at 752 tests /
+223 required scenarios. Exact-source CI remains required for this harness. The earlier broader native-matrix limits
+and original candidate/harness identities still apply.
+
+[pnpm's import documentation](https://pnpm.io/settings/node-modules#packageimportmethod)
+warns that with a hardlink, editing installed bytes “changes every project that
+links the same package”. [Node's link API](https://nodejs.org/api/fs.html#fspromiseslinkexistingpath-newpath)
+supplies the explicit peer used by the regression, and its
+[rename API](https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath) supplies
+the directory-entry replacement. These sources were fetched on 2026-10-02 UTC;
+this is test isolation, not a new BGA construct or privileged production API.
+
+## Final isolated-harness source proof, 2026-10-02 UTC
+
+[CI 37040333540](https://github.com/Brandon-Born/bga-mcp/actions/runs/37040333540)
+passes all six OS/Node pairs on clean `7a84f79df5dda632154eb4ac2666753930155fcd`.
+All six downloaded records independently validate schema, integrity, exact clean
+source, 752 tests / 223 scenarios and applicable conformance, with the installed
+hardlinked-peer and both 1,100 ms cleanup cases passed. These results verify the
+bounded observer and mutation-isolation corrections. The original warning
+attribution remains unproven, prior failed runs stay retained, and BGA-326
+remains implemented for its still-uncovered client-root, packaged-config and
+Studio-file paths. Original candidate/harness records remain historical.
+
+## Terminal directory cleanup observation, 2026-10-02 UTC
+
+[CI 37055009310](https://github.com/Brandon-Born/bga-mcp/actions/runs/37055009310)
+on `6bf9487` passed five jobs. macOS Node 22 failed the 600 ms
+`walk:dir-next` quiet-transcript assertion: the completion snapshot ended at
+`walk:dir-return`, and the following snapshot added the awaited
+`walk:dir-close` cleanup. The observer had accepted zero resources and balanced
+starts/ends between those two cleanup operations. This is an observation race;
+the retained log shows the final close, with no new project work.
+
+Completion now also requires a final close for each acquired directory. Both
+installed directory-next cases reject the actual intermediate return-only
+snapshot before accepting the complete transcript. The five-second observation
+limit, production cleanup ceiling, zero-resource and no-new-work assertions,
+quiet transcript, same-client call and installed mutation controls remain.
+The [cache lifecycle receipt](bga208-cache-lifecycle.json) retains the failed
+source, all six job outcomes and the failed log identity. The corrected harness passes all 53 cancellation tests and the fresh complete
+`pnpm check` at 768 tests / 234 required scenarios. [Exact-source CI 37056579093](https://github.com/Brandon-Born/bga-mcp/actions/runs/37056579093)
+passes all six OS/Node pairs on clean `e75be74a24de80b412cecaa9198dfdbfbcc3c6e9`.
+Each downloaded record independently validates schema, integrity, source,
+installed-artifact identity, the filesystem cancellation scenario and applicable
+conformance at 768 tests / 234 required scenarios. This closes the observed
+terminal-cleanup race; prior candidate and historical matrix identities are
+unchanged, and the complete native-matrix coverage limits still apply.
+
 ## Sources
 
 [Node.js FileHandle.close](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandleclose)

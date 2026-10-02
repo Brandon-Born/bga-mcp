@@ -894,7 +894,18 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-205",
-      "scenarios": ["UNIT-DOC-PROVENANCE", "UNIT-DOC-EVALUATION"]
+      "scenarios": [
+        "UNIT-DOC-PROVENANCE",
+        "UNIT-DOC-EVALUATION",
+        "UNIT-DOC-AUTHORITY-PAGES",
+        "E2E-DOC-AUTHORITY-CATALOG",
+        "E2E-DOC-AUTHORITY-POLICY",
+        "E2E-DOC-AUTHORITY-SEARCH",
+        "E2E-DOC-AUTHORITY-RESOURCES",
+        "E2E-DOC-AUTHORITY-CACHE",
+        "E2E-DOC-AUTHORITY-REDIRECTS",
+        "E2E-DOC-AUTHORITY-MUTATION"
+      ]
     },
     {
       "id": "TM-DOC-UNTRUSTED",
@@ -975,7 +986,12 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-206",
-      "scenarios": ["UNIT-DOC-SNAPSHOT-DATE", "UNIT-DOC-DRIFT"]
+      "scenarios": [
+        "UNIT-DOC-SNAPSHOT-DATE",
+        "UNIT-DOC-DRIFT",
+        "UNIT-DOC-QUERY-CACHE",
+        "E2E-DOC-QUERY-CACHE"
+      ]
     },
     {
       "id": "TM-EVIDENCE-COVERAGE",

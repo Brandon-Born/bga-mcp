@@ -1,17 +1,23 @@
 import { ResourceTemplate, type McpServer } from '@modelcontextprotocol/server';
 
 import { DocumentationCache } from '../docs/cache.js';
-import { UNTRUSTED_NOTICE, retrieveDocumentation } from '../docs/retrieve.js';
-import { DOCUMENTATION_TOPICS, topicFor, topicNames } from '../docs/topics.js';
+import { UNTRUSTED_NOTICE, readDocumentationPage } from '../docs/retrieve.js';
+import {
+  DOCUMENTATION_TOPICS,
+  topicFor,
+  topicNames,
+  documentationPassageQuery,
+} from '../docs/topics.js';
 import { readFrameworkVersions } from '../docs/versions.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { redactText } from '../redaction.js';
 import { publishJson, publishResourceFailure } from '../publish.js';
 
 export const DOCS_TOPIC_TEMPLATE = 'bga://docs/{topic}';
 export const FRAMEWORK_VERSION_URI = 'bga://framework/version';
 
-const MAX_EXCERPT_CHARS = 2_000;
+const MAX_EXCERPT_CHARS = 1_200;
 
 async function readJson(
   policy: PolicyBoundary,
@@ -62,25 +68,28 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
       );
     }
 
-    const page = await policy.fetchDocumentation(
-      { sourceId: source.id, path: entry.path },
-      { signal },
-    );
-    const result = await retrieveDocumentation(
-      source,
+    const result = await readDocumentationPage(
+      policy,
       cache,
-      { url: page.url, query: entry.summary, maxExcerptChars: MAX_EXCERPT_CHARS },
-      () =>
-        Promise.resolve({
-          url: page.url,
-          body: page.body,
-          retrievedAt: page.retrievedAt,
-          lastModified: page.lastModified,
-        }),
-      undefined,
+      {
+        sourceId: source.id,
+        path: entry.path,
+        query: documentationPassageQuery(entry, null),
+        maxExcerptChars: MAX_EXCERPT_CHARS,
+      },
       signal,
     );
-    return { schemaVersion: 1, topic: entry.topic, summary: entry.summary, ...result };
+    return {
+      schemaVersion: 1,
+      topic: entry.topic,
+      summary: entry.summary,
+      ...result,
+      // Redaction may expand a token; bound the excerpt after that expansion.
+      excerpt: redactText(result.excerpt, {
+        ...policy.redactionOptions,
+        paths: 'known-locations',
+      }).slice(0, MAX_EXCERPT_CHARS),
+    };
   };
 
   server.registerResource(
@@ -157,9 +166,9 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
           // server inventing a fact the source does not state.
           conflicts: reading.conflicts,
           url: page.url,
-          sourceId: source.id,
-          authority: source.authority,
-          provenance: source.authority === 'official-maintained' ? 'official' : 'community',
+          sourceId: page.sourceId,
+          authority: page.authority,
+          provenance: page.authority === 'official-maintained' ? 'official' : 'community',
           retrievedAt: page.retrievedAt,
           lastModified: page.lastModified,
           trust: 'untrusted-content',

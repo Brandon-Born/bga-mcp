@@ -52,7 +52,7 @@ export const DOCUMENTATION_TOPICS: readonly DocumentationTopic[] = [
   {
     topic: 'game-logic',
     sourceId: 'bga-studio-framework-reference',
-    path: 'Main_game_logic:_yourgamename.game.php',
+    path: 'Main_game_logic:_Game.php',
     title: 'Main game logic',
     summary: 'The game class, its location in modules/php, and the legacy flat form.',
     keywords: [
@@ -85,7 +85,7 @@ export const DOCUMENTATION_TOPICS: readonly DocumentationTopic[] = [
   {
     topic: 'client',
     sourceId: 'bga-studio-framework-reference',
-    path: 'Game_interface_logic:_yourgamename.js',
+    path: 'Game_interface_logic:_Game.js',
     title: 'Game interface logic',
     summary: 'The client entry point in modules/js and the legacy flat file.',
     keywords: [
@@ -140,16 +140,7 @@ export const DOCUMENTATION_TOPICS: readonly DocumentationTopic[] = [
     path: 'BGA_Studio_Cookbook',
     title: 'BGA Studio Cookbook',
     summary: 'Community-contributed recipes. Anyone may edit this page.',
-    keywords: [
-      'cookbook',
-      'recipe',
-      'recipes',
-      'community',
-      'example',
-      'examples',
-      'snippet',
-      'how do i',
-    ],
+    keywords: ['cookbook', 'recipe', 'recipes', 'community', 'example', 'examples', 'snippet'],
   },
 ];
 
@@ -172,6 +163,13 @@ export function topicNames(): readonly string[] {
 export function topicForQuery(query: string, signal?: AbortSignal): DocumentationTopic | null {
   cancellationCheckpoint(signal);
   const lowered = query.toLowerCase();
+  // The migration guide says "When all classes are migrated, you can remove
+  // the states.inc.php file" (States section, reviewed 2026-10-02). Prefer
+  // that conditional passage over the state-class reference for removal questions.
+  // This routing is a relevance heuristic, not a rule that authorizes deletion.
+  if (/\bstates\.inc\.php\b/u.test(lowered) && /\b(?:remov\w*|delet\w*)\b/u.test(lowered)) {
+    return topicFor('migration');
+  }
   const scored = DOCUMENTATION_TOPICS.map((topic) => {
     cancellationCheckpoint(signal);
     const haystack = [topic.topic, topic.title, topic.summary].join(' ').toLowerCase();
@@ -199,4 +197,44 @@ export function topicForQuery(query: string, signal?: AbortSignal): Documentatio
   }
   // A tie means the question did not pick a topic, so nothing is assumed.
   return runnerUp?.score === best.score ? null : best.topic;
+}
+
+/**
+ * @internal Source-backed location/overview hints; never add every topic keyword.
+ * The file reference links current Game.php and Game.js pages, whose opening
+ * notes explicitly name modules/php and modules/js and retain legacy usage.
+ * Sources and minimal quotations are retained in the BGA-211 capture review.
+ * Other questions retain their own terms rather than receiving location facts.
+ */
+export function documentationPassageQuery(
+  topic: DocumentationTopic | null,
+  query: string | null,
+): string {
+  if (topic === null) return query ?? '';
+  const location =
+    query === null || /\b(?:where|live|location|entry|class|files|contain\w*)\b/iu.test(query);
+  switch (topic.topic) {
+    case 'game-logic':
+      return location ? 'modules/php' : query;
+    case 'client':
+      return location ? 'modules/js' : query;
+    case 'file-reference':
+      return location ? 'dbmodel.sql' : query;
+    case 'states':
+      return location ? 'modules/php/States' : query;
+    case 'migration':
+      return query === null || /states\.inc\.php/iu.test(query)
+        ? 'When all classes are migrated'
+        : query;
+    case 'studio':
+      return query === null || /\b(?:version\w*|software)\b/iu.test(query)
+        ? 'Software Versions'
+        : query;
+    case 'cookbook':
+      return query === null || /\b(?:recipe\w*|community|cookbook)\b/iu.test(query)
+        ? 'cookbook of design and implementation recipes'
+        : query;
+    default:
+      return query ?? topic.summary;
+  }
 }

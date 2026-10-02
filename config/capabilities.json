@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "server": {
     "name": "bga-mcp",
-    "version": "1.0.0-rc.5"
+    "version": "1.0.0-rc.6"
   },
   "ciRuns": [
     {
@@ -310,7 +310,26 @@
           "E2E-DOCS-NO-MATCH",
           "E2E-DOCS-SOURCE-WITHOUT-SEARCH",
           "UNIT-DOC-SEARCH-PARSE",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "UNIT-DOC-AUTHORITY-PAGES",
+          "E2E-DOC-AUTHORITY-CATALOG",
+          "E2E-DOC-AUTHORITY-POLICY",
+          "E2E-DOC-AUTHORITY-SEARCH",
+          "E2E-DOC-AUTHORITY-RESOURCES",
+          "E2E-DOC-AUTHORITY-CACHE",
+          "E2E-DOC-AUTHORITY-REDIRECTS",
+          "E2E-DOC-AUTHORITY-MUTATION",
+          "UNIT-DOC-QUERY-CACHE",
+          "UNIT-DOC-RELEVANCE-ORACLE",
+          "E2E-DOC-RELEVANCE-CAPTURES",
+          "E2E-DOC-QUERY-CACHE",
+          "E2E-DOC-RELEVANCE-MUTATION",
+          "E2E-DOC-EXCERPT-BUDGET",
+          "E2E-DOC-CACHE-WARM",
+          "E2E-DOC-CACHE-REFRESH",
+          "E2E-DOC-CACHE-REDIRECT",
+          "E2E-DOC-CACHE-MUTATION",
+          "INT-DOC-CACHE-LIFECYCLE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
@@ -476,7 +495,25 @@
           "INT-DOCS-TOPICS",
           "INT-DOCS-NETWORK-OFF",
           "INT-DOCS-REFUSALS",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "UNIT-DOC-AUTHORITY-PAGES",
+          "E2E-DOC-AUTHORITY-CATALOG",
+          "E2E-DOC-AUTHORITY-POLICY",
+          "E2E-DOC-AUTHORITY-RESOURCES",
+          "E2E-DOC-AUTHORITY-CACHE",
+          "E2E-DOC-AUTHORITY-REDIRECTS",
+          "E2E-DOC-AUTHORITY-MUTATION",
+          "UNIT-DOC-QUERY-CACHE",
+          "UNIT-DOC-RELEVANCE-ORACLE",
+          "E2E-DOC-RELEVANCE-CAPTURES",
+          "E2E-DOC-QUERY-CACHE",
+          "E2E-DOC-RELEVANCE-MUTATION",
+          "E2E-DOC-EXCERPT-BUDGET",
+          "E2E-DOC-CACHE-WARM",
+          "E2E-DOC-CACHE-REFRESH",
+          "E2E-DOC-CACHE-REDIRECT",
+          "E2E-DOC-CACHE-MUTATION",
+          "INT-DOC-CACHE-LIFECYCLE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
@@ -498,7 +535,9 @@
           "E2E-FRAMEWORK-VERSION-CURRENT",
           "E2E-FRAMEWORK-VERSION-STALE",
           "E2E-FRAMEWORK-VERSION-MISSING",
-          "E2E-FRAMEWORK-VERSION-CONFLICTING"
+          "E2E-FRAMEWORK-VERSION-CONFLICTING",
+          "E2E-DOC-AUTHORITY-REDIRECTS",
+          "E2E-DOC-AUTHORITY-RESOURCES"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",

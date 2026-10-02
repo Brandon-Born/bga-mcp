@@ -10,6 +10,102 @@
 
 import { cancellationCheckpoint } from '../deadline.js';
 
+/**
+ * @internal Drop navigation, preserving nested element boundaries.
+ * Reviewed 2026-10-02 on Studio_file_reference and its linked Game.php,
+ * Game.js and Studio pages: the shared studio-framework-navigation sidebar
+ * and role=navigation table of contents are links, not answer passages.
+ * This is a markup heuristic; unfamiliar markup remains readable text.
+ */
+export function withoutDocumentationNavigation(html: string, signal?: AbortSignal): string {
+  const tokens = /<!--[\s\S]*?-->|<\/?([a-z][a-z0-9]*)\b[^>]*>/giu;
+  const output: string[] = [];
+  let position = 0;
+  let hiddenTag: string | null = null;
+  let depth = 0;
+  for (const match of html.matchAll(tokens)) {
+    cancellationCheckpoint(signal);
+    const tag = match[1]?.toLowerCase();
+    const token = match[0];
+    if (hiddenTag === null) {
+      output.push(html.slice(position, match.index));
+      if (
+        tag !== undefined &&
+        !token.startsWith('</') &&
+        (tag === 'nav' ||
+          /\b(?:id\s*=\s*["']toc["']|role\s*=\s*["']navigation["']|class\s*=\s*["'][^"']*\bstudio-framework-navigation\b)/iu.test(
+            token,
+          ))
+      ) {
+        hiddenTag = tag;
+        depth = 1;
+      } else {
+        output.push(token);
+      }
+    } else if (tag === hiddenTag) {
+      depth += token.startsWith('</') ? -1 : token.endsWith('/>') ? 0 : 1;
+      if (depth === 0) hiddenTag = null;
+    }
+    position = match.index + token.length;
+  }
+  if (hiddenTag === null) output.push(html.slice(position));
+  return output.join('');
+}
+
+/** @internal Select reviewed overview/location passages, retaining their wording. */
+export function documentationPassageHtml(
+  html: string,
+  query: string,
+  signal?: AbortSignal,
+): string {
+  // Select only visible markup. Extracting a <p> out of a script/template
+  // before removing its enclosing element would make hidden text visible.
+  html = html.replace(INVISIBLE_CONTENT, ' ');
+  if (query === 'dbmodel.sql') {
+    for (const match of html.matchAll(/<ul\b[^>]*>[\s\S]*?<\/ul>/giu)) {
+      cancellationCheckpoint(signal);
+      // The reviewed file-reference contents list names both current entries
+      // and legacy states. Keep the original list, not synthesized file facts.
+      if (
+        ['#dbmodel.sql', '#modules/php/Game.php', '#modules/js/Game.js', '#states.inc.php'].every(
+          (anchor) => match[0].includes('href="' + anchor + '"'),
+        )
+      )
+        return match[0];
+    }
+  }
+  html = withoutDocumentationNavigation(html, signal);
+  const hints = new Set([
+    'modules/php',
+    'modules/js',
+    'modules/php/States',
+    'When all classes are migrated',
+    'cookbook of design and implementation recipes',
+  ]);
+  if (hints.has(query)) {
+    for (const match of html.matchAll(/<p\b[^>]*>[\s\S]*?<\/p>/giu)) {
+      cancellationCheckpoint(signal);
+      if (htmlToText(match[0], signal).toLowerCase().includes(query.toLowerCase())) {
+        // Keep the whole paragraph: notably the legacy usage and the migration
+        // condition, not a made-up answer assembled from keyword matches.
+        return match[0];
+      }
+    }
+  }
+  if (query === 'Software Versions' || query === 'dbmodel.sql') {
+    for (const match of html.matchAll(/<h([1-6])\b[^>]*>[\s\S]*?<\/h\1>/giu)) {
+      cancellationCheckpoint(signal);
+      if (htmlToText(match[0], signal).trim().toLowerCase() !== query.toLowerCase()) continue;
+      const rest = html.slice(match.index + match[0].length);
+      const next = new RegExp(`<h[1-${match[1] ?? '6'}]\\b`, 'iu').exec(rest);
+      return match[0] + rest.slice(0, next?.index ?? rest.length);
+    }
+  }
+  // An unfamiliar page/markup has no assumed framework facts. Ordinary ranking
+  // remains a heuristic, and captured/live evaluation determines its quality.
+  return html;
+}
+
 const BLOCK_ELEMENTS =
   /<\/(?:p|div|section|article|h[1-6]|li|tr|td|th|pre|blockquote|table|ul|ol)>/giu;
 

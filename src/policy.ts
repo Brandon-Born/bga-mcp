@@ -12,7 +12,12 @@ import {
   type ResolvedAddress,
 } from './docs/addresses.js';
 import { readBoundedUtf8 } from './docs/read.js';
-import { describeRequestContentViolation, requestContentViolation } from './docs/request.js';
+import {
+  describeRequestContentViolation,
+  requestContentViolation,
+  documentationRequestUrl,
+  assertDocumentationRequestContent,
+} from './docs/request.js';
 import {
   parseDocumentationCatalog,
   sourceById,
@@ -1239,14 +1244,7 @@ export class PolicyBoundary {
       if (value === undefined) {
         continue;
       }
-      const violation = requestContentViolation(value, this.#resolvedRoots);
-      if (violation !== null) {
-        throw new PolicyViolationError(
-          ERROR_CODES.policyDocRequestContent,
-          `The documentation request was refused because ${describeRequestContentViolation(violation)}.`,
-          { details: { sourceId: source.id, violation } },
-        );
-      }
+      assertDocumentationRequestContent(value, this.#resolvedRoots, source.id);
     }
 
     const target = this.#documentationUrl(source, request);
@@ -1275,8 +1273,8 @@ export class PolicyBoundary {
       });
       if (result.location === null) {
         return {
-          sourceId: source.id,
-          authority: source.authority,
+          sourceId: hopSource.id,
+          authority: hopSource.authority,
           url: current.href,
           status: result.status,
           body: result.body,
@@ -1310,39 +1308,7 @@ export class PolicyBoundary {
 
   /** Builds the URL from catalog data and a page path, never from a caller's host. */
   #documentationUrl(source: DocumentationSource, request: DocumentationRequest): URL {
-    if (/[^A-Za-z0-9._~:@!$'()*+,;=/%-]/u.test(request.path) || request.path.includes('..')) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyDocSourceNotAllowed,
-        'The documentation page path contains characters that are not allowed.',
-        { details: { sourceId: source.id, path: request.path } },
-      );
-    }
-    // A protocol-relative or absolute path would re-point the request, so the
-    // path must be relative to the source and stay inside it.
-    if (request.path.startsWith('/') || request.path.includes('//')) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyDocSourceNotAllowed,
-        'The documentation page path must be relative to its source.',
-        { details: { sourceId: source.id, path: request.path } },
-      );
-    }
-    const base = new URL(source.canonicalUrl);
-    const url = new URL(request.path, base);
-    for (const [name, value] of Object.entries(request.params ?? {})) {
-      url.searchParams.set(name, value);
-    }
-    if (
-      url.protocol !== 'https:' ||
-      url.hostname !== source.host ||
-      !url.href.startsWith(source.canonicalUrl)
-    ) {
-      throw new PolicyViolationError(
-        ERROR_CODES.policyDocSourceNotAllowed,
-        'The documentation request did not stay within its source.',
-        { details: { sourceId: source.id, url: url.href } },
-      );
-    }
-    return url;
+    return documentationRequestUrl(source, request);
   }
 
   /** One HTTPS request, pinned to a checked address and bounded in size. */

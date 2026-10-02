@@ -72,6 +72,10 @@ Every supported runtime and platform combination runs the complete gate in CI. T
 | ----------------------- | ----- | --------- |
 | CLAIM-ENVIRONMENT-LOCAL | local | supported |
 
+BGA-423 keeps development documentation authority on exact catalog pages and follows final redirect provenance through search, topic resources and framework-version results. Installed original response fixtures and raw-prefix mutation controls cover page aliases, request confinement and seven/thirty-day excerpt retention. This does not change the public local-only inventory, transport/protocol contract, live wiki freshness claim or documentation capabilities' implemented status. [Scope and evidence](verification/DOCUMENTATION_AUTHORITY.md).
+
+BGA-208/BGA-211 add development-reader request-count, expiry/refresh, unavailable-upstream, deadline/refusal and redirect-cache scenarios. Exact final-page excerpts can be reused without another page fetch; aliases still establish their destination through policy, and API discovery remains live. A stale search fallback is dated and degraded. Synthetic upstream and external-clock controls prove this bounded lifecycle, not real network transport or general documentation release admission. [Cache scope](verification/DOCUMENTATION_CACHE_LIFECYCLE.md).
+
 Every public capability is served by the user's local stdio process. Documentation and experimental Studio reads may make an explicitly enabled request across their reviewed network boundary; that does not turn them into remotely hosted capabilities. The environment claim lists every manifest capability to which it applies, and the compatibility gate rejects either an omitted local claim or an unclaimed remote environment.
 
 ## MCP protocol versions and transports
@@ -157,3 +161,5 @@ BGA-405 replays selected security scenarios on the authenticated immutable candi
 BGA-415 adds `GATE-PUBLICATION`, `INT-PUBLICATION-BOUNDARIES` and `E2E-PUBLICATION-CONSUMER` to stdio release evidence. These prove offline admission/permission/provenance policy and the installed shared-package guide. The actual registry package, OIDC publisher and public-consumer provenance remain unverified. No installed runtime transport or network capability changes.
 
 BGA-421 extends CLAIM-TRANSPORT-STDIO with installed executable failure scenarios in both profiles. Usage/configuration failures exit 2; operational/internal failures exit 1. Dependency initialization, Studio preflight, protocol startup and shutdown collapse unexpected diagnostics, redact registered sessions and private paths, and avoid Node stack/cause output. Preflight refusal stays a terminal setup report. This is local process evidence; it adds no live Studio, network, client or game-correctness claim. See [CLI failure verification](verification/CLI_FAILURES.md).
+
+BGA-211 adds installed development-profile relevance replay for minimal reviewed documentation fragments, question-specific cache selections and excerpt budgets after redaction. The original historical replay and final source admission remain open; no public network capability, general framework freshness or game correctness claim is added.
