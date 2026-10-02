@@ -56,7 +56,7 @@ export async function validatePublicationPlan(
   const plan = JSON.parse(bytes.toString('utf8')) as PublicationPlan;
   const receipt = JSON.parse(
     await readFile(
-      resolve(import.meta.dirname, '../docs/verification/release-candidate-v1.0.0-rc.4.json'),
+      resolve(import.meta.dirname, '../docs/verification/release-candidate-v1.0.0-rc.5.json'),
       'utf8',
     ),
   ) as { candidate: { sourceTag: string; sourceCommit: string } };

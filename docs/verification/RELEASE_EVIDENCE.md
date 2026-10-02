@@ -35,7 +35,7 @@ The `verify` command always verifies signatures; there is no CLI bypass. Origina
 
 ## Publication and retention policy
 
-Every distributed release must retain this complete evidence packet and pass public download validation. The current workflow is deliberately restricted to the reviewed `v1.0.0-rc.4` candidate and its tracked candidate/signing receipts. A later tag requires its own reviewed receipts and validation before distribution; this item does not automatically approve arbitrary future tags. BGA-415 must preserve this evidence requirement when publishing the package.
+Every distributed release must retain this complete evidence packet and pass public download validation. The current workflow is deliberately restricted to the reviewed `v1.0.0-rc.5` candidate and its tracked candidate/signing receipts. A later tag requires its own reviewed receipts and validation before distribution; this item does not automatically approve arbitrary future tags. BGA-415 must preserve this evidence requirement when publishing the package.
 
 Prepare has read-only permissions, performs the full gate, authenticates the original signed archive, derives exact coverage and scans all assets. Only the publish job has repository contents-write; it installs no dependencies, uses only builtins and GitHub CLI, and verifies the prepared packet against a digest delivered through job outputs. It first creates a draft, checks each uploaded asset's server-reported digest and publishes the evidence-only prerelease only once all twelve assets are present. A retry can resume only an identical owned draft or accept an already identical complete record. Conflicts or foreign records fail without overwrite or deletion.
 
@@ -121,3 +121,31 @@ Local public copies remain ignored under
 public rc.1 assets remain unchanged. This establishes candidate evidence
 distribution, not registry package publication, security approval, live Studio
 compatibility or whole-game correctness.
+
+## Versioned-guide replacement: rc.5 preparation
+
+The read-only builder, isolated publisher, intended-plan test and workflow
+concurrency group now select the independently verified
+[original rc.5 candidate](release-candidate-v1.0.0-rc.5.json) and
+[its signature](release-signing-v1.0.0-rc.5.json). The original tag identifies
+`286f2bbb1bfff28726378098d9883058f19841e9`; package SHA-256 remains
+`b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`,
+and the expected signer is `a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`.
+No asset allowlist, permission, schema/coverage/signature check, conflict refusal
+or immutable-draft reconciliation rule changes with this selection.
+
+The official [release documentation](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases),
+read again before preparation, says releases are "based on Git tags".
+The [CLI reference](https://cli.github.com/manual/gh_release_create) retains the
+existing-tag, draft and prerelease controls used here. The
+[release API](https://docs.github.com/en/rest/releases/releases) remains the
+source for authenticated draft discovery and asset identity/digest checks.
+These are the existing reviewed publication boundaries; no registry publication
+or additional repository mutation is introduced.
+
+Actual local packet preparation, full local gate, manual evidence publication,
+independent token-free public download/refusal checks and exact-source CI must
+pass before rc.5 distribution is verified. Earlier public records and receipts
+remain scoped to their original versions. The twelve metadata assets include no
+installable package, and distribution grants no security, client-breadth,
+usefulness or Studio/game approval.

@@ -43,14 +43,14 @@ const execute = promisify(execFile);
 const root = resolve(import.meta.dirname, '..');
 const json = async <T>(path: string): Promise<T> => JSON.parse(await readFile(path, 'utf8')) as T;
 const candidateReceipt = await json<unknown>(
-  resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.4.json'),
+  resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.5.json'),
 );
 const identity = signingIdentity(candidateReceipt);
 const signingReceipt = await json<{
   signer: { commit: string };
   workflow: { artifactId: number; archiveDigest: string };
   attestation: { bundleDigest: string };
-}>(resolve(root, 'docs/verification/release-signing-v1.0.0-rc.4.json'));
+}>(resolve(root, 'docs/verification/release-signing-v1.0.0-rc.5.json'));
 const sourceFile = async (path: string): Promise<Buffer> =>
   (
     await execute('git', ['show', `${identity.sourceCommit}:${path}`], {

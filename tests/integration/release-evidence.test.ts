@@ -201,7 +201,7 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
       const packet = resolve(directory, 'packet');
       await mkdir(packet);
       const receipt = await load<{ candidate: { sourceTag: string; sourceCommit: string } }>(
-        'docs/verification/release-candidate-v1.0.0-rc.4.json',
+        'docs/verification/release-candidate-v1.0.0-rc.5.json',
       );
       const plan: PublicationPlan = {
         tag: receipt.candidate.sourceTag,
