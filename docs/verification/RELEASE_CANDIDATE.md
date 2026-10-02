@@ -82,3 +82,19 @@ separate from rc.2's historical failure.
 Only after this verification are signing selectors advanced to rc.3. Signing and
 frozen BGA-424 carry-forward remain subsequent observations. Original rc.1/rc.2
 packets and receipts remain unchanged; no package is published.
+
+## Current documentation and BGA-432 replacement: rc.4 preparation
+
+The checkout now identifies `1.0.0-rc.4`, including the public installation and
+private reporting documentation changes plus BGA-432's conservative treatment
+of the unconfirmed class-only initial state. Only package/server/manifest version
+metadata changes in this preparation; the selected seven local tools, three
+project resources, stdio protocol and public schemas remain unchanged.
+
+Changing package identity invalidates the eight previous framework implementation
+admissions. The replacement requires passing clean exact-source CI, explicit
+review re-admission against that evidence, a distinct clean tag, actual immutable
+production and independent original-byte consumer checks. Signing, candidate-specific
+client/usefulness/public evidence and security approval remain subsequent gates.
+No rc.4 candidate is claimed yet; the verified rc.3 install guide and historical
+receipts continue to identify their original bytes. No package is published.
