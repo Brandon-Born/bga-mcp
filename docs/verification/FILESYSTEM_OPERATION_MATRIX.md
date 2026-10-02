@@ -132,6 +132,18 @@ supplies the explicit peer used by the regression, and its
 the directory-entry replacement. These sources were fetched on 2026-10-02 UTC;
 this is test isolation, not a new BGA construct or privileged production API.
 
+## Final isolated-harness source proof, 2026-10-02 UTC
+
+[CI 37040333540](https://github.com/Brandon-Born/bga-mcp/actions/runs/37040333540)
+passes all six OS/Node pairs on clean `7a84f79df5dda632154eb4ac2666753930155fcd`.
+All six downloaded records independently validate schema, integrity, exact clean
+source, 752 tests / 223 scenarios and applicable conformance, with the installed
+hardlinked-peer and both 1,100 ms cleanup cases passed. These results verify the
+bounded observer and mutation-isolation corrections. The original warning
+attribution remains unproven, prior failed runs stay retained, and BGA-326
+remains implemented for its still-uncovered client-root, packaged-config and
+Studio-file paths. Original candidate/harness records remain historical.
+
 ## Sources
 
 [Node.js FileHandle.close](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandleclose)

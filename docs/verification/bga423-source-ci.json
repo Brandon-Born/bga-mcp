@@ -52,7 +52,115 @@
     "usefulnessEvaluationRepeated": false
   },
   "sourceCi": {
-    "status": "pending-isolated-mutation-exact-source",
+    "status": "passed",
+    "id": 37040333540,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37040333540",
+    "commit": "7a84f79df5dda632154eb4ac2666753930155fcd",
+    "jobsValidated": 6,
+    "jobs": [
+      {
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:28:18.883Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+        "evidenceDigest": "sha256:95ddb55ce6bc09bfb9e1826f4ca579a1a7dca43179bfeb25d22f62a5cbf40422",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:28:04.196Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+        "evidenceDigest": "sha256:b1eb83f445d6406c300e33fed867ece586de9ae109f0b5588f88c53113fef0b6",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "linux",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:27:50.488Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+        "evidenceDigest": "sha256:344ef1d98e851c8fcab7ff7df535664a7521a356990cc90e3cbd8231950a67ae",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "linux",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:25:52.001Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+        "evidenceDigest": "sha256:6949fb7b6e773870cf9fced1b517dc0ec63a365ffd22f82974ca99751ad22d85",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "win32",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:30:05.225Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:e02ae60d8824cfb59cc10dc5128309c6619a443e738430e66ef75dc3d21e213c",
+        "evidenceDigest": "sha256:959194f9c65f39b1bf5c1e649f5592d13a8f6d63b73e617d69e7d22d02903b99",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "win32",
+        "source": "7a84f79df5dda632154eb4ac2666753930155fcd",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T17:27:44.189Z",
+        "tests": 752,
+        "scenarios": 223,
+        "claims": 103,
+        "artifactDigest": "sha256:e02ae60d8824cfb59cc10dc5128309c6619a443e738430e66ef75dc3d21e213c",
+        "evidenceDigest": "sha256:320e1e663fc32468aef5be66c816d726dbd40cdf8d9458772bbe2b1527a2ff72",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "authorityScenariosValidated": true,
+        "cleanupScenariosValidated": true,
+        "conformance": "passed"
+      }
+    ],
     "previousAttempts": [
       {
         "status": "failed",
@@ -236,11 +344,12 @@
         "jobsFailed": ["windows-latest / Node 24"],
         "failure": "All controlled cleanup observations and all authority scenarios passed; the existing delegated-state test observed FileHandle GC-close warnings. In-place policy/deadline mutation controls can alter pnpm hardlinked peers. Atomic replacement and a deterministic hardlinked-peer regression address that hazard; the original warning is not retrospectively traced to a specific writer and remains a failed observation."
       }
-    ]
+    ],
+    "scope": "Six unique Ubuntu/macOS/Windows Node 22/24 pairs independently schema/integrity/exact-clean-source/test/scenario/conformance validated, including all eight authority scenarios, hardlinked-peer isolation and both 1100 ms cleanup regressions. Historical source proof, not proof for subsequent evidence-only metadata."
   },
   "approvalsTransferred": false,
   "observationFix": {
-    "status": "local-gates-passed-exact-source-ci-pending",
+    "status": "verified-at-7a84f79",
     "focusedTests": 59,
     "scope": "Test-only five-second bounded parent observation of actual selected completion, balanced issued-work/cleanup events and zero resources; unchanged production cleanup timer and no-new-work/leak/mutation oracles; two additional 1100 ms cleanup regressions",
     "initialFocusedAttempt": "Failed package-install setup under restricted registry DNS; all tests skipped, no runtime verdict",
@@ -287,7 +396,7 @@
     "thresholdsChanged": false
   },
   "hardlinkFix": {
-    "status": "local-gates-passed-exact-source-ci-pending",
+    "status": "verified-at-7a84f79",
     "scope": "Test-only atomic policy/deadline module replacement and restoration in every cancellation mutation control; deterministic original installed hardlinked-peer isolation case. No warning suppression, production change or candidate approval transfer.",
     "sources": [
       "https://pnpm.io/settings/node-modules#packageimportmethod",
