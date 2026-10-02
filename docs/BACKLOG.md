@@ -73,7 +73,7 @@ The first public release queue is:
 11. `BGA-405` — security review of the exact signed candidate.
 12. `BGA-415` — publish and independently reinstall the first release.
 
-BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 is implemented with exact-source CI and an external benign-report lifecycle still pending. BGA-408 is verified for its scoped process and simulated lifecycle. BGA-405 is implemented with retained clean-reviewer replay and exact-source CI; BGA-415 is implemented with publication still held; external reporting, live framework review, exact artifact and publication gates remain separate.
+BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 is implemented with exact-source CI and an external benign-report lifecycle still pending. BGA-408 is verified for its scoped process and simulated lifecycle. BGA-405 is implemented with retained clean-reviewer replay and exact-source CI; BGA-415 is implemented with publication still held; external reporting, exact artifact and publication gates remain separate. The eight mapped live framework sources have since been admitted with BGA-432's correction and fresh CI; see BGA-408.
 
 BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
@@ -1433,6 +1433,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Sources:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), fetched 2026-10-02 UTC, says “These files are deprecated”; [migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says “Then you can safely delete the gameoptions.inc.php file” after generating replacements. Deprecation does not establish removal; independent legacy/modern forms remain covered.
 - **Live baseline preparation, 2026-10-02 UTC:** All eight mapped official pages were explicitly observed and read. [Per-page source decisions](verification/FRAMEWORK_CHANGE_PROCESS.md#live-source-baseline--2026-10-02-utc) retain short quotes, displayed revisions and scope; no full-text corpus or new framework rule is added. Legacy and hybrid forms remain required, and the separately reread walkthrough still leaves BGA-419's action/transition conflict unresolved. Admission awaits clean post-observation exact-source CI; the ledger still holds publication until that evidence passes the existing review command.
 
+- **Live baseline admitted, 2026-10-02 UTC:** [Eight scoped source reviews and BGA-432 correction](verification/FRAMEWORK_CHANGE_PROCESS.md#live-source-baseline--2026-10-02-utc) are bound to clean post-observation [six-platform CI](verification/bga432-source-ci.json). Codex is the actual named reviewer. The framework release guard passes with no ledger holds for the recorded implementation; changes to implementation/fixtures or expired observations restore holds. Separate held security receipts, external reporting and exact candidate/publication gates are not waived.
+
 ### BGA-409 — Decide on a remote documentation-only transport
 
 - **Status:** planned
@@ -1728,7 +1730,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-432 — Preserve uncertainty about a state-class-only default entry point
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-124, BGA-113, BGA-408
 - **Finding, 2026-10-02 UTC:** Live framework review found that the state-class page still marks its default entry point “to be confirmed”, while the reader converts absent setup returns and a declared state 2 into a certain initial edge. The optional legacy state-1 declaration does not establish the default for every independent migration form.
@@ -1738,6 +1740,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Release effect:** Blocks live BGA-408 baseline admission and a replacement candidate until the installed regression and clean post-observation CI pass. Existing signed rc.3 bytes and historical receipts remain unchanged.
 - **Implementation evidence:** The complete local `corepack pnpm check` passes 674 tests / 209 required scenarios, all three public project resource assertions, package, applicable official conformance and safety gates. The acceptance map proves 193 of 199 cases across 60 items with the six existing external/publication gaps explicit. Exact-source CI and baseline admission remain pending.
 - **Sources:** [State classes](https://en.doc.boardgamearena.com/State_classes:_State_directory), displayed revision 29634, fetched/read 2026-10-02 UTC: “If you don't return anything its state 2 (_to be confirmed_)”. [Legacy state machine](https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php), revision 26511, separately documents the optional state-1 builder with “only keep this line if your initial state is not 2”. [Live review](verification/FRAMEWORK_CHANGE_PROCESS.md#live-source-baseline--2026-10-02-utc) records the bounded source decision; upstream confirmation is still absent.
+
+- **Verified, 2026-10-02 UTC:** [Exact-source CI](verification/bga432-source-ci.json) at `e9b35a2` passes all six Ubuntu/macOS/Windows Node 22/24 jobs at 674 tests / 209 required scenarios. All eight BGA-408 source reviews were explicitly admitted against that clean post-observation evidence; the actual framework release guard passes with zero ledger holds. This closes BGA-432 for its bounded syntax/entry-point scope, without upstream confirmation or new real-game/registry evidence.
 
 ## Coverage map
 

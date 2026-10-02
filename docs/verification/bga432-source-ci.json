@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-432",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "e9b35a2f1e232cfe8aac7a6e71d8145c600c09fe",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36975017261",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:e61bec310d0fa704b6c2b42f1ca0878f9e8320dc15dec8f3c8e0817cceb30a77",
+      "packageDigest": "sha256:0fa72d516a1693e38494233d6badae1743f7948d196fdb1572fa9617a339fe80",
+      "generatedAt": "2026-10-02T06:49:16.437Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:771ffa82251e59eb361cc8bb1e134bebd96e443a78420f9c78a8f28a5552f8d7",
+      "packageDigest": "sha256:0fa72d516a1693e38494233d6badae1743f7948d196fdb1572fa9617a339fe80",
+      "generatedAt": "2026-10-02T06:49:33.454Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:8d9dd32e146517037450afef4a6930a0b68b6e2f55a45adfdd72f56b462bbd49",
+      "packageDigest": "sha256:986bdb575e98e2313a1c0f9b5689e9b729f439f659e26660e9ee7dd1949b6510",
+      "generatedAt": "2026-10-02T06:47:49.583Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:e5f26d484e150be9ccf2d59ab45df9c03d38c295357dfb21759538f4c0a9bafa",
+      "packageDigest": "sha256:986bdb575e98e2313a1c0f9b5689e9b729f439f659e26660e9ee7dd1949b6510",
+      "generatedAt": "2026-10-02T06:46:35.725Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:495b51e3536a24eeb11423d2ace1fd8e5f54760a5f3e332fd4151863da1db069",
+      "packageDigest": "sha256:bbe994658af24b50d5fb36d1fffa61e22777b940759cb96b55e1427828f720a2",
+      "generatedAt": "2026-10-02T06:50:01.221Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:2e8e26e85d6cfefbdb313bf3b0d2cbf95f91ffb19469b8ddb98f3253c968b7a3",
+      "packageDigest": "sha256:bbe994658af24b50d5fb36d1fffa61e22777b940759cb96b55e1427828f720a2",
+      "generatedAt": "2026-10-02T06:49:20.777Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209,
+      "capabilities": 17,
+      "retainedClaims": 102
+    }
+  ],
+  "frameworkBaseline": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "mappedScenarios": 48,
+    "implementationDigest": "sha256:6e435d02dcd2e33b335976e14d26d2fc1a6855ec7dff52e919c82f0bdd0accab",
+    "evidenceDigest": "sha256:e5f26d484e150be9ccf2d59ab45df9c03d38c295357dfb21759538f4c0a9bafa",
+    "evidenceJob": "verification-ubuntu-latest-node-24",
+    "releaseGuard": "passed",
+    "checkedAt": "2026-10-02T06:54:51.762Z"
+  },
+  "scope": "Exact-source six-platform CI verifies BGA-432 located uncertainty and explicit/legacy/hybrid controls. Eight explicitly read mapped official sources were admitted against clean post-observation evidence. This is bounded framework review, not the whole wiki, a new real-game rerun, security approval, private-report lifecycle or registry publication."
+}
