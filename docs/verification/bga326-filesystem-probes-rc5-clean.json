@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-326",
+  "recordedAt": "2026-10-02T13:25:49.054Z",
+  "sourceCommit": "cc6413c07ec8c1474c49397791b25521021522f2",
+  "sourceClean": true,
+  "candidate": {
+    "tag": "v1.0.0-rc.5",
+    "sourceCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac"
+  },
+  "harness": {
+    "tests/e2e/cancellation.test.ts": "sha256:117378d68df61ddb06d1b437eb093dcac330da5fccde9d97c4d3bc40586c9cee",
+    "tests/e2e/fs-delay-stub.ts": "sha256:bff4a78ef20c896580ca244c78a0d10da53d6e2a5ef453d790eed88f714f5bea"
+  },
+  "resultDigest": "sha256:287b1be1266b84d99f74a78c6316a28ea5c08e17af1269bb90d6ef408ad30c03",
+  "testsPassed": 2,
+  "testsFailed": 0,
+  "scenario": "E2E-FILESYSTEM-CANCELLATION",
+  "primitives": ["lstat", "FileHandle.read"],
+  "setupDelayMs": 200,
+  "nominalDeadlineMs": 100,
+  "pendingDelayMs": 150,
+  "outcomes": {
+    "controlledExpiryAfterPrimitiveStart": "passed",
+    "primitiveEndsBeforeTimeoutPublication": "passed",
+    "transcriptUnchangedAfterSettlement": "passed",
+    "sameClientResponsive": "passed",
+    "noUnhandledErrors": "passed",
+    "cleanupAwaitRemovalControls": {
+      "lstat": "timeout published before primitive completion; detected",
+      "descriptorRead": "timeout published before primitive completion; detected",
+      "installedModuleRestored": "passed"
+    }
+  },
+  "signatureScope": "Original digest matches retained signed rc.5 identity; this probe did not repeat cryptographic signature verification.",
+  "scope": "Actual installed original tarball with current test-only instrumentation. First expiry callback and monotonic clock are controlled until pending syscall entry. Child publication order is observed before IPC delivery; the real 250 ms cleanup ceiling is unchanged. Two installed-module mutation controls restore original bytes. No new package, production callback, full filesystem matrix, real-time latency, fresh full security assessment or Studio claim."
+}

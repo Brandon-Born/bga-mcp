@@ -36,10 +36,13 @@ installed module is restored in `finally` and checked byte for byte. No project
 source or retained package is mutated.
 
 [The original rc.5 preparation receipt](bga326-filesystem-probes-rc5-preparation.json)
-records both passing cases and their cleanup-removal controls against the
-digest-matched original signed tarball. Its harness tree is explicitly dirty;
-clean committed repeat and six-platform CI remain required. This targeted run
-does not repeat cryptographic verification or the complete security assessment.
+records the earlier wrapper-model preparation against the digest-matched original
+signed tarball. Its harness tree is explicitly dirty and its identity remains
+unchanged. [The clean final-harness repeat](bga326-filesystem-probes-rc5-clean.json)
+at `cc6413c07ec8c1474c49397791b25521021522f2` records `sourceClean: true`, both
+primitive cases and both cleanup-removal controls with native I/O issued before
+expiry. Neither targeted run repeats cryptographic verification or the complete
+security assessment.
 
 These probes establish issued-operation cleanup behavior, not real wall-clock
 latency or cancellation of every native primitive. The separate uninstrumented
@@ -58,3 +61,14 @@ requests”. That wording concerns `readFile` buffering; it is not a promise tha
 `FileHandle.read` or `lstat` accepts cancellation. These probes therefore observe
 and await issued promises within the existing cleanup ceiling rather than
 claiming operating-system cancellation.
+
+[Exact-source CI 37012838535](bga326-filesystem-probes-ci.json) passes all six
+Ubuntu/macOS/Windows Node 22/24 jobs at `cc6413c`, each with 674 tests and 209
+required scenarios. Every downloaded sealed record validates trusted schema,
+integrity, exact clean source, CI environment and applicable conformance. Each
+platform's package digest matches its prior baseline; the Linux digest still
+matches original rc.5. The eight unchanged, still-fresh, previously read official
+framework decisions are explicitly re-admitted against that evidence and the
+actual framework release guard passes. BGA reader semantics and compatibility
+fixtures are unchanged. This does not approve the candidate or fill BGA-326's
+remaining complete native matrix.
