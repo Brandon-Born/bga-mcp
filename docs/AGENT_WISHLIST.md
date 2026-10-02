@@ -241,6 +241,14 @@ are refused even with current runner digests. This confirms why selection must
 remain explicit without silently carrying old client evidence forward. The
 central selection and impact-scoped review wish remains unimplemented.
 
+**BGA-405 confirmation, 2026-10-02 UTC.** The security plan and offline
+assessment verifier still selected rc.4 after install/client/usefulness evidence
+advanced to rc.5. Selecting the authenticated rc.5 packet and refusing an actual
+historical rc.4 assessment again requires exact-source CI and eight unchanged
+official-page admissions. Publication prerequisites deliberately remain pinned
+to historical receipts until their own handoff. This is further evidence for the
+existing selection/impact wish; the actual broad guard is retained.
+
 **Wish.** A single reviewed, immutable candidate selection receipt with an
 explanation of the downstream identities that still differ. Any impact-scoped
 review reuse should show which implementation and fixture dependencies changed,

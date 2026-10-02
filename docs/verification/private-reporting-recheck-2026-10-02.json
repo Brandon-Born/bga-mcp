@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-406",
+  "repository": "Brandon-Born/bga-mcp",
+  "observedAt": "2026-10-02T12:07:10.122492+00:00",
+  "channel": {
+    "enabled": true
+  },
+  "availableActor": "Brandon-Born",
+  "availableActorRepositoryRole": "administrator",
+  "lifecycle": null,
+  "scope": "Fresh read-only GitHub channel and available-actor permission checks; no private advisory enumeration, test submission, acknowledgement, triage or closure. The retained independent lifecycle is unobserved and an administrator cannot substitute for the reporter."
+}

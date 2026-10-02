@@ -35,3 +35,11 @@ Official [reporting documentation](https://docs.github.com/en/code-security/how-
 ## Validation
 
 The complete local `corepack pnpm check` passes: 656 tests, 198 required scenarios, package, applicable official conformance and safety checks. The acceptance map proves 185 of 188 scoped cases across 56 items and retains this external lifecycle plus two prior gaps as missing. [Exact-source CI](bga406-source-ci.json) passed all six Node 22/24 Ubuntu/macOS/Windows jobs. The external benign-report lifecycle is not run. BGA-406 remains implemented, not verified; later release work does not inherit completion from a configured channel.
+
+The [2026-10-02 channel recheck](private-reporting-recheck-2026-10-02.json)
+confirms reporting remains enabled and the available `Brandon-Born` account
+has repository administrator permission. No independent test identity has
+been supplied, and no private report was enumerated or submitted. This account
+cannot substitute for the required non-maintainer reporter. The original
+channel/lifecycle observation stays unchanged; the new read does not supply
+receipt, acknowledgement, triage or closure evidence.

@@ -170,3 +170,20 @@ select rc.5; an actual historical rc.4 assessment fails the new identity check.
 Historical validity cannot supply current approval. BGA-415's historical rc.4
 prerequisites have not been advanced or approved by this security preparation.
 No `--approve` invocation, registry write or release promotion is made.
+
+[Preparation CI 37004398077](rc5-security-preparation-ci.json) passed all six
+Ubuntu/macOS/Windows Node 22/24 jobs at
+`49dc413a2d0a3b00c09d8907f85f1fe163739528`, each with 674 tests and 209
+required scenarios. Independently downloaded records pass trusted schema,
+integrity, clean exact-source, CI-environment and applicable-conformance checks.
+All eight mapped official pages were fetched again on 2026-10-02 UTC and match
+the previously reviewed content digests. Their relevant wording was read before
+explicit admission using that CI; the actual framework release guard passes.
+
+In particular, the [state-class documentation](https://en.doc.boardgamearena.com/State_classes:_State_directory)
+still labels the implicit initial-state fallback “to be confirmed”. The
+[file reference](https://en.doc.boardgamearena.com/Studio_file_reference) still
+says “These files are deprecated”, and the
+[migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide)
+retains independently staged replacements. Existing unsupported-syntax and
+legacy/hybrid boundaries remain in force; no framework rule is changed.
