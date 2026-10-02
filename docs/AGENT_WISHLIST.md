@@ -158,8 +158,12 @@ project writes, test execution by the server, or Studio operations.
 
 ## Refresh current-run evidence summaries safely
 
-**Observed maintenance friction.** BGA-406, BGA-408 and BGA-405 each added valid scenarios or mitigations. Six typed current-run verification summaries then needed manual count updates after observing the full test/evidence output. On BGA-405, the new threat mitigation changed retained claims from 100 to 101 and exposed another stale counter after the tests passed. Historical receipts and prose must stay frozen, so a broad replacement is unsafe.
+**Observed maintenance friction.** BGA-406, BGA-408 and BGA-405 each added valid scenarios or mitigations. Six typed current-run verification summaries then needed manual count updates after observing the full test/evidence output. On BGA-405, the new threat mitigation changed retained claims from 100 to 101 and exposed another stale counter after the tests passed. BGA-415 repeated the same named-six-file update after observing 673 passing tests, 208 required scenarios and 102 retained claims. Historical receipts and prose must stay frozen, so a broad replacement is unsafe.
 
 **Wish.** A repository command that reads actual emitted evidence and previews precise updates to only explicitly typed current-run summary fields. It should preserve historical records, scoped review claims and statuses, refuse ambiguous markers, and never manufacture a passing test or promote a backlog item. This is repository maintenance tooling, not a new game-inspection MCP capability.
 
 **Next evidence.** Compare that command with the named-six-file manual workflow and seed historical, ambiguous and stale-result inputs. BGA-017 owns evidence integrity; BGA-411 owns public inventory documentation and does not already automate these run-summary fields. A separate scoped maintenance backlog proposal is needed before implementation.
+
+## See release holds across the candidate receipts
+
+**Observed and addressed in BGA-415.** Readiness was spread across the security assessment, private-report lifecycle, framework ledger, client smoke, install-guide, public evidence and usefulness receipts. Comparing their actual candidate digests exposed rc.1 client/public-distribution records alongside rc.3 security/usefulness evidence. `pnpm release:status` now gathers those owned holds and requires candidate-specific receipts before publication. This is repository release tooling; adding a game-inspection MCP tool would not improve this task. The actual registry and publisher setup remain separately unverified.

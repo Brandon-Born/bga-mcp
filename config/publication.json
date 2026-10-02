@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "decision": null,
+  "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.3-clean.json",
+  "prerequisites": {
+    "installation": "docs/verification/install-guide-bga411-rc.3.json",
+    "client": "docs/verification/codex-client-bga411-refresh.json",
+    "evidence": "docs/verification/release-evidence-v1.0.0-rc.1.json",
+    "usefulness": "docs/verification/agent-evaluation-v1.0.0-rc.3.json"
+  },
+  "npmCli": "12.2.0"
+}

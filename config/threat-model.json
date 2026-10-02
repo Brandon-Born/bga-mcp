@@ -461,7 +461,8 @@
         "TM-EVIDENCE-INTEGRITY",
         "TM-MODEL-AGREEMENT",
         "TM-RELEASE-EVIDENCE",
-        "TM-RELEASE-SECURITY-REVIEW"
+        "TM-RELEASE-SECURITY-REVIEW",
+        "TM-REGISTRY-PUBLICATION"
       ],
       "surfaces": ["SURFACE-RELEASE-EVIDENCE"]
     },
@@ -472,7 +473,12 @@
       "assets": ["ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "Signing, security review, or publication consumes an artifact other than the one whose installed scenarios passed.",
-      "mitigations": ["TM-CANDIDATE-IMMUTABLE", "TM-RELEASE-SIGNING", "TM-RELEASE-SECURITY-REVIEW"]
+      "mitigations": [
+        "TM-CANDIDATE-IMMUTABLE",
+        "TM-RELEASE-SIGNING",
+        "TM-RELEASE-SECURITY-REVIEW",
+        "TM-REGISTRY-PUBLICATION"
+      ]
     },
     {
       "id": "AC-CANDIDATE-PUBLICATION",
@@ -481,7 +487,7 @@
       "assets": ["ASSET-RELEASE-ARTIFACT", "ASSET-LOCAL-PRIVATE"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "An unreviewed candidate can reach a registry before signing, evidence publication, client testing, and security review finish.",
-      "mitigations": ["TM-CANDIDATE-NON-PUBLISHING"]
+      "mitigations": ["TM-CANDIDATE-NON-PUBLISHING", "TM-REGISTRY-PUBLICATION"]
     },
     {
       "id": "AC-STUDIO-UPLOAD-SCOPE",
@@ -1254,6 +1260,15 @@
         "INT-SECURITY-REVIEW-APPROVAL",
         "INT-SECURITY-REVIEW-ARTIFACT"
       ]
+    },
+    {
+      "id": "TM-REGISTRY-PUBLICATION",
+      "title": "Manual registry publication admits exact approved bytes with fresh audit and isolated identities; independent public signature, provenance and consumer evidence gates promotion",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-415",
+      "scenarios": ["GATE-PUBLICATION", "INT-PUBLICATION-BOUNDARIES", "E2E-PUBLICATION-CONSUMER"]
     }
   ],
   "residualRisks": [

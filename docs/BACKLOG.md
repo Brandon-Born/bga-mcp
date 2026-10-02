@@ -73,7 +73,7 @@ The first public release queue is:
 11. `BGA-405` — security review of the exact signed candidate.
 12. `BGA-415` — publish and independently reinstall the first release.
 
-BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 is implemented with exact-source CI and an external benign-report lifecycle still pending. BGA-408 is verified for its scoped process and simulated lifecycle. BGA-405 is implemented with retained clean-reviewer replay and exact-source CI; BGA-415 is the next independent implementation item; external reporting, live framework review, exact artifact and publication gates remain separate.
+BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 is implemented with exact-source CI and an external benign-report lifecycle still pending. BGA-408 is verified for its scoped process and simulated lifecycle. BGA-405 is implemented with retained clean-reviewer replay and exact-source CI; BGA-415 is implemented with publication still held; external reporting, live framework review, exact artifact and publication gates remain separate.
 
 BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
@@ -1503,13 +1503,16 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-415 — Publish and independently verify the first release
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414, BGA-416 through BGA-420, BGA-422, BGA-424
 - **Deliverable:** Publish the exact signed and security-reviewed BGA-403 candidate without rebuilding it, then verify the public artifact as an unrelated consumer would.
 - **Acceptance:** The registry package, checksums/provenance, source tag, candidate manifest, and verification evidence identify the same bytes and commit. Publication requires an explicit package-name/registry/trusted-publisher decision and an approved release candidate; no token or publish permission is available to pull-request or dry-run jobs. A failed post-publication check stops promotion and follows the documented recovery path rather than silently rebuilding or overwriting a version.
 - **Verification:** In a fresh environment, download the public artifact, verify its digest and provenance, install it, discover exactly the BGA-414 inventory with a real MCP client, run the documented first-use call, remove it, and confirm no project mutation or credential artifact remains. Record the registry URL, immutable version, source commit, CI run, and evidence digest in the release record.
 - **Dependency preflight:** Repeat BGA-422's live assessment on the exact candidate source immediately before publication and retain it alongside the approved immutable artifact. Recheck freshness, source/configuration identity, exception expiry and disposition; stale or failed results stop publication rather than cause a rebuild.
+
+- **Implementation, 2026-10-02 UTC:** [Publication workflow and recovery](verification/RELEASE_PUBLICATION.md) separate read-only exact-candidate preflight, explicit OIDC publication, token-free public consumer and receipt-bound promotion. Default dry runs cannot mint a publisher identity. Current package/registry/publisher decision remains null; candidate-specific install/client/public-evidence/usefulness receipts, BGA-406 lifecycle, fresh framework baseline and replacement-candidate security approval are required. Original rc.3 is preserved. Nine targeted tests and all 673 repository tests pass; all 208 required scenarios, packaging, applicable MCP conformance and safety checks pass. The complete local `pnpm check` passes with 102 retained claims and 192 of 198 acceptance cases proven across 59 items; six explicit gaps remain and exact-source CI is pending; no registry write, account setup, publication or promotion is claimed.
+- **Sources:** [npm publish](https://docs.npmjs.com/cli/v11/commands/npm-publish/) accepts “a gzipped tarball”; [trusted publishing](https://docs.npmjs.com/trusted-publishers/) documents short-lived OIDC and separate direct-publish/dist-tag permissions; [signature verification](https://docs.npmjs.com/cli/v11/commands/npm-audit/) and [GitHub CLI](https://cli.github.com/manual/gh_attestation_verify) provide independently verified provenance and certified actor policy.
 
 ### BGA-416 — Bind the installed public executable to the frozen release profile
 

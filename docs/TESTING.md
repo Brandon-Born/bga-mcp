@@ -216,3 +216,7 @@ No other wording should imply a stronger level of confidence than the recorded e
 ## Original-candidate security replay
 
 `pnpm review:security` requires an authenticated original packet, clean exact candidate source and a new assessment directory. The test harness selects those original bytes only in explicit security-review mode and records their digest separately from normal checkout evidence. `pnpm verify:security-review` checks the held/approved report and seeded integrity/admission controls; it cannot renew historical audit freshness or manufacture approval. See [the review procedure](verification/RELEASE_SECURITY_REVIEW.md).
+
+### Registry publication
+
+`pnpm verify:publication` checks the manual workflow, default dry run, pinned actions/tool, separated identity permissions and digest-bound preparation/consumer dependencies without registry writes. `GATE-PUBLICATION` seeds permission, trigger, rebuild, token and promotion bypasses; `INT-PUBLICATION-BOUNDARIES` seeds admission, registry-byte and provenance substitution. `E2E-PUBLICATION-CONSUMER` uses the shared installed artifact through the documented guide. These controls cannot verify an actual registry publication. The separate manual BGA-415 workflow requires an explicit configured publisher and fresh exact-candidate approval, then retains a real public-consumer receipt before promotion; see [publication process](verification/RELEASE_PUBLICATION.md).

@@ -1,0 +1,171 @@
+name: Publish and independently verify approved release
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [dry-run, publish]
+        default: dry-run
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: first-registry-publication
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.repository == 'Brandon-Born/bga-mcp' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      plan-digest: ${{ steps.admit.outputs.plan-digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Verify release tooling without publication identity
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          pnpm check
+          pnpm release:status
+      - name: Read pinned exact candidate source
+        id: source
+        run: node -e 'const fs = require("node:fs"); const p = JSON.parse(fs.readFileSync("config/security-review.json")); if (!/^[0-9a-f]{40}$/.test(p.reviewedCandidate.sourceCommit)) process.exit(1); fs.appendFileSync(process.env.GITHUB_OUTPUT, "commit=" + p.reviewedCandidate.sourceCommit + "\n");'
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ steps.source.outputs.commit }}
+          path: .artifacts/publication-source
+          persist-credentials: false
+      - name: Install exact source for the fresh advisory preflight
+        working-directory: .artifacts/publication-source
+        run: pnpm install --frozen-lockfile
+      - name: Authenticate original signed packet and admit fresh reviewed bytes
+        id: admit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BGA_MCP_SECURITY_SOURCE: ${{ github.workspace }}/.artifacts/publication-source
+        run: pnpm release:prepare "$RUNNER_TEMP/admitted"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: admitted-publication-${{ github.run_id }}
+          path: ${{ runner.temp }}/admitted
+          if-no-files-found: error
+          retention-days: 90
+
+  publish:
+    if: github.repository == 'Brandon-Born/bga-mcp' && github.ref == 'refs/heads/main' && inputs.mode == 'publish'
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: npm-publication
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Select pinned publisher CLI without lifecycle scripts
+        run: npm install --global --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org npm@12.2.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: admitted-publication-${{ github.run_id }}
+          path: ${{ runner.temp }}/admitted
+      - name: Publish admitted tarball under candidate tag
+        env:
+          BGA_MCP_PUBLICATION_MODE: ${{ inputs.mode }}
+          EXPECTED_PLAN_DIGEST: ${{ needs.prepare.outputs.plan-digest }}
+        run: node --experimental-strip-types scripts/publish-release.ts publish "$RUNNER_TEMP/admitted" "$EXPECTED_PLAN_DIGEST"
+
+  verify:
+    if: github.repository == 'Brandon-Born/bga-mcp' && github.ref == 'refs/heads/main' && inputs.mode == 'publish'
+    needs: [prepare, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      consumer-digest: ${{ steps.consumer.outputs.consumer-digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Install trusted verifier tooling
+        run: |
+          corepack enable
+          pnpm install --frozen-lockfile
+          npm install --global --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org npm@12.2.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: admitted-publication-${{ github.run_id }}
+          path: ${{ runner.temp }}/admitted
+      - name: Independent token-free public download, provenance, use and removal
+        id: consumer
+        env:
+          EXPECTED_PLAN_DIGEST: ${{ needs.prepare.outputs.plan-digest }}
+        run: pnpm release:consumer "$RUNNER_TEMP/admitted" "$EXPECTED_PLAN_DIGEST" "$RUNNER_TEMP/consumer.json"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: registry-consumer-${{ github.run_id }}
+          path: ${{ runner.temp }}/consumer.json
+          if-no-files-found: error
+          retention-days: 90
+
+  promote:
+    if: github.repository == 'Brandon-Born/bga-mcp' && github.ref == 'refs/heads/main' && inputs.mode == 'publish'
+    needs: [prepare, verify]
+    runs-on: ubuntu-latest
+    environment: npm-publication
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+      - name: Select pinned publisher CLI without lifecycle scripts
+        run: npm install --global --ignore-scripts --no-audit --no-fund --registry=https://registry.npmjs.org npm@12.2.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: admitted-publication-${{ github.run_id }}
+          path: ${{ runner.temp }}/admitted
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: registry-consumer-${{ github.run_id }}
+          path: ${{ runner.temp }}/verified
+      - name: Promote only the successful consumer's immutable version
+        env:
+          BGA_MCP_PUBLICATION_MODE: ${{ inputs.mode }}
+          EXPECTED_PLAN_DIGEST: ${{ needs.prepare.outputs.plan-digest }}
+          EXPECTED_CONSUMER_DIGEST: ${{ needs.verify.outputs.consumer-digest }}
+          BGA_MCP_CONSUMER_RECEIPT: ${{ runner.temp }}/verified/consumer.json
+        run: node --experimental-strip-types scripts/publish-release.ts promote "$RUNNER_TEMP/admitted" "$EXPECTED_PLAN_DIGEST" "$EXPECTED_CONSUMER_DIGEST"

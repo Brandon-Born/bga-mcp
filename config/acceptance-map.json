@@ -1212,6 +1212,30 @@
       "case": "The final candidate that includes current shipped documentation has passed exact-artifact security review with all release-blocking risks resolved",
       "boundary": "repository",
       "missing": "Signed rc.3 predates BGA-411/BGA-406; replacement candidate and independent reporting/fresh framework review are pending. Current rc.3 assessment is held."
+    },
+    {
+      "item": "BGA-415",
+      "case": "Manual publication separates read-only preflight and consumer jobs from explicit publisher identities; missing decisions, changed artifacts, expired admission and unsuccessful consumer evidence refuse publication or promotion",
+      "boundary": "repository",
+      "scenarios": ["GATE-PUBLICATION", "INT-PUBLICATION-BOUNDARIES"]
+    },
+    {
+      "item": "BGA-415",
+      "case": "The shared packaged artifact passes documented installed discovery, first-use call, unconfigured-root refusal, unchanged project and removal through a real MCP client",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PUBLICATION-CONSUMER"]
+    },
+    {
+      "item": "BGA-415",
+      "case": "The approved exact signed artifact is published through configured trusted publishing and its public registry bytes, signatures, certified publisher identity and provenance are independently verified",
+      "boundary": "repository",
+      "missing": "Package/registry decision and publisher setup, replacement candidate, BGA-406 lifecycle, current framework baseline and BGA-405 approval are pending; no registry package was published."
+    },
+    {
+      "item": "BGA-415",
+      "case": "A live successful public consumer receipt permits promotion of the immutable version and the resulting registry tag and release receipt are observed",
+      "boundary": "repository",
+      "missing": "No actual publication, public consumer or promotion has run. Offline controls do not supply live evidence."
     }
   ]
 }

@@ -151,3 +151,5 @@ BGA-408 adds a separate [framework change process](FRAMEWORK_CHANGES.md). A chan
 ## Exact-candidate security review
 
 BGA-405 replays selected security scenarios on the authenticated immutable candidate, with separate evidence from ordinary checkout tests. Held assessments do not grant security approval or expand the local-only capability set. Studio and adapters remain excluded; tests using stubs never stand in for live Studio evidence. [Security review scope](verification/RELEASE_SECURITY_REVIEW.md).
+
+BGA-415 adds `GATE-PUBLICATION`, `INT-PUBLICATION-BOUNDARIES` and `E2E-PUBLICATION-CONSUMER` to stdio release evidence. These prove offline admission/permission/provenance policy and the installed shared-package guide. The actual registry package, OIDC publisher and public-consumer provenance remain unverified. No installed runtime transport or network capability changes.
