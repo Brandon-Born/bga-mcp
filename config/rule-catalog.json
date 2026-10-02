@@ -2,7 +2,7 @@
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
   "catalogVersion": "1.6.0",
-  "updatedAt": "2026-08-23",
+  "updatedAt": "2026-10-02",
   "checks": [
     {
       "id": "action.argument.mismatch",
@@ -731,6 +731,11 @@
           "kind": "official-documentation",
           "reference": "State classes: State directory says \"To indicate your initial state, add return PlayerTurn::class; to the code of setupNewGame function in Game.php\", and the array form reserves \"ID=1 ... for the first game state\". The BGA Studio Migration Guide adds that \"States 1 and 99, that must not be changed, are now optional\", and the skeleton comments its state 1 line \"only keep this line if your initial state is not 2\".",
           "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
+        },
+        {
+          "kind": "official-documentation",
+          "reference": "State classes marks the absent setup return default as \"to be confirmed\". BGA-432 reports class-only entry uncertainty instead of concluding missing or default state 2. Displayed revision 29634, reviewed 2026-10-02 UTC.",
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
       "fixtures": {
@@ -740,7 +745,8 @@
       "scenarios": [
         "E2E-VALIDATE-STATES-CLEAN",
         "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
-        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
+        "E2E-STATE-UNCONFIRMED-INITIAL"
       ],
       "owner": "Brandon Born"
     },

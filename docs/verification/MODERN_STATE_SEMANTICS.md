@@ -8,9 +8,9 @@ This record describes a run, so it states which one. `pnpm verify:evidence` comp
 {
   "kind": "run",
   "capabilities": 17,
-  "scenarios": 208,
+  "scenarios": 209,
   "claims": 102,
-  "tests": 673
+  "tests": 674
 }
 ```
 
@@ -83,6 +83,6 @@ Unit and integration coverage sits under each of those: `tests/unit/project-mode
 Recorded rather than guessed at:
 
 - **`manager` is not in the current documentation.** Older project skeletons typed the reserved states 1 and 99 `manager`, and real projects still contain it. Those two identifiers are not judged, so the value is accepted there; on any other state it is reported as an undocumented type. Whether the framework still dispatches `manager` at all is not stated on any page found.
-- **The default entry point of a state-class project.** The state-class page says "If you don't return anything its state 2 (\*to be confirmed\*)". The reader uses state 2 and says so in its evidence string; the documentation's own uncertainty is not resolved here.
+- **The default entry point of a state-class project.** The state-class page says "If you don't return anything its state 2 (\*to be confirmed\*)". BGA-432's live review corrects the earlier assumption: a class-only machine without an explicit entry is now located unsupported syntax and has no invented initial edge. Independent legacy/hybrid default forms retain their separate documented source. `E2E-STATE-UNCONFIRMED-INITIAL` proves the public boundaries and controls; the framework default itself remains unconfirmed.
 - **A transition target written as a class name.** `initialPrivate` accepts `PlaceCard::class` and so do several `gamestate` methods, but the `transitions` map is documented with identifiers only. A class name there is reported as unreadable rather than assumed to work.
 - **`GameStateBuilder::endScore()`.** Documented as calling `stEndScore`, with nothing said about its transitions. It is marked as the framework's own state, and no rule judges it.

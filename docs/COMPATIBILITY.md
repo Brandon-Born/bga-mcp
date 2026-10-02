@@ -1,6 +1,6 @@
 # Compatibility matrix
 
-Updated: 2026-10-01. Backlog items: BGA-009, BGA-402, BGA-414, BGA-417 through BGA-420, and BGA-426 through BGA-428.
+Updated: 2026-10-02. Backlog items: BGA-009, BGA-402, BGA-414, BGA-417 through BGA-420, BGA-426 through BGA-428, and BGA-432.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.
 
@@ -43,6 +43,8 @@ coverage without claiming the whole generated template or game is release-ready.
 BGA-429 separates inventory from production-contract sources. All PHP and client source under `modules/` remains readable, including ignored files and arbitrary subdirectories; documented legacy root files remain readable independently. Other local PHP/JS/TS files remain in the inventory and produce `project.source.unsupported-syntax`, with their relative paths, rather than supplying contracts. This reports unknown Studio/test/generator execution scope, not a defect in the game. It propagates through individual validators, aggregate diagnostics and pre-release uncertainty. Copies inside `modules/` remain readable: this reader does not resolve dynamic imports or prove that every module executes. Callers needing a narrower set must identify and configure a separate canonical root. [Source-scope decision and workflow](verification/PROJECT_SOURCE_SCOPE.md).
 
 A layout being inside the compatibility contract is not the same as every capability being release-verified. The manifest now names all three supported layouts on each of the ten project tools and resources, and each supported layout claim independently lists the capabilities and packaged scenarios that prove that exact pairing. `pnpm verify:compatibility` compares those sources and seeds both an omission and an overclaim before accepting the real manifest. Retained evidence also copies layouts and environments from the manifest and rejects drift. BGA-006 and BGA-017 remain `implemented` until exact-commit CI passes this composition change; the semantic readers and compatibility claims remain supported on their existing evidence.
+
+BGA-432 keeps the state-class-only default initial state unsupported because the official page still marks it unconfirmed. A missing explicit setup return does not become a state-2 edge, a missing-entry defect or a reachability conclusion. The inventory and independent state checks remain readable. `E2E-STATE-UNCONFIRMED-INITIAL` uses original generated-template variants to prove this through inspection, state validation, aggregate, state resource and pre-release, and retains explicit setup returns, legacy state 1 and the independently documented hybrid default. [Source review](verification/FRAMEWORK_CHANGE_PROCESS.md#live-source-baseline--2026-10-02-utc).
 
 ## File generations
 

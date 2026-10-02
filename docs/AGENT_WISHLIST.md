@@ -139,6 +139,14 @@ and live evaluation, while BGA-411 owns accurate public and agent documentation.
 Record whether retrieval actually answers the development question before
 proposing diagnostic integration or expanding the release inventory.
 
+**Framework review observation, 2026-10-02 UTC.** The BGA-408 live baseline still
+required a separate read of the Complete Walkthrough beside the canonical state
+page to establish that BGA-419's conflict remains unresolved. A source link alone
+does not answer which wording governs a finding. Preserve competing sources and
+the unsupported decision together when considering this wish; the current
+baseline maps eight catalog/foundational pages, not the entire wiki. No new
+retrieval or supported-form claim follows from this review.
+
 ## Capture wishes during real work
 
 Whenever I need a workaround during BGA-424, add or update an entry here with:

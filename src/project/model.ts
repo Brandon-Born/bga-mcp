@@ -373,16 +373,19 @@ const NO_INITIAL_STATE = {
  *
  * The two generations declare it differently, and the framework kept both:
  * a state class project "add[s] `return PlayerTurn::class;` to the code of
- * `setupNewGame`", while `states.inc.php` reserves identifier 1 for it. Both
- * pages then say the declaration is optional — "States 1 and 99, that must not
- * be changed, are now optional" — and the skeleton comments its state 1 line
- * with "only keep this line if your initial state is not 2", so an undeclared
- * entry point means state 2 rather than a broken machine.
+ * `setupNewGame`", while `states.inc.php` reserves identifier 1 for it.
+ * The legacy skeleton comments state 1 with "only keep this line if your
+ * initial state is not 2". The state-class page instead marks its default
+ * "to be confirmed", so that default is unsupported for a class-only machine.
+ * Sources: https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php
+ * https://en.doc.boardgamearena.com/State_classes:_State_directory
  */
 function resolveInitialState(
   definitions: readonly StateDefinition[],
   supporting: readonly PhpSource[],
   classIds: ReadonlyMap<string, number>,
+  hasLegacyDefinitions: boolean,
+  classSource: string | null,
   unreadable: UnreadableConstruct[],
   signal?: AbortSignal,
 ): ProjectStates['initial'] {
@@ -415,6 +418,16 @@ function resolveInitialState(
       origin: 'state-1',
       evidence: 'State 1 is declared, and the framework reserves it for the first game state.',
     };
+  }
+  if (!hasLegacyDefinitions && definitions.some((state) => state.origin === 'class')) {
+    const construct =
+      'The default initial state of a state-class-only machine without an explicit entry point is unconfirmed in official documentation';
+    unreadable.push({
+      path: classSource,
+      construct,
+      scope: 'edge',
+    });
+    return { ids: [], origin: 'unresolved', evidence: construct };
   }
   if (declared.has(2)) {
     return {
@@ -511,7 +524,15 @@ async function readStates(
   }
 
   const definitions = mergeStates(legacyDefinitions, modernDefinitions, signal);
-  const initial = resolveInitialState(definitions, supporting, classIds, unreadable, signal);
+  const initial = resolveInitialState(
+    definitions,
+    supporting,
+    classIds,
+    legacyDefinitions.length > 0,
+    modernStateFiles[0] ?? null,
+    unreadable,
+    signal,
+  );
 
   for (const entry of unreadable) {
     cancellationCheckpoint(signal);

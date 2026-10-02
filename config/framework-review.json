@@ -3,5 +3,62 @@
   "owner": "Brandon-Born",
   "monitoringDays": 7,
   "emergencyResponseHours": 24,
-  "observations": []
+  "observations": [
+    {
+      "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+      "observedAt": "2026-10-02T06:26:57.901Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+      "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+      "observedAt": "2026-10-02T06:27:08.493Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+      "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+      "observedAt": "2026-10-02T06:27:19.415Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+      "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
+      "observedAt": "2026-10-02T06:28:00.376Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+      "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+      "observedAt": "2026-10-02T06:28:19.821Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Studio",
+      "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+      "observedAt": "2026-10-02T06:28:36.553Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+      "observedAt": "2026-10-02T06:21:07.879Z",
+      "review": null,
+      "needsReview": true
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+      "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+      "observedAt": "2026-10-02T06:28:41.440Z",
+      "review": null,
+      "needsReview": true
+    }
+  ]
 }

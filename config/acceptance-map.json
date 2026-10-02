@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-01",
+  "updatedAt": "2026-10-02",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1236,6 +1236,12 @@
       "case": "A live successful public consumer receipt permits promotion of the immutable version and the resulting registry tag and release receipt are observed",
       "boundary": "repository",
       "missing": "No actual publication, public consumer or promotion has run. Offline controls do not supply live evidence."
+    },
+    {
+      "item": "BGA-432",
+      "case": "Unconfirmed class-only initial state stays unsupported through installed state/aggregate/resource/pre-release results; explicit and independent legacy/hybrid entries remain readable and project digests unchanged",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-UNCONFIRMED-INITIAL"]
     }
   ]
 }

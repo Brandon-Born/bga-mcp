@@ -15,13 +15,15 @@ interface Result {
   trace: { gameMethods: string[]; clientCalls: { source: string }[] };
   complete: { declarations: boolean; edges: boolean };
   checks: { group?: string; outcome: string }[];
+  states: { initial: { ids: number[]; origin: string } };
 }
 
-let server: PackagedServer<'modern' | 'legacy'>;
+let server: PackagedServer<'modern' | 'legacy' | 'hybrid'>;
 beforeAll(async () => {
   server = await installPackagedServer('generated-baseline-regressions', {
     modern: 'modern-generated-regression',
     legacy: 'legacy',
+    hybrid: 'hybrid',
   });
 }, 240_000);
 afterAll(async () => {
@@ -33,6 +35,88 @@ async function copy(name: string): Promise<string> {
   await cp(server.projects.modern, root, { recursive: true });
   return root;
 }
+
+it('[E2E-STATE-UNCONFIRMED-INITIAL] preserves the official class-only default ambiguity without false entry or reachability verdicts', async () => {
+  for (const id of [2, 12]) {
+    const root = await copy(`unconfirmed-initial-${String(id)}`);
+    const gamePath = resolve(root, 'modules/php/Game.php');
+    const game = await readFile(gamePath, 'utf8');
+    await writeFile(gamePath, game.replace('return PlayerTurn::class;', 'return;'));
+    const constantsPath = resolve(root, 'modules/php/StateConstants.php');
+    const constants = await readFile(constantsPath, 'utf8');
+    await writeFile(
+      constantsPath,
+      constants.replace('STATE_PLAYER_TURN = 2', `STATE_PLAYER_TURN = ${String(id)}`),
+    );
+    const before = await digestDirectory(root);
+    await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      const inspected = await callTool<Result>(client, 'inspect_project', { projectRoot: root });
+      expect(inspected.structured?.states.initial).toMatchObject({ ids: [], origin: 'unresolved' });
+      const states = await callTool<Result>(client, 'validate_state_machine', {
+        projectRoot: root,
+      });
+      expect(states.structured?.complete).toMatchObject({ declarations: true, edges: false });
+      const findings = states.structured?.diagnostics.findings ?? [];
+      expect(findings).toContainEqual(
+        expect.objectContaining({ code: 'project.states.unsupported' }),
+      );
+      expect(
+        findings.find((finding) => finding.code === 'project.states.unsupported')?.locations.length,
+      ).toBeGreaterThan(0);
+      expect(findings.map((finding) => finding.code)).not.toContain('state.initial.missing');
+      expect(findings.map((finding) => finding.code)).not.toContain('state.unreachable');
+      const aggregate = await callTool<Result>(client, 'validate_project', {
+        projectRoot: root,
+        groups: ['state-machine'],
+      });
+      expect(aggregate.structured?.diagnostics.status).not.toBe('passed');
+      const audit = await callTool<Result>(client, 'run_pre_release_audit', { projectRoot: root });
+      const stateChecks =
+        audit.structured?.checks.filter((check) => check.group === 'state-machine') ?? [];
+      expect(stateChecks.length).toBeGreaterThan(0);
+      expect(stateChecks.every((check) => check.outcome === 'unsupported')).toBe(true);
+      for (const uri of [
+        'bga://project/states',
+        'bga://project/summary',
+        'bga://project/diagnostics',
+      ]) {
+        const resource = await client.readResource({ uri });
+        expect(JSON.stringify(resource)).toContain('unconfirmed');
+      }
+    });
+    expect(await digestDirectory(root)).toBe(before);
+    // Explicit setup returns remain readable for both state identifiers.
+    await writeFile(gamePath, game);
+    await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      const inspected = await callTool<Result>(client, 'inspect_project', { projectRoot: root });
+      expect(inspected.structured?.states.initial).toMatchObject({
+        ids: [id],
+        origin: 'setup-new-game',
+      });
+    });
+  }
+  // Independently migrated declarations retain the documented legacy default.
+  await withPublicPackagedServer(
+    server,
+    ['--project-root', server.projects.hybrid],
+    async (client) => {
+      const inspected = await callTool<Result>(client, 'inspect_project', {
+        projectRoot: server.projects.hybrid,
+      });
+      expect(inspected.structured?.states.initial).toMatchObject({ ids: [2], origin: 'default' });
+    },
+  );
+  await withPublicPackagedServer(
+    server,
+    ['--project-root', server.projects.legacy],
+    async (client) => {
+      const inspected = await callTool<Result>(client, 'inspect_project', {
+        projectRoot: server.projects.legacy,
+      });
+      expect(inspected.structured?.states.initial).toMatchObject({ ids: [1], origin: 'state-1' });
+    },
+  );
+}, 180_000);
 
 it('[E2E-INSPECT-JSONC-COMPONENTS] inventories JSONC, JSON, PHP and independently migrated components without inventing missing files', async () => {
   for (const [name, extensions] of [
