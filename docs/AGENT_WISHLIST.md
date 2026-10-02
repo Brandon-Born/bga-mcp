@@ -224,6 +224,14 @@ requires eight unchanged decisions to be admitted against exact-source CI. This
 is another observed instance of the existing wish, not an implemented central
 selection feature.
 
+**BGA-401 confirmation, 2026-10-02 UTC.** Advancing the native client
+observation to signed rc.5 required the runner receipt selector, an independent
+matrix candidate pin, the evaluated-receipt path and the identity-control test
+selection. The actual clean native run passes; historical rc.1 and rc.4 identities
+are refused even with current runner digests. This confirms why selection must
+remain explicit without silently carrying old client evidence forward. The
+central selection and impact-scoped review wish remains unimplemented.
+
 **Wish.** A single reviewed, immutable candidate selection receipt with an
 explanation of the downstream identities that still differ. Any impact-scoped
 review reuse should show which implementation and fixture dependencies changed,

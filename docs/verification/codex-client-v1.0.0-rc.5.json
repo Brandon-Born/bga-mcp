@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "recordedAt": "2026-10-02T11:05:34.946Z",
+  "recordedAt": "2026-10-02T11:08:46.722Z",
   "owner": "BGA-401",
   "client": "codex-cli 0.159.2",
   "clientBinaryDigest": "sha256:50ac633af64851511f9bbc71032cdae7f1ba20b3234c189687d61ba846c354c5",
-  "runnerCommit": "8123ed041722aea1e0b8bb64ab042bf3feb766eb",
-  "runnerTreeDirty": true,
+  "runnerCommit": "90565d57ea4cf9bbb25f35d79ea9727cc197a24d",
+  "runnerTreeDirty": false,
   "platform": "darwin",
   "architecture": "arm64",
   "node": "v22.17.1",
@@ -40,5 +40,145 @@
     "scripts/lib/install-guide.ts": "sha256:dcbda4c10b4548ac1f5751e058dfea57ca95cb44048c45fd568602e52a53afd7"
   },
   "inferenceTurns": 0,
-  "scope": "Codex app-server MCP connection, not GUI or agent development evaluation"
+  "scope": "Codex app-server MCP connection, not GUI or agent development evaluation",
+  "signaturePrerequisite": {
+    "receipt": "release-signing-v1.0.0-rc.5.json",
+    "signerCommit": "a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94",
+    "resultDigest": "sha256:a57c8a8f1d00ad7785c762ce02fcece2a935124033b7fa046a93ebb4e274d1f6",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "signature": "verified before native client use",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused"
+  },
+  "generatedSchemaReview": {
+    "client": "codex-cli 0.159.2",
+    "source": "https://learn.chatgpt.com/docs/app-server",
+    "schemas": {
+      "v1/InitializeParams.json": {
+        "digest": "sha256:b55124e7c0f36a1789396daa5578217a92be67f053903696236686e59f6f212e",
+        "required": ["clientInfo"],
+        "fields": ["capabilities", "clientInfo"]
+      },
+      "v2/ThreadStartParams.json": {
+        "digest": "sha256:80a40a7fac15b4bf70efb7f893fb353acc0a0d30c68f54aee4f01923deca85de",
+        "required": [],
+        "fields": [
+          "allowProviderModelFallback",
+          "approvalPolicy",
+          "approvalsReviewer",
+          "baseInstructions",
+          "config",
+          "cwd",
+          "daybreakEnabled",
+          "developerInstructions",
+          "dynamicTools",
+          "environments",
+          "ephemeral",
+          "experimentalRawEvents",
+          "historyMode",
+          "mockExperimentalField",
+          "model",
+          "modelProvider",
+          "multiAgentMode",
+          "permissions",
+          "personality",
+          "projectId",
+          "runtimeWorkspaceRoots",
+          "sandbox",
+          "selectedCapabilityRoots",
+          "serviceName",
+          "serviceTier",
+          "sessionStartSource",
+          "threadSource"
+        ]
+      },
+      "v2/McpServerToolCallParams.json": {
+        "digest": "sha256:7039a7583a1cbf38e9e0f5fe6398ff3711acd4d654b81b0be562514087fce6ba",
+        "required": ["server", "threadId", "tool"],
+        "fields": ["_meta", "arguments", "server", "threadId", "tool"]
+      },
+      "v2/McpResourceReadParams.json": {
+        "digest": "sha256:7ff0e4de6d70bd1c86b6d32ae781c9a841fee4d2e6d11eff8d8d0f224f7ad801",
+        "required": ["server", "uri"],
+        "fields": ["connectorId", "originCallId", "server", "target", "threadId", "uri"]
+      },
+      "v2/ListMcpServerStatusParams.json": {
+        "digest": "sha256:30b978c6502b37c9f0002aeba241f41c91d4c6adf0f92d89242b62ffde415a2d",
+        "required": [],
+        "fields": ["cursor", "detail", "limit", "serverName", "threadId"]
+      },
+      "v2/ConfigReadParams.json": {
+        "digest": "sha256:257c54a423b47c1d209ff1076765a1564d82322fd5161670fd489a2874de1bac",
+        "required": [],
+        "fields": ["cwd", "includeLayers"]
+      }
+    },
+    "scope": "version-specific request fields checked; unchanged adapter; actual native calls passed"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36999384205",
+    "commit": "90565d57ea4cf9bbb25f35d79ea9727cc197a24d",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:9761460ed9de34f319de9499262669f1605b4637519f4174e16ae636ef503366",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:13:07.539Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:7f1305beb99134bfa2b657d855511fb748f1ead1c5d87030706351904867e40e",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:12:36.871Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:d7949f97598a00b4980efcc4fcdbdefa4803f767bccd4b0b29281ca736a8b845",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:12:05.027Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:3eacdd964dd712390f83440b58c22b6c11433df50e080c666d6433893bc7465e",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:11:22.437Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:66bdc9fc7f13ebca24783b9c13d60441adb5ac6806c2176c365877e121ae6b64",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:15:22.064Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:874bf3985743fa7cb02b50739e91fce5b653e0fa4e210371786376e10efd2e1f",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:12:57.744Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "frameworkReadmission": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "implementationDigest": "sha256:aeea8026edaba27d007b980602c00399dd915ba91e92f37fb04e36de61c1c0ed",
+    "evidenceDigest": "sha256:3eacdd964dd712390f83440b58c22b6c11433df50e080c666d6433893bc7465e",
+    "evidenceCommit": "90565d57ea4cf9bbb25f35d79ea9727cc197a24d",
+    "releaseGuard": "passed",
+    "scope": "unchanged previously read wording; client-selection and matrix changes retested; no new BGA reader behavior, security or publication approval"
+  }
 }
