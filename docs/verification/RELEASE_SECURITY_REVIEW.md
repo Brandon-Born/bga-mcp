@@ -98,3 +98,11 @@ all four rc.4 prerequisite identities and current guide digest without the
 former cross-candidate hold; dirty-reviewer, guide replacement, private-report,
 framework re-admission and null publisher decision still hold approval. Clean
 committed-source CI and repeat assessment remain separate next steps.
+
+[Clean preparation CI 36985541238](rc4-security-preparation-ci.json) passed all
+six platform/Node jobs at `293ef53333fadddfe2c2951819ea968feb61e92e`, each with
+674 tests and 209 scenarios. Every downloaded record passed trusted schema,
+clean exact-source, integrity and applicable-conformance checks. The eight
+unchanged previously read framework decisions were explicitly re-admitted
+against that sealed evidence; the actual release guard passes. The separate
+clean reviewer repeat is still pending and cannot be inferred from this CI.
