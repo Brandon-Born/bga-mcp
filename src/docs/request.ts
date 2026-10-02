@@ -1,3 +1,7 @@
+import type { DocumentationSource } from './catalog.js';
+import { matchesDocumentationSource } from './catalog.js';
+import { ERROR_CODES, PolicyViolationError } from '../errors.js';
+
 /**
  * Decides whether a documentation request may leave the machine.
  *
@@ -76,5 +80,57 @@ export function describeRequestContentViolation(violation: RequestContentViolati
     case 'source-code': {
       return 'the query contains source syntax, so it was copied out of a file';
     }
+  }
+}
+
+/** @internal Shared lexical/source confinement for live and cached page reads. */
+export function documentationRequestUrl(
+  source: DocumentationSource,
+  request: { readonly path: string; readonly params?: Readonly<Record<string, string>> },
+): URL {
+  if (/[^A-Za-z0-9._~:@!$'()*+,;=/%-]/u.test(request.path) || request.path.includes('..')) {
+    throw new PolicyViolationError(
+      ERROR_CODES.policyDocSourceNotAllowed,
+      'The documentation page path contains characters that are not allowed.',
+      { details: { sourceId: source.id, path: request.path } },
+    );
+  }
+  // A protocol-relative or absolute path would re-point the request, so the
+  // path must be relative to the source and stay inside it.
+  if (request.path.startsWith('/') || request.path.includes('//')) {
+    throw new PolicyViolationError(
+      ERROR_CODES.policyDocSourceNotAllowed,
+      'The documentation page path must be relative to its source.',
+      { details: { sourceId: source.id, path: request.path } },
+    );
+  }
+  const base = new URL(source.canonicalUrl);
+  const url = new URL(request.path, base);
+  for (const [name, value] of Object.entries(request.params ?? {})) {
+    url.searchParams.set(name, value);
+  }
+  if (!matchesDocumentationSource(source, url)) {
+    throw new PolicyViolationError(
+      ERROR_CODES.policyDocSourceNotAllowed,
+      'The documentation request did not stay within its source.',
+      { details: { sourceId: source.id, url: url.href } },
+    );
+  }
+  return url;
+}
+
+/** @internal The same refusal applies before a cached search can return. */
+export function assertDocumentationRequestContent(
+  value: string,
+  roots: readonly string[],
+  sourceId?: string,
+): void {
+  const violation = requestContentViolation(value, roots);
+  if (violation !== null) {
+    throw new PolicyViolationError(
+      ERROR_CODES.policyDocRequestContent,
+      `The documentation request was refused because ${describeRequestContentViolation(violation)}.`,
+      { details: { sourceId, violation } },
+    );
   }
 }

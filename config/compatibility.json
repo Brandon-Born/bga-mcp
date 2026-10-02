@@ -333,7 +333,12 @@
         "E2E-DOC-RELEVANCE-CAPTURES",
         "E2E-DOC-QUERY-CACHE",
         "E2E-DOC-RELEVANCE-MUTATION",
-        "E2E-DOC-EXCERPT-BUDGET"
+        "E2E-DOC-EXCERPT-BUDGET",
+        "E2E-DOC-CACHE-WARM",
+        "E2E-DOC-CACHE-REFRESH",
+        "E2E-DOC-CACHE-REDIRECT",
+        "E2E-DOC-CACHE-MUTATION",
+        "INT-DOC-CACHE-LIFECYCLE"
       ],
       "capabilities": [
         {
@@ -373,7 +378,12 @@
             "E2E-DOC-RELEVANCE-CAPTURES",
             "E2E-DOC-QUERY-CACHE",
             "E2E-DOC-RELEVANCE-MUTATION",
-            "E2E-DOC-EXCERPT-BUDGET"
+            "E2E-DOC-EXCERPT-BUDGET",
+            "E2E-DOC-CACHE-WARM",
+            "E2E-DOC-CACHE-REFRESH",
+            "E2E-DOC-CACHE-REDIRECT",
+            "E2E-DOC-CACHE-MUTATION",
+            "INT-DOC-CACHE-LIFECYCLE"
           ]
         },
         {
@@ -408,7 +418,12 @@
             "E2E-DOC-RELEVANCE-CAPTURES",
             "E2E-DOC-QUERY-CACHE",
             "E2E-DOC-RELEVANCE-MUTATION",
-            "E2E-DOC-EXCERPT-BUDGET"
+            "E2E-DOC-EXCERPT-BUDGET",
+            "E2E-DOC-CACHE-WARM",
+            "E2E-DOC-CACHE-REFRESH",
+            "E2E-DOC-CACHE-REDIRECT",
+            "E2E-DOC-CACHE-MUTATION",
+            "INT-DOC-CACHE-LIFECYCLE"
           ]
         },
         {

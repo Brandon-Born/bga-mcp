@@ -114,7 +114,8 @@
         "src/tools/validate-notifications.ts",
         "src/tools/validate-project.ts",
         "src/tools/validate-state-machine.ts",
-        "docs/verification/DOCUMENTATION_RELEVANCE.md"
+        "docs/verification/DOCUMENTATION_RELEVANCE.md",
+        "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md"
       ]
     },
     {
@@ -151,6 +152,9 @@
         "tests/e2e/client-smoke.test.ts",
         "tests/e2e/dns-stub.ts",
         "tests/e2e/doc-network-stub.ts",
+        "tests/e2e/doc-cache-clock.ts",
+        "tests/e2e/docs-cache-lifecycle.test.ts",
+        "tests/integration/doc-cache-readers.test.ts",
         "tests/e2e/docs-authority.test.ts",
         "tests/e2e/docs-network.test.ts",
         "tests/e2e/documentation.test.ts",
@@ -478,7 +482,8 @@
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
         "tests/unit/version-policy.test.ts",
-        "docs/verification/bga211-source-evaluation.json"
+        "docs/verification/bga211-source-evaluation.json",
+        "docs/verification/bga208-cache-lifecycle.json"
       ]
     }
   ],

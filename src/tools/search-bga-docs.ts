@@ -1,8 +1,9 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
+import { documentationRequestUrl, assertDocumentationRequestContent } from '../docs/request.js';
 import { DocumentationCache } from '../docs/cache.js';
-import { UNTRUSTED_NOTICE, provenanceOf, retrieveDocumentation } from '../docs/retrieve.js';
+import { UNTRUSTED_NOTICE, provenanceOf, readDocumentationPage } from '../docs/retrieve.js';
 import { readSearchResponse, searchParams } from '../docs/search.js';
 import { topicForQuery, documentationPassageQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
@@ -234,6 +235,9 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             );
           }
 
+          policy.assertNetworkAllowed('documentation');
+          assertDocumentationRequestContent(query, policy.projectRoots, sourceId);
+
           const results: z.infer<typeof ResultSchema>[] = [];
           const seen = new Set<string>();
           // What was asked of whom, and what came back. Every exit from here
@@ -275,44 +279,30 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             lastEdited: string | null,
           ): Promise<void> => {
             attempted.add(source.id);
-            const page = await policy.fetchDocumentation({ sourceId: source.id, path }, { signal });
-            // The page was read. Whether it turns out to match is a separate
-            // question from whether this source was successfully searched.
-            attempted.add(page.sourceId);
-            searched.add(page.sourceId);
-            if (seen.has(page.url)) {
-              return;
-            }
-            seen.add(page.url);
-            // The catalog decides authority by page, so a community page keeps
-            // its own provenance even when the search reached it through the
-            // site-wide source.
-            const owning = (await policy.documentationSources()).find(
-              (candidate) => candidate.id === page.sourceId,
-            );
-            if (owning === undefined) {
-              throw new BgaMcpError(
-                ERROR_CODES.policyDocSourceNotAllowed,
-                'The retrieved documentation page has no reviewed source.',
-              );
-            }
-            const retrieved = await retrieveDocumentation(
-              owning,
+            const requestedUrl = documentationRequestUrl(source, { path }).href;
+            const retrieved = await readDocumentationPage(
+              policy,
               cache,
-              { url: page.url, query: excerptQuery, maxExcerptChars: MAX_EXCERPT_CHARS },
-              () =>
-                Promise.resolve({
-                  url: page.url,
-                  body: page.body,
-                  retrievedAt: page.retrievedAt,
-                  lastModified: page.lastModified,
-                }),
-              undefined,
+              {
+                sourceId: source.id,
+                path,
+                query: excerptQuery,
+                question: query,
+                maxExcerptChars: MAX_EXCERPT_CHARS,
+              },
               signal,
             );
+            // Reading a dated cached excerpt still processes this source's content.
+            attempted.add(retrieved.sourceId);
+            searched.add(retrieved.sourceId);
+            if (retrieved.stale) {
+              record(source.id, 'page', { code: ERROR_CODES.policyDocFetchFailed });
+            }
+            if (seen.has(retrieved.url)) return;
+            seen.add(retrieved.url);
             const selectedReviewedPassage =
               topicMatch !== null &&
-              new URL(page.url).pathname ===
+              new URL(retrieved.url).pathname ===
                 new URL(topicMatch.path, source.canonicalUrl).pathname &&
               mentionsQuery(retrieved.title, retrieved.excerpt, excerptQuery);
             if (
@@ -326,7 +316,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               return;
             }
             results.push({
-              title: retrieved.title === owning.title ? fallbackTitle : retrieved.title,
+              title: retrieved.title === retrieved.sourceTitle ? fallbackTitle : retrieved.title,
               url: retrieved.url,
               sourceId: retrieved.sourceId,
               sourceTitle: retrieved.sourceTitle,
@@ -335,7 +325,7 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               retrievedAt: retrieved.retrievedAt,
               lastModified: retrieved.lastModified,
               // A search hit dates its original page, not a redirect target.
-              lastEdited: page.redirects.length === 0 ? lastEdited : null,
+              lastEdited: !retrieved.cached && retrieved.url === requestedUrl ? lastEdited : null,
               ageDays: retrieved.ageDays,
               stale: retrieved.stale,
               cached: retrieved.cached,
