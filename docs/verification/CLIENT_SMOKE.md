@@ -53,3 +53,11 @@ that same controlled flow at `6a0c3c66083de96e8d1dd78351de6b65b6ac1cf6` with
 `runnerTreeDirty: false`. The current evaluated matrix references this separate
 receipt. Both original and preparation observations remain intact; no other
 client, version, platform, GUI or inference claim is added.
+
+## Original rc.5 controlled refresh — 2026-10-02 UTC
+
+The controlled runner and independent matrix candidate pin now select the original signed rc.5 packet. The [preparation receipt](codex-client-v1.0.0-rc.5-preparation.json) preserves the actual macOS arm64 / Node 22.17.1 / Codex 0.159.2 observation with its explicitly dirty runner tree. The [current controlled receipt](codex-client-v1.0.0-rc.5.json) initially carries that same observation and will retain a separate clean committed repeat before the handoff is finalized. Historical rc.1 and rc.4 receipts remain intact.
+
+Fresh independent signature verification with separately acquired roots passed before native-client use: exact signer/source, all original subjects and producer provenance matched, and cryptographic probes refused changed bytes, a wrong signer and a wrong workflow. Actual native discovery, all seven tool calls and three resource reads, schema/outside-root/excluded-tool refusals, restart, unchanged project/configuration, process exit and removal pass. No inference turn or GUI test occurred. The matrix controls reject both rc.1 and rc.4 identities even when current runner digests match. Full local gate, exact-source CI and the clean controlled repeat are pending.
+
+The [official app-server documentation](https://learn.chatgpt.com/docs/app-server) was fetched again before this run. It describes `mcpServer/tool/call` as “call a tool on a thread’s configured MCP server.” The installed 0.159.2 binary generated its experimental JSON schemas; initialization, ephemeral thread, catalog, resource, tool and configuration fields used by the unchanged adapter were checked against those version-specific schemas. No API behavior or BGA framework reader changed.

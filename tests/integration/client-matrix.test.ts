@@ -25,24 +25,29 @@ it('[GATE-CLIENT-MATRIX] refuses unsupported version, missing scenario, environm
   row(environment, 0).platforms = ['imaginary-platform'];
   expect((await verifyClientMatrix(environment, root)).failures.length).toBeGreaterThan(0);
   const receipt = JSON.parse(
-    await readFile(resolve(root, 'docs/verification/codex-client-v1.0.0-rc.4-clean.json'), 'utf8'),
+    await readFile(resolve(root, 'docs/verification/codex-client-v1.0.0-rc.5.json'), 'utf8'),
   ) as Record<string, unknown>;
   expect(
     (await verifyClientMatrix(original, root, { 'CLIENT-CODEX-APP-SERVER': receipt })).failures,
   ).toEqual([]);
-  const oldReceipt = JSON.parse(
-    await readFile(resolve(root, 'docs/verification/codex-client-v1.0.0-rc.1.json'), 'utf8'),
-  ) as Record<string, unknown>;
-  const oldCandidate = {
-    ...receipt,
-    candidateTag: oldReceipt.candidateTag,
-    candidateCommit: oldReceipt.candidateCommit,
-    artifactDigest: oldReceipt.artifactDigest,
-  };
-  expect(
-    (await verifyClientMatrix(original, root, { 'CLIENT-CODEX-APP-SERVER': oldCandidate }))
-      .failures,
-  ).toContain('Controlled smoke used another candidate');
+  for (const historical of [
+    'codex-client-v1.0.0-rc.1.json',
+    'codex-client-v1.0.0-rc.4-clean.json',
+  ]) {
+    const oldReceipt = JSON.parse(
+      await readFile(resolve(root, 'docs/verification', historical), 'utf8'),
+    ) as Record<string, unknown>;
+    const oldCandidate = {
+      ...receipt,
+      candidateTag: oldReceipt.candidateTag,
+      candidateCommit: oldReceipt.candidateCommit,
+      artifactDigest: oldReceipt.artifactDigest,
+    };
+    expect(
+      (await verifyClientMatrix(original, root, { 'CLIENT-CODEX-APP-SERVER': oldCandidate }))
+        .failures,
+    ).toContain('Controlled smoke used another candidate');
+  }
   const wrongArtifact = structuredClone(receipt);
   wrongArtifact.artifactDigest = `sha256:${'0'.repeat(64)}`;
   expect(
