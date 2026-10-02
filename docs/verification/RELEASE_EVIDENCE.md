@@ -216,3 +216,30 @@ No installable package was distributed or rebuilt by this workflow.
 ## rc.6 distribution preparation — 2026-10-02 UTC
 
 The evidence workflow now selects the actual original rc.6 producer and signing receipts. The signed original has been independently verified; selectors and focused packet/refusal tests are prepared for the integrated handoff. No rc.6 public metadata assets have been published yet. This workflow distributes authenticated metadata only; BGA-415 retains installable-package publication and its reporting/security/publisher gates. Historical rc.5 evidence remains intact.
+
+### rc.6 writer-pin failure and repair
+
+[Attempt 37074927384](https://github.com/Brandon-Born/bga-mcp/actions/runs/37074927384) passes preparation but fails the isolated writer; verification is skipped. The prepared plan digest is `sha256:94aec1abaca5bc724a1081fa665237c97aa485a197eebfb92c44672d0b5c2ca7`. The actual local handoff reproduces rejection of rc.6 against the writer's retained rc.5 pin before any remote operation. An authenticated paginated release listing finds no rc.6 release or draft. No retry or overwrite is performed at that source.
+
+The writer now pins the actual rc.6 original. Its positive regression fixture independently selects the reviewed candidate from `config/security-review.json`, so sharing a stale historical literal cannot hide a producer/writer mismatch. The actual digest-bound signed-original prepared plan is validated before a replacement workflow run. Full-check, reviewed integration and exact-source CI remain required for this repair. All previous runs and original bytes remain unchanged.
+
+```verification-record
+{
+  "kind": "review",
+  "scope": "rc.6 metadata-writer pin repair and independently selected regression",
+  "sourceBase": "b0c354578482226f7287c463720d37d256527cb5",
+  "sourceClean": false,
+  "actualSignedOriginalPlanDigest": "sha256:94aec1abaca5bc724a1081fa665237c97aa485a197eebfb92c44672d0b5c2ca7",
+  "oldWriterPinRefusedActualPlan": true,
+  "correctedWriterAcceptsActualPlan": true,
+  "oldPinRegressionControl": "failed as required",
+  "focusedTests": 3,
+  "completeGate": "passed",
+  "testsPassed": 768,
+  "scenariosPassed": 234,
+  "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+  "localEvidenceDigest": "sha256:8b59a41154e90f8313718fc36bb7edfc0beac81f98b4ebe460847e8fb2013649",
+  "logDigest": "sha256:60fcd35c3e3b94c0882ff7a3c093e54fa74027e533cb18b35624ac24fa003f9c",
+  "publicationPerformedByLocalCheck": false
+}
+```

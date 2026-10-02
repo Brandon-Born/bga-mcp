@@ -63,5 +63,72 @@
     "conformance": "passed",
     "initialFailure": "Premature publication reference to absent rc.6 public-evidence receipt; deferred reference, passing 8-test boundary repeat, then passing full gate",
     "scope": "Integrated reviewer tree; original signed candidate remains unchanged; exact-source CI pending"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37074879294",
+    "commit": "b0c354578482226f7287c463720d37d256527cb5",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:27523d637e08291aadcc53633d4b058e85f904ceb67a2dc71eabf95d170f63dd",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T22:58:27.910Z",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:a6ffbed1ba316d5a8c6a227ffa960095ef2b82688ce09adf05383aa408ed209e",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T23:00:02.947Z",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:7c7f24e3ee8f159b484f37d51504dd14172231c6879c94e1bd65f8ed186e9c46",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T22:58:57.610Z",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:2f4b093f79ccac446be569dcfe8c13b40b40c4516312dab9839a85d253b00bf2",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T22:57:18.056Z",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:e169edd5e1be769c4dd87a0d501aad5a383214d136e6f424cfa5949224d34785",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T23:00:58.325Z",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:e5b3b2357300e2dd771001027c279bf3d8b866bb14b312c3148f71a3d9d044fe",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T23:00:02.580Z",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      }
+    ]
   }
 }
