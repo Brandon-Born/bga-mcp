@@ -78,6 +78,10 @@ Do not claim that MCP framework checks validate game-specific scoring or gamepla
 4. Record useful findings, false positives, unsupported syntax, independent misses,
    setup friction, failures, and agent decisions. Adjudicate each finding against
    official BGA sources or independently checked game assertions.
+   Capture missing functionality and manual workarounds in the
+   [agent wishlist](AGENT_WISHLIST.md), including the task, desired result, and
+   evidence needed to show it helps. Revisit the wishes after each evaluated task;
+   distinguish improvements to existing tools from new capability proposals.
 5. Retain only sanitized summaries in this repository. Private source, publisher
    art, credentials, player data, paths identifying private environments, and raw
    transcripts stay out of public evidence and fixtures.
