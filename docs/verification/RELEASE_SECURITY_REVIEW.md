@@ -187,3 +187,24 @@ says “These files are deprecated”, and the
 [migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide)
 retains independently staged replacements. Existing unsupported-syntax and
 legacy/hybrid boundaries remain in force; no framework rule is changed.
+
+## Clean original rc.5 repeat
+
+The [clean committed assessment](security-review-v1.0.0-rc.5-clean.json)
+repeats the original rc.5 review from
+`9abd2162fafdb190ef407912a1de7ec7843d3e04` with `sourceClean: true`.
+Independent trust roots, original signature, subjects and producer provenance
+verify again. A fresh registry audit of the same clean exact candidate source
+reports zero production and zero full-graph findings. The original artifact
+again passes 27 tests / 11 required security scenarios and 274 text-file scans.
+This clean assessment is a separate record; the initial dirty assessment and all
+historical packets/reviews remain unchanged.
+
+Both candidate-documentation and current-framework gates now pass. The sole
+blocking assessment risk is `BLOCK-privateReportLifecycleVerified`: BGA-406's
+independent reporter receipt/acknowledgement/triage/closure remains unobserved.
+The assessment retains `status: held`; no explicit approval is requested or
+granted. The offline security verifier still validates the separately retained
+rc.5 preparation record structurally, which is not an approval check. BGA-415
+must select its own matching current prerequisites and clean assessment before
+admission, in addition to a real reporting lifecycle and publisher decision.

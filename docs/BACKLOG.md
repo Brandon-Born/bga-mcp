@@ -1428,6 +1428,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **rc.5 reviewer admission, 2026-10-02 UTC:** [Exact-source CI 37004398077](verification/rc5-security-preparation-ci.json) passes all six platform/Node jobs at `49dc413`, with 674 tests / 209 required scenarios. Downloaded records validate schema, integrity, clean exact source, CI environment and conformance. All eight official pages were fetched again, their unchanged relevant wording read, and their existing decisions explicitly re-admitted against that CI. The actual framework release guard passes; no BGA behavior, fixture or trust boundary changes. The initial dirty assessment remains historical; a separate clean committed reviewer repeat is next, with external reporting and final approval still held.
 
+- **Clean rc.5 repeat, 2026-10-02 UTC:** [Clean original-candidate assessment](verification/security-review-v1.0.0-rc.5-clean.json) from committed reviewer `9abd216` records `sourceClean: true`. Fresh independent roots authenticate the same unchanged signed original, subjects and provenance; fresh clean-source audits again report zero production/full-graph findings. The original tarball passes 27 tests / 11 required scenarios / 274 packaged text-file scans. Current guide bytes and the actual framework guard both pass. The sole blocking assessment risk is BGA-406's unobserved independent report lifecycle; status stays held. Preparation and historical assessments remain immutable; BGA-415's receipt/publisher admission is separate. No final approval, registry write or package rebuild occurs.
+
 ### BGA-406 — Establish private vulnerability reporting
 
 - **Status:** implemented
