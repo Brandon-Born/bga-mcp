@@ -548,7 +548,7 @@
       "dimension": "transport",
       "value": "stdio",
       "support": "supported",
-      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests. BGA-404 adds isolated original-byte attestation and a separate signature-verified consumer workflow; ordinary scenario tests exercise offline policy only. BGA-407 publishes signed original observations with exact frozen-inventory coverage and explicit exclusions; release-tool network reads add no network access to the local server.",
+      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests. BGA-404 adds isolated original-byte attestation and a separate signature-verified consumer workflow; ordinary scenario tests exercise offline policy only. BGA-407 publishes signed original observations with exact frozen-inventory coverage and explicit exclusions; release-tool network reads add no network access to the local server. BGA-411 checks shipped guides, help paths, and manifest-derived public/development inventory against installed MCP discovery; templates and concrete resources are counted separately. These documentation checks add no client or game-correctness claim.",
       "scenarios": [
         "E2E-RELEASE-PUBLIC-EXECUTABLE",
         "E2E-STDIO-SHUTDOWN",
@@ -559,7 +559,10 @@
         "INT-RELEASE-SIGNING",
         "GATE-RELEASE-EVIDENCE",
         "INT-RELEASE-EVIDENCE",
-        "INT-RELEASE-EVIDENCE-PACKET"
+        "INT-RELEASE-EVIDENCE-PACKET",
+        "E2E-DOCUMENTATION-PUBLIC",
+        "E2E-DOCUMENTATION-DEVELOPMENT",
+        "E2E-DOCUMENTATION-NEGATIVE"
       ]
     },
     {

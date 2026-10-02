@@ -1148,6 +1148,22 @@
       "case": "Ignored runtime modules are retained and outside source cannot consume their read budget",
       "boundary": "packaged",
       "scenarios": ["E2E-PROJECT-SOURCE-MODULES"]
+    },
+    {
+      "item": "BGA-411",
+      "case": "Shipped Markdown and help paths resolve; install, first use and removal follow the shipped guide",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCUMENTATION-PUBLIC", "E2E-INSTALL-GUIDE"]
+    },
+    {
+      "item": "BGA-411",
+      "case": "Public and development discovery match generated tool, template, concrete-resource, prompt, stability and network inventories; seeded omission and stale count fail",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-DOCUMENTATION-PUBLIC",
+        "E2E-DOCUMENTATION-DEVELOPMENT",
+        "E2E-DOCUMENTATION-NEGATIVE"
+      ]
     }
   ]
 }

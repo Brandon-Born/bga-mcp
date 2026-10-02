@@ -73,7 +73,7 @@ The first public release queue is:
 11. `BGA-405` — security review of the exact signed candidate.
 12. `BGA-415` — publish and independently reinstall the first release.
 
-BGA-431, discovered during BGA-424, is the current release-blocking correction before that evaluation can close. The three evaluated tasks are recorded, but their affected installed regression fails. Resolve it and repeat affected candidate checks before BGA-411.
+BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is now the current documentation owner; later release operations retain their separate artifact and publication gates.
 
 BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
@@ -1441,7 +1441,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-411 — Make public and agent-facing documentation self-contained and inventory-derived
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-003, BGA-006, BGA-400, BGA-414, BGA-416, BGA-424
 - **Deliverable:** A packed artifact whose README/help links resolve for an installed-package reader and whose public/canonical agent-facing capability inventory and boundary descriptions are generated or checked against real MCP discovery and policy configuration.
@@ -1450,6 +1450,9 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** An isolated consumer installs the tarball, resolves every local Markdown/help path, follows one install and one removal flow, discovers the server, and compares all documented names/counts/stabilities with the client response and packed manifest. A seeded missing file and stale count each fail.
 - **Finding:** The audited tarball contained README.md but no `docs/`; all README links to installation, testing, backlog, compatibility, threat model, and verification records were broken locally. Discovery returned 10 tools and 11 concrete resources, not the documented 7 and 3. The canonical agent instructions also retained the obsolete absolute claim that the server never opens a network connection.
 - **Additional finding, 2026-08-23:** Current prose has drifted again. `docs/INSTALL.md` says BGA-403 has not landed and only `legacy-flat` is supported; README says BGA-318, BGA-326, and BGA-328 remain open after their recorded implementations, points users at the development `dist/cli.js`, and describes an incomplete session boundary the backlog says was closed. The install guide still reports the older `4/9` documentation score while BGA-211 records `3/9`. The package still omits every linked `docs/*` page and `SECURITY.md`. BGA-416 additionally proves the installed public command and README inventory describe different profiles. These remain one inventory-derived documentation defect, not separate implementation items.
+
+- **Implementation, 2026-10-01:** Consumer guides, canonical agent instructions and help now share manifest/policy-derived inventories checked against both installed profiles. The package ships README, install, agent, contribution, security and versioning guides; repository-only links use immutable public source URLs. The guide identifies signed rc.3, original digest/retention and current-checkout separation. E2E checks local links and discovery, and deletes an installed guide plus seeds stale counts/names/stability/boundaries to prove refusal. BGA-424 claims cite the exact candidate/client/frozen tasks and adjudication, with SQL, reload, runtime and productivity limits retained. Full local gate passes (654 tests, 196 required scenarios); the unchanged original signed rc.3 also passes the corrected guide through removal. [Documentation record](verification/PACKAGED_DOCUMENTATION.md) retains the scoped checks and receipts. Exact-source CI is pending.
+- **Sources:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), fetched 2026-10-01, says “These files are deprecated”; [Migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says “Then you can safely delete the gameoptions.inc.php file” after replacement. Documentation retains independently migrated and legacy forms; no reader behavior changes.
 
 ### BGA-412 — Prove parser deadlines through the installed artifact
 

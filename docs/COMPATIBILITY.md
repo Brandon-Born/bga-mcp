@@ -86,7 +86,7 @@ The running server's negotiation constants, transport manifest, compatibility cl
 
 The installed server negotiates `2026-07-28`, supports discovery, and now completes project-root setup through its in-band multi-round-trip flow. The compatibility claim remains `unknown` because the pinned official conformance suite has no applicable stdio set for that revision; public capability entries do not claim the protocol until release evidence deliberately establishes the complete contract.
 
-The first release profile is separately frozen by [`config/release.json`](../config/release.json). Its package-manager-created `bga-mcp` command exposes only the seven historically verified local tools and three project resources on stdio and protocol `2025-11-25`; documentation, setup, Studio, and the implemented 2026 adapter remain available only in the development profile. BGA-414 is reopened until exact-current evidence restores that inventory. `E2E-RELEASE-PUBLIC-EXECUTABLE` compares real installed discovery with the inventory, and `GATE-RELEASE-INVENTORY` rejects a non-verified selection, executable drift, or candidate evidence from another commit or artifact.
+The first release profile is separately frozen by [`config/release.json`](../config/release.json). Its package-manager-created `bga-mcp` command exposes only the seven historically verified local tools and three project resources on stdio and protocol `2025-11-25`; documentation, setup, Studio, and the implemented 2026 adapter remain available only in the development profile. BGA-414 was restored by exact-source candidate CI; signed rc.3 adds the BGA-431 correction and the bounded BGA-424 carry-forward. `E2E-RELEASE-PUBLIC-EXECUTABLE` compares real installed discovery with the inventory, and `GATE-RELEASE-INVENTORY` rejects a non-verified selection, executable drift, or candidate evidence from another commit or artifact.
 
 ## Clients
 
@@ -139,3 +139,5 @@ reader: unterminated contexts and closing tags/mixed HTML remain unsupported;
 this is not full PHP syntax validation. The historical rc.2 failure above remains
 valid for those original bytes. The replacement signed candidate and explicit frozen-task
 carry-forward close BGA-424 for its bounded sample. See [implementation evidence](verification/EXECUTABLE_CONTRACTS.md).
+
+BGA-411 extends CLAIM-TRANSPORT-STDIO with installed documentation checks: all shipped guide/help paths resolve, public and development discovery match generated names/counts/stabilities/boundaries, and omitted-file/stale-inventory controls fail. Templates and concrete resources are distinct. This adds no network, named-client, productivity or game-correctness claim.

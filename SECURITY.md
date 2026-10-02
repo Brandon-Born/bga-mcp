@@ -1,6 +1,6 @@
 # Security Policy
 
-`bga-mcp` is intended to inspect local source code and may eventually connect to authenticated BGA Studio environments. Treat security and credential handling as core product behavior.
+`bga-mcp` is intended to inspect local source code and the development profile can make explicitly permitted documentation and experimental authenticated Studio reads. Network access is off by default; the public command excludes those surfaces. Treat security and credential handling as core product behavior.
 
 ## Reporting a vulnerability
 
@@ -32,8 +32,8 @@ These are design goals while the project is pre-release, not a claim that unrele
 
 ## Threat model
 
-[docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks behind those requirements, together with the operator responsibilities that the server cannot enforce on its own. Its machine-readable form is checked in CI: a mitigation without evidence, a manual control without an owner, or a capability advertised across an unreviewed boundary fails the build.
+[docs/THREAT_MODEL.md](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/THREAT_MODEL.md) records the assets, actors, trust boundaries, abuse cases, mitigations, and residual risks behind those requirements, together with the operator responsibilities that the server cannot enforce on its own. Its machine-readable form is checked in CI: a mitigation without evidence, a manual control without an owner, or a capability advertised across an unreviewed boundary fails the build.
 
-The BGA Studio boundary is recorded as unreviewed, so no Studio capability may be advertised.
+TB-STUDIO for mutation remains unreviewed; no mutation capability is advertised. The separate TB-STUDIO-READ boundary permits only the reviewed experimental read surface, which remains unable to retrieve browser-rendered Studio logs.
 
 The documentation-retrieval boundary was reviewed on 2026-08-07. It is reviewed, not open: the review records the mitigations that must exist before any capability may retrieve documentation, and the same gate refuses to advertise a capability whose boundary preconditions are still outstanding.

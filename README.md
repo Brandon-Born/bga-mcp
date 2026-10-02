@@ -1,153 +1,99 @@
 # bga-mcp
 
-An unofficial Model Context Protocol (MCP) server for Board Game Arena Studio development.
+An unofficial, read-only Model Context Protocol server for inspecting Board Game Arena game projects. It reports cross-file defects and uncertainty to a coding agent; it never writes to the inspected project or executes its game code.
 
-> [!IMPORTANT]
-> This project is in early implementation. The installed public `bga-mcp` command is bound to the frozen local-only release profile: seven tools and three project resources over stdio. The source-only development profile still exposes 10 tools and 11 concrete resources. BGA-416 through BGA-420 correct the public executable, unknown cross-file shapes, action scope, contradictory official action examples, and SQL aliases through installed-command scenarios. They remain `implemented`, not re-verified, until exact-current CI records the correction commit.
+The public `bga-mcp` command uses the frozen local release profile on stdio, protocol `2025-11-25`. The source development entry point exposes additional, separately reviewed documentation and experimental Studio reads. See the exact inventory below before configuring either profile.
 
-`bga-mcp` aims to give MCP-compatible coding agents structured, safe access to the information and workflows needed to build and maintain games for Board Game Arena (BGA). The goal is not to generate an entire game autonomously. The goal is to make an experienced developer faster and help a new BGA developer avoid framework-specific mistakes.
+## Install and use
 
-## Why this exists
+Follow the packaged [installation guide](docs/INSTALL.md) for authenticated candidate acquisition, installation, client configuration, updating, removal and troubleshooting. No registry package has been published. The latest independently verified candidate is signed `v1.0.0-rc.3`; [its original-byte signing receipt](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/verification/release-signing-v1.0.0-rc.3.json) identifies the package digest and finite artifact retention.
 
-BGA development spans local PHP, JavaScript or TypeScript, SQL, BGA's state machine, SFTP synchronization, browser-based testing, and Studio logs. General-purpose coding agents can edit the files, but they do not automatically understand how those pieces relate.
+This checkout's documentation changes are newer than that immutable candidate. Packing this checkout produces a new artifact; it does not replace the signed rc.3 bytes or transfer their signature to a rebuilt tarball. Candidate signing and package publication remain separate steps.
 
-This server will focus on the gaps that benefit from structured BGA knowledge and purpose-built operations:
+Configure an absolute, authorized project root and start with `inspect_project`. Review explicit unsupported findings before drawing conclusions. `validate_project` combines selected validators; `run_pre_release_audit` distinguishes passed, failed, unsupported and manual-required checks. A clean result cannot establish game correctness outside the syntax and checks the server reads.
 
-- Inspecting a project and explaining its BGA-specific structure.
-- Validating state definitions, transitions, actions, notifications, and database usage across files.
-- Searching curated, version-aware BGA development documentation.
-- Running repeatable project and pre-release checks.
-- Previewing and synchronizing changes to BGA Studio safely.
-- Reading and filtering Studio diagnostics without pasting logs into an agent conversation.
+The readers cover the documented legacy, modern and independently migrated file forms, with bounded syntax support. [Compatibility evidence](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/COMPATIBILITY.md) records the specific claims; the official [file reference](https://en.doc.boardgamearena.com/Studio_file_reference) and [migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) remain the framework authority.
 
-## Capabilities
+## Capability inventory and permissions
 
-Available now, local and read-only, implemented on protocol `2025-11-25`:
+<!-- inventory:start -->
 
-- `inspect_project` — detects the project layout, reports metadata, components, and the state machine where it can be read, and returns explicit findings for anything missing, uncertain, or unsupported.
-  Layout detection recognizes legacy, modern, and part-migrated projects. The validators have readers for both generations, but the current review found false or unsupported results for documented modern state, action, notification, and query forms. Every reader was corrected against the official documentation under BGA-124 through BGA-127, and BGA-128 proved each affected acceptance case through the installed server, so the modern and part-migrated layouts are inside the compatibility contract again. Every claim here is backed by a CI run of a commit in this history, which the evidence gate checks rather than assumes.
+Generated in a repository checkout by `corepack pnpm docs:inventory` from the capability manifest, release selection, topic table and policy defaults; installed MCP discovery checks both profiles.
 
-- `validate_state_machine` — checks the entry state, duplicate identifiers and names, unknown state types, transition targets, unreachable states, dead ends, and whether the methods a state names exist in readable PHP source. Structural findings are facts; cross-file handler findings are heuristics that carry their known limitations.
-- `validate_action_contracts` — traces each player action through its legacy dispatcher, game-class fallback, or state-local entry point. It compares only complete argument shapes; computed arguments and ambiguous state-local signatures remain unsupported.
-- `validate_notifications` — compares the notifications the server sends with the handlers the client declares, including payload keys. Computed payloads remain unknown rather than becoming fabricated empty payloads.
-- `audit_database_usage` — compares `dbmodel.sql` with the queries the PHP sources run, resolving explicit and implicit output/table aliases before reporting undeclared or unused columns.
-- `validate_project` — runs every validator, or the groups you select, and combines the results. A validator that fails is reported as failed and makes the run incomplete rather than leaving it looking clean.
+Network access is off by default. The public command excludes network surfaces and refuses network/Studio flags. In the development profile, `--allow-network` enables documentation search, topic reads and framework-version reads; Studio reads additionally require `--experimental-studio-logs`, an authorized account and session. The experimental Studio reader cannot read the browser-rendered log panel. No profile provides synchronization, uploads or other mutations.
 
-It also serves three read-only resources describing the single configured project: `bga://project/summary`, `bga://project/states`, and `bga://project/diagnostics`.
+Resource templates are URI patterns returned by `resources/templates/list`; concrete resources are individually listed URIs returned by `resources/list`. Counts below include each separately, including the fixed documentation-topic expansions.
 
-- `run_pre_release_audit` — runs the catalogued pre-release checks and reports passed, failed, unsupported, and manual-required separately. A check whose validator could not read part of the project stays unsupported: it is never counted as a pass, and never as a failure.
+**Public command (bga-mcp)**
 
-Available behind explicit network permission, implemented but not verified:
+Tools: 7; resource templates: 0; concrete resources: 3; prompts: 0. Discovery entries by manifest stability: verified 10, implemented 0, experimental 0. Network-backed entries: 0 (permission off by default).
 
-- `search_bga_docs`, seven fixed documentation-topic resources, and `bga://framework/version`. A search that could not reach a source now fails as a failed lookup instead of reporting that nothing matched, and it reports what it searched, what it attempted, and what failed. The version resource reads the Studio page's `Software Versions` section, returns every value with the line it came from, and states a disagreement rather than picking one. The maintained live retrieval evaluation still fails on excerpt selection; see BGA-211.
+| Kind      | Discovery name / URI        | Manifest stability | Trust boundary      | Network permission |
+| --------- | --------------------------- | ------------------ | ------------------- | ------------------ |
+| resources | `bga://project/diagnostics` | verified           | TB-LOCAL-FILESYSTEM | local              |
+| resources | `bga://project/states`      | verified           | TB-LOCAL-FILESYSTEM | local              |
+| resources | `bga://project/summary`     | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `audit_database_usage`      | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `inspect_project`           | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `run_pre_release_audit`     | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_action_contracts` | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_notifications`    | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_project`          | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_state_machine`    | verified           | TB-LOCAL-FILESYSTEM | local              |
 
-Also available:
+**Development entry point (dist/cli.js)**
 
-- `check_setup` — reports local, documentation, and experimental Studio setup state. The 2026 protocol-era roots/input flow remains BGA-318.
-- `read_studio_logs` — experimental, off by default, and now **blocked** rather than merely unverified. A live run on 2026-08-10 established that the Studio page it reads serves 99% script and none of the log: the panel a developer sees is rendered in their browser, so fetching HTML cannot read it at any budget. The tool refuses with that limit stated. Its credential handling, identifier, and output privacy are settled (BGA-320, BGA-321, BGA-327, BGA-328); its mechanism is not. See BGA-312. Output privacy (BGA-319) and address normalization (BGA-323) are corrected: nothing belonging to another developer or a player reaches any output surface, proven through the installed package.
+Tools: 10; resource templates: 1; concrete resources: 11; prompts: 0. Discovery entries by manifest stability: verified 10, implemented 11, experimental 1. Network-backed entries: 11 (permission off by default).
 
-Later releases may add authenticated Studio operations:
+| Kind      | Discovery name / URI        | Manifest stability | Trust boundary      | Network permission |
+| --------- | --------------------------- | ------------------ | ------------------- | ------------------ |
+| resources | `bga://docs/client`         | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/cookbook`       | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/file-reference` | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/game-logic`     | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/migration`      | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/states`         | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://docs/studio`         | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://framework/version`   | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| resources | `bga://project/diagnostics` | verified           | TB-LOCAL-FILESYSTEM | local              |
+| resources | `bga://project/states`      | verified           | TB-LOCAL-FILESYSTEM | local              |
+| resources | `bga://project/summary`     | verified           | TB-LOCAL-FILESYSTEM | local              |
+| templates | `bga://docs/{topic}`        | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| tools     | `audit_database_usage`      | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `check_setup`               | implemented        | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `inspect_project`           | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `read_studio_logs`          | experimental       | TB-STUDIO-READ      | explicit opt-in    |
+| tools     | `run_pre_release_audit`     | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `search_bga_docs`           | implemented        | TB-DOCS-NETWORK     | explicit opt-in    |
+| tools     | `validate_action_contracts` | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_notifications`    | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_project`          | verified           | TB-LOCAL-FILESYSTEM | local              |
+| tools     | `validate_state_machine`    | verified           | TB-LOCAL-FILESYSTEM | local              |
 
-- `preview_studio_sync`
-- `sync_to_studio`
-- Test-table and saved-state workflows where they can be implemented reliably and responsibly.
+Manifest stability describes the recorded scenario coverage, not general game correctness. Implemented and experimental entries are excluded from the public release. The development protocol adapter remains implemented; it is not a verified public transport.
+<!-- inventory:end -->
 
-Current discovery names are not yet a stable release API. Future capability names are proposals.
+The server reads only authorized roots. With exactly one configured root, tools may omit `projectRoot`; with multiple roots, select one explicitly. File/read budgets, timeouts and result-size limits apply. It creates no persistent project state or telemetry. Package acquisition and dependency installation may use the network independently of MCP calls. Server stdout is reserved for MCP frames; result and diagnostic output is screened and redacted.
 
-## Design principles
+## What the real-project evaluation established
 
-- **Verified, not assumed:** no tool or resource is complete until its public behavior passes end-to-end tests through a real MCP client.
-- **Local first:** source code and credentials stay on the developer's machine by default.
-- **Read-only by default:** inspection and validation should not change a project or Studio state.
-- **Preview before mutation:** uploads and other state-changing operations expose an exact dry run first.
-- **Structured results:** tools return actionable findings with locations, evidence, and severity.
-- **Agent neutral:** any client with suitable MCP support should be able to use the server.
-- **Current, attributable guidance:** documentation results retain their source and update metadata.
-- **Narrow permissions:** project roots and remote targets are explicitly configured and allowlisted.
+BGA-424 evaluated diagnosis, feature work and review on Dino Racer with native `codex-cli 0.159.2`. Signed rc.2 exposed a false handler and comment-only PHP method; BGA-431 corrected those readers. Signed rc.3 (SHA-256 `598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3`) then passed the explicit repeat of all 23 frozen task calls on the same five source snapshots. Independent JavaScript declaration and PHP lexical oracles adjudicated the corrected inventories. See the [bounded evaluation and task identities](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/verification/AGENT_EVALUATION_CARRY_FORWARD.md) and [sanitized ledger](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/verification/agent-evaluation-v1.0.0-rc.3.json).
 
-## Project status
+This supports bounded cross-file inspection usefulness. The review still had six unsupported SQL checks, one informational unavailable-audit failure and eight manual checks. The MCP did not identify the game-owned reload defect. There was no comparable effort baseline, measured time saving, live Studio gameplay, or general proof of game rules, scoring or conservation. Fixture coverage and client smoke tests do not establish those outcomes.
 
-The source development profile discovers 10 tools and 11 concrete resources. The public installed command discovers only the frozen seven local tools and three project resources. Those capabilities have historical verified evidence from [CI run 31439224886](https://github.com/Brandon-Born/bga-mcp/actions/runs/31439224886), but the 2026-08-23 release audit reopened that evidence. BGA-416 through BGA-420 are now implemented locally with real-client installed-command regressions; BGA-414 remains reopened until the remaining release blockers and exact-current CI restore the inventory. `check_setup` and the documentation capabilities remain development-profile features, and the Studio log reader remains experimental.
+## Develop and contribute
 
-Underneath it: a strict TypeScript package that builds and packs, a versioned [diagnostic contract](docs/DIAGNOSTICS.md) and public error contract, the [policy boundary](src/policy.ts) every capability routes through, a [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), and [version policy](docs/VERSIONING.md) enforced by CI gates, and a [verification evidence artifact](docs/verification/VERIFICATION_EVIDENCE.md) each run emits and checks.
-
-The local-only first-release inventory and its `1.0.0` contract are frozen. A manual, non-publishing release-candidate workflow is implemented: it accepts only an existing `v1.0.0-rc.N` tag, reconstructs the npm tarball from the same frozen lockfile, and refuses anything other than byte-for-byte equality before retaining the original artifact and its digest-bound evidence. BGA-403 remains `implemented`, not `verified`, until that workflow passes on an actual candidate tag and exact-head CI; no package has been published.
-
-See the executable [implementation backlog](docs/BACKLOG.md), [testing policy](docs/TESTING.md), [threat model](docs/THREAT_MODEL.md), [compatibility matrix](docs/COMPATIBILITY.md), [conformance coverage](docs/CONFORMANCE.md), [roadmap](docs/ROADMAP.md), and [architecture notes](docs/ARCHITECTURE.md).
-
-## Install it
-
-See the [installation guide](docs/INSTALL.md) for setup, configuration, updating, removal, and troubleshooting. An installed release is launched by the package-manager-created `bga-mcp` command; do not point a release client at an internal `dist/*.js` file. Source checkout instructions below are explicitly for development.
-
-## Develop locally
-
-Requirements: Node.js 22.13 or newer on the Node 22 line, or Node.js 24 LTS or newer; Corepack; and Git.
+Use a source checkout for development. Requirements: Node `^22.13.0 || >=24.0.0`, Corepack, Git and pinned pnpm 11.15.1.
 
 ```sh
 corepack pnpm install --frozen-lockfile
 corepack pnpm check
-```
-
-Build and inspect the local executable:
-
-```sh
 corepack pnpm build
 node dist/cli.js --help
-node dist/cli.js --version
 ```
 
-An MCP client can launch a development checkout after it has been built:
+`dist/cli.js` is the development profile; installed users launch the package-manager-created public `bga-mcp` command. Its help points to the packaged guide. Run `corepack pnpm docs:inventory` after inventory changes; `corepack pnpm verify:documentation` rejects drift, and installed E2E compares both profiles with actual MCP discovery.
 
-```json
-{
-  "command": "node",
-  "args": [
-    "/absolute/path/to/bga-mcp/dist/cli.js",
-    "--project-root",
-    "/absolute/path/to/a/bga-project"
-  ]
-}
-```
+Read the canonical [agent instructions](AGENTS.md), [contribution rules](CONTRIBUTING.md), [security policy](SECURITY.md) and packaged [version policy](docs/VERSIONING.md). Repository-only references are pinned to the reviewed handoff: [backlog](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/BACKLOG.md), [testing](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/TESTING.md), [threat model](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/THREAT_MODEL.md), [architecture](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/ARCHITECTURE.md), and [roadmap](https://github.com/Brandon-Born/bga-mcp/blob/35f90c924f29951a3f137af0edd82e38e25b2e09/docs/ROADMAP.md). They describe that revision, not future repository changes.
 
-Configuration is the policy boundary. Defaults are local, read-only, and network-off, and every relaxation is an explicit flag:
-
-| Option                         | Effect                                                                                                             |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| `--project-root <path>`        | Allow one local project root, as an absolute path. Repeatable. A missing root fails at startup.                    |
-| `--allow-remote-project <id>`  | Allowlist a BGA Studio project for a future mutation. Repeatable.                                                  |
-| `--operation-timeout-ms <n>`   | Deadline for the public response; underlying work may continue until BGA-326 passes.                               |
-| `--max-output-bytes <n>`       | Budget for one result payload, successful or not, in bytes. Minimum 137, the smallest failure the server can send. |
-| `--allow-network`              | Permit network access. Off by default.                                                                             |
-| `--experimental-studio-logs`   | Enable the experimental Studio log reader. Off by default.                                                         |
-| `--studio-dev-account <name>`  | A Studio dev account you own. Repeatable. Only lines about these accounts are returned, on every output surface.   |
-| `--studio-session-file <path>` | Read the Studio session from a small regular file only its owner can read. Refused as unsupported on Windows.      |
-| `--allow-mutations`            | Permit explicitly confirmed mutating operations. Off by default.                                                   |
-
-Every tool reads only from the roots given here. `projectRoot` may be omitted when exactly one root is configured, and then means that root; with none or several configured, the call is refused with a stable error code rather than guessing which project was meant.
-
-The server reserves stdout for MCP frames. Shared protocol/shutdown logging uses redaction, Studio output is screened on every surface, and successful results are redacted and minimized before they leave the process; session-file handling remains incomplete under BGA-328.
-
-## Verification commands
-
-- `pnpm format:check`, `pnpm lint`, and `pnpm typecheck` enforce source quality.
-- `pnpm test:coverage` runs unit, integration, fixture-integrity, harness self-tests, and packed-server E2E with coverage thresholds.
-- `pnpm check:package` builds, packs, and checks package metadata.
-- `pnpm test:conformance` proves the official suite rejects a seeded violation and exercises the measured 2025 stdio scenario set. The suite does not currently provide applicable 2026 stdio evidence.
-- `pnpm evidence` and `pnpm verify:evidence` write and check `.artifacts/verification-evidence.json`, which records what the run actually proved: see [docs/TESTING.md](docs/TESTING.md#verification-evidence).
-- `pnpm verify:threat-model`, `pnpm verify:compatibility`, and `pnpm verify:scenarios` prove the threat model, the compatibility matrix, and every claimed scenario stay consistent with the code and the tests. Each seeds its own defect first and fails on it.
-- `pnpm verify:safety-gates` proves the secret scanner detects a seeded credential without printing it, then scans the repository and every retained CI artifact.
-- `pnpm check` is the complete local gate.
-
-## Contributing
-
-Early feedback from active BGA developers is particularly valuable. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening an issue or pull request.
-
-Security-sensitive reports should follow [SECURITY.md](SECURITY.md).
-
-## License
-
-Licensed under the [Apache License 2.0](LICENSE).
-
-## Unofficial project
-
-`bga-mcp` is an independent, unofficial community project. It is not affiliated with, endorsed by, or operated by Board Game Arena or its owners. Board Game Arena, BGA, and related names and marks belong to their respective owners.
+Licensed under [Apache License 2.0](LICENSE). This independent community project is not affiliated with or endorsed by Board Game Arena or its owners.

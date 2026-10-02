@@ -22,15 +22,17 @@ export class CliUsageError extends Error {
 export const HELP_TEXT = `Usage: bga-mcp [options]
 
 Run the bga-mcp server over stdio. Defaults are local, read-only, and network-off.
+Explicit network permission enables documentation search, topic and framework-version reads.
+Experimental Studio reads additionally require the Studio flag, account and session.
 
 Options:
-  --project-root <path>          Allow a local BGA project root (repeatable)
+  --project-root <path>          Allow an absolute local BGA project root (repeatable)
   --allow-remote-project <id>    Allowlist a BGA Studio project for mutations (repeatable)
   --operation-timeout-ms <n>     Deadline for a single operation (default ${String(DEFAULT_POLICY_CONFIG.operationTimeoutMs)})
   --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)},
                                  minimum ${String(MINIMUM_OUTPUT_BYTES)}, which is the smallest failure the server can send)
   --allow-network                Permit network access for capabilities that need it
-  --experimental-studio-logs     Enable the experimental Studio log reader (see docs)
+  --experimental-studio-logs     Enable the experimental Studio log reader (see docs/INSTALL.md)
   --studio-dev-account <name>    A Studio dev account you own (repeatable). Only log
                                  lines about these accounts are ever returned
   --studio-session-file <path>   Read the Studio session from a file instead of the
@@ -40,19 +42,26 @@ Options:
   --allow-mutations              Permit explicitly confirmed mutating operations
   --help                         Show this help text
   --version                      Show the package version
+
+Read docs/INSTALL.md and README.md in the installed package for configuration,
+removal, exact discovery inventories and profile limitations.
 `;
 
 export const RELEASE_HELP_TEXT = `Usage: bga-mcp [options]
 
-Run the local-only bga-mcp release over stdio. Network, Studio, and mutation surfaces are not included.
+Run the local-only bga-mcp release over stdio. Network access is off; this profile excludes network, Studio and mutation surfaces.
+The development profile requires explicit permission for network reads.
 
 Options:
-  --project-root <path>          Allow a local BGA project root (repeatable)
+  --project-root <path>          Allow an absolute local BGA project root (repeatable)
   --operation-timeout-ms <n>     Deadline for a single operation (default ${String(DEFAULT_POLICY_CONFIG.operationTimeoutMs)})
   --max-output-bytes <n>         Maximum bytes returned by one result (default ${String(DEFAULT_POLICY_CONFIG.maxOutputBytes)},
                                  minimum ${String(MINIMUM_OUTPUT_BYTES)}, which is the smallest failure the server can send)
   --help                         Show this help text
   --version                      Show the package version
+
+Read docs/INSTALL.md and README.md in the installed package for configuration,
+removal and exact discovery inventories.
 `;
 
 export function helpTextForProfile(profile: ServerProfile): string {

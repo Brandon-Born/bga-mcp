@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "packageVersion": "1.0.0-rc.3",
+  "guideDigest": "sha256:6424e7d3fc99b3eec81e73bda60c9c629276cc82bfd88eb6ace687ef956b2804",
+  "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+  "platform": "darwin",
+  "node": "v22.17.1",
+  "install": "passed",
+  "discovery": "matched installed inventory",
+  "firstUse": "passed",
+  "unconfiguredRoot": "refused",
+  "repeatInstall": "passed",
+  "crossVersionUpgrade": "not evaluated: repeated same candidate",
+  "projectUnchanged": true,
+  "serverExited": true,
+  "removal": "passed",
+  "candidateCommit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+  "candidateTag": "v1.0.0-rc.3",
+  "signaturePrerequisite": "independent BGA-404 verification required",
+  "rebuilt": false,
+  "recordedAt": "2026-10-02T02:58:56.382228+00:00",
+  "owner": "BGA-411",
+  "runnerCommit": "35f90c924f29951a3f137af0edd82e38e25b2e09",
+  "runnerTreeDirty": true,
+  "previousIndependentSigningReceipt": "release-signing-v1.0.0-rc.3.json",
+  "signatureReexecutedThisFlow": false,
+  "runnerDigests": {
+    "scripts/test-install-guide.ts": "sha256:03175f9ca87a019cbf8977bed92193280f69c8d11d23bd8cb40d0e200eb6d21c",
+    "scripts/lib/install-guide.ts": "sha256:dcbda4c10b4548ac1f5751e058dfea57ca95cb44048c45fd568602e52a53afd7"
+  }
+}

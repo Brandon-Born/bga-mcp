@@ -30,3 +30,7 @@ rc.1 package using committed runner source `aa30ad4`. The
 digests and passing discovery, all calls, refusals, restart, immutable project and
 user configuration, process cleanup and removal. The original receipt is retained.
 This refresh does not transfer native-client evidence to rc.2 bytes.
+
+## BGA-411 helper refresh
+
+The [new controlled receipt](codex-client-bga411-refresh.json) repeats the same native Codex 0.159.2 macOS arm64 / Node 22 smoke on immutable signed rc.1 after installation-guide helper changes. All seven tools and three resources, refusals, restart, unchanged project/configuration, process exit and removal passed. It records the runner commit and explicitly dirty implementation tree plus exact helper digests. Original receipts remain unchanged. This refresh does not transfer named-client compatibility to a rebuilt documentation package or establish GUI interaction, inference, productivity or game correctness.

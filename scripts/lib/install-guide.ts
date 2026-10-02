@@ -9,7 +9,7 @@ import { runCommand } from '../../tests/helpers/process.js';
 import { waitForProcessExit } from '../../tests/helpers/scenario.js';
 
 const installPlaceholder = '/absolute/path/to/bga-mcp-install';
-const artifactPlaceholder = '/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz';
+const artifactPlaceholder = '/absolute/path/to/verified/bga-mcp-1.0.0-rc.3.tgz';
 
 export function verifyInstalledVersion(output: string, packageVersion: string): void {
   assert.equal(
@@ -168,7 +168,7 @@ export async function exerciseInstallGuide(artifact: string, repository: string)
       firstUse: 'passed',
       unconfiguredRoot: 'refused',
       repeatInstall: 'passed',
-      crossVersionUpgrade: 'not evaluated: only one candidate',
+      crossVersionUpgrade: 'not evaluated: repeated same candidate',
       projectUnchanged: true,
       serverExited: true,
       removal: 'passed',

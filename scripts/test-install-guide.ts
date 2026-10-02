@@ -10,7 +10,7 @@ const root = resolve(import.meta.dirname, '..');
 const packet = process.env.BGA_MCP_SIGNED_CANDIDATE;
 assert(packet, 'Supply the independently signature-verified original signed candidate directory');
 const receipt = JSON.parse(
-  await readFile(resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.1.json'), 'utf8'),
+  await readFile(resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.3.json'), 'utf8'),
 ) as unknown;
 const candidate = await readSigningCandidate(packet, receipt);
 const result = await exerciseInstallGuide(resolve(packet, candidate.identity.artifactName), root);
