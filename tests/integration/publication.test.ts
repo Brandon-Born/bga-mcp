@@ -301,6 +301,32 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
     evidence: await read(config.prerequisites.evidence),
     usefulness: await read(config.prerequisites.usefulness),
   };
+  const review = object(await read(config.reviewReceipt));
+  const reviewed = object(review.candidate) as {
+    tag: string;
+    sourceCommit: string;
+    artifactDigest: string;
+  };
+  const currentGuideDigest = sha256(await readFile(resolve(root, 'docs/INSTALL.md')));
+  // Real retained receipts are checked unchanged. Identity rewrites below are synthetic controls only.
+  expect(() =>
+    verifyPublicationPrerequisites(receipts, reviewed, currentGuideDigest),
+  ).not.toThrow();
+  for (const [key, path] of [
+    ['installation', 'install-guide-v1.0.0-rc.4-signed.json'],
+    ['client', 'codex-client-v1.0.0-rc.4-clean.json'],
+    ['evidence', 'release-evidence-v1.0.0-rc.4.json'],
+    ['usefulness', 'agent-evaluation-v1.0.0-rc.4.json'],
+  ] as const) {
+    const historical = await read(`docs/verification/${path}`);
+    expect(() =>
+      verifyPublicationPrerequisites(
+        { ...receipts, [key]: historical },
+        reviewed,
+        currentGuideDigest,
+      ),
+    ).toThrow();
+  }
   const plan = control(),
     expected = plan.candidate;
   // Independently bound receipts are required; this synthetic admission control grants no live release status.

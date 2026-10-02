@@ -249,6 +249,14 @@ official-page admissions. Publication prerequisites deliberately remain pinned
 to historical receipts until their own handoff. This is further evidence for the
 existing selection/impact wish; the actual broad guard is retained.
 
+**BGA-415 confirmation, 2026-10-02 UTC.** Publication still selected rc.4
+security/install/client/evidence/usefulness records after the five rc.5 owners
+completed their separate observations. The explicit references now align with
+rc.5, and each real historical rc.4 prerequisite is refused independently.
+The publisher decision and external lifecycle remain null; alignment does not
+advance either. This is another instance of scattered candidate selection,
+not an implemented shared selector or impact-scoped admission feature.
+
 **Wish.** A single reviewed, immutable candidate selection receipt with an
 explanation of the downstream identities that still differ. Any impact-scoped
 review reuse should show which implementation and fixture dependencies changed,

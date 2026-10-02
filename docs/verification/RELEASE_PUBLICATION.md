@@ -47,3 +47,28 @@ If public verification or promotion fails, preserve the version, candidate tag, 
 - [npm audit signatures](https://docs.npmjs.com/cli/v11/commands/npm-audit/) documents `--json --include-attestations` and verification of registry signatures and provenance. The actual pinned npm 12.2.0 distribution was inspected for `verified[].attestationBundles` and SLSA statement construction; unsupported formats are refused.
 - [GitHub CLI verification](https://cli.github.com/manual/gh_attestation_verify) states “only the `signature.certificate` and the `verifiedTimestamps` properties contain values that cannot be manipulated”; exact certificate/source/signer policy is enforced in addition to predicate checks. It supports SHA-512 artifact digests.
 - [Sigstore bundles](https://docs.sigstore.dev/about/bundle/) distinguish signed envelopes from certificate verification material. Decoding an envelope supplies no cryptographic verification by itself.
+
+## Original rc.5 prerequisite alignment
+
+`config/publication.json` now selects the separate clean rc.5 security assessment
+and the actual rc.5 signed-install, native-client, public-evidence and frozen-task
+usefulness receipts. The original candidate is source
+`286f2bbb1bfff28726378098d9883058f19841e9`, artifact
+`sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`.
+No historical receipt or original package is overwritten, rebuilt or relabelled.
+
+`INT-PUBLICATION-BOUNDARIES` checks all four real retained receipts unchanged
+against the selected clean assessment and current installation-guide digest.
+It then substitutes each actual historical rc.4 receipt independently and
+observes refusal. Synthetic decoder/admission controls remain explicitly
+synthetic and cannot supply a real reporting lifecycle, security approval,
+publisher setup or registry provenance.
+
+The actual read-only preparation status no longer reports candidate-prerequisite
+mismatches. It still holds on BGA-406's independent report lifecycle, BGA-405
+approval and the null package/registry/trusted-publisher decision. Changing
+configuration and its refusal test also requires clean exact-source CI and
+explicit framework re-admission under the existing broad implementation guard.
+The private reporter, publisher setup, registry publication and independent
+public consumer remain unverified. A current hosted dry run must follow that
+admission; no identity-bearing job or registry write is authorized by alignment.
