@@ -1371,6 +1371,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Replacement preparation evidence, 2026-10-02 UTC:** [rc.4 preparation CI](verification/rc4-preparation-ci.json) passes all six jobs at `c2d8d9d`, with 674 tests / 209 scenarios. The eight unchanged previously read source decisions were explicitly re-admitted using that sealed clean evidence; the actual framework release guard passes. The ledger handoff still precedes the distinct tag, immutable producer and original-byte consumer result. No candidate evidence silently transfers from rc.3.
 
+- **Replacement produced, 2026-10-02 UTC:** [Original rc.4 receipt](verification/release-candidate-v1.0.0-rc.4.json) binds clean tag `v1.0.0-rc.4` / source `5c4eebd`, actual successful producer `36977454907`, fresh zero-finding audits and byte-identical Ubuntu/Node 24 reconstruction. Exact-tag CI `36977410122` passes all six jobs at 674 tests / 209 scenarios. Independent native Codex checks all seven tools, three resources, refusals, BGA-432 controls and unchanged project/configuration plus cleanup. [Current Dino Racer rerun](verification/rc4-dino-racer-rerun.json) preserves whole-root uncertainty beside an explicitly different 18-file production export; computed SQL and source selection remain limitations. Original rc.4 installation recipes pass. These receipts do not claim a signature, full BGA-424 repeat, security approval or publication; BGA-404 is the next candidate-specific handoff.
+
 ### BGA-404 — Sign and attest release artifacts
 
 - **Status:** verified

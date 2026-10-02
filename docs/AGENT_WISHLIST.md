@@ -43,6 +43,18 @@ copies inside `modules/` remain eligible for contract reading. The rc.3 repeat
 again required manual exports of the exact 17-, 18- and 20-file roots and private
 digest comparisons; correctness is repaired, while this preparation friction remains.
 
+**Current rc.4 rerun, 2026-10-02 UTC.** The original unsigned rc.4 artifact
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`
+was used through native Codex on clean Dino Racer revision `83e2e50`.
+The [separate current-root/export receipts](verification/rc4-dino-racer-rerun.json)
+show 32 unsupported audit checks on the mixed root and six on an explicitly
+selected 18-file production export. State/action/notification validators pass on
+that export; computed SQL remains incomplete and one database audit check fails.
+I still had to assemble a temporary root, retain every selected file digest and
+keep the omitted local sources visible as a different coverage scope. There is
+no source-selection MCP feature or measured effort saving in this observation.
+This repeats the existing wish rather than assigning a new implementation owner.
+
 **Wish.** One readable receipt showing which files supplied each contract, which
 were excluded and why, and which have unknown scope. An explicit caller-selected
 source set could reduce snapshot preparation, provided omitted files remain

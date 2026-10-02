@@ -111,3 +111,50 @@ The following handoff commit retains those admissions so a distinct clean tag
 can pass the producer guard. Actual candidate production and consumer verification
 remain pending. The earlier signed candidates and their historical receipts are
 unchanged.
+
+### Original rc.4 produced and independently consumed
+
+[Candidate workflow 36977454907](https://github.com/Brandon-Born/bga-mcp/actions/runs/36977454907)
+completed successfully for `v1.0.0-rc.4` at
+`5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`. It ran the complete gate,
+fresh zero-finding production and full-graph audits, and byte-for-byte
+Ubuntu/Node 24 reconstruction. [Exact-tag source CI 36977410122](https://github.com/Brandon-Born/bga-mcp/actions/runs/36977410122)
+passed all six platform/Node jobs with 674 tests and 209 required scenarios.
+Cross-platform CI retains individual package digests; no cross-platform
+byte-equality claim is made.
+
+The original package SHA-256 is
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`.
+[The rc.4 receipt](release-candidate-v1.0.0-rc.4.json) records original archive
+ID `11214430454`, archive digest, finite retention, six checksums, trusted
+manifest/schema, sealed evidence, source/audit relationships and consumer results.
+The original seven files are retained locally in ignored
+`.artifacts/release-candidates/v1.0.0-rc.4/`.
+
+A fresh native Codex 0.159.2 consumer on macOS/Node 22 called all seven local tools,
+read all three resources and refused malformed, outside-root and excluded-tool
+requests. Installed BGA-432 variants for state IDs 2 and 12 retained located
+uncertainty through every consumer, without initial/reachability false findings;
+explicit setup returns resolved both IDs. Project and user-configuration hashes
+were unchanged, native processes exited and package removal succeeded.
+The [unsigned original installation recipe run](install-guide-v1.0.0-rc.4-unsigned.json)
+also passed install, version, first use, unconfigured-root refusal, repeat
+installation and removal. Acquisition/signature policy is still pending BGA-404;
+these consumer results do not supply cryptographic verification.
+
+[The current Dino Racer rerun](rc4-dino-racer-rerun.json) is separately scoped:
+all seven tools and three resources were exercised without changing the clean
+`83e2e50` game revision. The whole working root reported source-scope uncertainty
+and an audit of 0 passed / 1 failed / 32 unsupported / 8 manual checks. An explicitly
+selected, digest-bound 18-file temporary production export reported 26 passed /
+1 failed / 6 unsupported / 8 manual checks; state, action and notification validators
+passed, while database coverage remains incomplete. The excluded tests, scripts
+and disabled client files are a visible source-set change, not a clean whole-root
+verdict. This is not game correctness, live Studio gameplay or a repeat of the
+complete frozen BGA-424 evaluation. The source-selection workaround and computed
+SQL limitation remain in [the agent wishlist](../AGENT_WISHLIST.md).
+
+Only these bounded producer/consumer observations are complete. The original
+rc.4 candidate is unsigned; signing selectors still identify rc.3 until the
+replacement handoff is reviewed and advanced. No package or registry metadata
+was published. Earlier immutable tags, signed packets and receipts are unchanged.

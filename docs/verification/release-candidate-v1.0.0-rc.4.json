@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T07:20:28.196Z",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.4",
+    "sourceCommit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.4",
+    "artifactName": "bga-mcp-1.0.0-rc.4.tgz",
+    "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:1e67db73f38b1b8c48f3b962e7b2cb1e85b4cd22bc646f2692645aed676c19de",
+      "verificationEvidence": "sha256:78e2da27b7269de0d78d5056d46fac15e5940933e0b633c77860e311baae1bc6",
+      "artifact": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+      "securityAudit": "sha256:2f3218d0dcaf869b081cd5266e136d27f2bf9423c0c3a99e6d333e75649743ca"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36977454907",
+    "conclusion": "success",
+    "artifactId": 11214430454,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.4",
+    "archiveDigest": "sha256:0dadc28b8ff6ecd16736083eb22739f2a5cd34efc97e4adae026752226db689b",
+    "expiresAt": "2026-12-31T07:13:39Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36977410122",
+    "commit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:a422c57697bd09aca666f6255ba8513a26f6b8f9ad42fd5b164dd04d0550db72",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:a422c57697bd09aca666f6255ba8513a26f6b8f9ad42fd5b164dd04d0550db72",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:375454cb1d12cdaf29a9e577064e1c98a0f6eebd47cfdf494b9030edae0fec57",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:375454cb1d12cdaf29a9e577064e1c98a0f6eebd47cfdf494b9030edae0fec57",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-02T07:17:00.118Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentConsumer": {
+    "archiveDigestVerified": true,
+    "checksumsVerified": 6,
+    "discovery": "matched installed inventory",
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-02T07:18:50.672Z",
+    "client": "codex-cli 0.159.2",
+    "node": "v22.17.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "artifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+    "calls": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "schemaRefusal": true,
+    "outsideRootRefusal": true,
+    "excludedToolRefusal": true,
+    "projectUnchanged": true,
+    "userConfigurationUnchanged": true,
+    "appServerExited": true,
+    "serverProcessesExited": true,
+    "removal": true,
+    "bga432": [
+      {
+        "stateId": 2,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      },
+      {
+        "stateId": 12,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      }
+    ],
+    "runnerDigest": "sha256:bf920a8b2008d2d3e6a83a0afd4bba0e30d30b810a9b63113012b2527658b78e",
+    "stderrDiagnosticsObserved": true,
+    "scope": "original unsigned artifact native client smoke and installed BGA-432 controls; no signature or registry claim"
+  },
+  "localRetention": ".artifacts/release-candidates/v1.0.0-rc.4",
+  "published": false,
+  "signed": false,
+  "installationGuide": {
+    "receipt": "install-guide-v1.0.0-rc.4-unsigned.json",
+    "resultDigest": "sha256:a7017209f253145bb4827ca068a2c79b5072c427151ec429ec75a62193200e32",
+    "signatureReexecuted": false
+  },
+  "realProjectRerun": "rc4-dino-racer-rerun.json"
+}
