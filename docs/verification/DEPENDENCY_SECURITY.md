@@ -6,7 +6,7 @@
   "capabilities": 17,
   "scenarios": 209,
   "claims": 102,
-  "tests": 712
+  "tests": 732
 }
 ```
 

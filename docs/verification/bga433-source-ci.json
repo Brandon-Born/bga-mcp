@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-433",
+  "scope": "Repository framework interpretation/proof dependency gate; no runtime capability, artifact, security or publication promotion",
+  "preparation": {
+    "sourceBase": "198f3d17534e3ff8f3b189073ea9579904081194",
+    "sourceClean": false,
+    "focusedTests": 25,
+    "focusedStatus": "passed",
+    "finalFocusedTests": 21,
+    "finalFocusedStatus": "passed"
+  },
+  "fullGate": {
+    "status": "passed",
+    "firstAttempt": {
+      "status": "failed",
+      "testsPassed": 732,
+      "scenariosPassed": 209,
+      "applicableConformance": "passed",
+      "reason": "New review record used boundary instead of the required scope field; corrected and evidence verifier passed; complete rerun pending"
+    },
+    "intermediateAttempt": {
+      "status": "passed",
+      "testsPassed": 732,
+      "scenariosPassed": 209,
+      "applicableConformance": "passed",
+      "supersededBy": "Final review tightened ambiguous proof mapping and explicitly mapped shared tests; affected controls and integrated gate repeated"
+    },
+    "sourceBase": "198f3d17534e3ff8f3b189073ea9579904081194",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T15:01:42.678Z",
+    "testsPassed": 732,
+    "scenariosPassed": 209,
+    "retainedClaims": 102,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "packageDigest": "sha256:66c71f22f9b9a9af547d5b3a6e997d97e8d911eb7b4dae560cba461330e12306",
+    "evidenceDigest": "sha256:cc71ef0b004e6fb4ce945c68f9990cdf30544a8b2722fd6c22fc07a006d8614b",
+    "log": "bga433-handoff-check.log"
+  },
+  "sourceCi": {
+    "status": "pending"
+  },
+  "scopedAdmission": {
+    "status": "pending",
+    "legacyReuse": false
+  },
+  "evidenceCommitIsExactMetadataHead": false
+}

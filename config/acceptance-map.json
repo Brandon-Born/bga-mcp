@@ -1242,6 +1242,54 @@
       "case": "Unconfirmed class-only initial state stays unsupported through installed state/aggregate/resource/pre-release results; explicit and independent legacy/hybrid entries remain readable and project digests unchanged",
       "boundary": "packaged",
       "scenarios": ["E2E-STATE-UNCONFIRMED-INITIAL"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Shared reader, policy, governing claim and relevant fixture changes invalidate affected interpretations",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Proof-only changes require current proof and preserve original interpretation provenance",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-RETEST"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Explicitly unrelated publication selectors and receipt edits retain dependency identities",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "New, renamed, deleted, ignored, untracked or ambiguously mapped relevant dependencies fail closed",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-CHANGE", "GATE-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Source observation expiry, content drift and unavailable endpoints keep admission held",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Trusted schemas, snapshot integrity and explicit legacy migration refuse ambiguous reuse",
+      "boundary": "repository",
+      "scenarios": ["GATE-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Import closure cannot hide dependencies behind metadata exemptions",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-433",
+      "case": "Scoped process lifecycle retains installed public compatibility proof",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-CHANGE-LIFECYCLE"]
     }
   ]
 }

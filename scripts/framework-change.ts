@@ -11,8 +11,16 @@ import { createPolicyBoundary } from '../src/policy.js';
 import type { CompatibilityMatrix } from './lib/compatibility.js';
 import { integrityDigest, type Evidence } from './lib/evidence.js';
 import {
-  frameworkHolds,
+  currentFrameworkDependencies,
+  FRAMEWORK_INPUTS,
+  refreshFrameworkProof,
+  scopedFrameworkHolds,
+  verifyDependencyMap,
+  type DependencyMap,
+} from './lib/framework-dependencies.js';
+import {
   frameworkSources,
+  migrateFrameworkLedger,
   observeFrameworkPage,
   verifyFrameworkPolicy,
   verifyFrameworkRetest,
@@ -24,19 +32,6 @@ import {
 const execute = promisify(execFile);
 const root = resolve(import.meta.dirname, '..');
 const ledgerPath = resolve(root, 'config/framework-review.json');
-const implementationPaths = [
-  'src',
-  'scripts',
-  'tests',
-  'config',
-  'package.json',
-  'pnpm-lock.yaml',
-  'vitest.config.ts',
-  'tsconfig.json',
-  'tsconfig.build.json',
-  'eslint.config.js',
-  '.github/workflows/ci.yml',
-];
 const digest = (text: string | Buffer): string =>
   `sha256:${createHash('sha256').update(text).digest('hex')}`;
 const load = async <T>(path: string): Promise<T> =>
@@ -44,34 +39,42 @@ const load = async <T>(path: string): Promise<T> =>
 const git = async (...args: string[]): Promise<string> =>
   (await execute('git', args, { cwd: root, maxBuffer: 16 * 1024 * 1024 })).stdout.trim();
 
-/** Digest current implementations, tests, fixtures and their manifests, excluding the review ledger itself. */
-export async function implementationDigest(): Promise<string> {
-  const files = (await git('ls-files', '-z', ...implementationPaths))
-    .split('\0')
-    .filter((file) => file !== '' && file !== 'config/framework-review.json')
-    .sort();
-  const hash = createHash('sha256');
-  for (const file of files)
-    hash
-      .update(file)
-      .update('\0')
-      .update(await readFile(resolve(root, file)))
-      .update('\0');
-  return `sha256:${hash.digest('hex')}`;
-}
 export async function frameworkReleaseGuard(): Promise<void> {
-  const ledger = await load<FrameworkLedger>('config/framework-review.json');
-  const sources = frameworkSources(
-    await load<CompatibilityMatrix>('config/compatibility.json'),
-    await load('config/rule-catalog.json'),
-  );
-  const policy = verifyFrameworkPolicy(ledger, sources);
-  if (policy.failed) throw new Error(`Framework policy invalid: ${policy.failures.join('; ')}`);
-  const holds = frameworkHolds(sources, ledger, await implementationDigest(), Date.now());
+  const { holds } = await frameworkState();
   if (holds.length > 0)
     throw new Error(
       `Framework release hold: ${JSON.stringify(holds)}. Observe and review each affected page, update original fixtures and retain passing exact-source tests before new guidance or packages.`,
     );
+}
+export async function frameworkState() {
+  const ledger = await load<FrameworkLedger>('config/framework-review.json');
+  const matrix = await load<CompatibilityMatrix>('config/compatibility.json');
+  const sources = frameworkSources(matrix, await load('config/rule-catalog.json'));
+  const map = await load<DependencyMap>('config/framework-dependencies.json');
+  const ajv = new Ajv2020({ allErrors: true, strict: false });
+  for (const [file, value] of [
+    ['framework-review', ledger],
+    ['framework-dependencies', map],
+  ] as const) {
+    const validate = ajv.compile(await load<object>(`config/${file}.schema.json`));
+    if (!validate(value))
+      throw new Error(
+        `Framework policy invalid: ${file} schema: ${JSON.stringify(validate.errors)}`,
+      );
+  }
+  const failures = [
+    ...verifyFrameworkPolicy(ledger, sources).failures,
+    ...verifyDependencyMap(map, sources).failures,
+  ];
+  if (failures.length > 0) throw new Error(`Framework policy invalid: ${failures.join('; ')}`);
+  const identities = await currentFrameworkDependencies(root, sources, matrix, map);
+  return {
+    ledger,
+    matrix,
+    sources,
+    identities,
+    holds: scopedFrameworkHolds(sources, ledger, identities, Date.now()),
+  };
 }
 export async function runFrameworkChange(args: readonly string[]): Promise<void> {
   const [mode, url, evidencePath, reviewer, ciRun] = args;
@@ -79,14 +82,50 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
     await frameworkReleaseGuard();
     return;
   }
-  let ledger = await load<FrameworkLedger>('config/framework-review.json');
-  const matrix = await load<CompatibilityMatrix>('config/compatibility.json');
-  const sources = frameworkSources(matrix, await load('config/rule-catalog.json'));
-  const policy = verifyFrameworkPolicy(ledger, sources);
-  if (policy.failed) throw new Error(policy.failures.join('; '));
+  const state = await frameworkState();
+  let ledger = state.ledger;
+  const { matrix, sources, identities } = state;
   if (mode === 'status') {
     process.stdout.write(
-      `${JSON.stringify({ sources, holds: frameworkHolds(sources, ledger, await implementationDigest(), Date.now()) }, null, 2)}\n`,
+      `${JSON.stringify(
+        {
+          sources,
+          holds: state.holds,
+          provenance: sources.map((source) => {
+            const review = ledger.observations.find((entry) => entry.url === source.url)?.review;
+            return {
+              url: source.url,
+              currentSemanticDigest: identities.get(source.url)?.semanticDigest,
+              currentProofDigest: identities.get(source.url)?.proofDigest,
+              reviewedSemanticDigest: review?.dependencies?.semanticDigest ?? null,
+              interpretationEvidenceCommit: review?.evidenceCommit ?? null,
+              proofEvidenceCommit: review?.proof?.evidenceCommit ?? null,
+              carryForward:
+                !state.holds.some((hold) => hold.url === source.url) &&
+                review?.dependencies?.semanticDigest === identities.get(source.url)?.semanticDigest,
+              exactHeadEvidenceClaimed: false,
+            };
+          }),
+        },
+        null,
+        2,
+      )}\n`,
+    );
+    return;
+  }
+  if (mode === 'migrate') {
+    if (ledger.schemaVersion !== 1)
+      throw new Error('Only an unmigrated version-1 ledger can migrate.');
+    // Preserve historical broad reviews; they cannot certify a dependency map added later.
+    await writeFile(
+      resolve(root, 'docs/verification/framework-review-v1.json'),
+      `${JSON.stringify(ledger, null, 2)}\n`,
+      { flag: 'wx' },
+    );
+    ledger = migrateFrameworkLedger(ledger);
+    await writeFile(ledgerPath, `${JSON.stringify(ledger, null, 2)}\n`);
+    process.stdout.write(
+      'Migrated explicitly; historical reviews archived and new scoped reviews required.\n',
     );
     return;
   }
@@ -111,7 +150,7 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
       process.exitCode = 1;
     }
     ledger = observeFrameworkPage(ledger, source.url, pageDigest, now);
-  } else if (mode === 'review') {
+  } else if (mode === 'review' || mode === 'retest') {
     const observation = ledger.observations.find((entry) => entry.url === source.url);
     if (
       observation?.digest === undefined ||
@@ -123,6 +162,29 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
       throw new Error(
         'Review requires an observed page, evidence path and named reviewer who read the official wording.',
       );
+    const identity = identities.get(source.url);
+    if (ledger.schemaVersion !== 2 || identity === undefined || identity.issues.length > 0)
+      throw new Error(
+        `Review needs explicit migration and resolved dependency mapping: ${JSON.stringify(identity?.issues ?? [])}`,
+      );
+    const prior = observation.review;
+    if (
+      mode === 'retest' &&
+      (prior?.dependencies === undefined ||
+        observation.needsReview ||
+        prior.digest !== observation.digest ||
+        prior.dependencies.semanticDigest !== identity.semanticDigest ||
+        state.holds.some(
+          (hold) =>
+            hold.url === source.url &&
+            hold.reasons.some(
+              (reason) =>
+                reason !==
+                'Proving dependencies changed: current exact-source test evidence required',
+            ),
+        ))
+    )
+      throw new Error('Retest cannot replace a missing or changed interpretation review.');
     const evidenceText = await readFile(resolve(evidencePath), 'utf8');
     const parsed: unknown = JSON.parse(evidenceText);
     const validator = new Ajv2020({ allErrors: true, strict: false }).compile(
@@ -159,12 +221,16 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
     const ciReport = verifyFrameworkCi(run, evidence.source.commit);
     if (ciReport.failed) throw new Error(ciReport.failures.join('; '));
     await git('merge-base', '--is-ancestor', evidence.source.commit, 'HEAD');
-    const paths = [...implementationPaths, ':!config/framework-review.json'];
-    if (
-      (await git('diff', evidence.source.commit, '--', ...paths)) !== '' ||
-      (await git('ls-files', '--others', '--exclude-standard', '--', ...implementationPaths)) !== ''
+    const changed = (
+      await git('diff', '--name-only', '-z', evidence.source.commit, '--', ...FRAMEWORK_INPUTS)
     )
-      throw new Error('Implementation or fixtures differ from the passing evidence source.');
+      .split('\0')
+      .filter(Boolean);
+    const affected = new Set([...identity.semantic, ...identity.proof].map((entry) => entry.path));
+    if (changed.some((path) => affected.has(path)))
+      throw new Error(
+        'Interpretation or proof dependencies differ from the passing evidence source.',
+      );
     const fixturePaths = [
       ...new Set(
         matrix.claims
@@ -175,7 +241,7 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
     if (fixturePaths.length === 0) throw new Error('Review has no original fixture coverage.');
     const review = {
       digest: observation.digest,
-      implementationDigest: await implementationDigest(),
+      implementationDigest: identity.semanticDigest,
       evidenceDigest: digest(evidenceText),
       evidenceCommit: evidence.source.commit,
       ciRun: `https://github.com/Brandon-Born/bga-mcp/actions/runs/${ciRun}`,
@@ -183,15 +249,29 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
       reviewedAt: new Date().toISOString(),
       fixturePaths,
       scenarios: source.scenarios,
+      dependencies: identity,
+      proof: {
+        dependencyDigest: identity.proofDigest,
+        evidenceDigest: digest(evidenceText),
+        evidenceCommit: evidence.source.commit,
+        ciRun: `https://github.com/Brandon-Born/bga-mcp/actions/runs/${ciRun}`,
+        recordedAt: new Date().toISOString(),
+      },
     };
+    const admitted =
+      mode === 'retest' && prior !== null
+        ? refreshFrameworkProof(prior, identity, review.proof)
+        : review;
     ledger = {
       ...ledger,
       observations: ledger.observations.map((entry) =>
-        entry.url === url ? { ...entry, review, needsReview: false } : entry,
+        entry.url === url ? { ...entry, review: admitted, needsReview: false } : entry,
       ),
     };
   } else
-    throw new Error('Use status, observe URL, review URL EVIDENCE REVIEWER CI_RUN, or release.');
+    throw new Error(
+      'Use status, migrate, observe URL, review/retest URL EVIDENCE REVIEWER CI_RUN, or release.',
+    );
   await writeFile(ledgerPath, `${JSON.stringify(ledger, null, 2)}\n`);
   process.stdout.write(
     'Recorded process metadata only. Check framework:status for remaining release holds.\n',

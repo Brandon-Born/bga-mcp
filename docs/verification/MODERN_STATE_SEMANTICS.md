@@ -10,7 +10,7 @@ This record describes a run, so it states which one. `pnpm verify:evidence` comp
   "capabilities": 17,
   "scenarios": 209,
   "claims": 102,
-  "tests": 712
+  "tests": 732
 }
 ```
 

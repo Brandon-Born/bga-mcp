@@ -2,13 +2,19 @@ import { cp, readFile, rename } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { CompatibilityMatrix } from '../../scripts/lib/compatibility.js';
 import {
-  frameworkHolds,
   frameworkSources,
   observeFrameworkPage,
   verifyFrameworkRetest,
   type FrameworkLedger,
   type FrameworkTestEvidence,
 } from '../../scripts/lib/framework-change.js';
+import {
+  frameworkDependencies,
+  readDependencyFiles,
+  scopedFrameworkHolds,
+  type DependencyMap,
+} from '../../scripts/lib/framework-dependencies.js';
+import { collectDeclaredScenarios } from '../../scripts/lib/scenarios.js';
 import {
   callTool,
   digestDirectory,
@@ -29,6 +35,18 @@ it('[E2E-FRAMEWORK-CHANGE-LIFECYCLE] detects drift, holds publication, updates a
   );
   const source = sources.find((page) => page.url.endsWith('Studio_file_reference'));
   if (source === undefined) throw new Error('Missing impact source');
+  const dependencies = frameworkDependencies(
+    [source],
+    matrix,
+    JSON.parse(
+      await readFile(resolve(root, 'config/framework-dependencies.json'), 'utf8'),
+    ) as DependencyMap,
+    (await readDependencyFiles(root)).map((file) => ({ ...file, tracked: true })),
+    await collectDeclaredScenarios(resolve(root, 'tests')),
+  );
+  const identity = dependencies.get(source.url);
+  if (identity === undefined || identity.issues.length > 0)
+    throw new Error('Unmapped framework lifecycle proof');
   const server = await installPackagedServer('framework-change', {
     project: 'modern-generated-regression',
   });
@@ -38,11 +56,11 @@ it('[E2E-FRAMEWORK-CHANGE-LIFECYCLE] detects drift, holds publication, updates a
     const stamp = '2026-10-02T00:00:00Z';
     const oldDigest = `sha256:${'a'.repeat(64)}`;
     const newDigest = `sha256:${'b'.repeat(64)}`;
-    const codeDigest = `sha256:${'c'.repeat(64)}`;
+    const codeDigest = identity.semanticDigest;
     // Synthetic future-change signal uses an already documented JSONC form;
     // this is process proof, not a claim that BGA changed on this date.
     const ledger: FrameworkLedger = {
-      schemaVersion: 1,
+      schemaVersion: 2,
       owner: 'Brandon-Born',
       monitoringDays: 7,
       emergencyResponseHours: 24,
@@ -61,13 +79,23 @@ it('[E2E-FRAMEWORK-CHANGE-LIFECYCLE] detects drift, holds publication, updates a
             reviewedAt: stamp,
             fixturePaths: ['tests/fixtures/projects/modern-generated-regression'],
             scenarios: source.scenarios,
+            dependencies: identity,
+            proof: {
+              dependencyDigest: identity.proofDigest,
+              evidenceDigest: codeDigest,
+              evidenceCommit: 'a'.repeat(40),
+              ciRun: 'https://github.com/Brandon-Born/bga-mcp/actions/runs/1',
+              recordedAt: stamp,
+            },
           },
           needsReview: false,
         },
       ],
     };
     const changed = observeFrameworkPage(ledger, source.url, newDigest, stamp);
-    expect(frameworkHolds([source], changed, codeDigest, Date.parse(stamp))[0]).toMatchObject({
+    expect(
+      scopedFrameworkHolds([source], changed, dependencies, Date.parse(stamp))[0],
+    ).toMatchObject({
       state: 'stale',
       claims: source.claims,
       scenarios: source.scenarios,
@@ -96,7 +124,9 @@ it('[E2E-FRAMEWORK-CHANGE-LIFECYCLE] detects drift, holds publication, updates a
       ).toBe(true);
     });
     // Passing the fixture alone does not clear the process hold.
-    expect(frameworkHolds([source], changed, codeDigest, Date.parse(stamp))).toHaveLength(1);
+    expect(scopedFrameworkHolds([source], changed, dependencies, Date.parse(stamp))).toHaveLength(
+      1,
+    );
     const retest: FrameworkTestEvidence = {
       source: { commit: 'a'.repeat(40), clean: true },
       generatedAt: stamp,
@@ -119,7 +149,7 @@ it('[E2E-FRAMEWORK-CHANGE-LIFECYCLE] detects drift, holds publication, updates a
         },
       ],
     };
-    expect(frameworkHolds([source], restored, codeDigest, Date.parse(stamp))).toEqual([]);
+    expect(scopedFrameworkHolds([source], restored, dependencies, Date.parse(stamp))).toEqual([]);
     expect(await digestDirectory(variant)).not.toBe(before); // Only the fixture update changes files.
   } finally {
     await server.cleanup();

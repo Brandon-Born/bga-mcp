@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import {
   frameworkReleaseGuard,
   runFrameworkChange,
-  implementationDigest,
+  frameworkState,
 } from '../../scripts/framework-change.js';
 import type { CompatibilityMatrix } from '../../scripts/lib/compatibility.js';
 import {
@@ -143,7 +143,7 @@ it('[INT-FRAMEWORK-RETEST] requires post-observation, clean, passing targeted ev
 });
 
 it('[GATE-FRAMEWORK-CHANGE] actual admission refuses missing baseline and arbitrary URLs before any network or write', async () => {
-  const holds = frameworkHolds(sources, ledger, await implementationDigest(), Date.now());
+  const { holds } = await frameworkState();
   if (holds.length > 0)
     await expect(frameworkReleaseGuard()).rejects.toThrow('Framework release hold');
   else await expect(frameworkReleaseGuard()).resolves.toBeUndefined();

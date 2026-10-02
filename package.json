@@ -108,7 +108,9 @@
     "release:status": "tsx scripts/prepare-publication.ts status",
     "release:prepare": "tsx scripts/prepare-publication.ts prepare",
     "release:consumer": "tsx scripts/verify-publication-consumer.ts",
-    "verify:publication": "tsx scripts/verify-publication.ts"
+    "verify:publication": "tsx scripts/verify-publication.ts",
+    "framework:migrate": "tsx scripts/framework-change.ts migrate",
+    "framework:retest": "tsx scripts/framework-change.ts retest"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",

@@ -155,7 +155,7 @@ Wait for exact-source CI where a claim or admission rule requires it. Other inde
 
 Repeat a candidate evaluation only for a changed candidate, relevant harness or claim, a failed or incomplete observation, or the freshness requirement at actual review/publication. Preserve all immutable originals and historical assessments. A changed packed guide still needs a replacement candidate before publication; collect guide changes with the next substantive candidate preparation rather than immediately rerunning the entire release chain for every policy edit. This is scheduling, not permission to publish stale guides or waive signature, audit, reporting, framework or consumer gates.
 
-BGA-433 owns replacement of the broad framework implementation digest with explicit impact-scoped dependencies. Until that implementation and its counterexamples pass, current guards still apply. An unrelated metadata change is not a reason to invent a framework rule, silently exclude a file from review, or manufacture current approval.
+BGA-433 implements explicit semantic/proof dependency identities in the repository framework gate. Its schema, dependency mutations and installed lifecycle retain conservative holds; legacy ledgers require explicit migration and new scoped baselines. Metadata carry-forward never changes the original CI commit or grants artifact, signature or security approval. Full-check and exact-source CI receipts identify their actual implementation source; a later receipt-only commit does not recursively require a new receipt for itself.
 
 ## Release gates
 
@@ -225,7 +225,7 @@ No other wording should imply a stronger level of confidence than the recorded e
 
 ## Framework process gate
 
-`pnpm verify:framework-change` checks BGA-408 policy and impact coverage offline. `pnpm framework:status` reports current holds; `pnpm framework:observe URL` performs one explicitly requested official lookup. `pnpm framework:review URL EVIDENCE REVIEWER CI_RUN` requires clean post-observation evidence and matching implementation/fixtures. `pnpm framework:release` is mandatory before new candidate creation or guidance publication; it fails closed without a reviewed, fresh baseline. Process simulations and full local checks cannot stand in for live observation. See [FRAMEWORK_CHANGES.md](FRAMEWORK_CHANGES.md).
+`pnpm verify:framework-change` checks BGA-408 policy and impact coverage offline. `pnpm framework:status` reports current holds; `pnpm framework:observe URL` performs one explicitly requested official lookup. `pnpm framework:review URL EVIDENCE REVIEWER CI_RUN` requires clean post-observation evidence and matching affected semantic/proof dependencies. `framework:migrate` explicitly archives version-1 reviews without admitting them; `framework:retest` refreshes proof while preserving an unchanged interpretation review. `pnpm framework:release` is mandatory before new candidate creation or guidance publication; it fails closed without a reviewed, fresh baseline. Process simulations and full local checks cannot stand in for live observation. See [FRAMEWORK_CHANGES.md](FRAMEWORK_CHANGES.md).
 
 ## Original-candidate security replay
 

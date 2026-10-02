@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "enum": [1, 2]
+    },
+    "owner": {
+      "const": "Brandon-Born"
+    },
+    "monitoringDays": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 7
+    },
+    "emergencyResponseHours": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 24
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "pattern": "^https://en\\.doc\\.boardgamearena\\.com/[^ ]+$"
+          },
+          "observedAt": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "oneOf": [
+              {
+                "type": "string",
+                "pattern": "^sha256:[0-9a-f]{64}$"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "digest": {
+                    "type": "string",
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  },
+                  "implementationDigest": {
+                    "type": "string",
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  },
+                  "evidenceDigest": {
+                    "type": "string",
+                    "pattern": "^sha256:[0-9a-f]{64}$"
+                  },
+                  "evidenceCommit": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{40}$"
+                  },
+                  "ciRun": {
+                    "type": "string",
+                    "pattern": "^https://github\\.com/Brandon-Born/bga-mcp/actions/runs/[0-9]+$"
+                  },
+                  "reviewer": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "reviewedAt": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fixturePaths": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "scenarios": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "minItems": 1,
+                    "uniqueItems": true
+                  },
+                  "dependencies": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "semanticDigest": {
+                        "type": "string",
+                        "pattern": "^sha256:[0-9a-f]{64}$"
+                      },
+                      "proofDigest": {
+                        "type": "string",
+                        "pattern": "^sha256:[0-9a-f]{64}$"
+                      },
+                      "semantic": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "path": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "digest": {
+                              "type": "string",
+                              "pattern": "^sha256:[0-9a-f]{64}$"
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": ["path", "digest", "reason"]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                      },
+                      "proof": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "path": {
+                              "type": "string",
+                              "minLength": 1
+                            },
+                            "digest": {
+                              "type": "string",
+                              "pattern": "^sha256:[0-9a-f]{64}$"
+                            },
+                            "reason": {
+                              "type": "string",
+                              "minLength": 1
+                            }
+                          },
+                          "required": ["path", "digest", "reason"]
+                        },
+                        "minItems": 1,
+                        "uniqueItems": true
+                      },
+                      "issues": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "minItems": 0,
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": ["semanticDigest", "proofDigest", "semantic", "proof", "issues"]
+                  },
+                  "proof": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "dependencyDigest": {
+                        "type": "string",
+                        "pattern": "^sha256:[0-9a-f]{64}$"
+                      },
+                      "evidenceDigest": {
+                        "type": "string",
+                        "pattern": "^sha256:[0-9a-f]{64}$"
+                      },
+                      "evidenceCommit": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{40}$"
+                      },
+                      "ciRun": {
+                        "type": "string",
+                        "pattern": "^https://github\\.com/Brandon-Born/bga-mcp/actions/runs/[0-9]+$"
+                      },
+                      "recordedAt": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    },
+                    "required": [
+                      "dependencyDigest",
+                      "evidenceDigest",
+                      "evidenceCommit",
+                      "ciRun",
+                      "recordedAt"
+                    ]
+                  }
+                },
+                "required": [
+                  "digest",
+                  "implementationDigest",
+                  "evidenceDigest",
+                  "evidenceCommit",
+                  "ciRun",
+                  "reviewer",
+                  "reviewedAt",
+                  "fixturePaths",
+                  "scenarios"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "needsReview": {
+            "type": "boolean"
+          }
+        },
+        "required": ["url", "observedAt", "digest", "review", "needsReview"]
+      },
+      "minItems": 0,
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "schemaVersion",
+    "owner",
+    "monitoringDays",
+    "emergencyResponseHours",
+    "observations"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 2
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "observations": {
+            "items": {
+              "properties": {
+                "review": {
+                  "if": {
+                    "type": "object"
+                  },
+                  "then": {
+                    "required": ["dependencies", "proof"]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

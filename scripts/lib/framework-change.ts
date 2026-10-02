@@ -1,5 +1,6 @@
 import type { CompatibilityMatrix } from './compatibility.js';
 import { GateReport } from './gate.js';
+import type { FrameworkDependencies, FrameworkProof } from './framework-dependencies.js';
 
 export interface FrameworkSource {
   readonly url: string;
@@ -16,6 +17,8 @@ export interface FrameworkReview {
   readonly reviewedAt: string;
   readonly fixturePaths: readonly string[];
   readonly scenarios: readonly string[];
+  readonly dependencies?: FrameworkDependencies;
+  readonly proof?: FrameworkProof;
 }
 export interface FrameworkObservation {
   readonly url: string;
@@ -157,6 +160,20 @@ export function observeFrameworkPage(
     ].sort((left, right) => left.url.localeCompare(right.url)),
   };
 }
+/** Explicit migration does not reinterpret a historical broad digest as scoped approval. */
+export function migrateFrameworkLedger(ledger: FrameworkLedger): FrameworkLedger {
+  if (ledger.schemaVersion !== 1)
+    throw new Error('Only an unmigrated version-1 ledger can migrate.');
+  return {
+    ...ledger,
+    schemaVersion: 2,
+    observations: ledger.observations.map((entry) => ({
+      ...entry,
+      review: null,
+      needsReview: true,
+    })),
+  };
+}
 
 export interface FrameworkTestEvidence {
   readonly source: { readonly commit: string; readonly clean: boolean };
@@ -205,7 +222,7 @@ export function verifyFrameworkPolicy(
 ): GateReport {
   const report = new GateReport();
   report.require(
-    ledger.schemaVersion === 1 && ledger.owner === 'Brandon-Born',
+    [1, 2].includes(ledger.schemaVersion) && ledger.owner === 'Brandon-Born',
     'Framework process has no accountable owner',
   );
   report.require(
