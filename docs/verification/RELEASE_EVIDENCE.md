@@ -59,3 +59,23 @@ The hosted Ubuntu verifier and independent macOS verifier downloaded the fixed p
 - [GitHub CLI release creation](https://cli.github.com/manual/gh_release_create) documents existing-tag refusal, drafts and prereleases.
 - [Release assets API](https://docs.github.com/en/rest/releases/releases) documents asset identities and SHA-256 digests.
 - [BGA-404 signature policy](RELEASE_SIGNING.md) retains the original attestation sources and independently constrained signing identity.
+
+## Current documentation and BGA-432 replacement: rc.4 preparation
+
+The current manual workflow and its read-only verifier/builtin-only publisher
+select [the independently verified rc.4 candidate](release-candidate-v1.0.0-rc.4.json)
+and [its independently verified signature](release-signing-v1.0.0-rc.4.json).
+Its existing tag identifies original source
+`5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`, package SHA-256
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`,
+and signer `b593b76dc56fbb6affc1264b3b5ee53a338c209b`.
+Only reviewed receipt selectors and the candidate-specific concurrency group
+advance. The twelve metadata assets, immutable identity/schema/coverage checks,
+isolated write job and refusal of foreign/conflicting records remain unchanged.
+No tarball is distributed by this workflow.
+
+This preparation does not claim live distribution. The candidate-specific
+packet must first pass local preparation and the full gate, then the actual
+manual workflow, independent public download/refusal controls and exact-source CI.
+The original rc.1 public record and every earlier receipt remain historical;
+they do not supply rc.4 public download proof or package/security approval.

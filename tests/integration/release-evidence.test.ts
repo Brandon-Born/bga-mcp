@@ -201,7 +201,7 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
       const packet = resolve(directory, 'packet');
       await mkdir(packet);
       const receipt = await load<{ candidate: { sourceTag: string; sourceCommit: string } }>(
-        'docs/verification/release-candidate-v1.0.0-rc.1.json',
+        'docs/verification/release-candidate-v1.0.0-rc.4.json',
       );
       const plan: PublicationPlan = {
         tag: receipt.candidate.sourceTag,
@@ -214,6 +214,16 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
       const bytes = JSON.stringify(plan);
       await writeFile(resolve(directory, 'plan.json'), bytes);
       expect(await validatePublicationPlan(directory, assetDigest(bytes))).toEqual(plan);
+      // A valid digest for another candidate must not cross the reviewed tag/source boundary.
+      for (const stale of [
+        { ...plan, tag: 'v1.0.0-rc.1', title: 'v1.0.0-rc.1 verification evidence (candidate)' },
+        { ...plan, sourceCommit: '0'.repeat(40) },
+      ]) {
+        const staleBytes = JSON.stringify(stale);
+        await writeFile(resolve(directory, 'plan.json'), staleBytes);
+        await expect(validatePublicationPlan(directory, assetDigest(staleBytes))).rejects.toThrow();
+      }
+      await writeFile(resolve(directory, 'plan.json'), bytes);
       await expect(
         validatePublicationPlan(directory, `sha256:${'0'.repeat(64)}`),
       ).rejects.toThrow();
