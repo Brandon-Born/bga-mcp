@@ -117,9 +117,15 @@ beforeAll(async () => {
   async notif_spread(notif) { this.showMessage(notif.args.required, 'info'); }
   async notif_knownMismatch(notif) { this.showMessage(notif.args.read, 'info'); }
   async notif_malformed(notif) { this.showMessage(notif.args.required, 'info'); }
-  malformed() { this.bga.actions.performAction('actMalformed', { cardId: 1); }
 }
 `,
+  );
+  // An invalid module stays unsupported instead of being searched as raw JS.
+  // Keep independently readable handler declarations in the valid module so
+  // known payload pairs remain comparable while absence claims stay uncertain.
+  await writeFile(
+    resolve(server.projects.unknownshapes, 'modules/js/Malformed.js'),
+    `this.bga.actions.performAction('actMalformed', { cardId: 1);`,
   );
   await writeFile(
     resolve(server.projects.unknownshapes, 'modules/php/Game.php'),

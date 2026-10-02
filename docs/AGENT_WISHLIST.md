@@ -21,8 +21,9 @@ warning was suppressed; a clean-looking trace was insufficient evidence.
 
 **Wish and owner.** BGA-431 must remove these phantom contracts while preserving
 real supported methods, bindings and lexical contexts. This is a correctness fix
-to existing tools, not a new capability. Its recorded correctness probe currently
-fails and blocks the release. Explicit uncertainty is preferable when a reader
+to existing tools, not a new capability. Its historical rc.2 correctness probe fails. The BGA-431 implementation
+adds passing installed regressions; verified replacement bytes and frozen-task
+carry-forward still gate release advancement. Explicit uncertainty is preferable when a reader
 cannot establish executable context.
 
 ## Observations from the executed tasks

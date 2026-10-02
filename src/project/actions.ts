@@ -1,4 +1,5 @@
 import type { ParseOutcome } from './parse.js';
+import { readPhpCode } from './php.js';
 import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
@@ -303,9 +304,19 @@ export function parseServerActionEntries(
 
 /** Names of the methods a PHP source declares. */
 export function parsePhpMethodNames(source: string, signal?: AbortSignal): readonly string[] {
+  return readPhpMethodNames(source, signal).value;
+}
+
+/** Carry lexical uncertainty to validators instead of claiming method absence. */
+export function readPhpMethodNames(
+  source: string,
+  signal?: AbortSignal,
+): ParseOutcome<readonly string[]> {
   cancellationCheckpoint(signal);
+  const syntax = readPhpCode(source, signal);
+  if (syntax.unsupported.length > 0) return { value: [], unsupported: syntax.unsupported };
   const names: string[] = [];
-  for (const match of source.matchAll(PHP_FUNCTION)) {
+  for (const match of syntax.value.matchAll(PHP_FUNCTION)) {
     cancellationCheckpoint(signal);
     const name = match[2];
     if (name !== undefined) {
@@ -313,5 +324,5 @@ export function parsePhpMethodNames(source: string, signal?: AbortSignal): reado
     }
   }
   cancellationCheckpoint(signal);
-  return names;
+  return { value: names, unsupported: [] };
 }

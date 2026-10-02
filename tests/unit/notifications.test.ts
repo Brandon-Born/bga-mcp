@@ -98,12 +98,12 @@ describe('notification handler reading', () => {
 
     // Regression: the method alone was treated as bound. Without the
     // registration it is a method, and the framework never calls it.
-    expect(parseNotificationHandlers(method).value).toEqual([
+    expect(parseNotificationHandlers(`const game = { ${method} };`).value).toEqual([
       { name: 'cardPlayed', binding: 'method', bound: false, payloadKeys: ['cardId'] },
     ]);
 
     const registered = parseNotificationHandlers(
-      `setupNotifications: function () { this.bga.notifications.setupPromiseNotifications(); },\n${method}`,
+      `const game = { setupNotifications: function () { this.bga.notifications.setupPromiseNotifications(); },\n${method} };`,
     );
     expect(registered.value).toEqual([
       { name: 'cardPlayed', binding: 'method', bound: true, payloadKeys: ['cardId'] },
@@ -112,7 +112,7 @@ describe('notification handler reading', () => {
   });
 
   it('honours the prefix and ignore list the registration declares', () => {
-    const outcome = parseNotificationHandlers(`
+    const outcome = parseNotificationHandlers(`const game = {
       setupNotifications: function () {
         this.bga.notifications.setupPromiseNotifications({
           prefix: 'on_',
@@ -121,7 +121,7 @@ describe('notification handler reading', () => {
       },
       on_cardPlayed: function (notif) {},
       on_updateAutoPlay: function (notif) {},
-      notif_ignoredByPrefix: function (notif) {},`);
+      notif_ignoredByPrefix: function (notif) {}, };`);
 
     expect(outcome.registration).toEqual({ prefix: 'on_', ignored: ['updateAutoPlay'] });
     expect(outcome.value.map((handler) => [handler.name, handler.bound])).toEqual([
@@ -132,12 +132,12 @@ describe('notification handler reading', () => {
   });
 
   it('binds an ignored notification the client subscribes to by hand', () => {
-    const outcome = parseNotificationHandlers(`
+    const outcome = parseNotificationHandlers(`const game = {
       setupNotifications: function () {
         this.bga.notifications.setupPromiseNotifications({ ignoreNotifications: ['updateAutoPlay'] });
         dojo.subscribe('updateAutoPlay', this, 'notif_updateAutoPlay');
       },
-      notif_updateAutoPlay: function (notif) {},`);
+      notif_updateAutoPlay: function (notif) {}, };`);
     expect(outcome.value.map((handler) => [handler.name, handler.bound])).toEqual([
       ['updateAutoPlay', true],
     ]);
@@ -200,7 +200,7 @@ describe('notification rules', () => {
         {
           path: 'game.js',
           text: `dojo.subscribe('moved', this, 'notif_moved');
-                 notif_moved: function (notif) { this.go(notif.args.to); },`,
+                 const game = { notif_moved: function (notif) { this.go(notif.args.to); }, };`,
         },
       ],
     );
@@ -220,7 +220,7 @@ describe('notification rules', () => {
         {
           path: 'game.js',
           text: `dojo.subscribe('moved', this, 'notif_moved');
-                 notif_moved: function (notif) { this.go(notif.args.to); },`,
+                 const game = { notif_moved: function (notif) { this.go(notif.args.to); }, };`,
         },
       ],
     );

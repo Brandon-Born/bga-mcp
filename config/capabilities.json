@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "server": {
     "name": "bga-mcp",
-    "version": "1.0.0-rc.2"
+    "version": "1.0.0-rc.3"
   },
   "ciRuns": [
     {
@@ -254,7 +254,10 @@
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
-          "E2E-PROJECT-SOURCE-SELECTION"
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-CONTRACT-INERT-EXAMPLES",
+          "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+          "E2E-CONTRACT-UNKNOWN-PHP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -318,7 +321,11 @@
           "E2E-SUCCESS-OUTPUT-REDACTION",
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-PROJECT-SOURCE-SCOPE",
-          "E2E-PROJECT-SOURCE-SELECTION"
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-CONTRACT-INERT-EXAMPLES",
+          "E2E-CONTRACT-EXECUTABLE-CONTROLS",
+          "E2E-CONTRACT-COMMENT-METHOD-MISSING",
+          "E2E-CONTRACT-UNKNOWN-PHP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -351,7 +358,11 @@
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-PROJECT-SOURCE-MODULES"
+          "E2E-PROJECT-SOURCE-MODULES",
+          "E2E-CONTRACT-INERT-EXAMPLES",
+          "E2E-CONTRACT-EXECUTABLE-CONTROLS",
+          "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+          "E2E-CONTRACT-UNKNOWN-PHP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -383,7 +394,10 @@
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-PROJECT-SOURCE-MODULES"
+          "E2E-PROJECT-SOURCE-MODULES",
+          "E2E-CONTRACT-INERT-EXAMPLES",
+          "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+          "E2E-CONTRACT-COMMENT-METHOD-MISSING"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -485,7 +499,10 @@
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
-          "E2E-PROJECT-SOURCE-SELECTION"
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-CONTRACT-INERT-EXAMPLES",
+          "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+          "E2E-CONTRACT-UNKNOWN-PHP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -535,7 +552,8 @@
           "E2E-INSPECT-JSONC-COMPONENTS",
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
-          "E2E-PROJECT-SOURCE-SELECTION"
+          "E2E-PROJECT-SOURCE-SELECTION",
+          "E2E-CONTRACT-INERT-EXAMPLES"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

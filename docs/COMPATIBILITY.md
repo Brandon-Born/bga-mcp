@@ -125,3 +125,16 @@ passing fixture claims do not establish correct executable-context handling for
 that case. Candidate advancement is blocked pending repair, passing original
 packaged regressions and explicit replacement-artifact carry-forward. Unsupported
 computed SQL and game-owned rules also remain outside a clean verdict.
+
+## Executable contract context
+
+CLAIM-CONTRACT-EXECUTABLE-CONTEXT covers BGA-431's original comment-only handler
+and PHP-method regression, plus live modern/legacy controls beside comments,
+strings, regex and templates. The installed scenarios exercise tools, aggregate,
+resources and pre-release. JavaScript is parsed as a full script/module; typed
+TypeScript, computed/conflicting registrations and unreadable grammar remain
+unsupported, with dependent absence guesses suppressed. PHP is a bounded lexical
+reader: unterminated contexts and closing tags/mixed HTML remain unsupported;
+this is not full PHP syntax validation. The historical rc.2 failure above remains
+valid for those original bytes. A replacement signed candidate and frozen-task
+carry-forward still gate BGA-424 closure. See [implementation evidence](verification/EXECUTABLE_CONTRACTS.md).

@@ -3,7 +3,7 @@ import { cancellationCheckpoint } from '../deadline.js';
 import {
   PREDEFINED_NOTIFICATIONS,
   parseNotificationHandlers,
-  parsePromiseRegistration,
+  readPromiseRegistration,
   parseSentNotifications,
   type NotificationHandler,
   type SentNotification,
@@ -139,10 +139,12 @@ export function validateNotifications(
 ): NotificationTrace {
   const findings: DiagnosticFinding[] = [];
 
+  let serverComplete = true;
   const sent: (SentNotification & { source: string })[] = [];
   for (const source of serverSources) {
     cancellationCheckpoint(signal);
     const outcome = parseSentNotifications(source.text, signal);
+    serverComplete = serverComplete && outcome.unsupported.length === 0;
     for (const notification of outcome.value) {
       cancellationCheckpoint(signal);
       sent.push({ ...notification, source: source.path });
@@ -156,18 +158,36 @@ export function validateNotifications(
   // The registration may live in one file while the handlers live in others:
   // "handlers: [this, ...this.bga.states.getStateClasses()]". So it is looked
   // for across the whole client before any file is read for handlers.
-  const registration =
-    clientSources
-      .map((source) => {
-        cancellationCheckpoint(signal);
-        return parsePromiseRegistration(source.text, signal);
-      })
-      .find((entry) => entry !== null) ?? null;
+  const registrations = clientSources.map((source) => {
+    cancellationCheckpoint(signal);
+    return readPromiseRegistration(source.text, signal);
+  });
+  let registration = registrations.find((entry) => entry.value !== null)?.value ?? null;
+  let clientComplete = registrations.every((entry) => entry.unsupported.length === 0);
+  if (
+    new Set(
+      registrations
+        .filter((entry) => entry.value !== null)
+        .map((entry) => JSON.stringify(entry.value)),
+    ).size > 1
+  ) {
+    clientComplete = false;
+    registration = null;
+    for (const source of clientSources)
+      findings.push(
+        unsupported(
+          'client files declare differing promise notification registrations',
+          source.path,
+          'javascript',
+        ),
+      );
+  }
 
   const handlers: (NotificationHandler & { source: string })[] = [];
   for (const source of clientSources) {
     cancellationCheckpoint(signal);
     const outcome = parseNotificationHandlers(source.text, registration, signal);
+    clientComplete = clientComplete && outcome.complete;
     for (const handler of outcome.value) {
       cancellationCheckpoint(signal);
       handlers.push({ ...handler, source: source.path });
@@ -224,7 +244,7 @@ export function validateNotifications(
   const boundHandlers = handlers.filter((handler) => handler.bound);
   const handlerByName = new Map(boundHandlers.map((handler) => [handler.name, handler]));
   const sentByName = new Map(sent.map((notification) => [notification.name, notification]));
-  const bothSidesReadable = serverSources.length > 0 && clientSources.length > 0;
+  const bothSidesReadable = serverSources.length > 0 && clientSources.length > 0 && clientComplete;
   const predefined = new Set<string>(PREDEFINED_NOTIFICATIONS);
 
   if (bothSidesReadable) {
@@ -251,7 +271,7 @@ export function validateNotifications(
       }
     }
 
-    for (const handler of boundHandlers) {
+    for (const handler of serverComplete ? boundHandlers : []) {
       cancellationCheckpoint(signal);
       if (!sentByName.has(handler.name)) {
         findings.push(

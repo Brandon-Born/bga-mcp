@@ -12,6 +12,8 @@
  * and the rest of this module works on the masked copy and slices the original.
  */
 
+import type { ParseOutcome } from './parse.js';
+
 import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 const CLOSERS: Readonly<Record<string, string>> = { '(': ')', '[': ']', '{': '}' };
@@ -20,7 +22,7 @@ const CLOSE = new Set(Object.values(CLOSERS));
 
 function blank(text: string): string {
   // Newlines survive so that offsets and line counts both stay usable.
-  return text.replace(/[^\n]/gu, ' ');
+  return text.replace(/[^\r\n]/g, ' ');
 }
 
 /**
@@ -31,6 +33,27 @@ function blank(text: string): string {
  * is the real source.
  */
 export function maskLiterals(source: string, signal?: AbortSignal): string {
+  return maskPhp(source, true, signal);
+}
+
+/** Retain literal argument values while removing comments from structural reads. */
+export function maskComments(source: string, signal?: AbortSignal): string {
+  return maskPhp(source, false, signal);
+}
+
+/** Bounded lexical check, not PHP syntax validation or a mixed HTML reader. */
+export function readPhpCode(source: string, signal?: AbortSignal): ParseOutcome<string> {
+  const unsupported: string[] = [];
+  const value = maskPhp(source, true, signal, unsupported);
+  return { value, unsupported };
+}
+
+function maskPhp(
+  source: string,
+  literals: boolean,
+  signal?: AbortSignal,
+  unsupported?: string[],
+): string {
   let result = '';
   let index = 0;
 
@@ -39,13 +62,13 @@ export function maskLiterals(source: string, signal?: AbortSignal): string {
     const character = source[index] ?? '';
     const next = source[index + 1] ?? '';
 
-    if (character === "'" || character === '"') {
+    if (character === "'" || character === '"' || character === '`') {
       const quote = character;
       let end = index + 1;
       while (end < source.length) {
         periodicCancellationCheckpoint(end, signal);
         const inner = source[end];
-        if (inner === '\\' && quote === '"') {
+        if (inner === '\\' && quote !== "'") {
           end += 2;
           continue;
         }
@@ -62,8 +85,11 @@ export function maskLiterals(source: string, signal?: AbortSignal): string {
         }
         end += 1;
       }
+      if (end >= source.length) unsupported?.push('PHP source has an unterminated quoted literal');
       const stop = Math.min(end, source.length);
-      result += quote + blank(source.slice(index + 1, stop)) + (stop < source.length ? quote : '');
+      result += literals
+        ? quote + blank(source.slice(index + 1, stop)) + (stop < source.length ? quote : '')
+        : source.slice(index, stop < source.length ? stop + 1 : stop);
       index = stop + 1;
       continue;
     }
@@ -78,8 +104,9 @@ export function maskLiterals(source: string, signal?: AbortSignal): string {
       const label = heredoc[1] ?? heredoc[2] ?? '';
       const body = source.slice(index + heredoc[0].length);
       const closing = new RegExp(`^[ \\t]*${label}\\b`, 'mu').exec(body);
+      if (closing === null) unsupported?.push('PHP source has an unterminated heredoc or nowdoc');
       const stop = index + heredoc[0].length + (closing === null ? body.length : closing.index);
-      result += blank(source.slice(index, stop));
+      result += literals ? blank(source.slice(index, stop)) : source.slice(index, stop);
       index = stop;
       continue;
     }
@@ -88,12 +115,21 @@ export function maskLiterals(source: string, signal?: AbortSignal): string {
     const lineComment = (character === '/' && next === '/') || (character === '#' && next !== '[');
     if (lineComment || (character === '/' && next === '*')) {
       const close = lineComment ? source.indexOf('\n', index) : source.indexOf('*/', index);
+      if (close === -1 && !lineComment)
+        unsupported?.push('PHP source has an unterminated block comment');
       const stop = close === -1 ? source.length : close + (lineComment ? 0 : 2);
+      if (lineComment && source.slice(index, stop).includes('?>'))
+        unsupported?.push('PHP closing tags and mixed HTML source are not read');
       result += blank(source.slice(index, stop));
       index = stop;
       continue;
     }
 
+    if (character === '?' && next === '>') {
+      unsupported?.push('PHP closing tags and mixed HTML source are not read');
+      result += blank(source.slice(index));
+      break;
+    }
     result += character;
     index += 1;
   }

@@ -1,6 +1,6 @@
 {
   "name": "bga-mcp",
-  "version": "1.0.0-rc.2",
+  "version": "1.0.0-rc.3",
   "description": "Unofficial MCP server for Board Game Arena Studio development",
   "type": "module",
   "license": "Apache-2.0",
@@ -94,6 +94,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
+    "acorn": "8.18.0",
     "zod": "4.4.3"
   },
   "devDependencies": {

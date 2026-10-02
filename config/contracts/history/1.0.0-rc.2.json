@@ -9,16 +9,9 @@
     "id": "first-local-only",
     "serverName": "bga-mcp",
     "entrypoint": "dist/release-cli.js",
-    "bin": {
-      "bga-mcp": "dist/release-cli.js"
-    },
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    },
-    "typesDigest": "sha256:38ae3f8e1dfec1e0a67672882444888b0f64b863054f22b3fb4f1d73c74f7566",
+    "bin": { "bga-mcp": "dist/release-cli.js" },
+    "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+    "typesDigest": "sha256:e9469e67fadf05ca1baa74269cfe2b204f6831cfe6b12fbe5aed216b167cf180",
     "protocolVersions": ["2025-11-25"],
     "transports": ["stdio"]
   },
@@ -235,12 +228,6 @@
       "id": "CLAIM-CLIENT-SDK",
       "dimension": "client",
       "value": "@modelcontextprotocol/client 2.0.0",
-      "support": "supported"
-    },
-    {
-      "id": "CLAIM-CONTRACT-EXECUTABLE-CONTEXT",
-      "dimension": "file-generation",
-      "value": "static-contract-executable-context",
       "support": "supported"
     },
     {

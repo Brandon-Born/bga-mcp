@@ -7,7 +7,7 @@ import {
 } from '../project/modern.js';
 import {
   parseClientActionCalls,
-  parsePhpMethodNames,
+  readPhpMethodNames,
   parseServerActionEntries,
   type ClientActionCall,
   type ServerActionEntry,
@@ -310,11 +310,14 @@ export function validateActionContracts(
     entryPoints.filter((entry) => gameClassPaths.has(entry.source)).map((entry) => entry.action),
   );
 
-  const gameMethods = new Set(
-    phpSources
-      .filter((source) => !source.path.endsWith('.action.php'))
-      .flatMap((source) => parsePhpMethodNames(source.text, signal)),
-  );
+  let methodsComplete = true;
+  const gameMethods = new Set<string>();
+  for (const source of phpSources.filter((source) => !source.path.endsWith('.action.php'))) {
+    const outcome = readPhpMethodNames(source.text, signal);
+    methodsComplete = methodsComplete && outcome.unsupported.length === 0;
+    for (const name of outcome.value) gameMethods.add(name);
+    for (const construct of outcome.unsupported) findings.push(unsupported(construct, source.path));
+  }
 
   const declaredActions = new Set(
     model.states.definitions.flatMap((state) => state.possibleActions),
@@ -491,7 +494,7 @@ export function validateActionContracts(
       // An autowired action is its own game method; there is no second hop.
       continue;
     }
-    if (!gameMethods.has(entry.action) && gameMethods.size > 0) {
+    if (methodsComplete && !gameMethods.has(entry.action) && gameMethods.size > 0) {
       findings.push(
         heuristic(
           'action.game-method.missing',

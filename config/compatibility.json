@@ -594,6 +594,73 @@
       "value": "editor and agent clients",
       "support": "unknown",
       "notes": "General editor/agent support remains unknown. BGA-401 records a bounded native Codex app-server 0.159.2/macOS arm64 evaluation of the exact signed candidate; that evidence is not GUI, inference-turn or general editor support. See docs/CLIENTS.md."
+    },
+    {
+      "id": "CLAIM-CONTRACT-EXECUTABLE-CONTEXT",
+      "dimension": "file-generation",
+      "value": "static-contract-executable-context",
+      "support": "supported",
+      "notes": "BGA-431 excludes inert comments and quoted examples from bounded notification contracts and PHP game-method inventory. Full JavaScript parsing retains scripts/modules and executable template substitutions; typed TypeScript and unreadable grammar are explicitly unsupported. PHP lexical masking excludes strings, backticks, heredoc/nowdoc and comments with stable UTF-16 offsets; unfinished lexical constructs and closing tags/mixed HTML are unsupported. This is not runtime/control-flow evaluation or complete PHP syntax validation. The original rc.2 counterexample is retained as historical failure; replacement candidate carry-forward remains separate.",
+      "fixtures": [
+        "tests/fixtures/projects/comment-contract-reproduction",
+        "tests/fixtures/projects/comment-contract-controls",
+        "tests/fixtures/projects/legacy"
+      ],
+      "scenarios": [
+        "E2E-CONTRACT-COMMENT-METHOD-MISSING",
+        "E2E-CONTRACT-EXECUTABLE-CONTROLS",
+        "E2E-CONTRACT-INERT-EXAMPLES",
+        "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+        "E2E-CONTRACT-UNKNOWN-PHP"
+      ],
+      "capabilities": [
+        {
+          "reference": "tool:validate_notifications",
+          "scenarios": [
+            "E2E-CONTRACT-INERT-EXAMPLES",
+            "E2E-CONTRACT-EXECUTABLE-CONTROLS",
+            "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+            "E2E-CONTRACT-UNKNOWN-PHP"
+          ]
+        },
+        {
+          "reference": "tool:validate_action_contracts",
+          "scenarios": [
+            "E2E-CONTRACT-INERT-EXAMPLES",
+            "E2E-CONTRACT-EXECUTABLE-CONTROLS",
+            "E2E-CONTRACT-COMMENT-METHOD-MISSING",
+            "E2E-CONTRACT-UNKNOWN-PHP"
+          ]
+        },
+        {
+          "reference": "tool:validate_project",
+          "scenarios": [
+            "E2E-CONTRACT-INERT-EXAMPLES",
+            "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+            "E2E-CONTRACT-COMMENT-METHOD-MISSING"
+          ]
+        },
+        {
+          "reference": "tool:run_pre_release_audit",
+          "scenarios": [
+            "E2E-CONTRACT-INERT-EXAMPLES",
+            "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+            "E2E-CONTRACT-UNKNOWN-PHP"
+          ]
+        },
+        {
+          "reference": "resource:bga://project/diagnostics",
+          "scenarios": [
+            "E2E-CONTRACT-INERT-EXAMPLES",
+            "E2E-CONTRACT-UNKNOWN-GRAMMAR",
+            "E2E-CONTRACT-UNKNOWN-PHP"
+          ]
+        },
+        {
+          "reference": "resource:bga://project/summary",
+          "scenarios": ["E2E-CONTRACT-INERT-EXAMPLES"]
+        }
+      ]
     }
   ]
 }
