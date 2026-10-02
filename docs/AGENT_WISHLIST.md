@@ -34,6 +34,15 @@ cannot establish executable context.
 | Feature   | Prepare selected roots, bind their digests, compare action/state/payload results and retrieve official framework pages separately. | A source receipt and a compact before/after comparison without hiding changed coverage. Existing action traces already supplied useful argument relationships.                                |
 | Review    | Bind the frozen diff, run independent scoring/end-condition tests, interpret six SQL checks without verdicts.                      | Explain repeated unsupported causes and put independently identified test evidence beside the bounded framework verdict. No measured savings or new report-reading capability is established. |
 
+**Signed rc.5 frozen-task confirmation, 2026-10-02 UTC.** The explicit
+[BGA-424 repeat](verification/AGENT_EVALUATION_CARRY_FORWARD.md#signed-rc5-frozen-task-repeat)
+again required constructing all five frozen source roots, checking each selected
+file digest, comparing the 23 task calls and running independent game assertions.
+Declaration inventories now match the independent oracles, while source selection,
+compact before/after comparison, repeated SQL uncertainty and game-test context
+remain manual work. The three task observations above still apply; no new
+capability or measured saving is inferred from this repeat.
+
 ## Explain and select the source set
 
 **Observed.** The mixed working folder, tracked export, and production subset

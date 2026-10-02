@@ -3,7 +3,7 @@
 ```verification-record
 {
   "kind": "review",
-  "scope": "Signed rc.3 and rc.4 repeats of all frozen rc.2 MCP calls, independent game checks and executable-context adjudication"
+  "scope": "Signed rc.3, rc.4 and rc.5 repeats of all frozen rc.2 MCP calls, independent game checks and executable-context adjudication"
 }
 ```
 
@@ -166,3 +166,56 @@ No Studio gameplay, full game correctness or publisher permission is established
 The MCP still does not settle game-specific persisted representation or scoring
 without game-owned assertions. BGA-405/BGA-407/BGA-415 retain their separate exact-
 candidate review, public-evidence and publication gates.
+
+## Signed rc.5 frozen-task repeat
+
+The original signed `v1.0.0-rc.5` package from source
+`286f2bbb1bfff28726378098d9883058f19841e9` has SHA-256
+`b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`.
+[Its signing receipt](release-signing-v1.0.0-rc.5.json) identifies signer
+`a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`. Fresh independently acquired
+trust roots verify the original signature, all subjects and exact producer/source
+provenance before installation and calls; cryptographic probes refuse changed
+bytes, a wrong signer and a wrong workflow. The original package was not rebuilt.
+
+[The sanitized rc.5 ledger](agent-evaluation-v1.0.0-rc.5.json) records all 23
+original task calls across the same five digest-matching frozen source roots,
+using the unchanged native Codex 0.159.2 bridge and client binary. Seven separate
+consumer calls, three consumer resource reads, two explicit baseline resource
+reads and schema/outside-root/excluded-tool refusals remain outside the 23 task
+calls. Every selected source digest matches before and after every call. The
+current game production and user configuration remain unchanged, every process
+exits, temporary roots are removed and removal eliminates the evaluation command.
+Raw results, independent assertion logs and replay runners are retained only in
+ignored `Dino Racer private/mcp/evaluation-rc5`; tracked evidence retains
+sanitized counts, identities, comparisons and hashes.
+
+All five inventories agree with independently loaded JavaScript prototypes and
+PHP 8.4.26’s Zend lexer. The three early roots have no invented handler and two
+real unmatched-send warnings; feature and review roots each have one live handler
+and no notification warnings. Every scoped call summary matches the rc.4 repeat.
+The original [public-command correctness probe](bga431-fixed-v1.0.0-rc.5.json)
+passes all three assertions with unchanged fixture and runner digests. No newly
+untriaged false-certain finding was observed in this bounded sample.
+
+Separate temporary Git exports reproduce the original expected reload failure
+(1 test / 1 assertion / 1 failure), repaired diagnosis (28 / 59), drafting feature
+(34 / 94 plus 2 JavaScript tests) and review (39 / 105 plus 2 JavaScript tests).
+The pinned PHPUnit checksum matches. The frozen review diff is independently
+recomputed and still has SHA-256
+`f81486c0a759c87ab84db26740a9803ae5fb6ca32f49ec12df0d61b4c2b58cd5`.
+The foundation’s full suite is historical context, not represented as a fresh
+rc.5 repeat; current counts identify the assertions actually rerun.
+
+This is an explicit frozen-task carry-forward, not three newly implemented tasks
+or a measured productivity improvement. The review pre-release audit still has
+26 passed, 1 failed, 6 unsupported and 8 manual-required checks. Computed setup
+SQL and database-audit availability remain coverage limits. Source-selection
+friction in the newer working-root/export comparison remains separately scoped
+in [its rc.5 receipt](rc5-dino-racer-rerun.json). The MCP does not establish
+game-specific persisted representation or scoring without game-owned assertions;
+no whole-game, Studio gameplay, GUI, blind-author or publisher-permission claim
+is added. Existing source-selection, repeated-uncertainty and test-evidence
+wishes remain unimplemented. Full local gate and exact-source handoff CI are
+pending before the rc.5 ledger is marked verified. BGA-411 is next in the release
+queue; security review and publication retain their independent gates.
