@@ -243,3 +243,13 @@ The writer now pins the actual rc.6 original. Its positive regression fixture in
   "publicationPerformedByLocalCheck": false
 }
 ```
+
+## Verified public rc.6 metadata — 2026-10-02 UTC
+
+[The public metadata prerelease](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.6) retains twelve assets for the release lifetime. [The actual distribution receipt](release-evidence-v1.0.0-rc.6.json) records original candidate source `36a7d86`, signer `882859f`, corrected distribution source `cad8dd8`, successful [workflow 37076418295](https://github.com/Brandon-Born/bga-mcp/actions/runs/37076418295), exact public asset IDs/digests and both independently acquired and hosted validation.
+
+The first corrected-source attempt creates one empty matching draft, then stops without uploads. The generic failure log does not establish the cause. Authenticated reconciliation confirms the sole draft's ID, tag, source, title, notes, empty assets and exact plan digest; the hosted prepared packet equals the independently verified local packet byte for byte. Only failed jobs of that same corrected-source run resume. The recovery succeeds without duplicate creation or overwrite. The prior wrong-pin run at `b0c3545` remains a separate recorded failure, with no release created.
+
+Hosted and independent public downloads verify trusted schemas, original signature/workflow/source/producer identity and exact eleven-entry local coverage (stdio plus seven tools and three resources). Six repository capabilities stay excluded and Studio remains not-run. All twelve public files match the original prepared packet, their server-reported digests and the authenticated hosted verification archive. The independent original-copy probes refuse omitted advertised coverage, invented Studio support, a permissive replacement schema and modified signed evidence; the latter is refused cryptographically as well.
+
+[Exact distribution-source CI 37076402455](https://github.com/Brandon-Born/bga-mcp/actions/runs/37076402455) passes all six platform/Node jobs at `cad8dd8dbf5c6d7bdbe9f89baddbdaf3af0b6c93`, each with 768 tests / 234 required scenarios. Every downloaded record validates trusted schema, sealed integrity, clean exact source, artifact-run consistency and applicable conformance. The actual scoped framework guard passes without relabeling its earlier admission or renewing dated candidate observations. Local public copies are retained under ignored `.artifacts/published-release-evidence/v1.0.0-rc.6/`. Original and historical files remain unchanged. BGA-415 selects this completed evidence set separately; installable-package publication and security approval remain held.
