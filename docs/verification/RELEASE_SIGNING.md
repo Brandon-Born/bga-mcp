@@ -29,7 +29,94 @@ Identity permission remains confined to the main-only dependency-free signing jo
     "originalCandidateRebuilt": false,
     "signatureCreated": false,
     "registryPublished": false,
-    "cleanSourceCi": "pending"
+    "cleanSourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529",
+      "commit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:08104c9ebb172c7a73bf28c894e0fd94457c70bd6ccbd46b3905942779abb89b",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-02T21:59:39.085Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:ba99d995881e7c831dc96498ade8cabf1ca6231b8656eb13fe5ea705b6a96fa4",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-02T22:02:24.773Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:6d5ffc49d44cd1d15b8633d199125fdb31f90c9eb01294a75fe694b5a677cf94",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-02T21:59:16.032Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:675435affee9786cbc77ad36d42e0153b720e75afc37468b8890a7ac8c55366a",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-02T22:00:00.511Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:1ac00cc8fa0fe836ccce412ca976167a6838f5342d5fa7e537b1f644cef4c4cb",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-02T22:03:58.257Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:e4d1e07c400d1543bf53ef36ac080d37f8779ca89f950624bf00adb5738a60d8",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-02T21:59:59.924Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "reviewer": "Codex",
+      "pages": 8,
+      "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+      "ciRun": "37069653529",
+      "actualReleaseGuard": "passed",
+      "holds": 0
+    },
+    "mainIntegration": {
+      "mergeCommit": {
+        "oid": "882859f6c13643efdb7aca90d7405d2339ab9534"
+      },
+      "mergedAt": "2026-10-02T22:04:13Z",
+      "state": "MERGED"
+    },
+    "signingRun": {
+      "id": "37070595289",
+      "sourceCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+      "statusAtRecord": "in_progress",
+      "registryPublication": false
+    }
   }
 }
 ```
@@ -37,6 +124,8 @@ Identity permission remains confined to the main-only dependency-free signing jo
 The separate manual `Sign retained release candidate` workflow signs the original BGA-403 candidate. It does not rebuild, publish, or renew security approval. Its prepare job runs the full gate and verifies the original producer, source CI, tag and artifact archive against the tracked [trusted candidate receipt](release-candidate-v1.0.0-rc.1.json). Its signing job independently rechecks that archive before extracting the seven original files. Only that job can request a short-lived signing identity; it installs no dependencies and executes no package code. Actions are pinned to reviewed commits and checkout credentials are not persisted.
 
 The custom predicate `https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1` is a retention assertion. It binds the original tagged source `a2031afe9da6acbdcf1712007da8394bc0fdeef2`, producer run `36720091111`, source CI `36720062520`, original archive digest and all candidate material digests. It deliberately does not claim the later signing workflow built the candidate. All seven original files, including checksums, are signed as subjects of one DSSE/Sigstore bundle. `release-provenance.json` is a readable copy; acceptance uses the cryptographically verified predicate, not that unsigned copy.
+
+[Exact-source signing-handoff CI 37069653529](https://github.com/Brandon-Born/bga-mcp/actions/runs/37069653529) passes all six jobs at `2b8c2cb`; each downloaded record independently validates schema, integrity, clean exact source, 768 tests / 234 scenarios and artifact/conformance identity. All eight unchanged bounded source decisions are explicitly admitted against this post-mapping evidence, and the actual framework guard succeeds with zero holds. [PR #9](https://github.com/Brandon-Born/bga-mcp/pull/9) merges as `882859f` after all six PR checks pass. [Signing run 37070595289](https://github.com/Brandon-Born/bga-mcp/actions/runs/37070595289) is dispatched at that main commit; this dispatch is not a completed-signature observation. The active exact-signer main CI is left alone.
 
 ## Verification instructions
 
