@@ -20,3 +20,13 @@ The native Codex evaluation uses the actual installed CLI/app-server MCP stack a
 The independent native Codex run on macOS arm64/Node 22.17.1 used CLI 0.159.2 and the clean committed runner at that same source. The retained receipt names the actual client binary digest and runner hashes, original candidate source `a2031af`, and original package digest `sha256:a3472a97916bbd793fe32ffb847ced3d9638fe2c45cc112867b0af0a15f3acfa`. Exact discovery, all seven tool calls, all three resource reads, schema/outside-root/excluded-tool refusals, unchanged project and user configuration, clean app-server/child-process exit, restart and removal passed. Codex emitted startup diagnostics; raw stderr was discarded rather than represented as a clean stream. No inference turn or GUI interaction occurred. Configuration-change assertions compare bytes internally and expose only a boolean failure, so a failed check cannot print configuration contents.
 
 BGA-401 is verified within these scopes. It makes no claim for other clients, platforms, versions or replacement candidate bytes. BGA-424 is the next release item and requires an owner-authorized real game project and reviewed development tasks.
+
+## Runner refresh for replacement candidate preparation
+
+On 2026-10-01, BGA-430 corrected the installation runner's hardcoded rc.1 version
+assertion. The actual native Codex smoke was repeated against the unchanged signed
+rc.1 package using committed runner source `aa30ad4`. The
+[refresh receipt](codex-client-v1.0.0-rc.1-refresh.json) records the new runner
+digests and passing discovery, all calls, refusals, restart, immutable project and
+user configuration, process cleanup and removal. The original receipt is retained.
+This refresh does not transfer native-client evidence to rc.2 bytes.
