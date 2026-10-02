@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "recordedAt": "2026-10-02T12:43:24.400Z",
+  "sourceCommit": "50d19f103c0eb1fca49373220e2e374ab6b47527",
+  "candidate": {
+    "tag": "v1.0.0-rc.5",
+    "sourceCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac"
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37007946342",
+    "event": "workflow_dispatch",
+    "ref": "refs/heads/main",
+    "requestedMode": "dry-run",
+    "conclusion": "failure"
+  },
+  "status": "held-as-expected",
+  "jobs": [
+    {
+      "name": "prepare",
+      "conclusion": "failure",
+      "failedStep": "Authenticate original signed packet and admit fresh reviewed bytes",
+      "message": "Publication preflight failed; no registry write is permitted. Run release:status for owned holds."
+    },
+    {
+      "name": "publish",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "verify",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "promote",
+      "conclusion": "skipped"
+    }
+  ],
+  "checks": {
+    "fullLocalGate": "passed",
+    "testsPassed": 674,
+    "requiredScenariosPassed": 209,
+    "exactCandidateSourceCheckout": "passed",
+    "frozenSourceInstall": "passed",
+    "admission": "refused"
+  },
+  "observedReleaseStatus": {
+    "owner": "BGA-415",
+    "status": "held",
+    "holds": [
+      "Release gate is pending: privateReportLifecycleVerified",
+      "Open blocking risk BLOCK-privateReportLifecycleVerified owned by Brandon-Born",
+      "BGA-405 approval is held",
+      "Package/registry/trusted-publisher decision and setup evidence are pending",
+      "Non-maintainer benign report lifecycle has not been observed",
+      "BGA-406 is not verified"
+    ],
+    "published": false
+  },
+  "identityBearingJobsStarted": false,
+  "registryWriteAttempted": false,
+  "logDigest": "sha256:28240d73ff5e6cea49feb97ef005b4e1d9d0135358e550d779ccb50e12e26fbe",
+  "scope": "Actual explicit dry run passed full checks and exact-source installation, then stopped at owned release admission before packet acquisition. Publish, verify and promote were skipped; no publisher identity or registry operation was exercised. This expected refusal is not publication, account setup, a fresh admitted audit or an approved candidate."
+}

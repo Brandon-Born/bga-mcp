@@ -80,5 +80,20 @@ retains the clean source, actual receipt digests, four historical substitutions
 and the earlier pre-admission framework hold; it is not rewritten to imply
 that the later admission had already happened.
 The private reporter, publisher setup, registry publication and independent
-public consumer remain unverified. A current hosted dry run must follow that
-admission; no identity-bearing job or registry write is authorized by alignment.
+public consumer remain unverified. [Hosted dry run 37007946342](bga415-rc5-dry-run.json) on clean baseline
+`50d19f103c0eb1fca49373220e2e374ab6b47527` passed the complete gate
+(674 tests / 209 required scenarios), checked out original rc.5 source and
+installed its frozen lockfile. Admission then refused the actual reporting,
+security approval and publisher-decision holds. Its overall conclusion is
+`failure`; all three downstream jobs were skipped. No packet acquisition,
+fresh admitted audit, publisher identity, registry consumer or promotion is
+claimed. The separate prerequisite checks and real hosted refusal are retained
+as separate evidence scopes; BGA-415 stays implemented.
+
+[Clean baseline CI 37007946504](rc5-publication-baseline-ci.json) concludes
+successfully at `50d19f1` after one unchanged failed-job replay. All six sealed
+records validate trusted schema, integrity, exact clean source, CI environment,
+674 tests / 209 required scenarios and conformance. The initial Windows/Node 24
+failure had no injected `read:start` event before the 100 ms deadline. Its
+failure and log digest remain recorded under BGA-326; setup timing is plausible,
+not a confirmed root cause or a repaired deterministic probe.
