@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-408",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "b056c2ff5d1d5fbe7540932230096090c66b403c",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36964443442",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:2d13a883e5806573a6d25cb46b597a73a80e221cbf7cd23bf1f1102d78d81839",
+      "packageDigest": "sha256:932b8b5ee968f5a8523b9b8722582e14c589e2b508c7cc2acf780a91ca51e7f1",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:038a096f487f5a7bfd0fa8ae1632be6685649ed6b3e7fc5a12016eba2a11eae9",
+      "packageDigest": "sha256:932b8b5ee968f5a8523b9b8722582e14c589e2b508c7cc2acf780a91ca51e7f1",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:e29a333f875d4c947ac71a897359520680062308addbe79e35948970fadfe5d2",
+      "packageDigest": "sha256:0b9293c57a25be45abd684915f8c392c432d64824a555c384055b824a50599e2",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:a62c143ab11e972a592b4f4c0ca605738edfbc628306fab415b9db757c1f8694",
+      "packageDigest": "sha256:0b9293c57a25be45abd684915f8c392c432d64824a555c384055b824a50599e2",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:f6d44db9e996e0b4a6d8976317063b6aed2735877fc8f402f7e21ce81ada0791",
+      "packageDigest": "sha256:eb23db8278cc89e99d4c1b9be7a0b7ee17487c07f3190017aea92b7379f34b0f",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:192b7851cb8501c7328d709c43a8d89bd256ccf3f46ddf543234a36599dee197",
+      "packageDigest": "sha256:eb23db8278cc89e99d4c1b9be7a0b7ee17487c07f3190017aea92b7379f34b0f",
+      "testsPassed": 661,
+      "scenariosPassed": 202,
+      "capabilities": 17,
+      "retainedClaims": 100
+    }
+  ],
+  "scope": "Exact implementation CI on Ubuntu/macOS/Windows Node 22/24 verifies framework process controls and the explicitly simulated installed-fixture lifecycle. No live framework baseline, upstream change, new signature, private report lifecycle or publication claim."
+}
