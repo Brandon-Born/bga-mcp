@@ -62,6 +62,10 @@ Release-changing implementation follows dependency order, with a focused item an
 
 The first public release queue is:
 
+**User-directed final external gate, 2026-10-02:** Prepare all independent shipping work first. The user will arrange an independent agent for BGA-406's harmless non-maintainer reporting lifecycle later, as the last gate. This changes execution order only: security approval and publication remain held until the actual acknowledgement, triage and closure receipt exists. Do not substitute the available administrator account, send a report without authorization, or mark this acceptance criterion verified in advance.
+
+**User-directed shipping freeze, 2026-10-02:** Finish the shipping path for BGA-414's existing `first-local-only` inventory: seven tools, three project resources, stdio and protocol `2025-11-25`. Prepare `1.0.0-rc.6` from the integrated correctness and lifecycle changes rather than treating the older signed rc.5 as evidence for new bytes. Complete the existing BGA-403/404/400/401/424/411/407/405/406/408/415 gates against one original candidate; preserve their acceptance requirements and all historical receipts. Optional documentation, setup and Studio surfaces remain outside this release. BGA-211's historical replay gap remains implemented and excluded, not waived. Record further observed missing functionality in the wishlist for a later bounded change. Publisher/account and independent reporting actions remain explicit external holds; the unanswered approval to update `main` remains a separate integration hold. This freeze is scope direction, not security approval or permission to publish unreviewed bytes.
+
 1. `BGA-422` — clear current toolchain advisories and add a release advisory gate.
 2. `BGA-403` — rerun the reproducible, non-publishing release-candidate pipeline against the restored inventory.
 3. `BGA-404` — signatures and provenance.

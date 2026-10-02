@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "server": {
     "name": "bga-mcp",
-    "version": "1.0.0-rc.5"
+    "version": "1.0.0-rc.6"
   },
   "ciRuns": [
     {
