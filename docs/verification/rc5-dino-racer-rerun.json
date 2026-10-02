@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-403",
+  "recordedAt": "2026-10-02T09:29:13.251Z",
+  "candidateTag": "v1.0.0-rc.5",
+  "candidateCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+  "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+  "signature": "not yet signed",
+  "client": "codex-cli 0.159.2",
+  "platform": "darwin",
+  "node": "v22.17.1",
+  "wholeCheckout": {
+    "name": "Dino Racer",
+    "revision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "treeDirty": false,
+    "contentDigest": "0939d615b49c9d4eb2336b660b83d6016808e43aeb828f7a78343b929b6a2029",
+    "calls": [
+      {
+        "tool": "audit_database_usage",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": [
+          "database.audit.unavailable",
+          "database.unsupported-syntax",
+          "project.source.unsupported-syntax"
+        ],
+        "auditCounts": null
+      },
+      {
+        "tool": "inspect_project",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "run_pre_release_audit",
+        "layout": "modern",
+        "status": null,
+        "findingCodes": [],
+        "auditCounts": {
+          "passed": 0,
+          "failed": 1,
+          "unsupported": 32,
+          "manual-required": 8
+        }
+      },
+      {
+        "tool": "validate_action_contracts",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_notifications",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_project",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": [
+          "database.audit.unavailable",
+          "database.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax"
+        ],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_state_machine",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      }
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "projectUnchanged": true,
+    "scope": "read-only current-project MCP rerun; no gameplay, game implementation or full BGA-424 frozen-task carry-forward"
+  },
+  "explicitProductionExport": {
+    "name": "Dino Racer explicitly selected production export",
+    "revision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "treeDirty": false,
+    "selectedFiles": 18,
+    "selection": "all tracked modules and explicit root BGA code/configuration files; tests/scripts/src-disabled omitted visibly as coverage limits",
+    "sourceDigests": {
+      "dbmodel.sql": "sha256:1267e8d351e6b1254f765aafedc0f8df522383060fa2078de7159760c361e7cb",
+      "dinoracer.css": "sha256:aada5941eec53629895eca13f51c6250022fad9e5962d85438721152db0faefe",
+      "gameinfos.jsonc": "sha256:325f94ed7228c85928da3c9be4de39f4b9d7a1a36e937c51f8605bedcc5d1702",
+      "gameoptions.jsonc": "sha256:8cefd0f47eaead19f39d7455d324a7230bead79b08e719745508c6c30cb9cc32",
+      "gamepreferences.jsonc": "sha256:739348ab1afcc49dd31719202a148c1f67afa8c12c7e46e716e5604a80074d20",
+      "modules/README": "sha256:d8f6175e54d015f67ae8f37ef1595485e2dad0a0960d299eb9403ee234d5e11b",
+      "modules/js/Game.js": "sha256:e8dd7481e345d735348f7f667da9122ca968628d1ee61310ba8a8cdae036a9cc",
+      "modules/php/Game.php": "sha256:1031825caac5f12c33ac9a36e5ca32876965439e2272558406cf97b20292f4a1",
+      "modules/php/Rules/RaceResult.php": "sha256:146b54dc914b8459b37e95cdd0bb19c4bfc288dad9aea441049b225dd94ce60d",
+      "modules/php/Rules/Round.php": "sha256:51e5c895af81ab58b85b73d1411c8aaaf141c3cbb53e248fd3b36290787eaec9",
+      "modules/php/Rules/Standings.php": "sha256:1fe642fb0a35d17a5ac442508bcd0fa1768b032f3531cfa9103828c60bf5231a",
+      "modules/php/States/DraftCard.php": "sha256:1a54c8015f6117c3e108ebbbfbf21d32a7a52a6e706968db5a2152b4e591cea0",
+      "modules/php/States/DraftComplete.php": "sha256:8c2ae2cc5ee39abb851449bc5b056aaf423aa090be82066537b287dde62f5e3b",
+      "modules/php/States/EndScore.php": "sha256:0fe94e037133feb75350a2dc7342a418c545ba896f230977de70fd5f14a20616",
+      "modules/php/States/NextDraft.php": "sha256:d8293e7173398c77359f81900f077429f481a443b81a80c5141b6d1d5f6b3da0",
+      "package.json": "sha256:20e4b80f41774fb7d9a399090801afa4bf9e41b5f17c25ec89a1f6a8a78a6e2e",
+      "stats.jsonc": "sha256:47ceec81f115812b83002ffc74a8f9fb2765ba5722cce111a63f5f5583fac6fd",
+      "tsconfig.json": "sha256:9d9ee5f082c3ae1ccd4ccc326a0f42cc088e87731be70ac940dcc6b452bf581e"
+    },
+    "contentDigest": "3736f55f36daac51713301b37639ec7dfe8d35c10a01a2a957a59e8141983178",
+    "calls": [
+      {
+        "tool": "audit_database_usage",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "inspect_project",
+        "layout": "modern",
+        "status": "passed",
+        "findingCodes": [],
+        "auditCounts": null
+      },
+      {
+        "tool": "run_pre_release_audit",
+        "layout": "modern",
+        "status": null,
+        "findingCodes": [],
+        "auditCounts": {
+          "passed": 26,
+          "failed": 1,
+          "unsupported": 6,
+          "manual-required": 8
+        }
+      },
+      {
+        "tool": "validate_action_contracts",
+        "layout": "modern",
+        "status": "passed",
+        "findingCodes": [],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_notifications",
+        "layout": "modern",
+        "status": "passed",
+        "findingCodes": [],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_project",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": ["database.audit.unavailable", "database.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_state_machine",
+        "layout": "modern",
+        "status": "passed",
+        "findingCodes": [],
+        "auditCounts": null
+      }
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "projectUnchanged": true,
+    "scope": "agent-created temporary production export; no source-selection MCP feature, gameplay, game implementation or full BGA-424 carry-forward"
+  },
+  "consumerRunnerDigest": "sha256:531e162614d1427d32f17a8c595337b4c56e0215fa0301ee59e5435208e11a84",
+  "exportRunnerDigest": "sha256:2e9acfefb1efa645b5f01bfb2105f67de42313021a4bb30bfddac7deb966a730",
+  "userConfigurationUnchanged": true,
+  "appServerExited": true,
+  "serverProcessesExited": true,
+  "evaluationInstallationsRemoved": true,
+  "scope": "read-only current Dino Racer rerun and explicitly different production source set. Source selection is an agent-created workaround; source-scope uncertainty and computed SQL remain coverage limits. This is not whole-game correctness, Studio gameplay, signature verification, measured productivity or full BGA-424 carry-forward."
+}

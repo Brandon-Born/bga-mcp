@@ -55,6 +55,15 @@ keep the omitted local sources visible as a different coverage scope. There is
 no source-selection MCP feature or measured effort saving in this observation.
 This repeats the existing wish rather than assigning a new implementation owner.
 
+**rc.5 confirmation, 2026-10-02 UTC.** The verified original rc.5 artifact
+repeats this friction on the same clean Dino Racer revision `83e2e50`.
+[Its separate root/export receipt](verification/rc5-dino-racer-rerun.json)
+again records 32 unsupported checks on the whole root and six on the explicit
+18-file export, with one failed database check in each. I still assembled and
+digest-bound the export manually. This adds current-artifact evidence to the
+existing source-selection and unchecked-SQL wishes; it does not establish a new
+feature or a measured effort saving.
+
 **Wish.** One readable receipt showing which files supplied each contract, which
 were excluded and why, and which have unknown scope. An explicit caller-selected
 source set could reduce snapshot preparation, provided omitted files remain

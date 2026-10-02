@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T09:21:11.588Z",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.5",
+    "sourceCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.5",
+    "artifactName": "bga-mcp-1.0.0-rc.5.tgz",
+    "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:4ec623da23cd01877a3d537f077b2ae5160411a2fc8edee7fa225ef6b73e05a7",
+      "verificationEvidence": "sha256:579a47797347e0e5278cc6bf7606456144b9f5ee2a700b623f30bebe4fc0d83d",
+      "artifact": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+      "securityAudit": "sha256:53082bc12c997bb7b2c869cdf388714f28d14c10788250ba97807c362939f755"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36988666944",
+    "conclusion": "success",
+    "artifactId": 11218194859,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.5",
+    "archiveDigest": "sha256:601f4d344639bd6ac7d1ea57793c32be0220f6672f5f2da89c484234f8d03bb2",
+    "expiresAt": "2026-12-31T09:14:48Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36988582807",
+    "commit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-02T09:18:00.590Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentConsumer": {
+    "archiveDigestVerified": true,
+    "checksumsVerified": 6,
+    "discovery": "matched installed inventory",
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-02T09:21:14.668Z",
+    "client": "codex-cli 0.159.2",
+    "node": "v22.17.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+    "calls": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "schemaRefusal": true,
+    "outsideRootRefusal": true,
+    "excludedToolRefusal": true,
+    "projectUnchanged": true,
+    "userConfigurationUnchanged": true,
+    "appServerExited": true,
+    "serverProcessesExited": true,
+    "removal": true,
+    "bga432": [
+      {
+        "stateId": 2,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      },
+      {
+        "stateId": 12,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      }
+    ],
+    "runnerDigest": "sha256:531e162614d1427d32f17a8c595337b4c56e0215fa0301ee59e5435208e11a84",
+    "stderrDiagnosticsObserved": true,
+    "scope": "original unsigned artifact native client smoke and installed BGA-432 controls; no signature or registry claim"
+  },
+  "localRetention": ".artifacts/release-candidates/v1.0.0-rc.5",
+  "published": false,
+  "signed": false,
+  "installationGuide": {
+    "receipt": "install-guide-v1.0.0-rc.5-unsigned.json",
+    "resultDigest": "sha256:70460b028c2c5271048161d0ce461db7f8e68fff179a524b74e81db3ba7f341d",
+    "signatureReexecuted": false
+  },
+  "realProjectRerun": "rc5-dino-racer-rerun.json",
+  "packedGuides": {
+    "comparedAt": "2026-10-02T09:29:13.251Z",
+    "repositoryCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "files": [
+      {
+        "path": "README.md",
+        "digest": "sha256:eeeb67d522fb3e0c2107d92460ca2c79018891a68186639b09b2de25934063ce",
+        "matchesCurrent": true
+      },
+      {
+        "path": "AGENTS.md",
+        "digest": "sha256:15b7d84f859fb1008bfa434fc7aa91ee0ad8d41c35ba8e890c7efa0827e188f2",
+        "matchesCurrent": true
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "digest": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+        "matchesCurrent": true
+      },
+      {
+        "path": "SECURITY.md",
+        "digest": "sha256:30252562af68169ebeb55cc1f2f8d05dd84f7cbf9e467c6be46a1ea4757c31ab",
+        "matchesCurrent": true
+      },
+      {
+        "path": "docs/INSTALL.md",
+        "digest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+        "matchesCurrent": true
+      },
+      {
+        "path": "docs/VERSIONING.md",
+        "digest": "sha256:fcbcab8f6a678afa4021281526966d7c3747b88d6b899176e76cac0d6be6d1e0",
+        "matchesCurrent": true
+      }
+    ],
+    "scope": "original tarball text compared byte-for-byte with clean candidate-source checkout; no security approval"
+  }
+}

@@ -191,3 +191,51 @@ applicable-conformance checks. The eight unchanged previously read framework
 source decisions were explicitly re-admitted using that sealed evidence;
 the actual release guard passes. This ledger handoff precedes tagging, the
 immutable producer and independent original-byte consumption.
+
+## Original rc.5 producer and consumer handoff
+
+The [original rc.5 receipt](release-candidate-v1.0.0-rc.5.json) binds clean tag
+`v1.0.0-rc.5` to source `286f2bbb1bfff28726378098d9883058f19841e9` and
+tarball SHA-256 `b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`.
+[Producer 36988666944](https://github.com/Brandon-Born/bga-mcp/actions/runs/36988666944)
+passes the full gate, fresh zero-finding production/full audits and byte-for-byte
+reconstruction on Ubuntu / Node 24. Original artifact `11218194859` expires on
+2026-12-31 at 09:14:48 UTC. Its archive digest, six checksums, trusted source
+schema, evidence integrity and source/material relationships were independently
+verified before consumption. The original seven-file packet is retained locally
+under `.artifacts/release-candidates/v1.0.0-rc.5`.
+
+[Exact-source CI 36988582807](https://github.com/Brandon-Born/bga-mcp/actions/runs/36988582807)
+passes all six Linux/macOS/Windows jobs on Node 22/24, with 674 tests and 209
+scenarios each. These are separate source-CI observations; reproducibility is
+claimed only for the producer's Ubuntu / Node 24 reconstruction.
+
+An independent macOS arm64 consumer installs the original tarball through native
+Codex CLI 0.159.2. All seven tools and three resources match the installed
+inventory and are exercised; schema, outside-root and excluded-tool calls are
+refused. Both state-class entry-point controls retain uncertainty without false
+initial/reachability defects, then resolve their explicit setup return. Project
+and user configuration bytes remain unchanged; native processes exit and the
+installation is removed. This smoke does not renew the supported-client matrix
+or replace the full BGA-424 frozen-task evaluation.
+
+The [unsigned installation recipe run](install-guide-v1.0.0-rc.5-unsigned.json)
+passes installation, version/discovery, first use, unconfigured-root refusal,
+repeat installation and removal. All six packed guides match the clean candidate
+checkout byte-for-byte, including the corrected historical-example wording.
+The current marked recipes consume original rc.5 bytes; the separate historical
+rc.3 acquisition example is not relabeled as a current rc.5 acquisition test.
+
+The [current Dino Racer rerun](rc5-dino-racer-rerun.json) records every public
+tool/resource against the unchanged whole checkout and a separately prepared
+18-file production export. The whole-root audit has 0 passed, 1 failed, 32
+unsupported and 8 manual-required checks. The explicit export has 26 passed,
+1 failed, 6 unsupported and 8 manual-required checks. Its state, action and
+notification validators pass, while computed SQL remains unsupported. Selected
+file digests and omissions are retained; this manual export is not an MCP source
+selection feature or proof of game correctness, gameplay or productivity.
+
+BGA-403's original rc.5 handoff is complete. BGA-404 must next sign these retained
+bytes without rebuilding; signing selectors still identify historical rc.4.
+The unsigned receipt preserves that observation. No rc.5 signature, public
+evidence distribution, security approval or registry publication is claimed.
