@@ -268,7 +268,8 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             const page = await policy.fetchDocumentation({ sourceId: source.id, path }, { signal });
             // The page was read. Whether it turns out to match is a separate
             // question from whether this source was successfully searched.
-            searched.add(source.id);
+            attempted.add(page.sourceId);
+            searched.add(page.sourceId);
             if (seen.has(page.url)) {
               return;
             }
@@ -276,12 +277,15 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
             // The catalog decides authority by page, so a community page keeps
             // its own provenance even when the search reached it through the
             // site-wide source.
-            const owning =
-              (await policy.documentationSources()).find(
-                (candidate) =>
-                  candidate.canonicalUrl.length > source.canonicalUrl.length &&
-                  page.url.startsWith(candidate.canonicalUrl),
-              ) ?? source;
+            const owning = (await policy.documentationSources()).find(
+              (candidate) => candidate.id === page.sourceId,
+            );
+            if (owning === undefined) {
+              throw new BgaMcpError(
+                ERROR_CODES.policyDocSourceNotAllowed,
+                'The retrieved documentation page has no reviewed source.',
+              );
+            }
             const retrieved = await retrieveDocumentation(
               owning,
               cache,
@@ -311,7 +315,8 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               provenance: provenanceOf(retrieved.authority),
               retrievedAt: retrieved.retrievedAt,
               lastModified: retrieved.lastModified,
-              lastEdited,
+              // A search hit dates its original page, not a redirect target.
+              lastEdited: page.redirects.length === 0 ? lastEdited : null,
               ageDays: retrieved.ageDays,
               stale: retrieved.stale,
               cached: retrieved.cached,

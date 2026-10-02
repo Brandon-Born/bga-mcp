@@ -14,6 +14,7 @@ import {
 import { readBoundedUtf8 } from './docs/read.js';
 import { describeRequestContentViolation, requestContentViolation } from './docs/request.js';
 import {
+  matchesDocumentationSource,
   parseDocumentationCatalog,
   sourceById,
   sourceForUrl,
@@ -1275,8 +1276,8 @@ export class PolicyBoundary {
       });
       if (result.location === null) {
         return {
-          sourceId: source.id,
-          authority: source.authority,
+          sourceId: hopSource.id,
+          authority: hopSource.authority,
           url: current.href,
           status: result.status,
           body: result.body,
@@ -1331,11 +1332,7 @@ export class PolicyBoundary {
     for (const [name, value] of Object.entries(request.params ?? {})) {
       url.searchParams.set(name, value);
     }
-    if (
-      url.protocol !== 'https:' ||
-      url.hostname !== source.host ||
-      !url.href.startsWith(source.canonicalUrl)
-    ) {
+    if (!matchesDocumentationSource(source, url)) {
       throw new PolicyViolationError(
         ERROR_CODES.policyDocSourceNotAllowed,
         'The documentation request did not stay within its source.',

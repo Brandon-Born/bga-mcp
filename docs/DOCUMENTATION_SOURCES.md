@@ -47,6 +47,12 @@ That is unusually explicit, and it decides the design:
 - Retrieved text is **untrusted content**. It is data an agent reads, never instruction it follows, however it is phrased. See RR-DOC-INJECTION-RESIDUAL in the [threat model](THREAT_MODEL.md): labelling reduces the chance an agent treats documentation as instruction and cannot eliminate it.
 - Cache is bounded — 30 days for the maintained reference, 7 for community pages, which change less predictably — and nothing is served without its date.
 
+## Canonical page boundaries
+
+An explicit origin-root catalog entry covers its site. Every other entry covers only its exact normalized URL pathname. Query and fragment variants keep the page classification; text-prefix neighbours, case variants, encoded delimiters and unlisted subpages do not inherit it. No wiki title, query-based alias or subtree is inferred. Each alias needs its own reviewed catalog entry and use policy.
+
+The policy reclassifies every redirect hop, sends the owning source's user agent, and returns the final source identity. Development search, topic resources and framework-version provenance use that identity. Excerpt caches apply the final page's retention period: Cookbook seven days, site fallback thirty days. These are bounded on-demand reads and in-memory excerpts; no new indexing, crawler, persistent storage or public-release network capability is added. [BGA-423 verification](verification/DOCUMENTATION_AUTHORITY.md) records the tested subset and controls.
+
 ## Adding a source
 
 1. Fetch its `robots.txt` and record the raw signals with the date.

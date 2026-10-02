@@ -61,7 +61,109 @@
     "usefulnessEvaluationRepeated": false
   },
   "sourceCi": {
-    "status": "pending-after-cancellation-oracle-fix",
+    "status": "passed",
+    "id": 37032601192,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37032601192",
+    "commit": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+    "jobsValidated": 6,
+    "jobs": [
+      {
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:17:01.675Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:e282cf215ee18a99b6ae1a0ced3aafe38e7727981afc5472d42c66e7433cb1bf",
+        "evidenceDigest": "sha256:6a2708d74c4bb8ef69fa8454706864589be947685bbe2c243e830c906ad96cb1",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:20:18.394Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:e282cf215ee18a99b6ae1a0ced3aafe38e7727981afc5472d42c66e7433cb1bf",
+        "evidenceDigest": "sha256:f26215100e26a0c4f6bb5d30b61f4891a7bbb5712dee1f9457a6a0e3a9ff68f2",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "linux",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:18:09.493Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:add7f72232a61f3004efe84869e210862090bbe261594282cd8c4e6e4e27f2ea",
+        "evidenceDigest": "sha256:a056a6e9793e1487854a3dc5b42eb6cffb93c3347b2b2983a98243b71f8dcd87",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "linux",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:18:20.530Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:add7f72232a61f3004efe84869e210862090bbe261594282cd8c4e6e4e27f2ea",
+        "evidenceDigest": "sha256:c4bd1093b2b96e31e987442cb461ec355742ece0e23f617046d44e6cff0e799e",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v22.23.3",
+        "platform": "win32",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:22:01.394Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:ca312061df29f84cc72ffd32e1dcd552efa812e30876036a55bfcad2ad25336d",
+        "evidenceDigest": "sha256:7d3e7c7c523e31283aca8f2284683cbc74fd7d09adba657db8a8a1cd2e1683c7",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      },
+      {
+        "node": "v24.21.0",
+        "platform": "win32",
+        "source": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+        "sourceClean": true,
+        "generatedAt": "2026-10-02T16:20:35.691Z",
+        "tests": 741,
+        "scenarios": 215,
+        "claims": 103,
+        "artifactDigest": "sha256:ca312061df29f84cc72ffd32e1dcd552efa812e30876036a55bfcad2ad25336d",
+        "evidenceDigest": "sha256:e4acf049f608e294342adb8d38baa1ef069e7de7be5e25de4b72de2b36c47042",
+        "schemaValidated": true,
+        "integrityValidated": true,
+        "cliScenariosValidated": true,
+        "conformance": "passed"
+      }
+    ],
     "previousAttempts": [
       {
         "status": "failed",
@@ -94,7 +196,8 @@
         "failure": "Existing walk:lstat occurrence 3 nominal-150-ms cancellation probe assumed all directory cleanup would fit the real 250 ms ceiling. Loaded-runner trace recorded timeout after the ceiling and subsequent awaited cleanup. The test-only oracle now observes the actual ceiling timer and permits residual completion only after it fires; no-new-work, eventual release, same-client, and removed-await refusal controls remain required.",
         "passingRecordsValidated": 5
       }
-    ]
+    ],
+    "scope": "Exact clean source after portable shutdown preload and actual cleanup-ceiling oracle. All six OS/Node combinations independently schema/integrity/source/test/scenario/conformance validated. This is historical source evidence, not evidence for later metadata or BGA-423 changes."
   },
   "priorMetadataCi": {
     "id": 37025759118,

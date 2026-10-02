@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-423",
+  "scope": "Exact reviewed documentation page identity and final redirect provenance/retention in development; no new BGA grammar or public network inventory",
+  "preparation": {
+    "sourceBase": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+    "sourceClean": false,
+    "focusedTests": 30,
+    "focusedStatus": "passed",
+    "integratedTests": 749,
+    "integratedTestsFailed": 0,
+    "requiredScenarios": 223,
+    "scenariosPassed": 223,
+    "claims": 103,
+    "applicableConformance": "passed",
+    "generatedAt": "2026-10-02T16:37:24.255Z",
+    "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+    "evidenceDigest": "sha256:375666963b2f0bda6a765e3cffae3acb3ce80398a5241a33e637d8f132cae8a5",
+    "knownCorrections": [
+      "Retained public schema description restored; schema/declaration fingerprints unchanged",
+      "Test-only aged-cache timestamp applies to write rather than read"
+    ],
+    "typedHeaders": "Six current-run headers updated from emitted passing evidence; historical prose/receipts remain unchanged"
+  },
+  "fullGate": {
+    "status": "passed",
+    "sourceBase": "4b9f88942684cb61e8406b9f21296cb559c48a6d",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T16:40:32.194Z",
+    "testsPassed": 749,
+    "testsFailed": 0,
+    "requiredScenarios": 223,
+    "scenariosPassed": 223,
+    "claims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+    "evidenceDigest": "sha256:a2787a4a7540795c7f12618fb6228cc2d0aa775b8f56f1dc874e895448b7cb98",
+    "log": "bga423-handoff-check.log",
+    "metadataAfterGate": "This bounded receipt and status prose were refreshed after the successful gate. Exact committed-source CI is still required."
+  },
+  "realProject": {
+    "project": "Dino Racer",
+    "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "operation": "inspect_project through actual development MCP stdio",
+    "isError": false,
+    "layout": "modern",
+    "stderrEmpty": true,
+    "repositoryCleanBefore": true,
+    "repositoryCleanAfter": true,
+    "gameplayVerified": false,
+    "usefulnessEvaluationRepeated": false
+  },
+  "sourceCi": {
+    "status": "pending-exact-committed-source"
+  },
+  "approvalsTransferred": false
+}

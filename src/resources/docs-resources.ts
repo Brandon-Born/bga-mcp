@@ -66,8 +66,15 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
       { sourceId: source.id, path: entry.path },
       { signal },
     );
+    const owning = sources.find((candidate) => candidate.id === page.sourceId);
+    if (owning === undefined) {
+      throw new BgaMcpError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'The retrieved documentation page has no reviewed source.',
+      );
+    }
     const result = await retrieveDocumentation(
-      source,
+      owning,
       cache,
       { url: page.url, query: entry.summary, maxExcerptChars: MAX_EXCERPT_CHARS },
       () =>
@@ -157,9 +164,9 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
           // server inventing a fact the source does not state.
           conflicts: reading.conflicts,
           url: page.url,
-          sourceId: source.id,
-          authority: source.authority,
-          provenance: source.authority === 'official-maintained' ? 'official' : 'community',
+          sourceId: page.sourceId,
+          authority: page.authority,
+          provenance: page.authority === 'official-maintained' ? 'official' : 'community',
           retrievedAt: page.retrievedAt,
           lastModified: page.lastModified,
           trust: 'untrusted-content',

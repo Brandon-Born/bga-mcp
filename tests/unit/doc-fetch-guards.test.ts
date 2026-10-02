@@ -228,6 +228,54 @@ describe('documentation source allowlist', () => {
       parseDocumentationCatalog('{"sources":[{"id":"x","host":"docs.example"}]}'),
     ).toThrow(/incomplete source/u);
   });
+
+  it('[UNIT-DOC-AUTHORITY-PAGES] scopes page rules exactly and accepts only explicit aliases', () => {
+    const page = {
+      ...catalog.sources[0],
+      id: 'cookbook',
+      canonicalUrl: 'https://docs.example/BGA_Studio_Cookbook',
+      authority: 'official-host-community-edited',
+    };
+    const pages = parseDocumentationCatalog(
+      JSON.stringify({ sources: [...catalog.sources, page] }),
+    );
+    for (const suffix of ['', '?view=reference', '#section', '?view=reference#section']) {
+      expect(sourceForUrl(pages, new URL(page.canonicalUrl + suffix))?.id).toBe('cookbook');
+    }
+    for (const path of [
+      'BGA_Studio_CookbookExtra',
+      'BGA_Studio_Cookbook/Subpage',
+      'BGA_Studio_Cookbook%2FSubpage',
+      'BGA_Studio_Cookbook%3Fview=reference',
+      'BGA_Studio_Cookbook%23section',
+      '%42GA_Studio_Cookbook',
+      'bga_studio_cookbook',
+      'BGA_Studio_Cookbook/',
+      'index.php?title=BGA_Studio_Cookbook',
+    ]) {
+      expect(sourceForUrl(pages, new URL('https://docs.example/' + path))?.id).toBe('wiki');
+      expect(
+        sourceForUrl(
+          { ...pages, sources: pages.sources.filter((source) => source.id === 'cookbook') },
+          new URL('https://docs.example/' + path),
+        ),
+      ).toBeNull();
+    }
+    for (const url of [
+      'http://docs.example/BGA_Studio_Cookbook',
+      'https://docs.example:444/BGA_Studio_Cookbook',
+      'https://user@docs.example/BGA_Studio_Cookbook',
+    ]) {
+      expect(sourceForUrl(pages, new URL(url))).toBeNull();
+    }
+    const alias = { ...page, id: 'reviewed-alias', canonicalUrl: 'https://docs.example/Cookbook' };
+    const reviewed = parseDocumentationCatalog(
+      JSON.stringify({ sources: [...pages.sources, alias] }),
+    );
+    expect(sourceForUrl(pages, new URL(alias.canonicalUrl))?.id).toBe('wiki');
+    expect(sourceForUrl(reviewed, new URL(alias.canonicalUrl))?.id).toBe('reviewed-alias');
+    expect(sourceForUrl(reviewed, new URL(alias.canonicalUrl + '/Subpage'))?.id).toBe('wiki');
+  });
 });
 
 describe('documentation response budget', () => {

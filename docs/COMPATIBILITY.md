@@ -72,6 +72,8 @@ Every supported runtime and platform combination runs the complete gate in CI. T
 | ----------------------- | ----- | --------- |
 | CLAIM-ENVIRONMENT-LOCAL | local | supported |
 
+BGA-423 keeps development documentation authority on exact catalog pages and follows final redirect provenance through search, topic resources and framework-version results. Installed original response fixtures and raw-prefix mutation controls cover page aliases, request confinement and seven/thirty-day excerpt retention. This does not change the public local-only inventory, transport/protocol contract, live wiki freshness claim or documentation capabilities' implemented status. [Scope and evidence](verification/DOCUMENTATION_AUTHORITY.md).
+
 Every public capability is served by the user's local stdio process. Documentation and experimental Studio reads may make an explicitly enabled request across their reviewed network boundary; that does not turn them into remotely hosted capabilities. The environment claim lists every manifest capability to which it applies, and the compatibility gate rejects either an omitted local claim or an unclaimed remote environment.
 
 ## MCP protocol versions and transports

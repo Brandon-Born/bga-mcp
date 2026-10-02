@@ -70,16 +70,32 @@ export function parseDocumentationCatalog(text: string): DocumentationCatalog {
  * the whole site, or a community page would be reported as official.
  */
 export function sourceForUrl(catalog: DocumentationCatalog, url: URL): DocumentationSource | null {
-  const matches = catalog.sources.filter(
-    (source) =>
-      url.protocol === 'https:' &&
-      url.hostname === source.host &&
-      url.href.startsWith(source.canonicalUrl),
-  );
+  const matches = catalog.sources.filter((source) => matchesDocumentationSource(source, url));
   return (
     [...matches].sort((left, right) => right.canonicalUrl.length - left.canonicalUrl.length)[0] ??
     null
   );
+}
+
+/** @internal Shared page boundary for classification and request confinement. */
+export function matchesDocumentationSource(source: DocumentationSource, url: URL): boolean {
+  const canonical = new URL(source.canonicalUrl);
+  if (
+    url.protocol !== 'https:' ||
+    canonical.protocol !== 'https:' ||
+    url.hostname !== source.host ||
+    canonical.hostname !== source.host ||
+    url.origin !== canonical.origin ||
+    url.username !== '' ||
+    url.password !== ''
+  ) {
+    return false;
+  }
+  // WHATWG URL Standard: pathname is the serialized URL path, separate from
+  // query and fragment. Do not decode delimiters or invent wiki title aliases.
+  // Only an explicit origin-root entry covers a site. Every other entry is one
+  // exact page; aliases/subtrees need independently reviewed catalog entries.
+  return canonical.pathname === '/' || url.pathname === canonical.pathname;
 }
 
 /** Finds a source by identifier. */

@@ -1332,6 +1332,42 @@
       "case": "Executable operations outside the boundary fail logger and threat-model gates",
       "boundary": "repository",
       "scenarios": ["GATE-LOG-REDACTION", "GATE-THREAT-MODEL-AGREEMENT"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "Exact page classification preserves query/fragment variants and excludes prefix, case, encoded and unlisted subpage aliases",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-CATALOG"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "Page-specific requests cannot leave their exact reviewed source scope",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-POLICY"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "Search and topic resource provenance follow the final exact page",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-SEARCH", "E2E-DOC-AUTHORITY-RESOURCES"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "Every redirect uses its owning request policy and returns final source identity",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-REDIRECTS"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "Final-page retention determines repeated search cache freshness",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-CACHE"]
+    },
+    {
+      "item": "BGA-423",
+      "case": "A raw-prefix mutation fails catalog, policy, provenance, search, resource and cache assertions",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-AUTHORITY-MUTATION"]
     }
   ]
 }

@@ -1,0 +1,30 @@
+# BGA-423 exact documentation page authority
+
+```verification-record
+{"kind":"review","scope":"BGA-423 exact reviewed documentation page boundaries, final redirect identity and excerpt retention in development documentation reads"}
+```
+
+The catalog's explicit origin-root entry covers the reviewed wiki site. Other entries cover exactly their WHATWG-normalized serialized pathname, with exact HTTPS origin/host and no URL credentials. Query and fragment variants retain that page identity. Prefix neighbours, case changes, encoded delimiters, unlisted subpages and query-based wiki title aliases do not inherit a page-specific entry. A reviewed alias needs its own catalog entry; no subtree or wiki routing behaviour is inferred. A missing site entry means an unmatched page is refused, rather than treated as the original source.
+
+The same matcher confines the initially selected source. A site-wide lookup may reach a separately reviewed exact page; a page-specific lookup cannot use a neighbour. Redirects are resolved and reclassified before every request. The hop's own user agent is sent, and final source/authority are returned. Search, documentation topics and framework-version results use that final identity. Topic and search excerpt caches consequently use the final page's title, authority and retention policy rather than the starting source. Search records the final page among actually searched sources and does not attribute the original search hit's edit timestamp to a redirect destination. The catalog remains fixed for the process and the excerpt cache remains memory-only.
+
+| Scenario                    | Observation                                                                                                                                                     |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UNIT-DOC-AUTHORITY-PAGES    | Exact page, query/fragment stability, site fallback, refused origin/credentials, no inferred alias, explicit reviewed alias                                     |
+| E2E-DOC-AUTHORITY-CATALOG   | Installed catalog classifies canonical, prefix/case/encoded/subpage/query-alias variants and safe URL dot-segment normalization                                 |
+| E2E-DOC-AUTHORITY-POLICY    | Installed page-specific policy refuses prefix neighbours before an outbound request                                                                             |
+| E2E-DOC-AUTHORITY-SEARCH    | Real installed MCP search cites each of three original page responses with its owning source and title                                                          |
+| E2E-DOC-AUTHORITY-RESOURCES | Same actual MCP client observes topic redirects into/out of Cookbook and community-labelled unknown framework versions                                          |
+| E2E-DOC-AUTHORITY-CACHE     | Ten-day-old controlled cache entries refresh at seven days for Cookbook and remain fresh at thirty days for neighbours; both search and topic redirects covered |
+| E2E-DOC-AUTHORITY-REDIRECTS | Installed policy follows a three-hop chain with distinct original probe user agents and final site provenance                                                   |
+| E2E-DOC-AUTHORITY-MUTATION  | Restoring raw prefix matching fails catalog, request confinement, search provenance, topic provenance and cache assertions separately                           |
+
+The tests install the actual shared tarball and use original, minimal HTML and MediaWiki-shaped responses. An external socket stub supplies deterministic redirects; it proves reporting and request policy, not live TLS, DNS or address guard behaviour. The cache probe timestamps only an installed test copy ten days earlier, preserving the production retention reader under test. Atomically replaced modules/catalog bytes are restored and checked, protecting pnpm hardlinks. No production hook, new credential handling or new public network capability is added. Development documentation capabilities remain implemented; live source freshness and general framework interpretation are separate gates.
+
+All 30 focused tests and all 749 integrated tests pass, including the unchanged public schema/declaration fingerprints. Emitted evidence records 223 required scenarios passing and applicable conformance. The six typed current-run summary headers are refreshed precisely from that evidence; historical observations remain unchanged. A real stdio `inspect_project` call still reads clean Dino Racer `83e2e50` as modern with empty stderr and clean Git status afterward. This is local MCP inspection, not gameplay or a repeated usefulness evaluation. The full integrated `pnpm check` now passes at 749 tests / 223 required scenarios, with packaging, safety, unchanged public contract and applicable conformance. Exact-source CI remains required. The [bounded source receipt](bga423-source-ci.json) retains source/artifact identity and pending steps. Original release candidates, signed evidence, previous evaluations and approvals are unchanged.
+
+## Sources
+
+[Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) lists the Cookbook under “Unofficial”. The [Cookbook](https://en.doc.boardgamearena.com/BGA_Studio_Cookbook) says “If you have your own recipes feel free to edit this page.” Both fetched first on 2026-10-02; no contributed recipe is used to justify framework validation.
+
+The [WHATWG URL Standard](https://url.spec.whatwg.org/#dom-url-pathname) defines `pathname` as URL path serialization. Its [path comparison warning](https://url.spec.whatwg.org/#url-path-serializer) distinguishes complete path segments from naïve serialized string prefixes, and its origin definition includes scheme, host and port. This implementation applies those definitions to the reviewed catalog; it makes no claim that different wiki route spellings identify the same page.
