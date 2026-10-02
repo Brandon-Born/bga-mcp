@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "owner": "BGA-415",
   "decision": null,
-  "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.5-final-probes.json",
+  "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.6-clean.json",
   "prerequisites": {
-    "installation": "docs/verification/install-guide-v1.0.0-rc.5-signed.json",
-    "client": "docs/verification/codex-client-v1.0.0-rc.5.json",
-    "evidence": "docs/verification/release-evidence-v1.0.0-rc.5.json",
-    "usefulness": "docs/verification/agent-evaluation-v1.0.0-rc.5.json"
+    "installation": "docs/verification/install-guide-v1.0.0-rc.6-signed.json",
+    "client": "docs/verification/codex-client-v1.0.0-rc.6.json",
+    "evidence": "docs/verification/release-evidence-v1.0.0-rc.6.json",
+    "usefulness": "docs/verification/agent-evaluation-v1.0.0-rc.6.json"
   },
   "npmCli": "12.2.0"
 }

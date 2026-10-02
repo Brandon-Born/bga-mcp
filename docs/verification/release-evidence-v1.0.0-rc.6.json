@@ -1,0 +1,265 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T23:22:03.446Z",
+  "owner": "BGA-407",
+  "distributionSourceCommit": "cad8dd8dbf5c6d7bdbe9f89baddbdaf3af0b6c93",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.6.json",
+  "signingReceipt": "release-signing-v1.0.0-rc.6.json",
+  "candidateTag": "v1.0.0-rc.6",
+  "candidateSourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+  "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+  "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+  "planDigest": "sha256:94aec1abaca5bc724a1081fa665237c97aa485a197eebfb92c44672d0b5c2ca7",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37076418295",
+    "conclusion": "success",
+    "attempt": 2,
+    "stages": ["publish", "prepare", "verify"],
+    "retryMode": "failed jobs of same corrected-source run after exact authenticated empty-draft reconciliation",
+    "firstAttempt": {
+      "prepare": "passed",
+      "publish": "failed",
+      "verify": "skipped",
+      "reconciledDraftId": 402216124,
+      "assetsPresent": 0,
+      "titleNotesAndIdentity": "exact match",
+      "genericFailureCause": "not established",
+      "reconciliationReceiptDigest": "sha256:6ae7ef8f5396f5fbb3ae6a9abc8a02f33ee2f6390eee3209d58612015b811ead"
+    },
+    "priorFailedRun": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37074927384",
+      "sourceCommit": "b0c354578482226f7287c463720d37d256527cb5",
+      "conclusion": "failure",
+      "prepare": "passed",
+      "publish": "failed",
+      "verify": "skipped",
+      "confirmedLocalCause": "stale rc.5 writer pin refused the actual prepared rc.6 plan before remote writes",
+      "authenticatedReleaseMatchesAfterFailure": 0,
+      "repair": "independently selected candidate regression and reviewed main handoff; new run, no overwritten assets"
+    }
+  },
+  "release": {
+    "id": 402216124,
+    "url": "https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.6",
+    "tag": "v1.0.0-rc.6",
+    "draft": false,
+    "prerelease": true,
+    "publishedAt": "2026-10-02T23:18:06Z",
+    "assets": [
+      {
+        "id": 606694600,
+        "name": "SHA256SUMS",
+        "digest": "sha256:acb09e0d5a055ca9efc9379eccf0622f0ceea6bb69510014415a44ebf8508b77",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/SHA256SUMS",
+        "size": 546
+      },
+      {
+        "id": 606694602,
+        "name": "capabilities.json",
+        "digest": "sha256:683adb73110258c9e0bc0080a73b21209f5209ef46b8470cbf2d24e7c8023884",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/capabilities.json",
+        "size": 23421
+      },
+      {
+        "id": 606694604,
+        "name": "evidence.schema.json",
+        "digest": "sha256:141889dbb0e1d8bbbd569b92ba0bc9b653fdd866d7d82189b69e4acaec59f096",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/evidence.schema.json",
+        "size": 15704
+      },
+      {
+        "id": 606694601,
+        "name": "release-candidate.json",
+        "digest": "sha256:ca6978e3b13225373e2d89967a01b96a01a53fe44d0d092d11d0ae911223d1c2",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/release-candidate.json",
+        "size": 16951
+      },
+      {
+        "id": 606694603,
+        "name": "release-candidate.schema.json",
+        "digest": "sha256:4834eb61ae0dfac18a59b5886e4c8ec9476b342a2ccf1e8119c7f3abaae41065",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/release-candidate.schema.json",
+        "size": 3467
+      },
+      {
+        "id": 606694614,
+        "name": "release-evidence.json",
+        "digest": "sha256:81bc6a2f4c37a8b093a791601d492b3acb449a35a075bc68c5a35fa2ddae5e93",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/release-evidence.json",
+        "size": 59439
+      },
+      {
+        "id": 606694615,
+        "name": "release-evidence.schema.json",
+        "digest": "sha256:4b1a16ed48ba9d18987a0c972c012fff6bb809fcdf137f2a9ebb20b1e6278e0f",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/release-evidence.schema.json",
+        "size": 15043
+      },
+      {
+        "id": 606694617,
+        "name": "release-inventory.json",
+        "digest": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/release-inventory.json",
+        "size": 940
+      },
+      {
+        "id": 606694618,
+        "name": "security-audit-policy.json",
+        "digest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/security-audit-policy.json",
+        "size": 66
+      },
+      {
+        "id": 606694619,
+        "name": "security-audit.json",
+        "digest": "sha256:7da9eb769b9e425a6f08e8093d8ef3115e3fec16bede1e50658822ce52a14fbd",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/security-audit.json",
+        "size": 877
+      },
+      {
+        "id": 606694621,
+        "name": "sigstore-bundle.json",
+        "digest": "sha256:7e207d0990e3d85f6b26f7e2cab53cd80464dbc0a0d8b54d03e50271e16bcc88",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/sigstore-bundle.json",
+        "size": 13213
+      },
+      {
+        "id": 606694623,
+        "name": "verification-evidence.json",
+        "digest": "sha256:4e61ae8bbc6e72771baef4cc71658df766e798857c044e4a7374c0392a8ba3d3",
+        "url": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/verification-evidence.json",
+        "size": 485260
+      }
+    ]
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37076402455",
+    "commit": "cad8dd8dbf5c6d7bdbe9f89baddbdaf3af0b6c93",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:4b3c9e444eb7b949b088c9c75835c212299d90cd216a77d02caf7c0e604242ea",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T23:16:25.415Z",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:30404f531201e733f0b4bc7f19e9335c3956fc2645d46e2c3dbca850891dbd41",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-02T23:17:46.086Z",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:5b2419fc663dfea18afe3c4a336557c1db4b4f9a2881d7f0d65f1daa61f55f9d",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T23:16:50.316Z",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:a1711bc8c13183711165d37027edcb1548f2132c899cf67f7aaa7c5c290e8e3d",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-02T23:16:48.084Z",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:f336a403a37ca1ffb85167f2f843599dea200c3e090a6ce9c009382fec256e83",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T23:19:25.956Z",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:d9e9aa9f59388f657bb17e744b13cab2c68d43c5b00a56708330477701b68a36",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-02T23:18:13.114Z",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      }
+    ]
+  },
+  "coverage": {
+    "advertisedEntries": 11,
+    "excludedEntries": 6,
+    "staleEntries": [],
+    "liveStudio": "not-run",
+    "originalTestsPassed": 768,
+    "originalScenariosPassed": 234
+  },
+  "hostedPublicValidation": {
+    "resultArtifactId": 11256398738,
+    "resultArchiveDigest": "sha256:1ccf4359cc507ce4f7b63402defe73d6deab1b2c90197620cb49e915962de4d0",
+    "resultExpiresAt": "2026-12-31T23:17:56Z",
+    "metadataFiles": 12,
+    "publicCopiesByteIdentical": true,
+    "trustedSchemas": "passed",
+    "originalSignatureAndIdentity": "passed",
+    "exactCapabilityAndEnvironmentCoverage": "passed"
+  },
+  "independentPublicValidation": {
+    "schemaVersion": 1,
+    "owner": "BGA-407",
+    "recordedAt": "2026-10-02T23:19:39.096Z",
+    "candidateTag": "v1.0.0-rc.6",
+    "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "platform": "darwin",
+    "node": "v22.17.1",
+    "advertisedEntries": 11,
+    "excludedEntries": 6,
+    "liveStudio": "not-run",
+    "derivedSummaryDigest": "sha256:81bc6a2f4c37a8b093a791601d492b3acb449a35a075bc68c5a35fa2ddae5e93",
+    "originalEvidenceDigest": "sha256:4e61ae8bbc6e72771baef4cc71658df766e798857c044e4a7374c0392a8ba3d3",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "runnerDigest": "sha256:98339cbd8ee91bf86ca1bbbfda6fc4b243fcf2213c7038457c6fc4356a055383",
+    "refusals": {
+      "omittedAdvertisedCapability": "refused",
+      "inventedLiveStudioClaim": "refused",
+      "permissiveSchema": "refused",
+      "modifiedSignedEvidence": "refused by cryptographic verifier and packet validator"
+    },
+    "packetUnchanged": true,
+    "publicDownloadsWithoutToken": true,
+    "trustedSchemas": "passed",
+    "originalSignatureAndIdentity": "passed",
+    "exactCapabilityAndEnvironmentCoverage": "passed",
+    "preparedAndPublicCopiesByteIdentical": true
+  },
+  "frameworkBaseline": {
+    "schemaVersion": 2,
+    "evidenceCommit": "2b8c2cba421510f7534b99b6fbd183f984a10b34",
+    "ciRun": "37069653529",
+    "sourceCount": 8,
+    "releaseGuard": "passed",
+    "scope": "actual scoped interpretation/proof identities remained unchanged; no original CI relabeling or renewed security approval"
+  },
+  "retention": {
+    "destination": "GitHub release assets",
+    "duration": "Lifetime of the release; no automatic expiry or replacement",
+    "history": "Preserve signed original observations. Publish later assessments separately; never rewrite old evidence.",
+    "recovery": "Tracked receipts and a maintainer-controlled local copy supplement hosted assets; verify digests and signatures after restoration."
+  },
+  "rebuilt": false,
+  "packagePublished": false,
+  "securityApprovalGranted": false
+}

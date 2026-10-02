@@ -127,6 +127,10 @@ only the existing reporting, security-approval and publisher-setup holds,
 without a candidate-prerequisite or framework mismatch; `published` is false.
 This does not repeat the hosted dry run or execute any identity-bearing job.
 
-## rc.6 prerequisite preparation — 2026-10-02 UTC
+## rc.6 publication prerequisites — 2026-10-02 UTC
 
-Actual clean rc.6 security, signed installation, native-client and frozen-task records are retained. Publication configuration keeps its historical rc.5 prerequisites until the complete rc.6 evidence set exists; no placeholder public-evidence receipt is created. The rc.6 clean security assessment is held for the final independent reporting lifecycle, the usefulness handoff still awaits integrated CI, and rc.6 public metadata distribution remains pending. The publisher decision remains null. The npm route requires an existing package for trusted-publisher setup; no bootstrap placeholder or token fallback is authorized. A channel/policy decision is pending. No installable package has been distributed.
+Publication now selects the actual clean rc.6 security assessment, signed installation recipe, native-client receipt, publicly verified metadata and verified frozen-task usefulness ledger. All records identify the same original signed tarball. The reference update follows actual distribution and independent validation; no placeholder receipt or historical result is relabeled.
+
+[Metadata workflow 37076418295](https://github.com/Brandon-Born/bga-mcp/actions/runs/37076418295) completes prepare, publication and public verification at `cad8dd8` after exact empty-draft reconciliation and failed-job recovery. [The distribution receipt](release-evidence-v1.0.0-rc.6.json) preserves both the earlier stale-pin failure and this run's recovery. All six exact-source CI records at `cad8dd8` are independently validated. The actual installation, native-client and game-task observations retain their original source and artifact identities.
+
+The clean security assessment remains held for the final independent benign-report lifecycle. Publisher decision/setup remains unresolved: npm's trusted-publisher setup requires an existing package, and policy still forbids placeholder bootstrap or token fallback. The channel/policy decision is pending. The user will arrange independent reporting last. No installable package has been distributed or security approval granted.
