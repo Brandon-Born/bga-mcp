@@ -329,3 +329,11 @@ proposal, output/privacy review, updated contracts and installed-command cases
 before implementation; this wish adds no public capability. Compare any
 proposed trace with the independent controlled-probe oracle, including expiry
 before I/O, pending completion, cleanup-ceiling and minimum-output-budget cases.
+
+## Safe failures through the advertised executable
+
+**Observed, 2026-10-02.** A missing-root Studio preflight bypassed the normal startup handler and printed an absolute path, Node stack and nested filesystem cause. The pinned stdio router also reports some startup/cleanup failures through callbacks, making a successful-looking close insufficient evidence. An agent reading these terminals needs an actionable stable refusal without private diagnostic data.
+
+**Bounded next step and owner.** BGA-421 now supplies a common runner boundary, dependency-loading fallback, live credential registry and installed fault probes for both profiles. Its full handoff and exact-source CI are pending. The process probes keep stdin open and use boolean leak assertions, so debugging a regression does not retain the seeded private transcript. This changes no BGA grammar or live Studio capability; a future terminal path must join the same boundary and fault suite.
+
+**Observed CI diagnostic gap, 2026-10-02.** The post-BGA-433 metadata run `37025759118` failed Windows/Node 24's resource-root scenario because Node reported FileHandle garbage-collection cleanup. This run is not passing evidence. The current policy closes project/session descriptors in finally blocks, but that alone does not explain the observed warning. BGA-326's bounded follow-up is descriptor creation/explicit-close tracing in the installed resource scenario, with warning/leftover-handle controls and sanitized evidence. Do not suppress the warning or use an unchanged replay as proof of repair. This is lifecycle diagnosis, not a new game-inspection feature.

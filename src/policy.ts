@@ -240,6 +240,14 @@ function sessionFragments(pair: string): string[] {
   return [trimmed, trimmed.slice(0, separator).trim(), trimmed.slice(separator + 1).trim()];
 }
 
+/** @internal The existing provider spellings, reusable before CLI configuration is parsed. */
+export function studioSessionRedactionValues(raw: string | undefined): readonly string[] {
+  const value = raw?.trim() ?? '';
+  return [value, ...value.split(';').flatMap((pair) => sessionFragments(pair))].filter(
+    (part) => part.length >= MIN_REDACTED_SECRET_LENGTH,
+  );
+}
+
 /** A wait that bounds cleanup without keeping the process alive by itself. */
 async function delay(ms: number): Promise<void> {
   await new Promise<void>((settle) => {
@@ -445,7 +453,18 @@ export class PolicyBoundary {
    * Validates configuration and resolves every root through the filesystem so
    * later containment checks compare real locations rather than symlinks.
    */
-  static async create(config: PolicyConfig): Promise<PolicyBoundary> {
+  static create(config: PolicyConfig): Promise<PolicyBoundary>;
+  /* eslint-disable @typescript-eslint/unified-signatures -- Combining the internal overload would change the frozen public declaration. */
+  /** @internal Attach executable redaction before credential resolution. */
+  static create(
+    config: PolicyConfig,
+    onReady: ((policy: PolicyBoundary) => void) | undefined,
+  ): Promise<PolicyBoundary>;
+  /* eslint-enable @typescript-eslint/unified-signatures */
+  static async create(
+    config: PolicyConfig,
+    onReady?: (policy: PolicyBoundary) => void,
+  ): Promise<PolicyBoundary> {
     assertPositiveInteger(
       'operationTimeoutMs',
       config.operationTimeoutMs,
@@ -494,6 +513,9 @@ export class PolicyBoundary {
     }
 
     const boundary = new PolicyBoundary(config, resolvedRoots);
+    // Let the executable read this live registry before resolving credentials.
+    // Registration stays inside the policy boundary; consumers never read files.
+    onReady?.(boundary);
     // Resolved once here so the credential is registered for redaction before
     // this server can publish anything at all, rather than at whichever call
     // happens to need it first. A file that appears later is still read then;
@@ -1726,10 +1748,8 @@ export class PolicyBoundary {
     if (value.length === 0) {
       return null;
     }
-    for (const part of [value, ...value.split(';').flatMap((pair) => sessionFragments(pair))]) {
-      if (part.length >= MIN_REDACTED_SECRET_LENGTH) {
-        this.#sessionSecrets.add(part);
-      }
+    for (const part of studioSessionRedactionValues(raw)) {
+      this.#sessionSecrets.add(part);
     }
     return value;
   }

@@ -2,6 +2,8 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { verifyCliErrorBoundary, verifyCliEntryBoundary } from '../../scripts/lib/cli-boundary.js';
+
 import {
   verifyThreatModel,
   type Manifest,
@@ -37,6 +39,25 @@ beforeAll(async () => {
 });
 
 describe('threat model agreement', () => {
+  it('[GATE-THREAT-MODEL-AGREEMENT] rejects an executable CLI throw outside the modeled boundary', async () => {
+    const source = await readFile(resolve(repositoryRoot, 'src/cli-runner.ts'), 'utf8');
+    expect(verifyCliErrorBoundary(source).failures).toEqual([]);
+    for (const path of ['cli.ts', 'release-cli.ts']) {
+      const entry = await readFile(new URL(`../../src/${path}`, import.meta.url), 'utf8');
+      expect(verifyCliEntryBoundary(entry).failures).toEqual([]);
+      expect(verifyCliEntryBoundary(`${entry}\nthrow new Error("seeded");`).failed).toBe(true);
+      expect(
+        verifyCliEntryBoundary(
+          entry.replace('process.exitCode === undefined || process.exitCode === 0', 'true'),
+        ).failed,
+      ).toBe(true);
+    }
+    expect(
+      verifyCliErrorBoundary(
+        source.replace('  let policy:', '  throw new Error("seeded");\n  let policy:'),
+      ).failed,
+    ).toBe(true);
+  });
   it('[GATE-THREAT-MODEL-AGREEMENT] the recorded model and the document say the same thing', () => {
     const report = verifyThreatModel(model, manifest, documentation, schema);
     expect(report.failures).toEqual([]);

@@ -1290,6 +1290,48 @@
       "case": "Scoped process lifecycle retains installed public compatibility proof",
       "boundary": "packaged",
       "scenarios": ["E2E-FRAMEWORK-CHANGE-LIFECYCLE"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Both executable profiles refuse usage/configuration with code 2 and safe diagnostics",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-CONFIGURATION"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Studio preflight refuses unavailable roots, missing session files and disabled policy without private output",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-CONFIGURATION", "E2E-CLI-FAILURE-STUDIO"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Live environment and file session values are registered before credential-bearing setup failures",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-SETUP"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Dependency loading and unexpected setup collapse to internal.unexpected with exit 1",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-SETUP", "E2E-CLI-FAILURE-IMPORT"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Protocol startup failures close stdin and terminate deterministically",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-STARTUP"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Shutdown failures preserve exit 1 even when server and transport cleanup both fail",
+      "boundary": "packaged",
+      "scenarios": ["E2E-CLI-FAILURE-SHUTDOWN"]
+    },
+    {
+      "item": "BGA-421",
+      "case": "Executable operations outside the boundary fail logger and threat-model gates",
+      "boundary": "repository",
+      "scenarios": ["GATE-LOG-REDACTION", "GATE-THREAT-MODEL-AGREEMENT"]
     }
   ]
 }

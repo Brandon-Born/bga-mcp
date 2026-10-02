@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-421",
+  "scope": "Installed development/public CLI failure boundary; no new BGA grammar, Studio network capability, artifact promotion or publication approval",
+  "preparation": {
+    "sourceBase": "eb9285d7d591947e98c78175eee110f6de0e38af",
+    "sourceClean": false,
+    "focusedTests": 14,
+    "focusedStatus": "passed",
+    "publicContractTests": 8,
+    "publicContractStatus": "passed"
+  },
+  "fullGate": {
+    "status": "passed",
+    "previousAttempts": [
+      {
+        "status": "failed",
+        "testsPassed": 740,
+        "testsFailed": 1,
+        "reason": "Internal observer changed public declarations; retained contract stayed immutable and internal-only declarations were corrected"
+      },
+      {
+        "status": "failed",
+        "reason": "Lint required an explicit narrow exception for internal overload separation; no tests ran"
+      },
+      {
+        "status": "failed-at-current-run-summary-headers",
+        "testsPassed": 741,
+        "testsFailed": 0,
+        "scenariosPassed": 215,
+        "retainedClaims": 103,
+        "capabilities": 17,
+        "applicableConformance": "passed",
+        "reason": "Six typed current-run headers still contained old counts; exact headers now updated from emitted evidence while dated prose and historical receipts stayed unchanged"
+      }
+    ],
+    "sourceBase": "eb9285d7d591947e98c78175eee110f6de0e38af",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T15:48:48.460Z",
+    "testsPassed": 741,
+    "testsFailed": 0,
+    "scenariosPassed": 215,
+    "retainedClaims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "packageDigest": "sha256:e282cf215ee18a99b6ae1a0ced3aafe38e7727981afc5472d42c66e7433cb1bf",
+    "evidenceDigest": "sha256:eaa8e2646b62473c6ea682ea709441847ecff5298d9d8b36d9cc8aa0bb632ff3",
+    "log": "bga421-handoff-check.log",
+    "metadataAfterGate": "This receipt and current-status prose were refreshed after the successful local run; exact-source CI remains required."
+  },
+  "realProject": {
+    "project": "Dino Racer",
+    "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "operation": "inspect_project through actual MCP stdio",
+    "protocol": "2025-11-25",
+    "layout": "modern",
+    "isError": false,
+    "stderrEmpty": true,
+    "repositoryCleanAfter": true,
+    "gameplayVerified": false,
+    "usefulnessEvaluationRepeated": false
+  },
+  "sourceCi": {
+    "status": "pending"
+  },
+  "priorMetadataCi": {
+    "id": 37025759118,
+    "source": "eb9285d7d591947e98c78175eee110f6de0e38af",
+    "status": "failed",
+    "failure": "Windows Node 24 E2E-MODERN-INPUT-REQUIRED-ROOTS received a Node FileHandle garbage-collection warning; diagnosis remains open",
+    "usedAsPassingEvidence": false
+  },
+  "approvalsTransferred": false
+}

@@ -596,6 +596,16 @@
         "TM-STUDIO-READ-NETWORK-CANCELLATION",
         "TM-STUDIO-READ-CANCELLATION"
       ]
+    },
+    {
+      "id": "AC-CLI-FAILURE-DISCLOSURE",
+      "title": "Direct CLI startup, preflight or shutdown failure exposes private diagnostics",
+      "actor": "ACTOR-DEVELOPER",
+      "assets": ["ASSET-LOCAL-PRIVATE", "ASSET-STUDIO-CREDENTIALS", "ASSET-RELEASE-ARTIFACT"],
+      "boundary": "TB-OUTPUT",
+      "impact": "An uncaught stack or cause exposes private paths or session values in terminal transcripts and retained CI output.",
+      "mitigations": ["TM-CLI-ERROR-BOUNDARY", "TM-ARTIFACT-SCAN"],
+      "surfaces": ["SURFACE-CLI-STDOUT", "SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"]
     }
   ],
   "mitigations": [
@@ -1269,6 +1279,25 @@
       "status": "implemented",
       "backlog": "BGA-415",
       "scenarios": ["GATE-PUBLICATION", "INT-PUBLICATION-BOUNDARIES", "E2E-PUBLICATION-CONSUMER"]
+    },
+    {
+      "id": "TM-CLI-ERROR-BOUNDARY",
+      "title": "Direct executable failures collapse, redact live registered sessions and preserve failure exits through cleanup",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-421",
+      "surfaces": ["SURFACE-CLI-STDOUT", "SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"],
+      "scenarios": [
+        "E2E-CLI-FAILURE-CONFIGURATION",
+        "E2E-CLI-FAILURE-STUDIO",
+        "E2E-CLI-FAILURE-SETUP",
+        "E2E-CLI-FAILURE-IMPORT",
+        "E2E-CLI-FAILURE-STARTUP",
+        "E2E-CLI-FAILURE-SHUTDOWN",
+        "GATE-LOG-REDACTION",
+        "GATE-THREAT-MODEL-AGREEMENT"
+      ]
     }
   ],
   "residualRisks": [

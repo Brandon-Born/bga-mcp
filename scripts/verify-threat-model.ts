@@ -1,6 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
+import { verifyCliErrorBoundary, verifyCliEntryBoundary } from './lib/cli-boundary.js';
+
 import { expectSeededFailure, reportOrExit, type GateReport } from './lib/gate.js';
 import {
   coverage,
@@ -424,6 +426,25 @@ async function main(): Promise<void> {
 
   proveGateDetectsSeededDefects(model, manifest, documentation, schema);
 
+  const cli = await readFile(resolve(repositoryRoot, 'src/cli-runner.ts'), 'utf8');
+  expectSeededFailure(
+    'CLI throw outside the boundary',
+    verifyCliErrorBoundary(
+      cli.replace('  let policy:', '  throw new Error("seeded");\n  let policy:'),
+    ),
+  );
+  const checked = verify(model, manifest, documentation, schema);
+  checked.failures.push(...verifyCliErrorBoundary(cli).failures);
+
+  for (const entry of ['src/cli.ts', 'src/release-cli.ts']) {
+    const source = await readFile(resolve(repositoryRoot, entry), 'utf8');
+    expectSeededFailure(
+      'CLI entry throw outside the boundary',
+      verifyCliEntryBoundary(`${source}\nthrow new Error("seeded");`),
+    );
+    checked.failures.push(...verifyCliEntryBoundary(source).failures);
+  }
+
   const rows = coverage(model);
   const open = rows.filter((row) => row.protecting.length === 0);
   const compared = expectedTables(model).reduce(
@@ -432,7 +453,7 @@ async function main(): Promise<void> {
   );
   reportOrExit(
     'Threat model',
-    verify(model, manifest, documentation, schema),
+    checked,
     `Threat model is consistent with its document and its gate detects seeded defects: ${String(model.abuseCases.length)} abuse cases, ${String(model.mitigations.length)} mitigations, ${String(model.residualRisks.length)} recorded residual risks, ${String(compared)} fields compared cell for cell, and ${String(rows.length - open.length)} of ${String(rows.length)} output surfaces protected today${open.length === 0 ? '' : ` (open: ${open.map((row) => `${row.abuseCase}/${row.surface}`).join(', ')})`}.`,
   );
 }

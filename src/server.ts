@@ -104,14 +104,33 @@ export async function createDefaultServer(): Promise<McpServer> {
  * Builds the policy boundary before any transport is served, so an invalid or
  * unavailable configuration fails at startup instead of at first use.
  */
+export function createServerWithPolicy(
+  config: ServerConfig,
+  profile?: ServerProfile,
+): Promise<{
+  readonly policy: PolicyBoundary;
+  readonly create: (context?: { readonly era?: 'legacy' | 'modern' }) => McpServer;
+}>;
+/* eslint-disable @typescript-eslint/unified-signatures -- Combining the internal overload would change the frozen public declaration. */
+/** @internal The executable observes the policy before resolving credentials. */
+export function createServerWithPolicy(
+  config: ServerConfig,
+  profile: ServerProfile,
+  onPolicyReady: (policy: PolicyBoundary) => void,
+): Promise<{
+  readonly policy: PolicyBoundary;
+  readonly create: (context?: { readonly era?: 'legacy' | 'modern' }) => McpServer;
+}>;
+/* eslint-enable @typescript-eslint/unified-signatures */
 export async function createServerWithPolicy(
   config: ServerConfig,
   profile: ServerProfile = 'development',
+  onPolicyReady?: (policy: PolicyBoundary) => void,
 ): Promise<{
   readonly policy: PolicyBoundary;
   readonly create: (context?: { readonly era?: 'legacy' | 'modern' }) => McpServer;
 }> {
-  const policy = await PolicyBoundary.create(config);
+  const policy = await PolicyBoundary.create(config, onPolicyReady);
   const ruleCatalog = JSON.parse(
     await policy.readPackagedConfig('rule-catalog.json'),
   ) as RuleCatalog;
