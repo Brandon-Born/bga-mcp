@@ -8,10 +8,94 @@ Before tagging, the integrated gate and fresh exact-source CI must pass, and all
 
 The integrated local `corepack pnpm check` passes at dirty preparation based on `1fd29af1792ad7a8b3b6b1bc7afd67a0dc5ba9bd`: 768 tests, 234 required scenarios, 103 retained claims and 17 capabilities; packaging, official applicable conformance and safety pass. The observed test package is `sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906`; sealed evidence at `2026-10-02T21:16:36.460Z` hashes to `sha256:b7c6eb062978e5c11ff8f79a02f9df2cd763e0d90bbdd20137668cc76e6a5d73`, and the full log hashes to `sha256:3cb6084368212dd421fbd5c867026c4b57ad9637098c4d679dd3d320f8e295e7`. These are local preparation results, not an original tagged producer artifact or clean CI admission. The later workflow-only instruction placing the independent report last received formatting and diff checks; it changes no acceptance requirement or package bytes.
 
+[Exact-source CI 37066111972](https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972) passes all six Ubuntu/macOS/Windows Node 22/24 jobs at `667883c`; each downloaded record independently validates the trusted schema, intact digest, clean exact source, 768 tests / 234 required scenarios, conformance and one consistent installed package per job. The review block retains their individual identities. The owner explicitly approved [PR #8](https://github.com/Brandon-Born/bga-mcp/pull/8), which merged as `de5e492`. All eight refreshed pages were explicitly admitted against the post-observation Ubuntu/Node 24 record through the actual review command; the actual framework release guard succeeds with zero holds. This clears source preparation for tagging, not signature/security approval or registry publication. The user will arrange the independent reporting lifecycle as the final gate.
+
 ```verification-record
 {
   "kind": "review",
-  "scope": "BGA-403 actual tagged non-publishing candidate workflow and independent artifact verification"
+  "scope": "BGA-403 actual tagged non-publishing candidate workflow and independent artifact verification",
+  "rc6Preparation": {
+    "sourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37066111972",
+      "commit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:c1d2843e26e3ca5cd824bd871acd95f54764bdd8af17b44e0f7f2fcc777796c1",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-02T21:25:40.995Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:722570bbea549a44016588db578556e790c79d13877f4450cf13cfadd9864fc1",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-02T21:24:33.994Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:62a443a4698cb5178deb5e803f45201d5598ceef6626e421958ca03d136435e2",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-02T21:23:57.991Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:1e005913cbf142b3b1ca731fdae92a7b084fbd528a6df0032a545aba23dbe56a",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-02T21:22:51.555Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:86d4ebeb1a4dceafec4d11c56682256a73bda8c3b820893916c0f30e2ebbb2e9",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-02T21:25:23.730Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:fd549d30862406633fe3ece9a0a460f45d0e2ddf6854022715442bbdd7312798",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-02T21:26:07.780Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 768,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "approvedIntegration": {
+      "pullRequest": "https://github.com/Brandon-Born/bga-mcp/pull/8",
+      "mergeCommit": "de5e4927aaa5537f32ffa454f791344c6cdd1b82",
+      "mergedAt": "2026-10-02T21:25:28Z"
+    },
+    "frameworkAdmission": {
+      "reviewer": "Codex",
+      "sourcePages": 8,
+      "evidenceCommit": "667883c5521b483da548f2fc4a2f8c864e0fc61c",
+      "ciRun": "37066111972",
+      "actualReleaseGuard": "passed",
+      "holds": 0
+    }
+  }
 }
 ```
 
