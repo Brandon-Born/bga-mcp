@@ -48,3 +48,13 @@ Both the Ubuntu hosted consumer and an independent macOS consumer acquired trust
 - [Offline verification](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/verify-attestations-offline) documents independently acquired trusted roots and their limitations.
 
 BGA-407 subsequently distributed the same signed original metadata, original bundle and digest-bound inventory/manifest as public release assets. [Distribution verification](RELEASE_EVIDENCE.md) records the durable destination and independent public download. This does not alter the historical signing receipt or approve package publication.
+
+## Replacement candidate selection
+
+For the authorized BGA-424 evaluation, the current main-only signer now selects
+[the separately verified rc.2 receipt](release-candidate-v1.0.0-rc.2.json). Its
+producer/source CI, original archive digest and seven material files are distinct
+from rc.1. The receipt selector is a reviewed source constant, not caller input.
+Historical rc.1 verification uses its recorded trusted verifier commit and
+receipt; no rc.1 bytes, tags or receipts are replaced. Rc.2 signing and independent
+cryptographic verification are pending until actual workflow evidence is recorded.

@@ -1676,12 +1676,13 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-430 — Compare installation smoke with the installed candidate version
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-400, BGA-401, BGA-424
 - **Finding, 2026-10-01:** Preparing the replacement candidate `1.0.0-rc.2` for BGA-424 fails `E2E-INSTALL-GUIDE`: the public command correctly prints `1.0.0-rc.2`, but the runner hardcodes a regular expression for `1.0.0-rc.1`. This is a smoke-runner defect, not a broken installation.
 - **Deliverable and acceptance:** Compare the public command's complete trimmed version output with the installed `bga-mcp` package identity. Accept both original and replacement candidate versions, refuse stale or decorated output, and preserve installation, root refusal, immutable project, repeat installation, and removal assertions. The historical rc.1 candidate remains immutable.
 - **Verification:** `E2E-INSTALL-GUIDE` must pass against the newly packed candidate; exact-version controls reject stale and substring-only matches. The changed runner digest requires a fresh native Codex smoke receipt under BGA-401 before the full gate and exact-source CI can verify this item. No public MCP contract or BGA framework behavior changes.
+- **Evidence, 2026-10-01:** The full local gate and [exact-source CI 36945419932](https://github.com/Brandon-Born/bga-mcp/actions/runs/36945419932) pass 618 tests and all 188 required scenarios in each of six platform/Node jobs at `f5f5297c6d98fd0d0aadc3ce98ca01536ed75c74`. The fresh native rc.1 client receipt preserves the original artifact scope. The independently downloaded rc.2 package also passes all seven calls, all three resource reads, refusal checks, immutable project/configuration and native process cleanup; [candidate receipt](verification/release-candidate-v1.0.0-rc.2.json) records its distinct identity.
 - **Coordination:** BGA-403/BGA-404 retain replacement-candidate production/signing, and BGA-411 retains current public documentation. BGA-424 continues only with the explicitly identified evaluated artifact.
 
 ## Coverage map
