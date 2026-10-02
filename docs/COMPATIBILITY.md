@@ -116,14 +116,15 @@ BGA-400 extends CLAIM-CLIENT-SDK evidence: the generic stdio guide is exercised 
 
 BGA-401 adds E2E-CLIENT-SDK-SMOKE and GATE-CLIENT-MATRIX to transport evidence. The gate refuses missing/version/environment/scenario claims and rejects changed controlled runners or candidate identities.
 
-## Open real-development counterexample
+## Historical real-development counterexample
 
 [BGA-424](verification/AGENT_EVALUATION.md) evaluated the signed rc.2 original on
 three actual development tasks. BGA-431 reproduces phantom notification handlers
 and PHP methods from comments through the installed public command. Existing
 passing fixture claims do not establish correct executable-context handling for
-that case. Candidate advancement is blocked pending repair, passing original
-packaged regressions and explicit replacement-artifact carry-forward. Unsupported
+that case. The rc.2 failure remains historical. BGA-431 supplies passing original packaged
+regressions and [signed rc.3 carry-forward](verification/AGENT_EVALUATION_CARRY_FORWARD.md)
+confirms the correction on the same real-project inputs. Unsupported
 computed SQL and game-owned rules also remain outside a clean verdict.
 
 ## Executable contract context
@@ -136,5 +137,5 @@ TypeScript, computed/conflicting registrations and unreadable grammar remain
 unsupported, with dependent absence guesses suppressed. PHP is a bounded lexical
 reader: unterminated contexts and closing tags/mixed HTML remain unsupported;
 this is not full PHP syntax validation. The historical rc.2 failure above remains
-valid for those original bytes. A replacement signed candidate and frozen-task
-carry-forward still gate BGA-424 closure. See [implementation evidence](verification/EXECUTABLE_CONTRACTS.md).
+valid for those original bytes. The replacement signed candidate and explicit frozen-task
+carry-forward close BGA-424 for its bounded sample. See [implementation evidence](verification/EXECUTABLE_CONTRACTS.md).

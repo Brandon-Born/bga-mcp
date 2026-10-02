@@ -80,3 +80,25 @@ per-release distribution. No package was published or original candidate rebuilt
 The [real development evaluation](AGENT_EVALUATION.md) subsequently found BGA-431.
 Cryptographic verification remains valid, but does not clear that release blocker
 or transfer usefulness claims to a future replacement artifact.
+
+## BGA-431 replacement: signed rc.3
+
+[Signer workflow 36954957803](https://github.com/Brandon-Born/bga-mcp/actions/runs/36954957803)
+passed at `e092d1d9cccccae2f38e4eff7129ad8f690fb3bf`, consuming the separately
+verified original rc.3 candidate from `c7ad5c2`. Its preparation runs the complete
+gate without signing identity; signing then rechecks the archive and attests the
+seven unchanged original files. [Signer-source CI 36954958134](https://github.com/Brandon-Born/bga-mcp/actions/runs/36954958134)
+passed all six platform/Node jobs with 651 tests and 193 required scenarios.
+
+The [rc.3 receipt](release-signing-v1.0.0-rc.3.json) records signed archive
+`bc95d082687e61345395c66881b593035aeb20341544b2acffdcbd09ba59f464`,
+[attestation 52023946](https://github.com/Brandon-Born/bga-mcp/attestations/52023946),
+finite hosted retention and independent packet/original-file comparison.
+Hosted and macOS independent consumers produced equal results: signatures and
+provenance matched, modified bytes and wrong signer/workflow were refused, fresh
+installation/first use/unchanged project/process exit/removal passed. Original
+package SHA-256 remains `598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3`.
+
+[Explicit BGA-424 carry-forward](AGENT_EVALUATION_CARRY_FORWARD.md) subsequently
+repeated the frozen real-project calls on these verified bytes. Original rc.1/rc.2
+receipts remain unchanged. No package was rebuilt during signing or published.

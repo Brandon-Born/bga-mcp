@@ -55,7 +55,8 @@ published stable snapshot exists. Tool/resource descriptors, input/output and
 versioned-schema fingerprints are unchanged. The strict installed comparison
 remains enabled. Local full-gate and exact-source CI observations will be
 appended after they pass.
-The package source version is reserved as `1.0.0-rc.3`; that is not yet a produced
+Preparation note before candidate production: the package source version was
+reserved as `1.0.0-rc.3`; at that point it was not yet a produced
 or signed replacement artifact. BGA-431 remains implemented until its required
 gates pass. BGA-424 remains implemented until verified replacement bytes repeat
 the affected frozen-task calls. No rc.1/rc.2 receipt or result silently transfers.
@@ -104,3 +105,20 @@ All projects and client configuration were unchanged and processes exited.
 BGA-431's parser correction is verified for the identified source and original
 candidate bytes. Signing and explicit frozen-task carry-forward still gate
 BGA-424 closure; code verification alone does not transfer that evaluation.
+
+## Signed replacement and real-project closure
+
+The [rc.3 signing receipt](release-signing-v1.0.0-rc.3.json) records actual
+signing plus equal hosted/independent cryptographic consumer results. The
+[frozen-task repeat](AGENT_EVALUATION_CARRY_FORWARD.md) preserves all original
+production digests and repeats 23 native MCP calls. Its five JavaScript handler
+traces equal actual module prototypes, and PHP method inventories equal a
+separate Zend-lexer oracle. Baseline handlers are absent, both unmatched sends
+warn, and the feature/review handler remains live without notification warnings.
+The original game diagnosis still requires its game-owned assertion. BGA-424
+closes for the bounded sample; dynamic SQL and runtime/gameplay limits remain.
+
+The agent-side PHP oracle follows [token_get_all](https://www.php.net/manual/en/function.token-get-all.php),
+fetched 2026-10-01 local: it uses “the Zend engine's lexical scanner”. It is a
+separate verification operation, not a PHP runtime dependency or project-code
+execution capability in the MCP.

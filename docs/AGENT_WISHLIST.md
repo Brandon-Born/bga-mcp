@@ -22,8 +22,8 @@ warning was suppressed; a clean-looking trace was insufficient evidence.
 **Wish and owner.** BGA-431 must remove these phantom contracts while preserving
 real supported methods, bindings and lexical contexts. This is a correctness fix
 to existing tools, not a new capability. Its historical rc.2 correctness probe fails. The BGA-431 implementation
-adds passing installed regressions; verified replacement bytes and frozen-task
-carry-forward still gate release advancement. Explicit uncertainty is preferable when a reader
+adds passing installed regressions; independently verified signed rc.3 and the explicit frozen-task repeat now
+confirm the correction. See [carry-forward evidence](verification/AGENT_EVALUATION_CARRY_FORWARD.md). Explicit uncertainty is preferable when a reader
 cannot establish executable context.
 
 ## Observations from the executed tasks
@@ -39,7 +39,9 @@ cannot establish executable context.
 **Observed.** The mixed working folder, tracked export, and production subset
 produce different coverage. I prepared separate roots and recorded selected
 paths and digests manually, including 17-, 18- and 20-file roots in the formal tasks. BGA-429 fixes outside-source contamination, but
-copies inside `modules/` remain eligible for contract reading.
+copies inside `modules/` remain eligible for contract reading. The rc.3 repeat
+again required manual exports of the exact 17-, 18- and 20-file roots and private
+digest comparisons; correctness is repaired, while this preparation friction remains.
 
 **Wish.** One readable receipt showing which files supplied each contract, which
 were excluded and why, and which have unknown scope. An explicit caller-selected

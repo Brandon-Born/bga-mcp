@@ -7,6 +7,16 @@
 }
 ```
 
+Current handoff: the rc.2 observations below are historical and remain unchanged
+for those bytes. BGA-431 is corrected in independently verified signed rc.3, and
+[explicit frozen-task carry-forward](AGENT_EVALUATION_CARRY_FORWARD.md) repeats
+all 23 calls and independent checks. BGA-424 is now verified for that bounded
+sample. Use the [rc.3 ledger](agent-evaluation-v1.0.0-rc.3.json) for the current
+artifact and observed differences; no productivity or game-correctness claim is
+added.
+
+## Historical rc.2 observation
+
 Observed 2026-10-01 locally / 2026-10-02 UTC. **Conclusion: useful for bounded
 framework wiring, limited for diagnosis and gameplay review. Release is blocked
 by BGA-431.** The three development tasks ran; this evaluation remains
