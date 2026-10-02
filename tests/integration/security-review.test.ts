@@ -69,9 +69,16 @@ function control(): SecurityReview {
 function sealed(review: SecurityReview): SecurityReview {
   return { ...review, integrity: reviewIntegrity(review) };
 }
-it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidence despite rewritten integrity fields', () => {
+it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidence despite rewritten integrity fields', async () => {
   const review = control();
   expect(verifyReviewRecord(review, plan).failures).toEqual([]);
+  const historical = JSON.parse(
+    await readFile(
+      resolve(root, 'docs/verification/security-review-v1.0.0-rc.4-clean.json'),
+      'utf8',
+    ),
+  ) as unknown;
+  expect(verifyReviewRecord(historical, plan).failed).toBe(true);
   const substituted = {
     ...review,
     candidate: { ...review.candidate, artifactDigest: `sha256:${'e'.repeat(64)}` },
@@ -82,6 +89,7 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
   expect(verifyReviewRecord({ ...review, reviewedAt: 'invalid' }, plan).failed).toBe(true);
   for (const changed of [
     { ...review, candidate: { ...review.candidate, tag: 'v1.0.0-rc.3' } },
+    { ...review, candidate: { ...review.candidate, tag: 'v1.0.0-rc.4' } },
     { ...review, tests: { ...review.tests, artifactDigest: `sha256:${'c'.repeat(64)}` } },
     {
       ...review,

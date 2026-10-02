@@ -1,7 +1,7 @@
 # BGA-405 exact-candidate security review
 
 ```verification-record
-{"kind":"review","scope":"BGA-405 authenticated original rc.3 and rc.4 security replays, fresh exact-source dependency assessments and owned publication holds; no final security approval"}
+{"kind":"review","scope":"BGA-405 authenticated original rc.3, rc.4 and rc.5 security replays, fresh exact-source dependency assessments and owned publication holds; no final security approval"}
 ```
 
 The [retained assessment](security-review-v1.0.0-rc.3.json) applies to original signed `v1.0.0-rc.3`, source `c7ad5c2962e608a82b532dd0d1882040d1ba31ea`, tarball `sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3`. It does not transfer to a newly packed checkout. The review authenticates the original packet with refreshed independent trusted roots and BGA-404's exact repository/workflow/signer/provenance constraints before installation. The tarball and its signed packet remain unchanged.
@@ -142,3 +142,31 @@ the clean rc.4 receipt references and their refusal controls; it does not
 approve rc.4 or cover the later rc.5 version preparation. Framework admission
 for the replacement candidate will use its own final preparation CI, avoiding
 an intermediate admission that the version change would immediately invalidate.
+
+## Original rc.5 preparation
+
+The [separately retained rc.5 assessment](security-review-v1.0.0-rc.5.json)
+consumes original signed artifact
+`sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`,
+source `286f2bbb1bfff28726378098d9883058f19841e9` and signer
+`a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`. Fresh independent trust roots,
+signature, subjects and producer provenance verification precede all package
+tests. The exact candidate source is isolated, clean and installed from its
+frozen lockfile; fresh registry-backed production and full-graph audits both
+report zero findings. Source/configuration digests match the signed original
+assessment. Original candidate and signing packets remain unchanged.
+
+The original tarball passes 27 tests / 11 required security scenarios and 274
+packaged text-file scans. Every selected suite records the authenticated
+original digest. All six packed guides match current bytes, so the rc.4 guide
+replacement hold is cleared for rc.5. The existing residual dispositions remain
+limited to the local public inventory; Studio and external adapters are excluded.
+
+The preparation reviewer is uncommitted and the changed selector invalidates
+the broad implementation admission. A clean committed replay, exact-source CI
+and explicit framework re-admission remain required. BGA-406's non-maintainer
+private-report lifecycle is also still null. The plan and offline verifier now
+select rc.5; an actual historical rc.4 assessment fails the new identity check.
+Historical validity cannot supply current approval. BGA-415's historical rc.4
+prerequisites have not been advanced or approved by this security preparation.
+No `--approve` invocation, registry write or release promotion is made.
