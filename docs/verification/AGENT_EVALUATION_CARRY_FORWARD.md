@@ -216,6 +216,13 @@ in [its rc.5 receipt](rc5-dino-racer-rerun.json). The MCP does not establish
 game-specific persisted representation or scoring without game-owned assertions;
 no whole-game, Studio gameplay, GUI, blind-author or publisher-permission claim
 is added. Existing source-selection, repeated-uncertainty and test-evidence
-wishes remain unimplemented. Full local gate and exact-source handoff CI are
-pending before the rc.5 ledger is marked verified. BGA-411 is next in the release
-queue; security review and publication retain their independent gates.
+wishes remain unimplemented. The full local preparation gate
+passes with 674 tests / 209 required scenarios. [Exact-source CI 37001465682](https://github.com/Brandon-Born/bga-mcp/actions/runs/37001465682)
+passes all six Ubuntu/macOS/Windows Node 22/24 jobs at
+`2b62948ad47433184388d1924a63e5043609a0e9`; every downloaded sealed record
+validates trusted schema, exact clean source, CI environment, integrity, tests,
+scenarios and conformance. The existing framework admission remains current
+because this handoff changes only receipts/docs, and the actual release guard
+passes. The rc.5 ledger is verified within the bounded sample above. BGA-411 is
+next in the release queue; security review and publication retain their
+independent gates.

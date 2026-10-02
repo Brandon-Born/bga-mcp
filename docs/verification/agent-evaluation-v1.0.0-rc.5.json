@@ -18,7 +18,7 @@
   "runtimeStudioEvaluated": false,
   "privateSourceRetainedInMcpRepository": false,
   "recordedAt": "2026-10-02T11:27:04.870557Z",
-  "status": "implemented",
+  "status": "verified",
   "conclusion": "bounded frozen-task usefulness carry-forward on original signed rc.5; no measured productivity or whole-game claim",
   "priorCarryForward": "agent-evaluation-v1.0.0-rc.4.json",
   "candidate": {
@@ -617,5 +617,69 @@
     "assertionsPassed": 3,
     "projectUnchanged": true,
     "serverExited": true
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37001465682",
+    "commit": "2b62948ad47433184388d1924a63e5043609a0e9",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:e7171c1093f8a68d7eab5cf016a6c991a7cf9adcb8dd3c4682c36a78841a5d10",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:36:04.078Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:66bbec58c606a302bb35eb2dbca65947f74bcd983af7016ebf2aae9b5af631f9",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:34:32.635Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:97b0f4ef70e3a6d6383d96509c5c419f44095f7c2704d6db2868b89e2f0711e1",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:34:47.029Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:1222916992b3f6213e09be7dc6e5c45214341e13fd7a732cb6097dc51941902d",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:33:59.483Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:53d23cf8ef32d457892b5ddfd0f83fe638e0dd94c9d80899c6d4a5bf49d60856",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:38:05.183Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:d96852a4d3b200dc277e94d17d2613b7df5af26f916afae0993a23322f3820cf",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:36:46.533Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "frameworkAdmission": {
+    "sourceCount": 8,
+    "evidenceCommit": "90565d57ea4cf9bbb25f35d79ea9727cc197a24d",
+    "implementationDigest": "sha256:aeea8026edaba27d007b980602c00399dd915ba91e92f37fb04e36de61c1c0ed",
+    "evidenceDigest": "sha256:3eacdd964dd712390f83440b58c22b6c11433df50e080c666d6433893bc7465e",
+    "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36999384205",
+    "releaseGuard": "passed",
+    "scope": "unchanged implementation and existing previously read admissions; evaluation changes only receipts/docs, not readers, fixtures or framework behavior"
   }
 }
