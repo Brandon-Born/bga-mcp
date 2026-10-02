@@ -3,6 +3,7 @@ import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { readFile, realpath, rename, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 import { installPackagedServer, type PackagedServer } from '../helpers/packaged.js';
 import type { CommandResult } from '../helpers/process.js';
@@ -59,7 +60,7 @@ async function execute(
   return await new Promise((done, reject) => {
     const child = spawn(
       process.execPath,
-      [...(shutdown ? ['--import', preload] : []), cli, ...args],
+      [...(shutdown ? ['--import', pathToFileURL(preload).href] : []), cli, ...args],
       {
         env: { ...process.env, BGA_STUDIO_SESSION: `opaque=${session}` },
         stdio: shutdown ? ['pipe', 'pipe', 'pipe', 'ipc'] : ['pipe', 'pipe', 'pipe'],

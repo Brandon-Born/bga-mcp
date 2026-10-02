@@ -61,7 +61,18 @@
     "usefulnessEvaluationRepeated": false
   },
   "sourceCi": {
-    "status": "pending"
+    "status": "failed",
+    "id": 37029810137,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37029810137",
+    "commit": "379438a66533496b0cd42feb12282fed9b43a5d8",
+    "jobsPassed": [
+      "ubuntu-latest / Node 22",
+      "ubuntu-latest / Node 24",
+      "macos-latest / Node 22",
+      "macos-latest / Node 24"
+    ],
+    "jobsFailed": ["windows-latest / Node 22", "windows-latest / Node 24"],
+    "failure": "The shutdown test passed a Windows absolute path to --import instead of a file URL. Node module loading failed before the CLI began; the private-output assertion correctly refused the Node diagnostic. The test-only preload now uses pathToFileURL. New exact-source CI is required."
   },
   "priorMetadataCi": {
     "id": 37025759118,
