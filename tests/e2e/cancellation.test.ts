@@ -39,8 +39,11 @@ import {
  *   dropped rather than drained" is the other party's observation rather than
  *   this server's own report.
  * - **The filesystem half is observed in the installed process.** A delayed
- *   syscall must record its end before timeout settlement, the transcript must
- *   remain unchanged afterwards, and the same MCP client must still work.
+ *   syscall and cleanup must finish before timeout settlement, or the real
+ *   bounded cleanup ceiling must fire first. No new project work may start,
+ *   resources must be released, and the same MCP client must still work.
+ *   Nominal probe delays do not guarantee native cleanup finishes inside the
+ *   ceiling on a loaded runner.
  */
 
 const stubModule = new URL('./doc-network-stub.ts', import.meta.url).href;
@@ -159,17 +162,22 @@ function expectMatrixDeadlineOrder(
   );
   expect(published).toBeGreaterThan(expired);
   expect(completed).toBeGreaterThan(expired);
-  if (completionMs === 150) {
+  if (result.afterWait === result.atSettlement) {
     expect(published).toBeGreaterThan(completed);
-    expect(result.afterWait).toBe(result.atSettlement);
     expect(matrixEvents(result.atSettlement).at(-1)).toMatchObject({ files: 0, directories: 0 });
   } else {
-    expect(completed).toBeGreaterThan(published);
+    // Late native completion is allowed only after the actual production
+    // cleanup timer fired. Removed awaiting still fails: it publishes before
+    // that timer, regardless of runner speed or the nominal injected delay.
+    const ceiling = events.findIndex((event) => event.event === 'cleanup:ceiling');
+    expect(ceiling).toBeGreaterThan(expired);
+    expect(published).toBeGreaterThan(ceiling);
     const publication = events[published];
     const expiry = events[expired];
     if (!publication || !expiry) throw new Error('Missing timeout/expiry transcript events');
     expect(publication.time - expiry.time).toBeGreaterThanOrEqual(200);
   }
+  if (completionMs === 600) expect(completed).toBeGreaterThan(published);
 }
 
 async function matrixMutation(target: string, replace: (source: string) => string) {
@@ -543,11 +551,29 @@ describe('packaged operation deadlines', () => {
     '[E2E-FILESYSTEM-CANCELLATION] bounds delayed handle cleanup after %s expiry',
     async (target) => {
       const result = await filesystemMatrixProbe(target, 1, 150, 400);
-      const events = expectMatrixQuiescence(result);
+      expectMatrixDeadlineOrder(result, target, 150);
+      const events = matrixEvents(result.afterWait);
       const published = events.findIndex((event) => event.event === 'response:timeout');
       expect(
         events.findIndex((event, index) => index > published && event.event === 'cleanup:end'),
       ).toBeGreaterThan(published);
+      const withoutCeiling = (text: string) =>
+        matrixEvents(text)
+          .filter((event) => event.event !== 'cleanup:ceiling')
+          .map((event, index) => JSON.stringify({ ...event, sequence: index + 1 }))
+          .join('\n') + '\n';
+      expect(() =>
+        expectMatrixDeadlineOrder(
+          {
+            ...result,
+            atSettlement: withoutCeiling(result.atSettlement),
+            afterWait: withoutCeiling(result.afterWait),
+            afterQuiescence: withoutCeiling(result.afterQuiescence),
+          },
+          target,
+          150,
+        ),
+      ).toThrow();
     },
     180_000,
   );

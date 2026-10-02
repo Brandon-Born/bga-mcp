@@ -127,6 +127,15 @@ globalThis.setTimeout = ((
     };
     return timer(() => undefined, ms);
   }
+  // Observe the real cleanup ceiling without changing its scheduling. A nominal
+  // 150 ms hold plus actual native cleanup/logging can exceed 250 ms under load.
+  if (active && ms === 250 && (new Error().stack ?? '').includes('runWithTimeout')) {
+    return timer(() => {
+      // The losing race timer is not abandoned filesystem work.
+      if (!published) record('cleanup:ceiling');
+      callback(...args);
+    }, ms);
+  }
   return timer(callback, ms, ...args);
 }) as typeof setTimeout;
 const write = process.stdout.write.bind(process.stdout);

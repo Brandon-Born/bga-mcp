@@ -28,14 +28,20 @@ matrix covers these 17 positions through an installed real MCP client:
 | Descriptor-bound project read | Descriptor `read`                    | First read and EOF probe                 |
 | Descriptor-bound project read | Descriptor `close`                   | First                                    |
 
-Each position runs with 150 ms and 600 ms observed completion. In the first
-case, the operation and required handle cleanup finish before timeout
-publication, and the transcript remains unchanged afterward. In the second,
-timeout publication precedes completion after the existing 250 ms cleanup
-ceiling. Only completion of already-issued work and close/iterator-return
-cleanup may follow expiry; another application-level filesystem start fails.
+Each position runs with nominal 150 ms and 600 ms completion holds. A nominal
+hold does not bound native or instrumentation latency on a loaded runner.
+When the operation and required cleanup finish before timeout publication,
+the transcript must remain unchanged afterward. Otherwise the actual existing
+250 ms cleanup timer must be observed firing before publication; no synthetic
+timer schedule replaces it. The 600 ms case also requires publication before
+the selected completion. Only completion of already-issued work and
+close/iterator-return cleanup may follow expiry; another application-level
+filesystem start fails.
 Two additional cases hold file/directory cleanup for 400 ms after a 150 ms
-opening promise, proving that the ceiling also bounds delayed cleanup.
+opening promise, proving that the ceiling also bounds delayed cleanup. Removing
+the observed ceiling event from an otherwise sequence-consistent transcript
+must make the residual-completion oracle fail. Removing the production cleanup
+wait still fails because timeout publication precedes the real timer.
 
 The child records publication before transport delivery. This protects order
 assertions from IPC scheduling. Acquisition/release counters must return to
