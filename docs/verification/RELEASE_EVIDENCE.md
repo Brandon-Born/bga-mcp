@@ -149,3 +149,21 @@ pass before rc.5 distribution is verified. Earlier public records and receipts
 remain scoped to their original versions. The twelve metadata assets include no
 installable package, and distribution grants no security, client-breadth,
 usefulness or Studio/game approval.
+
+### rc.5 pre-publication source and framework admission
+
+[Preparation CI 36993540951](rc5-distribution-preparation-ci.json) passes all six
+jobs on `83d0fb31e4c311bab9d1782cc68f7aac1d29d480`, with 674 tests and 209
+scenarios each. Every downloaded sealed record passes trusted schema, clean
+exact-source, integrity and applicable-conformance checks. The eight unchanged
+previously read framework decisions are explicitly re-admitted against that
+source; the actual framework release guard passes before launching metadata
+publication. The existing broad implementation boundary is retained.
+
+Local preparation verifies the signed original packet and produces the reviewed
+twelve-asset plan, SHA-256
+`d0f75eb53943c38f21431783477d2c655d3e28db265bdc318cb6f35a6c4719c2`.
+Authenticated initial discovery finds no existing rc.5 release or draft.
+The publisher will still reconcile current authenticated identity before any
+write. Actual workflow publication and independent public download/refusal
+results remain pending; this admission does not claim them.

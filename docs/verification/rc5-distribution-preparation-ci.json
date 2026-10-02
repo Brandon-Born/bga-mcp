@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-407",
+  "recordedAt": "2026-10-02T10:16:17.357619+00:00",
+  "scope": "clean distribution-selector preparation CI and explicit framework admission before actual metadata-publication workflow; not public download or publication evidence",
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36993540951",
+    "commit": "83d0fb31e4c311bab9d1782cc68f7aac1d29d480",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:ccaa7ae185f67231628d6e6d3123675d1ce57f95e350761aa41e3ec7d57ec8b7",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T10:09:26.976Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:186452bc386af99e5b509a0b04c909ecf8a2c206c136557ab115dd3225026124",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T10:09:50.863Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:0dd4258ad8e2c08059351e9cf12ff52ab5098cd365b7b8351378502318f5c48e",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T10:09:03.523Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:7f794dae298f7003ad8a28ad42e5795595a26483236ca7e9517514ae93d40077",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T10:08:44.493Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:5eb2b9ece96060cac91813305bf098799fe76fa0552142eb08efe2c3a0bf8850",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T10:11:38.833Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:ad7918dbfee30ebf16477aa6f43f722f6418135845b8ed596628d23f9ff79f8d",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T10:10:43.724Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "frameworkAdmission": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "implementationDigest": "sha256:41275a22d0d5f84767943d0e871ef9dad23c12d63c46890141b8b4e044923c0e",
+    "evidenceCommit": "83d0fb31e4c311bab9d1782cc68f7aac1d29d480",
+    "evidenceDigest": "sha256:7f794dae298f7003ad8a28ad42e5795595a26483236ca7e9517514ae93d40077",
+    "releaseGuard": "passed before metadata publication"
+  },
+  "candidateTag": "v1.0.0-rc.5",
+  "publication": "not yet run"
+}

@@ -1454,6 +1454,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **rc.5 distribution preparation, 2026-10-02 UTC:** Read-only packet/verification selectors, the isolated publisher, intended-plan test and workflow concurrency group select the independently verified [rc.5 producer](verification/release-candidate-v1.0.0-rc.5.json) and [signature](verification/release-signing-v1.0.0-rc.5.json). Original tag/source, seven signed subjects and the twelve-asset metadata allowlist remain immutable. Identity isolation, trusted schemas, exact coverage, digest-bound plan and foreign/conflicting-record refusals are retained. Local preparation, full gate, actual manual publication, independent public download/negative checks and exact-source CI remain required before rc.5 distribution is verified. Historical releases are preserved; no installable package or security approval is distributed.
 
+- **rc.5 pre-publication admission, 2026-10-02 UTC:** [Clean preparation CI 36993540951](verification/rc5-distribution-preparation-ci.json) passes all six jobs at `83d0fb3`, with 674 tests / 209 scenarios each; every sealed record validates. Eight unchanged previously read framework decisions are explicitly re-admitted using that exact source. The actual framework release guard passes before the metadata-publication workflow. Local original-byte packet preparation and the digest-bound twelve-asset plan also pass, and authenticated initial discovery found no existing rc.5 release/draft. This admission is retained separately from the still-pending actual public workflow and independent download proof.
+
 ### BGA-408 — Establish the BGA framework change process
 
 - **Status:** verified
