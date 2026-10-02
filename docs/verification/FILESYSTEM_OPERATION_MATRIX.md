@@ -84,6 +84,27 @@ headers are updated to the observed 712 total; dated observations, source CI
 records and original candidate evidence are not rewritten. The integrated full
 gate must pass before the handoff is called done.
 
+## Bounded completion observation, 2026-10-02 UTC
+
+BGA-423 CI on `e20e866` passed five jobs; Windows Node 22 failed the
+600 ms `walk:opendir` case because a directory remained acquired at the fixed
+700 ms observation. The log proves that failed observation, not an eventual
+leak or eventual release. The new parent-side observer polls for selected
+completion, balanced work/cleanup events and zero resources for at most five
+seconds, then retains the same quiet transcript and same-client checks. Reaching
+that observation limit cannot pass the ordering/resource oracle. The production
+250 ms cleanup ceiling is unchanged, and late completion still requires its
+actual event before timeout publication.
+
+Two additional installed cases hold cleanup for 1,100 ms on the file and directory
+paths, deliberately outlasting the old fixed observation. The earlier 400 ms
+cases and removed-wait/checkpoint/close controls remain. Historical rc.5 and CI
+receipts above retain their original harness and counts; this changed observer
+passes all 59 focused cancellation/authority tests and the fresh integrated
+`pnpm check` at 751 tests / 223 required scenarios; exact-source CI remains
+required before its handoff is verified. The [BGA-423 receipt](bga423-source-ci.json) records the
+failed attempt and subsequent proof separately.
+
 ## Sources
 
 [Node.js FileHandle.close](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandleclose)

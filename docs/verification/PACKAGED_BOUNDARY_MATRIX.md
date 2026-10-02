@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-128, the completeness owner for the verification findings of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind": "run", "capabilities": 17, "scenarios": 223, "claims": 103, "tests": 749}
+{"kind": "run", "capabilities": 17, "scenarios": 223, "claims": 103, "tests": 751}
 ```
 
 ## What was missing

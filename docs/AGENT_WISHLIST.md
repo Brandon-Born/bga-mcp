@@ -169,6 +169,20 @@ and live evaluation, while BGA-411 owns accurate public and agent documentation.
 Record whether retrieval actually answers the development question before
 proposing diagnostic integration or expanding the release inventory.
 
+**BGA-211 preparation, 2026-10-02 UTC.** A direct retrieval/cache probe on
+BGA-423 source `e20e866`, using only original synthetic text, reproduces two
+limitations: a warm lookup for a second question returns the first question's
+passage although a cold lookup finds the second passage; a warm 1,200-character
+request returns the 1,507-character excerpt previously selected at a 2,000-character
+limit. The cache records page URL alone. This is supporting component evidence,
+not an installed MCP result or a captured-page relevance evaluation. BGA-211's
+next bounded step is an installed same-client, same-page two-question regression
+and independent search/topic budget checks, followed by its reviewed minimal
+captures and unchanged scoring thresholds. Search and resources currently have
+separate caches and fixed per-reader limits; the component budget probe does not
+establish a public cross-reader cache leak. Preserve page authority, retention,
+untrusted labelling and the existing no-full-text storage boundary.
+
 **Framework review observation, 2026-10-02 UTC.** The BGA-408 live baseline still
 required a separate read of the Complete Walkthrough beside the canonical state
 page to establish that BGA-419's conflict remains unresolved. A source link alone

@@ -52,7 +52,129 @@
     "usefulnessEvaluationRepeated": false
   },
   "sourceCi": {
-    "status": "pending-exact-committed-source"
+    "status": "pending-observation-fix-exact-source",
+    "previousAttempts": [
+      {
+        "status": "failed",
+        "id": 37036268492,
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37036268492",
+        "commit": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+        "passingRecordsValidated": 5,
+        "jobs": [
+          {
+            "node": "v22.23.2",
+            "platform": "darwin",
+            "source": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T16:52:23.879Z",
+            "tests": 749,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+            "evidenceDigest": "sha256:46d3aa2c24ae2f44d696537e27eb56322d01cc77bef5ec9bbcd1fd03fb57face",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v24.20.0",
+            "platform": "darwin",
+            "source": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T16:51:52.991Z",
+            "tests": 749,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+            "evidenceDigest": "sha256:567afc8cc8ab0d689275c2278cf6fc7f671f7e6acf40fff05af09555e50bc8cc",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v22.23.3",
+            "platform": "linux",
+            "source": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T16:51:37.940Z",
+            "tests": 749,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+            "evidenceDigest": "sha256:74c27e634e28330a7986fa01013a42bd79007e4fa9d87be5c28290628003a229",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v24.21.0",
+            "platform": "linux",
+            "source": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T16:50:00.151Z",
+            "tests": 749,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+            "evidenceDigest": "sha256:813bb69a06de500c672d8c818ee4b25e50477ffbddd5230503b2e51d00daf282",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v24.21.0",
+            "platform": "win32",
+            "source": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T16:53:33.063Z",
+            "tests": 749,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:e02ae60d8824cfb59cc10dc5128309c6619a443e738430e66ef75dc3d21e213c",
+            "evidenceDigest": "sha256:58c00cf31540201e601cdd0bd9495e60ac48cc46c8437b1d6d8b93f4e87884a4",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          }
+        ],
+        "jobsFailed": ["windows-latest / Node 22"],
+        "failure": "Existing walk:opendir occurrence 1, nominal 600 ms completion case observed one acquired directory after fixed 700 ms wait. This proves the failed observation, not eventual leak/release. All eight authority scenarios passed in all six jobs; no production change is made by the bounded parent-side completion observer."
+      }
+    ]
   },
-  "approvalsTransferred": false
+  "approvalsTransferred": false,
+  "observationFix": {
+    "status": "local-gates-passed-exact-source-ci-pending",
+    "focusedTests": 59,
+    "scope": "Test-only five-second bounded parent observation of actual selected completion, balanced issued-work/cleanup events and zero resources; unchanged production cleanup timer and no-new-work/leak/mutation oracles; two additional 1100 ms cleanup regressions",
+    "initialFocusedAttempt": "Failed package-install setup under restricted registry DNS; all tests skipped, no runtime verdict",
+    "focusedLog": "bga423-observation-focused2.log",
+    "integratedTests": 751,
+    "requiredScenarios": 223,
+    "scenariosPassed": 223,
+    "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+    "evidenceDigest": "sha256:a1a1c52304db80f6ac652aaa8f357bea9e13389f60dec4e69a1ea72df1490982",
+    "fullGate": {
+      "status": "passed",
+      "sourceBase": "e20e8663b2cd92478818151e7a3a6185c7f311ed",
+      "sourceClean": false,
+      "generatedAt": "2026-10-02T17:03:14.076Z",
+      "testsPassed": 751,
+      "testsFailed": 0,
+      "requiredScenarios": 223,
+      "scenariosPassed": 223,
+      "claims": 103,
+      "capabilities": 17,
+      "applicableConformance": "passed",
+      "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+      "evidenceDigest": "sha256:24e2e98029e5a0a769345c53e2d75f59a692dc446d3e252f4284a4c4968b3ebd",
+      "log": "bga423-observation-handoff-check.log",
+      "metadataAfterGate": "Bounded receipt and status prose refreshed after the passing gate; exact committed-source CI still required."
+    }
+  }
 }

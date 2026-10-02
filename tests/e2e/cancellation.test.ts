@@ -101,10 +101,18 @@ async function filesystemMatrixProbe(
     async (client) => {
       const response = await callTool(client, 'inspect_project', {}, 30_000);
       const atSettlement = await readFile(log, 'utf8');
-      await new Promise<void>((ready) => {
-        setTimeout(ready, 700);
-      });
-      const afterWait = await readFile(log, 'utf8');
+      // Observe completion rather than assume a nominal injected delay bounds
+      // native cleanup on a loaded runner. This parent-side observation never
+      // extends the production cleanup ceiling or turns a leak into a pass.
+      const observationDeadline = performance.now() + 5_000;
+      let afterWait = atSettlement;
+      while (!matrixCleanupObserved(matrixEvents(afterWait), target)) {
+        if (performance.now() >= observationDeadline) break;
+        await new Promise<void>((ready) => {
+          setTimeout(ready, 25);
+        });
+        afterWait = await readFile(log, 'utf8');
+      }
       await new Promise<void>((ready) => {
         setTimeout(ready, 100);
       });
@@ -128,6 +136,27 @@ async function filesystemMatrixProbe(
   return { ...result, stderr };
 }
 
+function matrixCleanupObserved(events: readonly FilesystemMatrixEvent[], target: string): boolean {
+  const issued = events.findIndex((event) => event.event === 'selected:issued');
+  const completed = events.some(
+    (event, index) =>
+      index > issued &&
+      (event.event === 'work:end' || event.event === 'cleanup:end') &&
+      event.operation === target,
+  );
+  const last = events.at(-1);
+  return (
+    issued >= 0 &&
+    completed &&
+    last?.files === 0 &&
+    last.directories === 0 &&
+    events.filter((event) => event.event === 'work:start').length ===
+      events.filter((event) => event.event === 'work:end').length &&
+    events.filter((event) => event.event === 'cleanup:start').length ===
+      events.filter((event) => event.event === 'cleanup:end').length
+  );
+}
+
 function expectMatrixQuiescence(result: Awaited<ReturnType<typeof filesystemMatrixProbe>>) {
   expect(result.response.isError, result.response.text).toBe(true);
   expect(result.response.text).toContain('policy.timeout.exceeded');
@@ -141,7 +170,7 @@ function expectMatrixQuiescence(result: Awaited<ReturnType<typeof filesystemMatr
   const expired = events.findIndex((event) => event.event === 'deadline:expire');
   expect(expired).toBeGreaterThan(issued);
   expect(events.filter((event) => event.event === 'work:start' && event.expired)).toEqual([]);
-  expect(events.at(-1)).toMatchObject({ files: 0, directories: 0 });
+  expect(events.at(-1), JSON.stringify(events)).toMatchObject({ files: 0, directories: 0 });
   expect(result.afterQuiescence).toBe(result.afterWait);
   return events;
 }
@@ -152,6 +181,7 @@ function expectMatrixDeadlineOrder(
   completionMs: number,
 ): void {
   const events = expectMatrixQuiescence(result);
+  expect(matrixCleanupObserved(events, target)).toBe(true);
   const published = events.findIndex((event) => event.event === 'response:timeout');
   const expired = events.findIndex((event) => event.event === 'deadline:expire');
   const completed = events.findIndex(
@@ -547,10 +577,14 @@ describe('packaged operation deadlines', () => {
     180_000,
   );
 
-  it.each(['walk:opendir', 'readProjectFile:open'])(
-    '[E2E-FILESYSTEM-CANCELLATION] bounds delayed handle cleanup after %s expiry',
-    async (target) => {
-      const result = await filesystemMatrixProbe(target, 1, 150, 400);
+  it.each(
+    ['walk:opendir', 'readProjectFile:open'].flatMap((target) =>
+      [400, 1_100].map((cleanupMs) => ({ target, cleanupMs })),
+    ),
+  )(
+    '[E2E-FILESYSTEM-CANCELLATION] bounds $cleanupMs ms handle cleanup after $target expiry',
+    async ({ target, cleanupMs }) => {
+      const result = await filesystemMatrixProbe(target, 1, 150, cleanupMs);
       expectMatrixDeadlineOrder(result, target, 150);
       const events = matrixEvents(result.afterWait);
       const published = events.findIndex((event) => event.event === 'response:timeout');
