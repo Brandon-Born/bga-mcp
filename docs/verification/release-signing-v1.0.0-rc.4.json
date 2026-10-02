@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T07:45:15.555577+00:00",
+  "owner": "BGA-404",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.4.json",
+  "candidateTag": "v1.0.0-rc.4",
+  "candidateSourceCommit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+  "originalArtifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+  "signer": {
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-signing.yml",
+    "commit": "b593b76dc56fbb6affc1264b3b5ee53a338c209b",
+    "ref": "refs/heads/main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "hostedRunnersOnly": true
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36979061792",
+    "conclusion": "success",
+    "artifactId": 11215156020,
+    "artifactName": "signed-candidate-36979061792",
+    "archiveDigest": "sha256:892e824429c3439248fefb0365499138a2ab77aed0a833de8f6f205890aa00c3",
+    "expiresAt": "2026-12-31T07:32:05Z"
+  },
+  "attestation": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/attestations/52075839",
+    "transparencyLogUrl": "https://search.sigstore.dev?logIndex=3050635902",
+    "predicateType": "https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1",
+    "signedSubjects": 7,
+    "bundleDigest": "sha256:f7f3cbcdf0ca25770ba3de7fdbca86adeea1bda7025cc9e9950408bac942da9d",
+    "predicateCopyDigest": "sha256:f2d1dfddd4fa02914d1f9525b89c75663d3adaa4105c32a56e9bf932a2a27319"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36979053850",
+    "commit": "b593b76dc56fbb6affc1264b3b5ee53a338c209b",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:ad1ba56d2ac88fe8e663155957a230bd920da66d5655fc81611b99422424ee75",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:351d62de203044d2e1d980c4279017351b237334c4cebba4dcc5aaf5089fe1ca",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:7f479a1ca1fc99e0b12ae89c41fd3ca9444adaf8bb040329d1fd766190178da3",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:e9cbb16b6d7bd6bd62eab7768f7bbc075c6875d9f6d4a0ff4bb9490d977128d6",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:b16bd1658683938170ff3df5a6ce31a484b2007a3e544fde4604ea6316217d02",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:d9be56c3463f6919e01994a582311656a9ad95aa78e8b9bf692c16b76764b09f",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "hostedConsumer": {
+    "resultArtifactId": 11215200682,
+    "resultArchiveDigest": "sha256:a04c6b793bb5777a55f680db17c866b6ce3493cc14a918b761e3b034c2e7b694",
+    "resultDigest": "sha256:b641db9af42df0cbe32454bf32821e5857428f883e6e7b6498d7be16035007b7",
+    "result": {
+      "schemaVersion": 1,
+      "candidateTag": "v1.0.0-rc.4",
+      "candidateCommit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+      "originalArtifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+      "signerCommit": "b593b76dc56fbb6affc1264b3b5ee53a338c209b",
+      "signature": "verified",
+      "provenance": "matched reviewed candidate and original producer",
+      "modifiedArtifact": "refused by cryptographic verifier",
+      "wrongSignerCommit": "refused",
+      "wrongSignerWorkflow": "refused",
+      "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+      "freshInstall": "passed",
+      "firstUse": "passed",
+      "projectUnchanged": true,
+      "serverExited": true,
+      "removal": "passed",
+      "rebuilt": false,
+      "published": false
+    }
+  },
+  "independentConsumer": {
+    "platform": "macOS",
+    "node": "v22.17.1",
+    "resultDigest": "sha256:b641db9af42df0cbe32454bf32821e5857428f883e6e7b6498d7be16035007b7",
+    "result": {
+      "schemaVersion": 1,
+      "candidateTag": "v1.0.0-rc.4",
+      "candidateCommit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+      "originalArtifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+      "signerCommit": "b593b76dc56fbb6affc1264b3b5ee53a338c209b",
+      "signature": "verified",
+      "provenance": "matched reviewed candidate and original producer",
+      "modifiedArtifact": "refused by cryptographic verifier",
+      "wrongSignerCommit": "refused",
+      "wrongSignerWorkflow": "refused",
+      "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+      "freshInstall": "passed",
+      "firstUse": "passed",
+      "projectUnchanged": true,
+      "serverExited": true,
+      "removal": "passed",
+      "rebuilt": false,
+      "published": false
+    }
+  },
+  "originalFilesByteIdentical": true,
+  "rebuilt": false,
+  "published": false,
+  "localRetention": ".artifacts/signed-release-candidates/v1.0.0-rc.4",
+  "frameworkReadmission": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "implementationDigest": "sha256:94accafa01bb16c9b5e7587d438eee0c1951ca0db06ebfb3266e15c19695fb91",
+    "evidenceDigest": "sha256:e9cbb16b6d7bd6bd62eab7768f7bbc075c6875d9f6d4a0ff4bb9490d977128d6",
+    "evidenceCommit": "b593b76dc56fbb6affc1264b3b5ee53a338c209b",
+    "releaseGuard": "passed",
+    "scope": "unchanged previously read wording; signing-selector implementation change retested; no security or publication approval"
+  }
+}

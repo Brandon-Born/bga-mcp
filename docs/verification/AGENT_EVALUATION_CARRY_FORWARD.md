@@ -1,9 +1,9 @@
-# BGA-424 explicit carry-forward to signed rc.3
+# BGA-424 explicit carry-forward to signed replacements
 
 ```verification-record
 {
   "kind": "review",
-  "scope": "Signed rc.3 repeat of all frozen rc.2 MCP calls, independent game checks and executable-context adjudication"
+  "scope": "Signed rc.3 and rc.4 repeats of all frozen rc.2 MCP calls, independent game checks and executable-context adjudication"
 }
 ```
 
@@ -117,3 +117,52 @@ oracle follows [token_get_all](https://www.php.net/manual/en/function.token-get-
 fetched 2026-10-01 local, which identifies its scanner as the Zend lexical scanner.
 Original game-rule assertions and printed-page citations remain in the frozen
 definitions; no new game rule is implemented by this repeat.
+
+## Signed rc.4 frozen-task repeat
+
+The original signed `v1.0.0-rc.4` package from source
+`5c4eebd782f3e1bb2251bd8aad4a6826038ddb15` has SHA-256
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`.
+[Its actual signing receipt](release-signing-v1.0.0-rc.4.json) records independent
+signature/provenance/subject verification, modified-byte and wrong-signer/workflow
+refusals, original-file equality and fresh consumers. Original-source and signer
+CI each pass all six jobs at 674 tests / 209 scenarios. This package includes the
+current documentation and BGA-432's conservative initial-state behavior; its
+identity is separate from every earlier evaluated artifact.
+
+[The sanitized rc.4 ledger](agent-evaluation-v1.0.0-rc.4.json) records an explicit
+repeat of all 23 original task calls across the same five frozen 17-/18-/20-file
+roots and Git revisions listed above. The same controlled native Codex 0.159.2
+bridge and binary were used. Every selected production file matched its original
+snapshot before and after every call. Seven additional consumer calls, three
+consumer resource reads, two explicit baseline resource reads and malformed/
+outside-root/excluded-tool refusals remain distinct from the 23 task calls.
+
+All five reported handler inventories match independently loaded JavaScript
+prototypes; all five method inventories match PHP 8.4.26's Zend lexer. The three
+early roots report no invented handler and two real unmatched sends; feature and
+review roots retain one live handler and no notification warnings. The original
+[three-assertion public-command probe](bga431-fixed-v1.0.0-rc.4.json) passes with
+unchanged fixture and runner digests. No newly untriaged false-certain result was
+observed in this bounded repeat.
+
+Separate temporary Git exports replayed the original game assertions again:
+one expected pre-repair failure, diagnosis 28 tests / 59 assertions, feature
+34 tests / 94 assertions and two controlled client tests, review 39 tests /
+105 assertions and two controlled client tests. The pinned PHPUnit checksum
+matches the original. Game production and user configuration stayed unchanged;
+processes exited, temporary source roots were removed and removal eliminated the
+evaluation installation's public command. Raw inputs/results and reproduction
+runners are retained only in ignored `Dino Racer private/mcp/evaluation-rc4`;
+tracked MCP evidence contains sanitized counts, identities and hashes.
+
+This is a frozen-task carry-forward, not three newly implemented tasks or a
+measured productivity improvement. Review audit counts remain 26 passed, 1 failed,
+6 unsupported and 8 manual-required; computed generated SQL and the information-
+level database audit availability finding remain coverage limits. The separate
+[current working-root/production-export comparison](rc4-dino-racer-rerun.json)
+retains source-selection friction; neither result is a whole-root success claim.
+No Studio gameplay, full game correctness or publisher permission is established.
+The MCP still does not settle game-specific persisted representation or scoring
+without game-owned assertions. BGA-405/BGA-407/BGA-415 retain their separate exact-
+candidate review, public-evidence and publication gates.

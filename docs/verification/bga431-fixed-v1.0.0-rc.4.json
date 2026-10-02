@@ -1,0 +1,838 @@
+{
+  "owner": "BGA-431",
+  "recordedAt": "2026-10-02T07:41:05.102Z",
+  "fixtureDigest": "sha256:ce7ffef66d95260da67a375f4ea4a1dbde585f1fb7b11afebe8c73488102f04a",
+  "runnerDigest": "sha256:d330a5b16c060a7b8ba1835b77b4a9591c6342d4831d7c2f05dc249cc0c62131",
+  "liveHandlers": [],
+  "failures": [],
+  "calls": {
+    "validate_notifications": {
+      "schemaVersion": 1,
+      "layout": "modern",
+      "serverSourcesRead": 1,
+      "clientSourcesRead": 1,
+      "trace": {
+        "sent": [
+          {
+            "name": "markerChanged",
+            "payloadKeys": ["marker"],
+            "payloadShape": "known",
+            "scope": "all",
+            "source": "modules/php/Game.php"
+          }
+        ],
+        "handlers": []
+      },
+      "rules": [
+        {
+          "code": "notification.trace.unavailable",
+          "severity": "information",
+          "certainty": "certain",
+          "summary": "The contract could not be traced because one side of it could not be read.",
+          "falsePositives": []
+        },
+        {
+          "code": "notification.subscription.duplicate",
+          "severity": "warning",
+          "certainty": "certain",
+          "summary": "The client subscribes to one notification name more than once.",
+          "falsePositives": []
+        },
+        {
+          "code": "notification.sent.not-handled",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "The server sends a notification no readable client handler receives.",
+          "falsePositives": [
+            "A handler may be bound dynamically, inherited from a shared client module, or declared in a file outside the read budget.",
+            "A notification consumed only by the framework replay or spectator view has no project handler by design."
+          ]
+        },
+        {
+          "code": "notification.handled.not-sent",
+          "severity": "information",
+          "certainty": "possible",
+          "summary": "The client handles a notification no readable server source sends.",
+          "falsePositives": [
+            "The send may be built at runtime, live in a file outside the read budget, or come from a framework module rather than project code.",
+            "A handler kept for an upcoming feature is intentional and harmless."
+          ]
+        },
+        {
+          "code": "notification.payload.mismatch",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "The server payload and the client handler disagree about a key.",
+          "falsePositives": [
+            "A payload assembled at runtime cannot be compared; such a send is reported as unsupported syntax instead.",
+            "A handler may read the payload through a helper or destructuring form this reader does not recognize."
+          ]
+        }
+      ],
+      "diagnostics": {
+        "schemaVersion": 1,
+        "status": "findings",
+        "summary": {
+          "errors": 0,
+          "warnings": 1,
+          "information": 0,
+          "unsupported": 0
+        },
+        "findings": [
+          {
+            "kind": "heuristic",
+            "code": "notification.sent.not-handled",
+            "message": "The server sends 'markerChanged', which no readable client handler receives.",
+            "locations": [
+              {
+                "uri": "modules/php/Game.php"
+              }
+            ],
+            "evidence": [
+              {
+                "kind": "heuristic",
+                "message": "No subscription or notif_markerChanged method was found in 1 readable client source file(s)."
+              },
+              {
+                "kind": "source",
+                "message": "Known limitation: A handler may be bound dynamically, inherited from a shared client module, or declared in a file outside the read budget. A notification consumed only by the framework replay or spectator view has no project handler by design."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Add a handler for 'markerChanged' in the client, or stop sending it."
+              }
+            ],
+            "severity": "warning",
+            "certainty": "likely"
+          }
+        ]
+      }
+    },
+    "validate_action_contracts": {
+      "schemaVersion": 1,
+      "layout": "modern",
+      "clientSourcesRead": 1,
+      "phpSourcesRead": 1,
+      "trace": {
+        "clientCalls": [],
+        "entryPoints": [],
+        "declaredActions": [],
+        "gameMethods": ["changeMarker"]
+      },
+      "rules": [
+        {
+          "code": "action.trace.unavailable",
+          "severity": "information",
+          "certainty": "certain",
+          "summary": "The contract could not be traced because one side of it could not be read.",
+          "falsePositives": []
+        },
+        {
+          "code": "action.entry-point.duplicate",
+          "severity": "error",
+          "certainty": "certain",
+          "summary": "Two entry points in the same framework resolution scope share a name.",
+          "falsePositives": []
+        },
+        {
+          "code": "action.name.convention",
+          "severity": "information",
+          "certainty": "certain",
+          "summary": "A player action the client calls should be named act\u2026 so the framework routes it.",
+          "falsePositives": []
+        },
+        {
+          "code": "action.call.not-declared",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "The client calls an action that no state lists as a possible action.",
+          "falsePositives": [
+            "A state declared with computed keys or targets cannot be read, and its possible actions are invisible to this rule; that state is reported as unsupported syntax instead.",
+            "A project whose states enumerate no possible actions gives this rule nothing to compare against, so it stays silent rather than reporting every call."
+          ]
+        },
+        {
+          "code": "action.declared.not-called",
+          "severity": "information",
+          "certainty": "possible",
+          "summary": "A state declares a possible action that no readable client source calls.",
+          "falsePositives": [
+            "The client may build the call name at runtime, route it through a shared helper, or live in a file outside the read budget.",
+            "The action may be intended for a client that is not part of this project."
+          ]
+        },
+        {
+          "code": "action.entry-point.missing",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "An action the client calls is declared by no action class, game class, or state class.",
+          "falsePositives": [
+            "A project may dispatch every action through one generic entry point, or inherit entry points from a framework class outside the project."
+          ]
+        },
+        {
+          "code": "action.argument.invalid",
+          "severity": "error",
+          "certainty": "certain",
+          "summary": "A literal argument the client sends fails the check its parameter attribute declares.",
+          "falsePositives": []
+        },
+        {
+          "code": "action.game-method.missing",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "An action has an entry point but no game method of the same name.",
+          "falsePositives": [
+            "The game method may be defined dynamically, inherited from a framework class, or named differently by deliberate indirection."
+          ]
+        },
+        {
+          "code": "action.argument.mismatch",
+          "severity": "warning",
+          "certainty": "likely",
+          "summary": "The client and the entry point disagree about an action argument.",
+          "falsePositives": [
+            "Arguments assembled at runtime cannot be compared; such a call is reported as unsupported syntax instead.",
+            "An entry point may read an argument through a helper this reader does not recognize."
+          ]
+        }
+      ],
+      "diagnostics": {
+        "schemaVersion": 1,
+        "status": "findings",
+        "summary": {
+          "errors": 0,
+          "warnings": 0,
+          "information": 1,
+          "unsupported": 0
+        },
+        "findings": [
+          {
+            "kind": "issue",
+            "code": "action.trace.unavailable",
+            "message": "The action contract could not be traced: no readable state machine.",
+            "locations": [],
+            "evidence": [
+              {
+                "kind": "relationship",
+                "message": "One or more sides of the client-to-server contract could not be read."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Confirm the project layout is supported, or report the sources that could not be read."
+              }
+            ],
+            "severity": "information",
+            "certainty": "certain"
+          }
+        ]
+      }
+    },
+    "validate_project": {
+      "schemaVersion": 1,
+      "layout": "modern",
+      "status": "findings",
+      "groups": [
+        {
+          "id": "state-machine",
+          "requested": true,
+          "ran": true,
+          "status": "findings",
+          "summary": {
+            "errors": 1,
+            "warnings": 0,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCount": 1
+        },
+        {
+          "id": "action-contracts",
+          "requested": true,
+          "ran": true,
+          "status": "findings",
+          "summary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 0
+          },
+          "findingCount": 1
+        },
+        {
+          "id": "notifications",
+          "requested": true,
+          "ran": true,
+          "status": "findings",
+          "summary": {
+            "errors": 0,
+            "warnings": 1,
+            "information": 0,
+            "unsupported": 0
+          },
+          "findingCount": 1
+        },
+        {
+          "id": "database",
+          "requested": true,
+          "ran": true,
+          "status": "findings",
+          "summary": {
+            "errors": 0,
+            "warnings": 0,
+            "information": 1,
+            "unsupported": 0
+          },
+          "findingCount": 1
+        }
+      ],
+      "truncation": {
+        "limit": 200,
+        "omitted": 0
+      },
+      "diagnostics": {
+        "schemaVersion": 1,
+        "status": "findings",
+        "summary": {
+          "errors": 1,
+          "warnings": 1,
+          "information": 2,
+          "unsupported": 0
+        },
+        "findings": [
+          {
+            "kind": "issue",
+            "code": "action.trace.unavailable",
+            "message": "The action contract could not be traced: no readable state machine.",
+            "locations": [],
+            "evidence": [
+              {
+                "kind": "relationship",
+                "message": "One or more sides of the client-to-server contract could not be read."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Confirm the project layout is supported, or report the sources that could not be read."
+              }
+            ],
+            "severity": "information",
+            "certainty": "certain"
+          },
+          {
+            "kind": "issue",
+            "code": "database.audit.unavailable",
+            "message": "Database usage could not be audited: no readable dbmodel.sql, no readable query.",
+            "locations": [],
+            "evidence": [
+              {
+                "kind": "relationship",
+                "message": "The schema, the queries, or both could not be read."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Confirm the project declares its schema in dbmodel.sql and queries it from readable PHP."
+              }
+            ],
+            "severity": "information",
+            "certainty": "certain"
+          },
+          {
+            "kind": "heuristic",
+            "code": "notification.sent.not-handled",
+            "message": "The server sends 'markerChanged', which no readable client handler receives.",
+            "locations": [
+              {
+                "uri": "modules/php/Game.php"
+              }
+            ],
+            "evidence": [
+              {
+                "kind": "heuristic",
+                "message": "No subscription or notif_markerChanged method was found in 1 readable client source file(s)."
+              },
+              {
+                "kind": "source",
+                "message": "Known limitation: A handler may be bound dynamically, inherited from a shared client module, or declared in a file outside the read budget. A notification consumed only by the framework replay or spectator view has no project handler by design."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Add a handler for 'markerChanged' in the client, or stop sending it."
+              }
+            ],
+            "severity": "warning",
+            "certainty": "likely"
+          },
+          {
+            "kind": "issue",
+            "code": "state.initial.missing",
+            "message": "No state definitions could be read, so the state machine cannot be validated.",
+            "locations": [],
+            "evidence": [
+              {
+                "kind": "relationship",
+                "message": "The project declares no readable states."
+              }
+            ],
+            "suggestions": [
+              {
+                "message": "Declare the state machine for this layout, or report the syntax that could not be read."
+              }
+            ],
+            "severity": "error",
+            "certainty": "certain"
+          }
+        ]
+      }
+    },
+    "run_pre_release_audit": {
+      "schemaVersion": 1,
+      "layout": "modern",
+      "catalogVersion": "1.6.0",
+      "counts": {
+        "passed": 29,
+        "failed": 4,
+        "unsupported": 0,
+        "manual-required": 8
+      },
+      "checks": [
+        {
+          "id": "action.argument.mismatch",
+          "outcome": "passed",
+          "summary": "The client and the entry point disagree about an action argument.",
+          "group": "action-contracts",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "action.argument.invalid",
+          "outcome": "passed",
+          "summary": "A literal argument the client sends fails the check its parameter attribute declares.",
+          "group": "action-contracts",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "action.call.not-declared",
+          "outcome": "passed",
+          "summary": "The client calls an action that no state lists as a possible action.",
+          "group": "action-contracts",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "action.declared.not-called",
+          "outcome": "passed",
+          "summary": "A state declares a possible action that no readable client source calls.",
+          "group": "action-contracts",
+          "severity": "information",
+          "certainty": "possible"
+        },
+        {
+          "id": "action.entry-point.duplicate",
+          "outcome": "passed",
+          "summary": "Two entry points in the same framework resolution scope share a name.",
+          "group": "action-contracts",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "action.entry-point.missing",
+          "outcome": "passed",
+          "summary": "An action the client calls has no matching entry point in the action class.",
+          "group": "action-contracts",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "action.game-method.missing",
+          "outcome": "passed",
+          "summary": "An action has an entry point but no game method of the same name.",
+          "group": "action-contracts",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "action.name.convention",
+          "outcome": "passed",
+          "summary": "A player action the client calls should be named act\u2026 so the framework routes it.",
+          "group": "action-contracts",
+          "severity": "information",
+          "certainty": "certain"
+        },
+        {
+          "id": "action.trace.unavailable",
+          "outcome": "failed",
+          "summary": "The contract could not be traced because one side of it could not be read.",
+          "group": "action-contracts",
+          "severity": "information",
+          "certainty": "certain",
+          "findings": [
+            {
+              "kind": "issue",
+              "code": "action.trace.unavailable",
+              "message": "The action contract could not be traced: no readable state machine.",
+              "locations": [],
+              "evidence": [
+                {
+                  "kind": "relationship",
+                  "message": "One or more sides of the client-to-server contract could not be read."
+                }
+              ],
+              "suggestions": [
+                {
+                  "message": "Confirm the project layout is supported, or report the sources that could not be read."
+                }
+              ],
+              "severity": "information",
+              "certainty": "certain"
+            }
+          ]
+        },
+        {
+          "id": "database.audit.unavailable",
+          "outcome": "failed",
+          "summary": "The audit could not run because the schema or the queries could not be read.",
+          "group": "database",
+          "severity": "information",
+          "certainty": "certain",
+          "findings": [
+            {
+              "kind": "issue",
+              "code": "database.audit.unavailable",
+              "message": "Database usage could not be audited: no readable dbmodel.sql, no readable query.",
+              "locations": [],
+              "evidence": [
+                {
+                  "kind": "relationship",
+                  "message": "The schema, the queries, or both could not be read."
+                }
+              ],
+              "suggestions": [
+                {
+                  "message": "Confirm the project declares its schema in dbmodel.sql and queries it from readable PHP."
+                }
+              ],
+              "severity": "information",
+              "certainty": "certain"
+            }
+          ]
+        },
+        {
+          "id": "database.column.duplicate",
+          "outcome": "passed",
+          "summary": "A table declares one column more than once.",
+          "group": "database",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "database.column.undeclared",
+          "outcome": "passed",
+          "summary": "A query names a column its table does not declare.",
+          "group": "database",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "database.column.unused",
+          "outcome": "passed",
+          "summary": "The schema declares a column no readable query names.",
+          "group": "database",
+          "severity": "information",
+          "certainty": "possible"
+        },
+        {
+          "id": "database.query.interpolated",
+          "outcome": "passed",
+          "summary": "A query interpolates a PHP value into its text rather than escaping it.",
+          "group": "database",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "database.table.duplicate",
+          "outcome": "passed",
+          "summary": "The schema declares one table more than once.",
+          "group": "database",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "database.table.undeclared",
+          "outcome": "passed",
+          "summary": "A query names a table the schema does not declare.",
+          "group": "database",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "notification.handled.not-sent",
+          "outcome": "passed",
+          "summary": "The client handles a notification no readable server source sends.",
+          "group": "notifications",
+          "severity": "information",
+          "certainty": "possible"
+        },
+        {
+          "id": "notification.payload.mismatch",
+          "outcome": "passed",
+          "summary": "The server payload and the client handler disagree about a key.",
+          "group": "notifications",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "notification.sent.not-handled",
+          "outcome": "failed",
+          "summary": "The server sends a notification no readable client handler receives.",
+          "group": "notifications",
+          "severity": "warning",
+          "certainty": "likely",
+          "findings": [
+            {
+              "kind": "heuristic",
+              "code": "notification.sent.not-handled",
+              "message": "The server sends 'markerChanged', which no readable client handler receives.",
+              "locations": [
+                {
+                  "uri": "modules/php/Game.php"
+                }
+              ],
+              "evidence": [
+                {
+                  "kind": "heuristic",
+                  "message": "No subscription or notif_markerChanged method was found in 1 readable client source file(s)."
+                },
+                {
+                  "kind": "source",
+                  "message": "Known limitation: A handler may be bound dynamically, inherited from a shared client module, or declared in a file outside the read budget. A notification consumed only by the framework replay or spectator view has no project handler by design."
+                }
+              ],
+              "suggestions": [
+                {
+                  "message": "Add a handler for 'markerChanged' in the client, or stop sending it."
+                }
+              ],
+              "severity": "warning",
+              "certainty": "likely"
+            }
+          ]
+        },
+        {
+          "id": "notification.subscription.duplicate",
+          "outcome": "passed",
+          "summary": "The client subscribes to one notification name more than once.",
+          "group": "notifications",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "notification.trace.unavailable",
+          "outcome": "passed",
+          "summary": "The contract could not be traced because one side of it could not be read.",
+          "group": "notifications",
+          "severity": "information",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.action.handler-missing",
+          "outcome": "passed",
+          "summary": "The state names an action method that no readable PHP source declares.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "state.args.handler-missing",
+          "outcome": "passed",
+          "summary": "The state names an args method that no readable PHP source declares.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "state.dead-end",
+          "outcome": "passed",
+          "summary": "A player-facing or game state with no transition and no handler redirect cannot hand control back.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.id.duplicate",
+          "outcome": "passed",
+          "summary": "A repeated state identifier silently discards the earlier definition.",
+          "group": "state-machine",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.id.reserved",
+          "outcome": "passed",
+          "summary": "A state class may not take identifier 1 or 99, which the framework reserves.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.initial.missing",
+          "outcome": "failed",
+          "summary": "Nothing names where the game starts: no setupNewGame return value, no state 1, and no state 2.",
+          "group": "state-machine",
+          "severity": "error",
+          "certainty": "certain",
+          "findings": [
+            {
+              "kind": "issue",
+              "code": "state.initial.missing",
+              "message": "No state definitions could be read, so the state machine cannot be validated.",
+              "locations": [],
+              "evidence": [
+                {
+                  "kind": "relationship",
+                  "message": "The project declares no readable states."
+                }
+              ],
+              "suggestions": [
+                {
+                  "message": "Declare the state machine for this layout, or report the syntax that could not be read."
+                }
+              ],
+              "severity": "error",
+              "certainty": "certain"
+            }
+          ]
+        },
+        {
+          "id": "state.name.duplicate",
+          "outcome": "passed",
+          "summary": "Two states sharing a name make client-side state checks ambiguous.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.name.missing",
+          "outcome": "passed",
+          "summary": "A state without a name cannot be addressed by the client.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.possible-action.handler-missing",
+          "outcome": "passed",
+          "summary": "A possible action names a method that no readable PHP source declares.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "likely"
+        },
+        {
+          "id": "state.transition.target-exists",
+          "outcome": "passed",
+          "summary": "Every transition must target a declared state.",
+          "group": "state-machine",
+          "severity": "error",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.type.unknown",
+          "outcome": "passed",
+          "summary": "A state type outside activeplayer, multipleactiveplayer, private, and game is not one of the four the framework documents.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "state.unreachable",
+          "outcome": "passed",
+          "summary": "No chain of transitions or handler redirects reaches this state from the entry point.",
+          "group": "state-machine",
+          "severity": "warning",
+          "certainty": "certain"
+        },
+        {
+          "id": "manual.artwork.rights",
+          "outcome": "manual-required",
+          "summary": "Every image, font, and sound shipped with the game is originally created or licensed for redistribution.",
+          "reason": "A tool cannot judge provenance or licensing of a binary asset."
+        },
+        {
+          "id": "manual.rules.fidelity",
+          "outcome": "manual-required",
+          "summary": "The implemented rules match the published game rules, including edge cases and scoring.",
+          "reason": "Requires reading the physical rulebook against the implementation."
+        },
+        {
+          "id": "manual.translation.strings",
+          "outcome": "manual-required",
+          "summary": "Player-visible strings are wrapped for translation and read naturally when translated.",
+          "reason": "Judging whether a string reads naturally is a human decision."
+        },
+        {
+          "id": "manual.tutorial.quality",
+          "outcome": "manual-required",
+          "summary": "The in-game help and tutorial explain the game to a first-time player.",
+          "reason": "Quality of explanation cannot be measured statically."
+        },
+        {
+          "id": "manual.accessibility.colour",
+          "outcome": "manual-required",
+          "summary": "Game state is distinguishable without relying on colour alone.",
+          "reason": "Requires visual inspection of the rendered interface."
+        },
+        {
+          "id": "manual.multiplayer.testing",
+          "outcome": "manual-required",
+          "summary": "The game has been played end to end at every supported player count, including a turn-order edge case.",
+          "reason": "Requires running real tables with real players."
+        },
+        {
+          "id": "manual.spectator.replay",
+          "outcome": "manual-required",
+          "summary": "Spectator view and replay show the same game state a player would see.",
+          "reason": "Requires observing a live table and its replay."
+        },
+        {
+          "id": "manual.performance.table",
+          "outcome": "manual-required",
+          "summary": "The game stays responsive with the largest supported board and player count.",
+          "reason": "Requires measuring a live table."
+        }
+      ]
+    }
+  },
+  "resources": {
+    "bga://project/diagnostics": {
+      "contents": [
+        {
+          "uri": "bga://project/diagnostics",
+          "mimeType": "application/json",
+          "text": "{\n  \"schemaVersion\": 1,\n  \"layout\": \"modern\",\n  \"status\": \"findings\",\n  \"groups\": [\n    {\n      \"id\": \"state-machine\",\n      \"requested\": true,\n      \"ran\": true,\n      \"status\": \"findings\",\n      \"summary\": {\n        \"errors\": 1,\n        \"warnings\": 0,\n        \"information\": 0,\n        \"unsupported\": 0\n      },\n      \"findingCount\": 1\n    },\n    {\n      \"id\": \"action-contracts\",\n      \"requested\": true,\n      \"ran\": true,\n      \"status\": \"findings\",\n      \"summary\": {\n        \"errors\": 0,\n        \"warnings\": 0,\n        \"information\": 1,\n        \"unsupported\": 0\n      },\n      \"findingCount\": 1\n    },\n    {\n      \"id\": \"notifications\",\n      \"requested\": true,\n      \"ran\": true,\n      \"status\": \"findings\",\n      \"summary\": {\n        \"errors\": 0,\n        \"warnings\": 1,\n        \"information\": 0,\n        \"unsupported\": 0\n      },\n      \"findingCount\": 1\n    },\n    {\n      \"id\": \"database\",\n      \"requested\": true,\n      \"ran\": true,\n      \"status\": \"findings\",\n      \"summary\": {\n        \"errors\": 0,\n        \"warnings\": 0,\n        \"information\": 1,\n        \"unsupported\": 0\n      },\n      \"findingCount\": 1\n    }\n  ],\n  \"truncation\": {\n    \"limit\": 200,\n    \"omitted\": 0\n  },\n  \"diagnostics\": {\n    \"schemaVersion\": 1,\n    \"status\": \"findings\",\n    \"summary\": {\n      \"errors\": 1,\n      \"warnings\": 1,\n      \"information\": 2,\n      \"unsupported\": 0\n    },\n    \"findings\": [\n      {\n        \"kind\": \"issue\",\n        \"code\": \"action.trace.unavailable\",\n        \"severity\": \"information\",\n        \"certainty\": \"certain\",\n        \"message\": \"The action contract could not be traced: no readable state machine.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"One or more sides of the client-to-server contract could not be read.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Confirm the project layout is supported, or report the sources that could not be read.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"database.audit.unavailable\",\n        \"severity\": \"information\",\n        \"certainty\": \"certain\",\n        \"message\": \"Database usage could not be audited: no readable dbmodel.sql, no readable query.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"The schema, the queries, or both could not be read.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Confirm the project declares its schema in dbmodel.sql and queries it from readable PHP.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"heuristic\",\n        \"code\": \"notification.sent.not-handled\",\n        \"severity\": \"warning\",\n        \"certainty\": \"likely\",\n        \"message\": \"The server sends 'markerChanged', which no readable client handler receives.\",\n        \"locations\": [\n          {\n            \"uri\": \"modules/php/Game.php\"\n          }\n        ],\n        \"evidence\": [\n          {\n            \"kind\": \"heuristic\",\n            \"message\": \"No subscription or notif_markerChanged method was found in 1 readable client source file(s).\"\n          },\n          {\n            \"kind\": \"source\",\n            \"message\": \"Known limitation: A handler may be bound dynamically, inherited from a shared client module, or declared in a file outside the read budget. A notification consumed only by the framework replay or spectator view has no project handler by design.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add a handler for 'markerChanged' in the client, or stop sending it.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"state.initial.missing\",\n        \"severity\": \"error\",\n        \"certainty\": \"certain\",\n        \"message\": \"No state definitions could be read, so the state machine cannot be validated.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"The project declares no readable states.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Declare the state machine for this layout, or report the syntax that could not be read.\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+        }
+      ]
+    },
+    "bga://project/summary": {
+      "contents": [
+        {
+          "uri": "bga://project/summary",
+          "mimeType": "application/json",
+          "text": "{\n  \"schemaVersion\": 1,\n  \"layout\": \"modern\",\n  \"gameKey\": \"bga431-3icMBK\",\n  \"detection\": {\n    \"layout\": \"modern\",\n    \"gameKey\": \"bga431-3icMBK\",\n    \"certainty\": \"certain\",\n    \"reason\": \"main game logic is modern, client interface logic is modern.\",\n    \"components\": [\n      {\n        \"id\": \"metadata\",\n        \"description\": \"game metadata\",\n        \"generation\": \"absent\",\n        \"legacyFiles\": [],\n        \"modernFiles\": []\n      },\n      {\n        \"id\": \"game-logic\",\n        \"description\": \"main game logic\",\n        \"generation\": \"modern\",\n        \"legacyFiles\": [],\n        \"modernFiles\": [\n          \"modules/php/Game.php\"\n        ]\n      },\n      {\n        \"id\": \"states\",\n        \"description\": \"state machine\",\n        \"generation\": \"absent\",\n        \"legacyFiles\": [],\n        \"modernFiles\": []\n      },\n      {\n        \"id\": \"client-logic\",\n        \"description\": \"client interface logic\",\n        \"generation\": \"modern\",\n        \"legacyFiles\": [],\n        \"modernFiles\": [\n          \"modules/js/Game.js\"\n        ]\n      }\n    ],\n    \"signals\": [\n      {\n        \"id\": \"modern.metadata\",\n        \"description\": \"JSON or JSONC game metadata\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"modern.php-modules\",\n        \"description\": \"PHP game logic under modules/php\",\n        \"matched\": true,\n        \"files\": [\n          \"modules/php/Game.php\"\n        ]\n      },\n      {\n        \"id\": \"modern.state-classes\",\n        \"description\": \"State classes under modules/php/States\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"modern.js-modules\",\n        \"description\": \"JavaScript or TypeScript client logic under modules/js\",\n        \"matched\": true,\n        \"files\": [\n          \"modules/js/Game.js\"\n        ]\n      },\n      {\n        \"id\": \"legacy.metadata\",\n        \"description\": \"PHP game metadata\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"legacy.game-class\",\n        \"description\": \"Flat <game>.game.php table class\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"legacy.action-class\",\n        \"description\": \"Flat <game>.action.php entry point\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"legacy.client\",\n        \"description\": \"Flat <game>.js client logic\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"legacy.states\",\n        \"description\": \"states.inc.php state machine\",\n        \"matched\": false,\n        \"files\": []\n      },\n      {\n        \"id\": \"shared.database\",\n        \"description\": \"dbmodel.sql schema\",\n        \"matched\": false,\n        \"files\": []\n      }\n    ]\n  },\n  \"metadata\": {\n    \"gameName\": null,\n    \"playerCounts\": [],\n    \"source\": null\n  },\n  \"components\": [\n    {\n      \"id\": \"metadata\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": true\n    },\n    {\n      \"id\": \"options\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": true\n    },\n    {\n      \"id\": \"preferences\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": false\n    },\n    {\n      \"id\": \"states\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": true\n    },\n    {\n      \"id\": \"statistics\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": true\n    },\n    {\n      \"id\": \"database\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": true\n    },\n    {\n      \"id\": \"game-logic\",\n      \"present\": true,\n      \"files\": [\n        \"modules/php/Game.php\"\n      ],\n      \"expected\": true\n    },\n    {\n      \"id\": \"client-logic\",\n      \"present\": true,\n      \"files\": [\n        \"modules/js/Game.js\"\n      ],\n      \"expected\": true\n    },\n    {\n      \"id\": \"player-actions\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": false\n    },\n    {\n      \"id\": \"view\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": false\n    },\n    {\n      \"id\": \"template\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": false\n    },\n    {\n      \"id\": \"styles\",\n      \"present\": false,\n      \"files\": [],\n      \"expected\": false\n    }\n  ],\n  \"states\": {\n    \"parsed\": false,\n    \"definitions\": [],\n    \"unsupported\": [],\n    \"source\": null,\n    \"sources\": [],\n    \"complete\": {\n      \"declarations\": true,\n      \"edges\": true\n    },\n    \"duplicateIds\": [],\n    \"initial\": {\n      \"ids\": [],\n      \"origin\": \"unresolved\",\n      \"evidence\": \"No state machine was read, so its entry point is unknown.\"\n    }\n  },\n  \"fileCount\": 2,\n  \"truncated\": false,\n  \"skippedLinks\": [],\n  \"unreadablePaths\": [],\n  \"diagnostics\": {\n    \"schemaVersion\": 1,\n    \"status\": \"findings\",\n    \"summary\": {\n      \"errors\": 0,\n      \"warnings\": 6,\n      \"information\": 0,\n      \"unsupported\": 0\n    },\n    \"findings\": [\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.component.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"A modern project usually defines its metadata, and none was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"No file matched the metadata component.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the metadata file for this layout, or confirm it is intentionally absent.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.component.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"A modern project usually defines its options, and none was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"No file matched the options component.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the options file for this layout, or confirm it is intentionally absent.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.component.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"A modern project usually defines its states, and none was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"No file matched the states component.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the states file for this layout, or confirm it is intentionally absent.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.component.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"A modern project usually defines its statistics, and none was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"No file matched the statistics component.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the statistics file for this layout, or confirm it is intentionally absent.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.component.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"A modern project usually defines its database, and none was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"No file matched the database component.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the database file for this layout, or confirm it is intentionally absent.\"\n          }\n        ]\n      },\n      {\n        \"kind\": \"issue\",\n        \"code\": \"project.states.missing\",\n        \"severity\": \"warning\",\n        \"certainty\": \"certain\",\n        \"message\": \"No state machine definition was found.\",\n        \"locations\": [],\n        \"evidence\": [\n          {\n            \"kind\": \"relationship\",\n            \"message\": \"Neither states.inc.php nor modules/php/States was present.\"\n          }\n        ],\n        \"suggestions\": [\n          {\n            \"message\": \"Add the state definitions for the project layout in use.\"\n          }\n        ]\n      }\n    ]\n  }\n}\n"
+        }
+      ]
+    }
+  },
+  "projectUnchanged": true,
+  "serverExited": true,
+  "candidate": {
+    "tag": "v1.0.0-rc.4",
+    "sourceCommit": "5c4eebd782f3e1bb2251bd8aad4a6826038ddb15",
+    "artifactDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+    "signingReceipt": "release-signing-v1.0.0-rc.4.json"
+  }
+}

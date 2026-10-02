@@ -122,3 +122,41 @@ exact-signer-source CI are still required before rc.4 signing is verified.
 Historical rc.1/rc.2/rc.3 instructions use their recorded trusted verifier commits
 and receipts. No prior tag, packet or receipt is replaced, and no publication or
 security approval follows from a new signature.
+
+### Observed rc.4 signing and independent verification
+
+[Signing workflow 36979061792](https://github.com/Brandon-Born/bga-mcp/actions/runs/36979061792)
+completed successfully at signer `b593b76dc56fbb6affc1264b3b5ee53a338c209b`.
+[Attestation 52075839](https://github.com/Brandon-Born/bga-mcp/attestations/52075839)
+binds all seven original subjects with the reviewed custom retention predicate.
+The preparation job verified the source and original archive without signing
+identity; the isolated signing job executed no candidate or dependency build.
+[Exact-signer-source CI 36979053850](https://github.com/Brandon-Born/bga-mcp/actions/runs/36979053850)
+passed all six Ubuntu/macOS/Windows Node 22/24 jobs, each with 674 tests and 209
+required scenarios. All six sealed CI receipts were independently checked.
+
+[The rc.4 signing receipt](release-signing-v1.0.0-rc.4.json) retains signed
+archive ID `11215156020`, archive digest
+`892e824429c3439248fefb0365499138a2ab77aed0a833de8f6f205890aa00c3`,
+finite retention, bundle/predicate digests and actual hosted/independent results.
+The independent download matched that archive digest, allowed exactly nine packet
+files and compared all seven originals byte for byte with the unsigned producer
+packet. Original package SHA-256 remains
+`662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200`.
+
+Hosted Ubuntu and independent macOS consumers separately acquired trusted roots,
+verified the exact signer/ref/workflow/issuer, matched all subjects and original
+provenance, refused altered bytes and wrong signer/workflow identities, and passed
+fresh install, first use, discovery, unchanged project, exit and removal. Their
+retained result documents are equal. The current verifier source selects rc.4;
+for this packet the expected signer is `b593b76dc56fbb6affc1264b3b5ee53a338c209b`,
+distinct from original package source `5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`.
+
+The eight unchanged previously read framework decisions were explicitly
+re-admitted against clean post-observation signer-source CI because the broad
+implementation digest includes the changed selector scripts. The actual release
+guard passes; no guard was weakened. [The rc.4 frozen-task repeat](AGENT_EVALUATION_CARRY_FORWARD.md#signed-rc4-frozen-task-repeat)
+subsequently verified its own bounded usefulness scope rather than inheriting an
+older candidate's result. Historical tags, packets and receipts remain unchanged.
+Nothing was rebuilt during signing, no package was published and no security
+approval follows from this signature.

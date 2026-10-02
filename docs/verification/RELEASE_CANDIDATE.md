@@ -158,3 +158,9 @@ Only these bounded producer/consumer observations are complete. The original
 rc.4 candidate is unsigned; signing selectors still identify rc.3 until the
 replacement handoff is reviewed and advanced. No package or registry metadata
 was published. Earlier immutable tags, signed packets and receipts are unchanged.
+
+BGA-404 subsequently [signed the same original rc.4 files](release-signing-v1.0.0-rc.4.json)
+and passed independent cryptographic verification. The unsigned producer receipt
+above remains its historical observation. [The explicit frozen-task repeat](AGENT_EVALUATION_CARRY_FORWARD.md#signed-rc4-frozen-task-repeat)
+uses those signed bytes; it is separate from the current-project source-scope
+comparison and does not establish general game correctness or publication.
