@@ -7,7 +7,7 @@
 }
 ```
 
-The manual `Publish candidate verification evidence` workflow consumes the original [BGA-404 signed candidate](RELEASE_SIGNING.md). It distributes verification metadata on the existing `v1.0.0-rc.1` GitHub prerelease record. It does not rebuild or distribute an npm tarball, grant security approval, or publish to a package registry. The signing identity and original source commit remain distinct from later distribution code.
+The manual `Publish candidate verification evidence` workflow consumes the original [BGA-404 signed candidate](RELEASE_SIGNING.md). It distributes verification metadata on the individually reviewed candidate tag. The current selection is `v1.0.0-rc.4`; the original rc.1 record remains immutable historical evidence. It does not rebuild or distribute an npm tarball, grant security approval, or publish to a package registry. The signing identity and original source commit remain distinct from later distribution code.
 
 ## Packet and authentication
 
@@ -19,7 +19,7 @@ The view accounts for all 17 repository entries: the frozen seven tools, three r
 
 ## Validation
 
-Use the separately trusted distribution checkout `0c7564c2b872dc3e73eeb54561e542fa1023d118` (or a later reviewed verifier that accepts this same packet) with full Git history, its frozen dependencies, GitHub CLI supporting artifact attestations and curl. Acquire trust roots through GitHub CLI independently of the packet. Do not execute verifier code supplied by an asset packet.
+For rc.4, use the separately trusted distribution checkout `b5eb22c335953376bd6c3fc210881f4c7b3fe579` with full Git history, its frozen dependencies, GitHub CLI supporting artifact attestations and curl. Historical rc.1 validation uses its original trusted checkout `0c7564c2b872dc3e73eeb54561e542fa1023d118`; current receipt selection does not reinterpret that packet. Acquire trust roots through GitHub CLI independently of the packet. Do not execute verifier code supplied by an asset packet.
 
 ```sh
 corepack pnpm release:evidence download /tmp/bga-public-release-evidence
@@ -35,7 +35,7 @@ The `verify` command always verifies signatures; there is no CLI bypass. Origina
 
 ## Publication and retention policy
 
-Every distributed release must retain this complete evidence packet and pass public download validation. The current workflow is deliberately restricted to the reviewed `v1.0.0-rc.1` candidate and its tracked candidate/signing receipts. A later tag requires its own reviewed receipts and validation before distribution; this item does not automatically approve arbitrary future tags. BGA-415 must preserve this evidence requirement when publishing the package.
+Every distributed release must retain this complete evidence packet and pass public download validation. The current workflow is deliberately restricted to the reviewed `v1.0.0-rc.4` candidate and its tracked candidate/signing receipts. A later tag requires its own reviewed receipts and validation before distribution; this item does not automatically approve arbitrary future tags. BGA-415 must preserve this evidence requirement when publishing the package.
 
 Prepare has read-only permissions, performs the full gate, authenticates the original signed archive, derives exact coverage and scans all assets. Only the publish job has repository contents-write; it installs no dependencies, uses only builtins and GitHub CLI, and verifies the prepared packet against a digest delivered through job outputs. It first creates a draft, checks each uploaded asset's server-reported digest and publishes the evidence-only prerelease only once all twelve assets are present. A retry can resume only an identical owned draft or accept an already identical complete record. Conflicts or foreign records fail without overwrite or deletion.
 
@@ -79,3 +79,45 @@ packet must first pass local preparation and the full gate, then the actual
 manual workflow, independent public download/refusal controls and exact-source CI.
 The original rc.1 public record and every earlier receipt remain historical;
 they do not supply rc.4 public download proof or package/security approval.
+
+### Observed rc.4 public distribution, 2026-10-02 UTC
+
+[Workflow 36982958202](https://github.com/Brandon-Born/bga-mcp/actions/runs/36982958202)
+at `b5eb22c335953376bd6c3fc210881f4c7b3fe579` passed preparation,
+publication and public-download verification. Attempt one passed preparation,
+then failed publication, leaving matching empty draft `401642719`.
+Authenticated reconciliation confirmed the exact title, notes and retained plan;
+attempt two resumed that same draft, uploaded all twelve metadata assets and
+published the [rc.4 evidence prerelease](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.4).
+The generic first failure message does not establish its underlying cause.
+No duplicate was created and no asset was overwritten.
+
+The hosted Ubuntu verifier and independent macOS Node 22 verifier acquired the
+public assets without token flags and independently acquired trust roots.
+Original signature/identity, trusted schemas and exact eleven-entry local
+coverage passed, with six exclusions and live Studio `not-run`. All twelve
+public files match both independently prepared packets byte for byte.
+Probes on copies refused omitted advertised coverage, invented Studio support,
+a permissive replacement schema and modified signed evidence. The last probe
+also failed the actual cryptographic verifier; all original public-copy digests
+were unchanged after the probes.
+
+[Exact distribution-source CI 36982923705](https://github.com/Brandon-Born/bga-mcp/actions/runs/36982923705)
+passed all six Ubuntu/macOS/Windows Node 22/24 jobs. Every downloaded evidence
+record passed schema and integrity checks, names the clean exact source, and
+records 674 passing tests, 209 passing required scenarios and passing applicable
+conformance. The original signed evidence retains its own candidate source
+`5c4eebd782f3e1bb2251bd8aad4a6826038ddb15`, 674 tests and 209 scenarios;
+distribution did not rebuild the candidate or renew its dated security audit.
+The eight unchanged previously read framework decisions were explicitly
+re-admitted against the sealed clean distribution evidence; the actual release
+guard passes without weakening its implementation/fixture boundary.
+
+[The rc.4 distribution receipt](release-evidence-v1.0.0-rc.4.json) retains release
+and asset IDs/digests, original and distribution identities, CI evidence hashes,
+independent verification and refusal results, and lifetime retention policy.
+Local public copies remain ignored under
+`.artifacts/published-release-evidence/v1.0.0-rc.4/`. Historical receipts and
+public rc.1 assets remain unchanged. This establishes candidate evidence
+distribution, not registry package publication, security approval, live Studio
+compatibility or whole-game correctness.

@@ -212,3 +212,18 @@ This is repository release tooling, not a game-inspection MCP capability.
 BGA-404 constants before proposing an executable change. BGA-404 owns signing
 selection, BGA-408 owns framework invalidation, and BGA-415 owns publication holds.
 These observations do not relax the existing broad guard or transfer any approval.
+
+**Additional observed release friction, 2026-10-02 UTC.** BGA-407's first rc.4
+publication attempt passed preparation but emitted only a generic failure. I
+had to separately fetch the retained plan and authenticated release list,
+validate the exact plan/title/notes and inspect missing assets before safely
+resuming the same empty draft. The underlying cause remains unknown; a
+successful retry does not identify it.
+
+**Wish.** Bounded stage diagnostics for release tooling that identify which
+operation failed and which reviewed record was reconciled, while withholding
+tokens, private reports and unbounded subprocess output. Seeded errors should
+prove both useful stage attribution and redaction before implementation.
+BGA-407 owns this publication path; this is repository tooling, not a missing
+game-inspection MCP capability. Existing identity and conflict refusals must
+remain intact.
