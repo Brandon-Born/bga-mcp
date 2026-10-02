@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-406",
+  "repository": "Brandon-Born/bga-mcp",
+  "observedAt": "2026-10-02T03:48:38.228451+00:00",
+  "channel": {
+    "enabledBefore": false,
+    "enabled": true,
+    "anonymousEntry": "sign-in-required"
+  },
+  "actorRole": "administrator",
+  "collaboratorsObserved": ["Brandon-Born"],
+  "lifecycle": null,
+  "scope": "Live configuration read and anonymous browser sign-in entry only; non-maintainer private report, acknowledgement, triage and closure not observed."
+}

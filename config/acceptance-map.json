@@ -1164,6 +1164,18 @@
         "E2E-DOCUMENTATION-DEVELOPMENT",
         "E2E-DOCUMENTATION-NEGATIVE"
       ]
+    },
+    {
+      "item": "BGA-406",
+      "case": "Reporting policy identifies private channel, ownership, triage/disclosure expectations and version-aligned security support; incomplete external evidence cannot become verified",
+      "boundary": "repository",
+      "scenarios": ["GATE-PRIVATE-REPORTING", "INT-PRIVATE-REPORTING-LIFECYCLE"]
+    },
+    {
+      "item": "BGA-406",
+      "case": "Retained evidence of the real non-maintainer private report receipt, acknowledgement, triage and closure is available; synthetic verifier controls cannot supply it",
+      "boundary": "repository",
+      "missing": "External non-maintainer report and authorized acknowledgement/triage/closure are not yet observed."
     }
   ]
 }

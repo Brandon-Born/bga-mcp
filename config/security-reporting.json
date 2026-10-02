@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-406",
+  "repository": "Brandon-Born/bga-mcp",
+  "maintainer": "Brandon-Born",
+  "status": "implemented",
+  "channel": "https://github.com/Brandon-Born/bga-mcp/security/advisories/new",
+  "acknowledgementBusinessDays": 3,
+  "initialTriageBusinessDays": 7,
+  "updateCalendarDays": 7,
+  "fixTargetCalendarDays": 30,
+  "disclosureReviewCalendarDays": 90,
+  "previousMajorSecurityFixDays": 180,
+  "supportedPrerelease": "1.0.0-rc.3",
+  "liveReceipt": "docs/verification/private-reporting-channel.json"
+}

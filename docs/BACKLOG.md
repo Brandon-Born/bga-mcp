@@ -1391,12 +1391,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-406 — Establish private vulnerability reporting
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-013
 - **Deliverable:** A working private channel, triage expectations, disclosure process, supported-version policy, and updated `SECURITY.md`.
 - **Acceptance:** The channel is tested without sending secrets and is accessible to non-maintainers who need to report safely.
 - **Verification:** A benign test report is received, acknowledged, triaged, and closed through the documented process.
+
+- **Implementation, 2026-10-02 UTC:** Enabled GitHub private vulnerability reporting and read back `enabled: true`; anonymous browser entry reaches sign-in. Updated packaged SECURITY.md with ownership, triage/update targets, version-policy-aligned support and coordinated disclosure. Offline guards refuse promotion without observed non-maintainer receipt/acknowledgement/triage/closure; synthetic verifier controls do not supply that proof. [Process record and exact benign payload](verification/PRIVATE_REPORTING.md) retain the null live lifecycle and external step. No report, advisory publication, CVE or private fork was created. Full local gate passes with 656 tests and 198 required scenarios; source CI is pending. The non-maintainer live report remains an explicit unproven acceptance case.
+- **Sources:** [GitHub private reporting](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately) says “anyone can submit a private vulnerability report” and distinguishes administrator drafts. [Triage](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/fix-reported-vulnerabilities/manage-vulnerability-reports) documents private acknowledgement/discussion and closure of non-security reports; [API](https://docs.github.com/en/rest/repos/repos#enable-private-vulnerability-reporting-for-a-repository) documents enablement and status reads.
 
 ### BGA-407 — Publish per-release verification evidence
 
