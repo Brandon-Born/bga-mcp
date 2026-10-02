@@ -1399,6 +1399,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **rc.4 signing verified, 2026-10-02 UTC:** [Actual signing receipt](verification/release-signing-v1.0.0-rc.4.json) binds original candidate `5c4eebd`, signer `b593b76`, successful workflow `36979061792`, attestation `52075839` and all seven unchanged original files. Hosted and independent macOS consumers verify the exact signature/identity/subjects/provenance, refuse modified bytes and wrong signer/workflow, and pass fresh install/use/exit/removal. Exact-signer-source CI `36979053850` passes all six jobs at 674 tests / 209 scenarios. The eight unchanged framework decisions are explicitly re-admitted against that clean CI and the release guard passes. This signature neither approves security/publication nor updates historical packets.
 
+- **rc.5 signing preparation, 2026-10-02 UTC:** The reviewed signer/consumer receipt constants and candidate-specific workflow concurrency group advance only after [original rc.5 handoff](verification/release-candidate-v1.0.0-rc.5.json) and [clean handoff CI 36990226664](https://github.com/Brandon-Born/bga-mcp/actions/runs/36990226664) pass. Original source `286f2bb`, archive `11218194859` and tarball SHA-256 `b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac` are retained without rebuilding. Identity isolation, provenance/subject verification, original-byte checks and cryptographic negatives are unchanged. Actual rc.5 signing, independent consumer/negative checks and exact-signer-source CI remain required; no signature, security approval or publication is claimed by selector preparation.
+
 ### BGA-405 — Complete release security review
 
 - **Status:** implemented

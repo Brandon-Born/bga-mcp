@@ -160,3 +160,35 @@ subsequently verified its own bounded usefulness scope rather than inheriting an
 older candidate's result. Historical tags, packets and receipts remain unchanged.
 Nothing was rebuilt during signing, no package was published and no security
 approval follows from this signature.
+
+## Versioned-guide replacement: rc.5 selection
+
+The main-only signer and actual signed consumer now select the independently
+verified [original rc.5 candidate receipt](release-candidate-v1.0.0-rc.5.json).
+Its original package source is `286f2bbb1bfff28726378098d9883058f19841e9`,
+archive ID is `11218194859`, archive SHA-256 is
+`601f4d344639bd6ac7d1ea57793c32be0220f6672f5f2da89c484234f8d03bb2`,
+and original tarball SHA-256 is
+`b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac`.
+[Handoff CI 36990226664](https://github.com/Brandon-Born/bga-mcp/actions/runs/36990226664)
+passes all six jobs. Only the two reviewed receipt constants and the
+candidate-specific concurrency group change; every identity, subject/provenance,
+original-byte and consumer/refusal check remains in force. The public MCP/BGA
+behavior is unchanged.
+
+The official [actions/attest](https://github.com/actions/attest) documentation,
+read again for this preparation, describes a "short-lived Sigstore-issued signing
+certificate" and custom predicates. The isolated signing job retains its existing
+reviewed custom retention predicate and signs the original seven files. The
+[CLI verification reference](https://cli.github.com/manual/gh_attestation_verify)
+continues to document source/signer/workflow policy and independent local trusted
+roots used by the existing verifier. These sources justify no broader identity
+permission or new publication path.
+
+Actual main-only signing, independent signature verification and negatives,
+original-file comparison, consumer installation/removal and exact-signer-source
+CI must pass before rc.5 signing is verified. The earlier rc.4 selector text above
+records its historical preparation and observation. Earlier trusted verifier
+commits, candidate tags, original packets and receipts remain available for their
+own versions. No security approval, usefulness carry-forward or registry
+publication follows from selector preparation.
