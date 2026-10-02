@@ -569,18 +569,19 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('reports a deadline and stays responsive afterwards', async () => {
-    const root = await bigProject('slow-walk', 2_000);
+    transcript = [];
+    const root = await bigProject('real-deadline', 2);
 
     const { result, stderr } = await connect(
       root,
-      ['--operation-timeout-ms', '30'],
+      ['--allow-network', '--operation-timeout-ms', '30'],
       async (client) => {
         const started = Date.now();
-        const timedOut = await callTool(client, 'validate_project', {}, 30_000);
+        const timedOut = await callTool(client, 'search_bga_docs', { query: 'stall' }, 30_000);
         const answered = Date.now() - started;
 
-        // The next call is the measurement: a server still walking two
-        // thousand files cannot answer promptly, and this one has to.
+        // The stub never completes its response. The next call measures
+        // whether the cancelled operation still occupies the server.
         const afterwards = Date.now();
         const setup = await callTool(client, 'check_setup', {}, 30_000);
         return { timedOut, answered, setup, responsive: Date.now() - afterwards };
@@ -753,15 +754,17 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('exits cleanly after a deadline rather than staying alive on abandoned work', async () => {
-    const root = await bigProject('shutdown', 1_500);
+    transcript = [];
+    const root = await bigProject('shutdown', 2);
 
     const { result, stderr } = await connect(
       root,
-      ['--operation-timeout-ms', '40'],
-      async (client) => await callTool(client, 'validate_project', {}, 30_000),
+      ['--allow-network', '--operation-timeout-ms', '40'],
+      async (client) => await callTool(client, 'search_bga_docs', { query: 'stall' }, 30_000),
     );
 
     expect(result.isError).toBe(true);
+    expect(result.text).toContain('policy.timeout.exceeded');
     // `withPackagedServer` waits for the process to exit after closing the
     // client, so reaching this line at all means the server shut down rather
     // than staying alive on work nobody was waiting for.

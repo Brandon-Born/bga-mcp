@@ -121,6 +121,22 @@ async function delay(milliseconds: number): Promise<void> {
   });
 }
 
+/** Issue native I/O first, then hold its observed completion for the probe. */
+async function heldCompletion<T>(pending: Promise<T>): Promise<T> {
+  // Attach both handlers immediately: a delayed native rejection must not
+  // become unhandled while the test holds its completion.
+  const observed = pending.then(
+    (value) => ({ value }),
+    (error: unknown) => ({ error }),
+  );
+  await delay(delayMs);
+  const result = await observed;
+  if ('error' in result) {
+    throw result.error;
+  }
+  return result.value;
+}
+
 async function slowSetup(): Promise<void> {
   if (expireDeadline !== undefined && !setupDelayed) {
     setupDelayed = true;
@@ -146,9 +162,8 @@ if (operation === 'lstat') {
   fsPromises.lstat = (async (...arguments_: Parameters<typeof original>) => {
     await slowSetup();
     start('lstat:start');
-    await delay(delayMs);
     try {
-      return await original(...arguments_);
+      return await heldCompletion(original(...arguments_));
     } finally {
       record('lstat:end');
     }
@@ -161,9 +176,8 @@ if (operation === 'lstat') {
     const originalRead = handle.read.bind(handle);
     handle.read = async (...readArguments: Parameters<typeof originalRead>) => {
       start('read:start');
-      await delay(delayMs);
       try {
-        return await originalRead(...readArguments);
+        return await heldCompletion(originalRead(...readArguments));
       } finally {
         record('read:end');
       }

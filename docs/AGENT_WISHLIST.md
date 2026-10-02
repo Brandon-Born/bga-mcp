@@ -302,3 +302,26 @@ acquisition example and asks readers to obtain another version's independent
 receipt and matching verifier. The correction requires one new candidate;
 future candidate creation alone need not rewrite this historical example.
 This is documentation/release maintenance, not a new MCP inspection tool.
+
+## See which operation phase remains after a timeout
+
+**Observed debugging friction, 2026-10-02 UTC.** The Windows descriptor-read
+probe returned a deadline failure with no read-start transcript. Distinguishing
+expiry before the intended read from cleanup of a pending read required a
+pre-imported test shim recording setup, primitive entry, expiry, completion and
+response publication. The current timeout error identifies the operation and
+budget but does not expose that phase or cleanup outcome. This observation
+comes from repository regression debugging, not a measured real-game slowdown.
+
+**Wish.** Opt-in, bounded timeout diagnostics identifying the operation phase,
+elapsed time and whether cleanup settled or reached its ceiling. They should
+contain no file contents, SQL values, credentials or private paths, and should
+identify any unsupported or producer-observed field. Such a trace cannot imply
+OS-level cancellation or whole-game correctness.
+
+**Existing owner and next evidence.** BGA-326 owns cancellation and its
+remaining native matrix. A public diagnostic addition requires a scoped
+proposal, output/privacy review, updated contracts and installed-command cases
+before implementation; this wish adds no public capability. Compare any
+proposed trace with the independent controlled-probe oracle, including expiry
+before I/O, pending completion, cleanup-ceiling and minimum-output-budget cases.

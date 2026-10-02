@@ -14,8 +14,12 @@ The pre-imported test shim now holds the first operation's monotonic deadline
 and captures its actual timer callback. Setup deliberately takes 200 ms, longer
 than the nominal 100 ms deadline. Only after the selected primitive returns a
 pending promise does a microtask invoke the captured callback and advance the
-clock. The primitive is delayed by 150 ms, inside the unchanged 250 ms cleanup
-ceiling. No production timer, callback, option or package file changes.
+clock. The shim issues native I/O before that expiry microtask and holds its
+observed completion by 150 ms, inside the unchanged 250 ms cleanup ceiling.
+Both completion handlers attach immediately, including native rejection.
+This models an issued filesystem promise completing slowly; it does not claim
+the operating system remains busy throughout the injected delay. No production
+timer, callback, option or package file changes.
 
 The transcript must show registration, setup, primitive start, expiry,
 primitive completion and timeout publication in that order. The timeout frame
@@ -39,7 +43,11 @@ does not repeat cryptographic verification or the complete security assessment.
 
 These probes establish issued-operation cleanup behavior, not real wall-clock
 latency or cancellation of every native primitive. The separate uninstrumented
-deadline and responsiveness case still uses real time. BGA-326 remains
+deadline, responsiveness and shutdown cases still use real time against a
+stub response that never completes. They do not assume that a chosen number
+of files must take longer than 30 or 40 ms: the shutdown assumption also failed
+locally when its scan completed successfully. No live documentation request
+is made by these cases. BGA-326 remains
 implemented pending its complete matrix and residual-platform evidence.
 
 ## Sources
