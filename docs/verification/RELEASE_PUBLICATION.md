@@ -115,3 +115,14 @@ configuration also requires clean exact-source CI and explicit framework
 re-admission before the framework release guard clears. No registry or account
 operation is performed by this handoff; the earlier hosted dry-run observation
 retains its original source and does not claim to test this later reference.
+
+[Exact-reference CI 37015716008](bga415-final-probes-reference-ci.json) passes
+all six platform/Node jobs at `a34f7cf`, each with 674 tests and 209 required
+scenarios. All downloaded records validate trusted schema, integrity, clean
+exact source, matching matrix environment, applicable conformance and unchanged
+platform package digests. The eight unchanged, fresh, previously read official
+decisions are explicitly re-admitted against that evidence; the actual
+framework release guard passes. The read-only publication status then reports
+only the existing reporting, security-approval and publisher-setup holds,
+without a candidate-prerequisite or framework mismatch; `published` is false.
+This does not repeat the hosted dry run or execute any identity-bearing job.

@@ -227,6 +227,16 @@ remain outside this evidence. The original tarball, original signed packet and
 all preceding assessments remain unchanged. Current packed-guide and framework
 guards pass; the independent private-report lifecycle remains the sole blocking
 assessment risk. Status stays `held`, without explicit security approval or
-publication. BGA-415's selected receipt is still the earlier clean assessment
-until its separate reference handoff; retaining this evidence does not alter
+publication. At assessment capture, BGA-415 still selected the earlier clean
+assessment. Its [subsequent separate reference handoff](RELEASE_PUBLICATION.md#final-probe-security-receipt-handoff)
+selects this newer record; retaining or selecting the evidence does not alter
 publisher setup or waive its admission checks.
+
+[Exact-reviewer CI 37015034964](bga405-final-probes-reviewer-ci.json) passes
+all six Ubuntu/macOS/Windows Node 22/24 jobs at `b07ea15`. Each downloaded
+sealed record validates trusted schema, integrity, exact clean source, matching
+platform and Node major, CI environment, 674 tests, 209 required scenarios and
+applicable conformance. Platform package digests match their prior baselines;
+the Linux digest still matches the original rc.5. This is checkout verification
+of the clean reviewer; the separate assessment above proves the original
+candidate security replay. Neither scope supplies approval or registry evidence.

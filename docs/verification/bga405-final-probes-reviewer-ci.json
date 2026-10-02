@@ -1,0 +1,55 @@
+{
+  "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37015034964",
+  "commit": "b07ea15fe885cc3625e6542e5fe69d1d080c36e6",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:0af032e61dd3642c676b515b074723c75868923f2f9652646455ce9342492045",
+      "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+      "generatedAt": "2026-10-02T13:49:08.853Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:c6888fdeeab19ab930872b381237322e76a8a31198d120e0f29fa3f1191d4f5b",
+      "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+      "generatedAt": "2026-10-02T13:48:55.243Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:3f786a076f797ce35d604b472c58ffea2d29090786b21170b1750c506c49f543",
+      "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+      "generatedAt": "2026-10-02T13:48:19.687Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:26add6258f6786dc51e98fc0e7a27ebbb493b3a8d5a47201a7af22cce061b989",
+      "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+      "generatedAt": "2026-10-02T13:48:10.082Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:a59d3280ba49a33205166a7afeea0acf1806a5b996f6a0d6efad0b9639f9f00f",
+      "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+      "generatedAt": "2026-10-02T13:50:05.318Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:68ef4a1fb0eb9b1189ad853ae2d7191cd9eaf1da6ba60bfba5d192f3b2e59a2e",
+      "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+      "generatedAt": "2026-10-02T13:49:34.798Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    }
+  ]
+}
