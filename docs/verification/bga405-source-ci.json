@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-405",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "c8b5411cfbb901c6c2745b3d134d9ce437d2b7d8",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36968783409",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:273a60d944a325f6750d1fbd6eb5bd296e24f22cc0838ca9b20da82ef6a209d5",
+      "packageDigest": "sha256:3efa0795c2358ea81aa6f7c38d4f8f77426971aea0227eb41e2363d98e74025c",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:ffac4ad0fb1117b6d532d1a011aac0aab2f0554702e44a5719e768651f701d4b",
+      "packageDigest": "sha256:3efa0795c2358ea81aa6f7c38d4f8f77426971aea0227eb41e2363d98e74025c",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:9c446491a4eda2d644ec9937b34a9a6c23f42d165a786456e6943c1f2c50ea4f",
+      "packageDigest": "sha256:6885f9591933b6378498ab9e83175f97c28d2ace1748a037a5dd76c7fa4f5448",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:c4244e4fafd3bfd48d053045dea4514541b7b93b1d3ec7039059d8b3a75cc3a6",
+      "packageDigest": "sha256:6885f9591933b6378498ab9e83175f97c28d2ace1748a037a5dd76c7fa4f5448",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:1fc00b49f5c053feed07e944d6e0c14ef08bb0e441063c2a5270d693520af812",
+      "packageDigest": "sha256:f8ebbf50614e80913767185784b4a05ac7ad4e6757922076e42386fb1ffe5788",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:510d0e1b5590e3d4af6a81a81bdcd1c891ed7cd9b4a9901ea8fe363a7b5f37d2",
+      "packageDigest": "sha256:f8ebbf50614e80913767185784b4a05ac7ad4e6757922076e42386fb1ffe5788",
+      "testsPassed": 664,
+      "scenariosPassed": 205,
+      "capabilities": 17,
+      "retainedClaims": 101
+    }
+  ],
+  "scope": "Exact-source implementation CI verifies security review guards and ordinary packaged scenarios. Separately retained original rc.3 replay remains held; no final approval or publication."
+}

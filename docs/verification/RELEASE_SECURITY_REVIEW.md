@@ -33,7 +33,7 @@ The risk register names every canonical residual risk's existing owner and dispo
 - **Private reporting:** BGA-406 still needs the independent harmless-report lifecycle.
 - **Framework freshness:** BGA-408 needs official-page observation/review and clean post-observation retest before new publication.
 
-The initial retained assessment additionally records that its reviewer implementation was uncommitted. Approval refuses that condition rather than attributing the harness to the base commit. Repeating the assessment on a clean committed reviewer records that distinct provenance.
+The initial retained assessment additionally records that its reviewer implementation was uncommitted. Approval refuses that condition rather than attributing the harness to the base commit. The [clean committed repeat](security-review-v1.0.0-rc.3-clean.json) records reviewer `c8b5411cfbb901c6c2745b3d134d9ce437d2b7d8` with `sourceClean: true`; it passes the same 27 tests, 11 scenarios and 270-file scan and preserves all three approval holds.
 
 ## Approval is separate
 
@@ -41,7 +41,7 @@ The initial retained assessment additionally records that its reviewer implement
 
 An explicit `--approve` review requires every owned blocker and release gate cleared, fresh complete audit/scenario evidence and committed reviewer code. It records only a security decision; it never publishes. BGA-415 must bind future publication to that exact candidate digest and fresh approval. BGA-405 remains implemented until the replacement candidate is reviewed with resolved release gates and applicable exact-source CI. No package, advisory, CVE or Studio operation has been published or executed by this assessment.
 
-The full local gate passes 664 tests and 205 required scenarios, including package, applicable official conformance, safety and acceptance checks. The acceptance map proves 190 of 194 scoped cases across 58 items and preserves four incomplete cases. Exact-source CI is pending. The new supply-chain mitigation and human threat-model table record the same scope.
+The full local gate passes 664 tests and 205 required scenarios, including package, applicable official conformance, safety and acceptance checks. The acceptance map proves 190 of 194 scoped cases across 58 items and preserves four incomplete cases. [Exact-source CI](bga405-source-ci.json) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at that reviewer commit. The new supply-chain mitigation and human threat-model table record the same scope.
 
 ## Sources
 
