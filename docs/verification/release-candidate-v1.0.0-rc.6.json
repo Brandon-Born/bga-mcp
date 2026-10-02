@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T21:48:02.135180Z",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.6",
+    "sourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.6",
+    "artifactName": "bga-mcp-1.0.0-rc.6.tgz",
+    "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:683adb73110258c9e0bc0080a73b21209f5209ef46b8470cbf2d24e7c8023884",
+      "verificationEvidence": "sha256:4e61ae8bbc6e72771baef4cc71658df766e798857c044e4a7374c0392a8ba3d3",
+      "artifact": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+      "securityAudit": "sha256:7da9eb769b9e425a6f08e8093d8ef3115e3fec16bede1e50658822ce52a14fbd"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37067227890",
+    "conclusion": "success",
+    "artifactId": 11252987277,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.6",
+    "archiveDigest": "sha256:81e509db2f451e4ed4a2bed975c0cb2f0db1e3ff62444350c6fbbd75eb72fc97",
+    "expiresAt": "2026-12-31T21:30:24Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37067230778",
+    "commit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "evidenceDigest": "sha256:cc0311be03984189b37a434a67db6ca13212b4692e6b338d3a1aa8ea05b756c7",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "evidenceDigest": "sha256:2b68173bacb50e78f4a5578aaad8cb7a12d86c8fd281f061e2396e70244922f2",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "evidenceDigest": "sha256:33a43a9e757347af7a2188c6b1a10776c8cba212d8b65f392733528fb18cd43d",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "evidenceDigest": "sha256:85b8aca5db1590355c1152fddccb49dd962e1ebcab18646398ea8682eb9bfeba",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "evidenceDigest": "sha256:03352466e0e478b1ae8d600f4351674f6e35ec6ca95f05e8e976de526b5c1f5d",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "evidenceDigest": "sha256:a7caa6d1c0c3d95b99e93ebe941363fd59e8cecd3fede1a4b981923119fe50e6",
+        "testsPassed": 768,
+        "scenariosPassed": 234
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-02T21:34:26.984Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentConsumer": {
+    "archiveDigestVerified": true,
+    "checksumsVerified": 6,
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-02T21:37:44.099Z",
+    "client": "codex-cli 0.159.2",
+    "node": "v22.17.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "discovery": "matched installed inventory",
+    "calls": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "schemaRefusal": true,
+    "outsideRootRefusal": true,
+    "excludedToolRefusal": true,
+    "projectUnchanged": true,
+    "userConfigurationUnchanged": true,
+    "appServerExited": true,
+    "serverProcessesExited": true,
+    "removal": true,
+    "bga432": [
+      {
+        "stateId": 2,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      },
+      {
+        "stateId": 12,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      }
+    ],
+    "runnerDigest": "sha256:32c0dbd9bc5cc6c878602f20b1f6f5974104bbf42c0529b110275c813f1e5870",
+    "stderrDiagnosticsObserved": true
+  },
+  "packagedDocumentation": {
+    "guides": [
+      {
+        "path": "README.md",
+        "digest": "sha256:eeeb67d522fb3e0c2107d92460ca2c79018891a68186639b09b2de25934063ce",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "AGENTS.md",
+        "digest": "sha256:1dda4e5b3dddd9bc4e6b940e5b4c52b19c1a191f4a55547a12d5fc044e9b2b4f",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "digest": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "SECURITY.md",
+        "digest": "sha256:30252562af68169ebeb55cc1f2f8d05dd84f7cbf9e467c6be46a1ea4757c31ab",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/INSTALL.md",
+        "digest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/VERSIONING.md",
+        "digest": "sha256:fcbcab8f6a678afa4021281526966d7c3747b88d6b899176e76cac0d6be6d1e0",
+        "matchesCandidateSource": true
+      }
+    ],
+    "scope": "original tarball guides match the exact clean candidate-source checkout; no security approval"
+  },
+  "signature": "not yet signed"
+}

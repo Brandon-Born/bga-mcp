@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-403",
+  "recordedAt": "2026-10-02T21:48:02.135180Z",
+  "candidateTag": "v1.0.0-rc.6",
+  "candidateCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+  "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+  "signature": "unsigned original candidate",
+  "client": "codex-cli 0.159.2",
+  "node": "v22.17.1",
+  "platform": "darwin",
+  "scope": "read-only current-project MCP rerun; no gameplay, game implementation or full BGA-424 frozen-task carry-forward",
+  "wholeCheckout": {
+    "name": "Dino Racer",
+    "revision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "treeDirty": false,
+    "contentDigest": "cdb3ca68cf8958994d4d34fa45730ebf7e064066ecbe15835cbbf8c46bad4e57",
+    "calls": [
+      {
+        "tool": "audit_database_usage",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": [
+          "database.audit.unavailable",
+          "database.unsupported-syntax",
+          "project.source.unsupported-syntax"
+        ],
+        "auditCounts": null
+      },
+      {
+        "tool": "inspect_project",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "run_pre_release_audit",
+        "layout": "modern",
+        "status": null,
+        "findingCodes": [],
+        "auditCounts": {
+          "passed": 0,
+          "failed": 1,
+          "unsupported": 32,
+          "manual-required": 8
+        }
+      },
+      {
+        "tool": "validate_action_contracts",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_notifications",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_project",
+        "layout": "modern",
+        "status": "findings",
+        "findingCodes": [
+          "database.audit.unavailable",
+          "database.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax"
+        ],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_state_machine",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      }
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "projectUnchanged": true,
+    "scope": "read-only current-project MCP rerun; no gameplay, game implementation or full BGA-424 frozen-task carry-forward"
+  }
+}
