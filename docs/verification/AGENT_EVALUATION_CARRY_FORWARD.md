@@ -226,3 +226,11 @@ because this handoff changes only receipts/docs, and the actual release guard
 passes. The rc.5 ledger is verified within the bounded sample above. BGA-411 is
 next in the release queue; security review and publication retain their
 independent gates.
+
+## Signed rc.6 frozen-task repeat
+
+[The actual rc.6 ledger](agent-evaluation-v1.0.0-rc.6.json) repeats all 23 prior task calls on the same five digest-bound original source snapshots, using the original signed rc.6 tarball through Codex 0.159.2 on macOS arm64. All scoped findings match the prior carry-forward. Independent JavaScript prototype and PHP lexer oracles confirm reported method and notification inventories. The original negative game assertion fails as expected; the unchanged diagnosis, feature and review checks pass (28/34/39 PHP tests, 59/94/105 assertions; both feature/review JavaScript tests pass). The [unchanged extracted correctness probe](bga431-fixed-v1.0.0-rc.6.json) passes all three assertions. Production snapshots, user configuration and the actual game checkout remain unchanged; the evaluation installation is removed.
+
+The integrated local gate passes 768 tests / 234 required scenarios. [Exact merged-source CI 37074879294](https://github.com/Brandon-Born/bga-mcp/actions/runs/37074879294) passes all six jobs at `b0c354578482226f7287c463720d37d256527cb5`; every downloaded record validates trusted schema, sealed integrity, clean exact source, complete scenarios and applicable conformance. The separate clean native-client/security observations retain their actual reviewer source `0a542e6`, not the later CI source. The existing scoped framework guard passes without relabeling its earlier admission.
+
+This verifies only the bounded frozen-task usefulness sample on these original bytes. Manual source selection, computed setup SQL (six unchecked audit items) and game-owned assertions remain necessary. No live Studio, GUI, blind author sample, new task implementation or productivity baseline is claimed. Metadata-writer repair and publication remain separate shipping work; original and historical evaluation records stay intact.

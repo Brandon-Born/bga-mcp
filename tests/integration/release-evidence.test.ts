@@ -200,8 +200,11 @@ describe('per-release evidence policy (synthetic offline inputs; no signature ge
     try {
       const packet = resolve(directory, 'packet');
       await mkdir(packet);
+      // Select the independently reviewed candidate, so a stale writer pin cannot
+      // pass merely because the policy fixture shares its historical literal.
+      const selection = await load<{ candidateReceipt: string }>('config/security-review.json');
       const receipt = await load<{ candidate: { sourceTag: string; sourceCommit: string } }>(
-        'docs/verification/release-candidate-v1.0.0-rc.5.json',
+        selection.candidateReceipt,
       );
       const plan: PublicationPlan = {
         tag: receipt.candidate.sourceTag,
