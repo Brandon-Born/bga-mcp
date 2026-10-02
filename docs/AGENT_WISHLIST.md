@@ -236,6 +236,15 @@ validate the exact plan/title/notes and inspect missing assets before safely
 resuming the same empty draft. The underlying cause remains unknown; a
 successful retry does not identify it.
 
+**rc.5 repeat, 2026-10-02 UTC.** The same generic publication failure recurred
+after successful preparation and left one matching empty draft, `401721181`.
+I again fetched the hosted plan, compared both prepared packets, authenticated
+the exact title/notes/identity and counted missing assets before resuming failed
+jobs in the same run. [The rc.5 distribution receipt](verification/release-evidence-v1.0.0-rc.5.json)
+records successful completion of that same record and independent public
+validation. The first failure's cause remains unknown. This confirms the existing
+bounded-stage-diagnostics wish; successful recovery does not implement it.
+
 **Wish.** Bounded stage diagnostics for release tooling that identify which
 operation failed and which reviewed record was reconciled, while withholding
 tokens, private reports and unbounded subprocess output. Seeded errors should

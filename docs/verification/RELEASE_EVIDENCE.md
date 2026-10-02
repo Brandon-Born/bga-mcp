@@ -167,3 +167,48 @@ Authenticated initial discovery finds no existing rc.5 release or draft.
 The publisher will still reconcile current authenticated identity before any
 write. Actual workflow publication and independent public download/refusal
 results remain pending; this admission does not claim them.
+
+### Observed rc.5 public distribution, 2026-10-02 UTC
+
+[Workflow 36994754017](https://github.com/Brandon-Born/bga-mcp/actions/runs/36994754017)
+at `580b6db79dfe61f9358c7d581725e6e17a8b40f2` passes preparation,
+publication and public-download verification on attempt two. The first attempt
+passes preparation and fails publication, leaving one empty draft, `401721181`.
+Authenticated reconciliation verifies the exact retained plan, title, notes and
+identity before retrying the failed jobs in the same run. The retry resumes that
+record and publishes all twelve metadata assets. No duplicate is created or
+asset overwritten. The generic first failure message does not identify its
+underlying cause; this repeats the bounded-diagnostics wish already recorded for
+the rc.4 publisher.
+
+The [rc.5 public evidence prerelease](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.5)
+retains the twelve files for the release lifetime. Every public file matches both
+the independently prepared local packet and the hosted prepared packet, as well
+as its server-reported SHA-256. Hosted and independent macOS consumers download
+the public asset URLs without token flags, acquire trust roots separately and
+pass original signature/identity, trusted schemas and exact eleven-entry local
+coverage. Six repository entries remain excluded; live Studio remains `not-run`.
+The hosted retained public-verification archive matches the independent public
+copy byte for byte across all twelve files.
+
+Independent probes on copies refuse omitted advertised coverage, invented Studio
+support, a permissive replacement schema and altered signed evidence. Actual
+cryptographic verification also refuses the changed signed bytes. The original
+public-copy digests remain unchanged after those probes.
+
+[Exact distribution-source CI 36994697469](https://github.com/Brandon-Born/bga-mcp/actions/runs/36994697469)
+passes all six Linux/macOS/Windows Node 22/24 jobs with 674 tests and 209 required
+scenarios each. All sealed downloaded records pass trusted schema, clean
+exact-source, integrity and applicable-conformance checks. The separately retained
+preparation-source CI and eight unchanged source decisions cleared the actual
+framework release guard before launching publication; no guard or original
+observation was weakened or renewed by distribution.
+
+[The rc.5 distribution receipt](release-evidence-v1.0.0-rc.5.json) retains public
+release and asset identities/digests, both attempts, original source/signer and
+distribution identities, CI and independent validation, and the lifetime retention
+policy. Local public copies are ignored under
+`.artifacts/published-release-evidence/v1.0.0-rc.5/`. Historical releases and
+receipts remain unchanged. BGA-400/401/424/405/415 still own this candidate's
+installation, client breadth, usefulness, security approval and registry release.
+No installable package was distributed or rebuilt by this workflow.
