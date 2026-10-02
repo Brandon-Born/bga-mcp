@@ -30,7 +30,7 @@
       "protocolVersions": ["2025-11-25"],
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [],
-      "receipt": "docs/verification/codex-client-v1.0.0-rc.4-preparation.json",
+      "receipt": "docs/verification/codex-client-v1.0.0-rc.4-clean.json",
       "scope": "Controlled macOS arm64 smoke of the exact signed original candidate through the real Codex MCP stack. No inference turn or GUI interaction; no general editor/agent support claim. Replacement clients/artifacts require re-execution."
     },
     {

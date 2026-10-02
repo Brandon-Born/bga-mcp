@@ -106,3 +106,30 @@ clean exact-source, integrity and applicable-conformance checks. The eight
 unchanged previously read framework decisions were explicitly re-admitted
 against that sealed evidence; the actual release guard passes. The separate
 clean reviewer repeat is still pending and cannot be inferred from this CI.
+
+## Clean rc.4 repeat, 2026-10-02 UTC
+
+[The separate clean assessment](security-review-v1.0.0-rc.4-clean.json) records
+committed reviewer `6a0c3c66083de96e8d1dd78351de6b65b6ac1cf6` with
+`sourceClean: true`. Fresh independent trust roots authenticate the same
+original signed rc.4 packet and all original subjects/provenance. A new live
+production/full-graph audit of clean original source again reports zero
+findings; the original tarball again passes 27 tests / 11 required scenarios
+and 274 text-file scans. No original signed or preparation receipt is replaced.
+
+The actual framework guard passed during this clean assessment, clearing that
+previous gate. Two security gates remain held: the immutable rc.4 package lacks
+the two corrected current guides, and BGA-406's independent harmless-report
+lifecycle remains null. The existing canonical residual dispositions still
+apply only to the frozen local inventory. No `--approve` invocation or final
+security decision was made.
+
+[The clean native-client repeat](codex-client-v1.0.0-rc.4-clean.json) passes the
+same actual seven-tool/three-resource flow, refusals, restart, unchanged
+project/configuration, process exit and removal with Codex 0.159.2 from that
+same clean committed source. The offline verifier, bounded evaluated-client
+matrix and publication prerequisites now read these separately retained clean
+receipts. This changes no public support claim or permission. Those reference
+updates require their own clean CI/framework re-admission under the existing
+broad guard before a new candidate may be created. Publisher selection/setup
+remains null; historical audit validity is not renewed approval.

@@ -47,3 +47,9 @@ its independent candidate pin now select this actual candidate, and controls
 refuse historical candidate identities even when runner digests match.
 Historical receipts are preserved. This is a bounded app-server observation,
 not a new general supported-client claim, GUI or inference evaluation.
+
+[The clean committed rc.4 repeat](codex-client-v1.0.0-rc.4-clean.json) passes
+that same controlled flow at `6a0c3c66083de96e8d1dd78351de6b65b6ac1cf6` with
+`runnerTreeDirty: false`. The current evaluated matrix references this separate
+receipt. Both original and preparation observations remain intact; no other
+client, version, platform, GUI or inference claim is added.

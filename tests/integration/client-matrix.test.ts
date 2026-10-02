@@ -25,10 +25,7 @@ it('[GATE-CLIENT-MATRIX] refuses unsupported version, missing scenario, environm
   row(environment, 0).platforms = ['imaginary-platform'];
   expect((await verifyClientMatrix(environment, root)).failures.length).toBeGreaterThan(0);
   const receipt = JSON.parse(
-    await readFile(
-      resolve(root, 'docs/verification/codex-client-v1.0.0-rc.4-preparation.json'),
-      'utf8',
-    ),
+    await readFile(resolve(root, 'docs/verification/codex-client-v1.0.0-rc.4-clean.json'), 'utf8'),
   ) as Record<string, unknown>;
   expect(
     (await verifyClientMatrix(original, root, { 'CLIENT-CODEX-APP-SERVER': receipt })).failures,
