@@ -1,5 +1,5 @@
 import { createServer, type Server, type ServerResponse } from 'node:http';
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
+import { link, mkdir, readFile, readdir, rename, unlink, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
@@ -210,16 +210,23 @@ function expectMatrixDeadlineOrder(
   if (completionMs === 600) expect(completed).toBeGreaterThan(published);
 }
 
+/** Replace a directory entry, never the bytes shared by pnpm store hardlinks. */
+async function replaceInstalledModule(path: string, source: string): Promise<void> {
+  const temporary = path + '.cancellation-probe';
+  await writeFile(temporary, source);
+  await rename(temporary, path);
+}
+
 async function matrixMutation(target: string, replace: (source: string) => string) {
   const path = resolve(dirname(server.cli), 'policy.js');
   const original = await readFile(path, 'utf8');
   const modified = replace(original);
   expect(modified).not.toBe(original);
   try {
-    await writeFile(path, modified);
+    await replaceInstalledModule(path, modified);
     return await filesystemMatrixProbe(target, 1, 150);
   } finally {
-    await writeFile(path, original);
+    await replaceInstalledModule(path, original);
     expect(await readFile(path, 'utf8')).toBe(original);
   }
 }
@@ -392,10 +399,10 @@ async function filesystemCleanupControl(root: string, operation: 'lstat' | 'hand
     original,
   );
   try {
-    await writeFile(policyModule, neutralized);
+    await replaceInstalledModule(policyModule, neutralized);
     return await filesystemProbe(root, operation);
   } finally {
-    await writeFile(policyModule, original);
+    await replaceInstalledModule(policyModule, original);
     expect(await readFile(policyModule, 'utf8')).toBe(original);
   }
 }
@@ -564,6 +571,25 @@ afterAll(async () => {
 });
 
 describe('packaged operation deadlines', () => {
+  it('[E2E-FILESYSTEM-CANCELLATION] isolates installed mutation controls from a hardlinked peer', async () => {
+    const path = resolve(dirname(server.cli), 'policy.js');
+    const peer = resolve(server.temporaryRoot, 'hardlinked-policy-peer.js');
+    const original = await readFile(path, 'utf8');
+    const modified = original.replace('await handle.close();', 'void handle;');
+    expect(modified).not.toBe(original);
+    await link(path, peer);
+    try {
+      await replaceInstalledModule(path, modified);
+      expect(await readFile(path, 'utf8')).toBe(modified);
+      expect(await readFile(peer, 'utf8')).toBe(original);
+    } finally {
+      await replaceInstalledModule(path, original);
+      expect(await readFile(path, 'utf8')).toBe(original);
+      expect(await readFile(peer, 'utf8')).toBe(original);
+      await unlink(peer);
+    }
+  });
+
   it.each(
     filesystemStages.flatMap(([target, occurrence]) =>
       [150, 600].map((completionMs) => ({ target, occurrence, completionMs })),
@@ -941,7 +967,7 @@ describe('packaged operation deadlines', () => {
     expect(neutralized, 'the mutation control did not find the installed checkpoint').not.toBe(
       original,
     );
-    await writeFile(deadlineModule, neutralized);
+    await replaceInstalledModule(deadlineModule, neutralized);
     try {
       const control = await parserDeadlineProbe(root, 'neutralized');
       const controlEvents = parserEvents(control.atSettlement);
@@ -953,7 +979,7 @@ describe('packaged operation deadlines', () => {
       expect(control.stderr).not.toContain(PARSER_MARKER);
       expect(control.stderr).not.toContain('Unhandled');
     } finally {
-      await writeFile(deadlineModule, original);
+      await replaceInstalledModule(deadlineModule, original);
     }
   }, 180_000);
 

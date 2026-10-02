@@ -105,6 +105,33 @@ passes all 59 focused cancellation/authority tests and the fresh integrated
 required before its handoff is verified. The [BGA-423 receipt](bga423-source-ci.json) records the
 failed attempt and subsequent proof separately.
 
+## Installed mutation isolation, 2026-10-02 UTC
+
+The next CI on `0ac0055` passed the cleanup matrix in all six jobs, but
+Windows Node 24's existing delegated-state test reported FileHandle GC-close
+warnings. Some cancellation controls wrote modified policy/deadline modules
+in place. When installations share pnpm hardlinks, removing descriptor close
+in one control can affect other suites reading that same file. All three
+cancellation mutation paths now replace and restore the individual directory
+entry, as the authority and executable-failure controls already do. An original
+installed hardlinked-peer case requires modified bytes at the selected path,
+unchanged bytes at the peer, and restored original bytes at both afterward.
+
+This is a deterministic isolation correction; the failed child's warning was
+not retrospectively traced to a particular writer. No warning is suppressed,
+production descriptor cleanup is unchanged, and the prior failed run remains
+in the bounded receipt. All 64 affected tests and the fresh integrated `pnpm check` pass at 752 tests /
+223 required scenarios. Exact-source CI remains required for this harness. The earlier broader native-matrix limits
+and original candidate/harness identities still apply.
+
+[pnpm's import documentation](https://pnpm.io/settings/node-modules#packageimportmethod)
+warns that with a hardlink, editing installed bytes “changes every project that
+links the same package”. [Node's link API](https://nodejs.org/api/fs.html#fspromiseslinkexistingpath-newpath)
+supplies the explicit peer used by the regression, and its
+[rename API](https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath) supplies
+the directory-entry replacement. These sources were fetched on 2026-10-02 UTC;
+this is test isolation, not a new BGA construct or privileged production API.
+
 ## Sources
 
 [Node.js FileHandle.close](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandleclose)

@@ -52,7 +52,7 @@
     "usefulnessEvaluationRepeated": false
   },
   "sourceCi": {
-    "status": "pending-observation-fix-exact-source",
+    "status": "pending-isolated-mutation-exact-source",
     "previousAttempts": [
       {
         "status": "failed",
@@ -144,6 +144,97 @@
         ],
         "jobsFailed": ["windows-latest / Node 22"],
         "failure": "Existing walk:opendir occurrence 1, nominal 600 ms completion case observed one acquired directory after fixed 700 ms wait. This proves the failed observation, not eventual leak/release. All eight authority scenarios passed in all six jobs; no production change is made by the bounded parent-side completion observer."
+      },
+      {
+        "status": "failed",
+        "id": 37038290531,
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37038290531",
+        "commit": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+        "passingRecordsValidated": 5,
+        "jobs": [
+          {
+            "node": "v22.23.2",
+            "platform": "darwin",
+            "source": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T17:10:35.460Z",
+            "tests": 751,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+            "evidenceDigest": "sha256:72cdbd786989463da7218a73f229f683478a54feaabdfa09d46cf93023fcdcaa",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v24.20.0",
+            "platform": "darwin",
+            "source": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T17:10:51.655Z",
+            "tests": 751,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+            "evidenceDigest": "sha256:4bbdd1540bed30736ddc5b9353d065bce8cd5570f7a04b27fd179e75bcdf41e6",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v22.23.3",
+            "platform": "linux",
+            "source": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T17:09:42.023Z",
+            "tests": 751,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+            "evidenceDigest": "sha256:6b19c3dee9b54c19375b4947e532e64ad26080e78dbaaa4385dad4dc37858892",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v24.21.0",
+            "platform": "linux",
+            "source": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T17:09:24.889Z",
+            "tests": 751,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:d297074d094bb53989a9fee1c2462ed5f6bb1cbede3cb3b40ad8f380904f8bee",
+            "evidenceDigest": "sha256:422fb7f7b76a1b0c8fad66449844a4bbe133317c084830dd66ec7abf6a7f353b",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          },
+          {
+            "node": "v22.23.3",
+            "platform": "win32",
+            "source": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+            "sourceClean": true,
+            "generatedAt": "2026-10-02T17:09:59.277Z",
+            "tests": 751,
+            "scenarios": 223,
+            "claims": 103,
+            "artifactDigest": "sha256:e02ae60d8824cfb59cc10dc5128309c6619a443e738430e66ef75dc3d21e213c",
+            "evidenceDigest": "sha256:99cb695d4c2e74fdd4d7d8e98366c31d93ad591bc94f55126c024c3f57031509",
+            "schemaValidated": true,
+            "integrityValidated": true,
+            "authorityScenariosValidated": true,
+            "conformance": "passed"
+          }
+        ],
+        "jobsFailed": ["windows-latest / Node 24"],
+        "failure": "All controlled cleanup observations and all authority scenarios passed; the existing delegated-state test observed FileHandle GC-close warnings. In-place policy/deadline mutation controls can alter pnpm hardlinked peers. Atomic replacement and a deterministic hardlinked-peer regression address that hazard; the original warning is not retrospectively traced to a specific writer and remains a failed observation."
       }
     ]
   },
@@ -175,6 +266,57 @@
       "evidenceDigest": "sha256:24e2e98029e5a0a769345c53e2d75f59a692dc446d3e252f4284a4c4968b3ebd",
       "log": "bga423-observation-handoff-check.log",
       "metadataAfterGate": "Bounded receipt and status prose refreshed after the passing gate; exact committed-source CI still required."
+    }
+  },
+  "nextWorkPreparation": {
+    "item": "BGA-211",
+    "observation": {
+      "sourceCommit": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+      "sourceClean": true,
+      "artifactDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+      "scope": "Actual installed development MCP stdio, scripted original HTML/API; not captured BGA relevance, live TLS/DNS, game validation or public-release docs",
+      "discovered": true,
+      "sameClientFirstMatchesNavigation": true,
+      "sameClientSecondCached": true,
+      "sameClientSecondMatchesOrbital": false,
+      "coldSecondMatchesOrbital": true,
+      "closedClients": 2,
+      "stderrEmpty": true
+    },
+    "status": "defect-reproduced-not-implemented",
+    "thresholdsChanged": false
+  },
+  "hardlinkFix": {
+    "status": "local-gates-passed-exact-source-ci-pending",
+    "scope": "Test-only atomic policy/deadline module replacement and restoration in every cancellation mutation control; deterministic original installed hardlinked-peer isolation case. No warning suppression, production change or candidate approval transfer.",
+    "sources": [
+      "https://pnpm.io/settings/node-modules#packageimportmethod",
+      "https://nodejs.org/api/fs.html#fspromiseslinkexistingpath-newpath",
+      "https://nodejs.org/api/fs.html#fspromisesrenameoldpath-newpath"
+    ],
+    "historicalRootCause": "Consistent with cross-suite mutation leakage; not proven by tracing the original failed child.",
+    "focusedTests": 64,
+    "integratedTests": 752,
+    "requiredScenarios": 223,
+    "scenariosPassed": 223,
+    "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+    "evidenceDigest": "sha256:9709fdbbd2354dc802eccc19098d6a75d2924d8914a20ad192f1f2bf50c6160b",
+    "fullGate": {
+      "status": "passed",
+      "sourceBase": "0ac0055c9b2872aca330a285f881771ace5bc4c0",
+      "sourceClean": false,
+      "generatedAt": "2026-10-02T17:20:28.886Z",
+      "testsPassed": 752,
+      "testsFailed": 0,
+      "requiredScenarios": 223,
+      "scenariosPassed": 223,
+      "claims": 103,
+      "capabilities": 17,
+      "applicableConformance": "passed",
+      "packageDigest": "sha256:8364970f9376267cd04c4544c1ad2b018665428315a60dca1451361dc4658c2b",
+      "evidenceDigest": "sha256:51f9c3c2be15f9d86dbe2822af887328946990ba9183ee40ffe67518cb76423e",
+      "log": "bga423-hardlink-handoff-check.log",
+      "metadataAfterGate": "Bounded receipt and status prose refreshed after the passing gate. Exact committed-source CI still required."
     }
   }
 }

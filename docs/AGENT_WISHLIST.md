@@ -183,6 +183,17 @@ separate caches and fixed per-reader limits; the component budget probe does not
 establish a public cross-reader cache leak. Preserve page authority, retention,
 untrusted labelling and the existing no-full-text storage boundary.
 
+**Installed follow-up, 2026-10-02 UTC.** On clean source `0ac0055`, the actual
+installed development MCP discovers search and reproduces the query-change miss
+with original HTML/API responses: the same client asks `quasar navigation` then
+`nebula orbital` for one page, and the second cached passage omits `orbital`; a
+fresh client selects the passage containing it. Both clients exit with empty
+stderr. The [bounded preparation receipt](verification/bga423-source-ci.json)
+binds the unchanged package digest and source. This proves the warm-query defect
+through installed stdio, not captured BGA relevance, live DNS/TLS or a public
+documentation capability. BGA-211 still needs its regression, reviewed captures,
+A/B scoring and live acceptance; no implementation or threshold change follows.
+
 **Framework review observation, 2026-10-02 UTC.** The BGA-408 live baseline still
 required a separate read of the Complete Walkthrough beside the canonical state
 page to establish that BGA-419's conflict remains unresolved. A source link alone
