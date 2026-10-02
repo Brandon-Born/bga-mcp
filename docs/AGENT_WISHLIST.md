@@ -155,3 +155,11 @@ improvements to existing tools when they solve the need. Promote a wish into
 BACKLOG.md only after defining scope, source-backed acceptance, verification,
 version impact, and any trust-boundary changes. These wishes do not authorize
 project writes, test execution by the server, or Studio operations.
+
+## Refresh current-run evidence summaries safely
+
+**Observed maintenance friction.** BGA-406, BGA-408 and BGA-405 each added valid scenarios or mitigations. Six typed current-run verification summaries then needed manual count updates after observing the full test/evidence output. On BGA-405, the new threat mitigation changed retained claims from 100 to 101 and exposed another stale counter after the tests passed. Historical receipts and prose must stay frozen, so a broad replacement is unsafe.
+
+**Wish.** A repository command that reads actual emitted evidence and previews precise updates to only explicitly typed current-run summary fields. It should preserve historical records, scoped review claims and statuses, refuse ambiguous markers, and never manufacture a passing test or promote a backlog item. This is repository maintenance tooling, not a new game-inspection MCP capability.
+
+**Next evidence.** Compare that command with the named-six-file manual workflow and seed historical, ambiguous and stale-result inputs. BGA-017 owns evidence integrity; BGA-411 owns public inventory documentation and does not already automate these run-summary fields. A separate scoped maintenance backlog proposal is needed before implementation.

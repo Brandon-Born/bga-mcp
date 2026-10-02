@@ -1194,6 +1194,24 @@
       "case": "Simulated framework change detects stale claims, exposes an outdated fixture assertion, updates original fixtures, retests documented forms through installed MCP and restores only after review",
       "boundary": "packaged",
       "scenarios": ["E2E-FRAMEWORK-CHANGE-LIFECYCLE"]
+    },
+    {
+      "item": "BGA-405",
+      "case": "Exact signed candidate security review binds installed/scanned artifact and fresh dependency source to owned risk dispositions; tampering and omitted scenarios cannot become complete evidence",
+      "boundary": "repository",
+      "scenarios": ["GATE-SECURITY-REVIEW", "INT-SECURITY-REVIEW-ARTIFACT"]
+    },
+    {
+      "item": "BGA-405",
+      "case": "Open risks, stale audits, dirty reviewer code and unfinished documentation, reporting and framework gates prevent security approval",
+      "boundary": "repository",
+      "scenarios": ["INT-SECURITY-REVIEW-APPROVAL"]
+    },
+    {
+      "item": "BGA-405",
+      "case": "The final candidate that includes current shipped documentation has passed exact-artifact security review with all release-blocking risks resolved",
+      "boundary": "repository",
+      "missing": "Signed rc.3 predates BGA-411/BGA-406; replacement candidate and independent reporting/fresh framework review are pending. Current rc.3 assessment is held."
     }
   ]
 }

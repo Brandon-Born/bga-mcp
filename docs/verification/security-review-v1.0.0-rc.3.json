@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-405",
+  "reviewedAt": "2026-10-02T04:54:39.928Z",
+  "status": "held",
+  "candidate": {
+    "tag": "v1.0.0-rc.3",
+    "sourceCommit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+    "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3"
+  },
+  "reviewer": {
+    "sourceCommit": "69936af9e5de1b8d8bc8cadde61ab0b5cf1ecf02",
+    "sourceClean": false,
+    "harnessDigest": "sha256:6775cbba18ea4092f33d93c22cb746b063b8dd51894fb4cbfdc1b3129fd4e975"
+  },
+  "signature": {
+    "verified": true,
+    "signerCommit": "e092d1d9cccccae2f38e4eff7129ad8f690fb3bf",
+    "trustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c"
+  },
+  "dependencyAudit": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-02T04:54:34.152Z",
+    "registry": "https://registry.npmjs.org",
+    "source": {
+      "commit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+      "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+      "packageDigest": "sha256:7f4f6eff0315753012c594e4eac9e4a1f84e406e62d435050578994b88de2cf0",
+      "workspaceDigest": "sha256:fef5dd514042853948c785238bcd49325463812870a8160c27451785e2633e38",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    }
+  },
+  "dependencyPolicy": {
+    "schemaVersion": 1,
+    "maxAgeHours": 24,
+    "exceptions": []
+  },
+  "tests": {
+    "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+    "resultDigest": "sha256:24d525a542033dd8b2c64fb7c8d3be88105c474cdbe2fc105d2b56885bea98ff",
+    "testsPassed": 27,
+    "testsFailed": 0,
+    "requiredScenarios": [
+      "E2E-RELEASE-PUBLIC-EXECUTABLE",
+      "E2E-READ-ONLY-NETWORK-DENIED",
+      "E2E-READ-ONLY-NETWORK-HARNESS",
+      "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+      "E2E-TOOLS-REDACTION",
+      "E2E-POLICY-OBJECT-BOUND-READS",
+      "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+      "E2E-SUCCESS-OUTPUT-REDACTION",
+      "E2E-POLICY-RACE-BARRIER",
+      "E2E-FILESYSTEM-CANCELLATION",
+      "E2E-POLICY-PARSER-DEADLINE"
+    ],
+    "passedScenarios": [
+      "E2E-FILESYSTEM-CANCELLATION",
+      "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+      "E2E-POLICY-OBJECT-BOUND-READS",
+      "E2E-POLICY-PARSER-DEADLINE",
+      "E2E-POLICY-RACE-BARRIER",
+      "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+      "E2E-READ-ONLY-NETWORK-DENIED",
+      "E2E-READ-ONLY-NETWORK-HARNESS",
+      "E2E-RELEASE-PUBLIC-EXECUTABLE",
+      "E2E-SUCCESS-OUTPUT-REDACTION",
+      "E2E-TOOLS-REDACTION"
+    ]
+  },
+  "packageScan": {
+    "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+    "files": 270,
+    "findings": 0
+  },
+  "studio": "excluded; no live claim",
+  "adapters": [],
+  "risks": [
+    {
+      "id": "RR-POLICY-NO-TOOL-EVIDENCE",
+      "owner": "Brandon Born",
+      "disposition": "accepted",
+      "evidence": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, synchronous parser expiry, and quiescence for instrumented listing and descriptor-read syscalls. It does not prove every native filesystem primitive; BGA-326 owns that remaining gap. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-STUDIO-UNREVIEWED",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "The Studio boundaries were reviewed on 2026-08-07. Synchronization remains unimplemented behind planned controls; experimental own-account log reading is discoverable but remains unreleased and has additional open correctness, privacy, address, cancellation, and credential-file controls from the 2026-08-08 audit. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-DOC-CONTENT-UNREVIEWED",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "Documentation retrieval is reviewed and implemented behind explicit network enablement, host restrictions, provenance, and untrusted-content labelling. Those controls do not prove arbitrary query provenance or prevent an agent from acting on hostile retrieved prose; BGA-324 and RR-DOC-INJECTION-RESIDUAL carry those limits. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-CLIENT-BEHAVIOR",
+      "owner": "Brandon Born",
+      "disposition": "accepted",
+      "evidence": "The server cannot control what an agent does with a correct, redacted result. Operator judgement remains part of the safety model. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-SECRET-SCAN-COVERAGE",
+      "owner": "Brandon Born",
+      "disposition": "accepted",
+      "evidence": "Secret scanning recognizes known credential formats. A novel or encoded secret can pass the gate, so redaction and the artifact allowlist remain the primary controls. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-DOC-INJECTION-RESIDUAL",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "Labelling retrieved content as untrusted does not stop an agent from acting on it. No server-side control can; the mitigation reduces the chance an agent treats documentation as instruction, and the operator responsibilities carry the rest. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-DOC-ALLOWLIST-TRUST",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel. Provenance and untrusted-content labelling limit the damage; the allowlist cannot prevent it. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-STUDIO-NO-UNDO",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "SFTP has no version history. A previewed, confirmed synchronization that writes the intended file to the intended project can still overwrite something the developer wanted, and nothing on this side of the connection can undo it. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-STUDIO-SHARED-ACCOUNT",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "The documentation describes multiple developer accounts per person and says nothing about credential confidentiality. A credential the developer has already shared is outside this server's control. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-POLICY-TRAVERSAL-OPENAT",
+      "owner": "Brandon Born",
+      "disposition": "accepted",
+      "evidence": "Direct-policy and installed-artifact barriers prove refusal in selected single-swap windows. Portable Node pathname checks cannot prevent repeated adversarial swaps across successive identity and containment checks because Node exposes no descriptor-relative openat; the deterministic single-swap evidence is not openat equivalence. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "RR-DOC-QUERY-PROVENANCE",
+      "owner": "Brandon Born",
+      "disposition": "excluded",
+      "evidence": "The request filter reads the shape of a query, not its origin. Text that reads as an ordinary question is sent as one, so a model that paraphrases project content into a question can still put it in a request. Enforcing origin needs an explicit user-supplied channel or a deliberately narrow grammar, which BGA-324 owns; until then the limit is stated in the tool description rather than implied away. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+    },
+    {
+      "id": "BLOCK-candidateDocumentationCurrent",
+      "owner": "Brandon-Born",
+      "disposition": "held",
+      "evidence": "New candidate required for current shipped guides: README.md, AGENTS.md, CONTRIBUTING.md, SECURITY.md, docs/INSTALL.md. BGA-411/BGA-406 own the changes; original signed bytes are preserved."
+    },
+    {
+      "id": "BLOCK-privateReportLifecycleVerified",
+      "owner": "Brandon-Born",
+      "disposition": "held",
+      "evidence": "BGA-406 non-maintainer benign-report lifecycle is not observed."
+    },
+    {
+      "id": "BLOCK-frameworkReviewCurrent",
+      "owner": "Brandon-Born",
+      "disposition": "held",
+      "evidence": "BGA-408 fresh official-page review is pending; new publication remains held."
+    }
+  ],
+  "releaseGates": {
+    "candidateDocumentationCurrent": false,
+    "privateReportLifecycleVerified": false,
+    "frameworkReviewCurrent": false
+  },
+  "integrity": "sha256:bfdda5802c2f8ea6062ff5c13f59c206435c144642f45b443d7ba06810586318"
+}

@@ -460,7 +460,8 @@
         "TM-EVIDENCE-COVERAGE",
         "TM-EVIDENCE-INTEGRITY",
         "TM-MODEL-AGREEMENT",
-        "TM-RELEASE-EVIDENCE"
+        "TM-RELEASE-EVIDENCE",
+        "TM-RELEASE-SECURITY-REVIEW"
       ],
       "surfaces": ["SURFACE-RELEASE-EVIDENCE"]
     },
@@ -471,7 +472,7 @@
       "assets": ["ASSET-RELEASE-ARTIFACT"],
       "boundary": "TB-SUPPLY-CHAIN",
       "impact": "Signing, security review, or publication consumes an artifact other than the one whose installed scenarios passed.",
-      "mitigations": ["TM-CANDIDATE-IMMUTABLE", "TM-RELEASE-SIGNING"]
+      "mitigations": ["TM-CANDIDATE-IMMUTABLE", "TM-RELEASE-SIGNING", "TM-RELEASE-SECURITY-REVIEW"]
     },
     {
       "id": "AC-CANDIDATE-PUBLICATION",
@@ -1240,6 +1241,19 @@
       "backlog": "BGA-407",
       "scenarios": ["GATE-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE", "INT-RELEASE-EVIDENCE-PACKET"],
       "surfaces": ["SURFACE-RELEASE-EVIDENCE"]
+    },
+    {
+      "id": "TM-RELEASE-SECURITY-REVIEW",
+      "title": "Exact-candidate security approval binds authenticated original bytes, fresh dependency assessment, security replay and owned release holds",
+      "boundary": "TB-SUPPLY-CHAIN",
+      "control": "automated",
+      "status": "implemented",
+      "backlog": "BGA-405",
+      "scenarios": [
+        "GATE-SECURITY-REVIEW",
+        "INT-SECURITY-REVIEW-APPROVAL",
+        "INT-SECURITY-REVIEW-ARTIFACT"
+      ]
     }
   ],
   "residualRisks": [

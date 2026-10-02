@@ -1383,13 +1383,16 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-405 — Complete release security review
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P0
 - **Depends on:** BGA-013, BGA-014, BGA-403, BGA-404, BGA-407, BGA-414, all capabilities in the release
 - **Deliverable:** Review of threat mitigations, dependencies, permissions, data handling, adapters, release pipeline, and residual risks.
 - **Acceptance:** Every open release-blocking risk has an owner and resolution; unsupported risk results in removal or disabling of the affected capability.
 - **Verification:** Security scenarios and scans pass against the exact release candidate, including live tests for Studio-backed behavior.
 - **Dependency preflight:** Run BGA-422's registry-backed `pnpm audit:security` on the exact candidate source immediately before review, validate its source/configuration digests against the retained candidate assessment, and retain the fresh result. Missing, unavailable, expired, or undisposed assessments block approval; the original candidate bytes are preserved.
+
+- **Implementation, 2026-10-02 UTC:** [Exact signed-artifact security review](verification/RELEASE_SECURITY_REVIEW.md) authenticates original rc.3, audits its clean source/configuration afresh, scans every packaged text file and replays security scenarios without repacking. Retained replay writes separate artifact/run records so it cannot impersonate current-checkout evidence. The actual original assessment passes 27 tests, 11 required security scenarios and 270 text-file scans, with zero production/tooling advisory findings. Approval remains held: this immutable candidate predates current packaged guides/security policy, BGA-406 external reporting is unverified, and BGA-408 fresh framework review is pending. Three offline guards and their seeded negatives are implemented; full local gate passes 664 tests and 205 required scenarios; exact-source CI pending. No candidate was rebuilt or published and no final security approval is claimed.
+- **Sources:** [GitHub CLI attestation verification](https://cli.github.com/manual/gh_attestation_verify) documents repository/workflow/commit and local-bundle policy checks; [pnpm audit](https://pnpm.io/cli/audit) documents separate production and JSON audits. BGA-404 signature verification and BGA-422 audit normalization are reused, not replaced by self-declared checksums.
 
 ### BGA-406 — Establish private vulnerability reporting
 

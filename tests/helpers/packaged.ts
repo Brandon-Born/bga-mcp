@@ -71,7 +71,7 @@ export async function recordInstalledArtifact(suite: string, artifact: string): 
 
   try {
     await writeFile(
-      resolve(repositoryRoot, `.artifacts/packaged-runs/${suite}.json`),
+      resolve(inject('packedArtifactRecords'), `${suite}.json`),
       `${JSON.stringify({ suite, digest }, null, 2)}\n`,
     );
   } catch {

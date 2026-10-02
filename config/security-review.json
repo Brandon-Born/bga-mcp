@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-405",
+  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.3.json",
+  "signingReceipt": "docs/verification/release-signing-v1.0.0-rc.3.json",
+  "suites": [
+    "tests/e2e/release-inventory.test.ts",
+    "tests/e2e/read-only-network-off.test.ts",
+    "tests/e2e/tool-boundary.test.ts",
+    "tests/e2e/traversal-bounds.test.ts",
+    "tests/e2e/output-budget.test.ts",
+    "tests/e2e/success-redaction.test.ts",
+    "tests/e2e/race-barrier.test.ts",
+    "tests/e2e/cancellation.test.ts"
+  ],
+  "requiredScenarios": [
+    "E2E-RELEASE-PUBLIC-EXECUTABLE",
+    "E2E-READ-ONLY-NETWORK-DENIED",
+    "E2E-READ-ONLY-NETWORK-HARNESS",
+    "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+    "E2E-TOOLS-REDACTION",
+    "E2E-POLICY-OBJECT-BOUND-READS",
+    "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+    "E2E-SUCCESS-OUTPUT-REDACTION",
+    "E2E-POLICY-RACE-BARRIER",
+    "E2E-FILESYSTEM-CANCELLATION",
+    "E2E-POLICY-PARSER-DEADLINE"
+  ],
+  "reviewedCandidate": {
+    "tag": "v1.0.0-rc.3",
+    "sourceCommit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+    "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+    "signerCommit": "e092d1d9cccccae2f38e4eff7129ad8f690fb3bf",
+    "auditIdentity": {
+      "commit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+      "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+      "packageDigest": "sha256:7f4f6eff0315753012c594e4eac9e4a1f84e406e62d435050578994b88de2cf0",
+      "workspaceDigest": "sha256:fef5dd514042853948c785238bcd49325463812870a8160c27451785e2633e38",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    }
+  },
+  "requiredRiskIds": [
+    "RR-POLICY-NO-TOOL-EVIDENCE",
+    "RR-STUDIO-UNREVIEWED",
+    "RR-DOC-CONTENT-UNREVIEWED",
+    "RR-CLIENT-BEHAVIOR",
+    "RR-SECRET-SCAN-COVERAGE",
+    "RR-DOC-INJECTION-RESIDUAL",
+    "RR-DOC-ALLOWLIST-TRUST",
+    "RR-STUDIO-NO-UNDO",
+    "RR-STUDIO-SHARED-ACCOUNT",
+    "RR-STUDIO-UNDOCUMENTED-PAGE",
+    "RR-POLICY-TRAVERSAL-OPENAT",
+    "RR-DOC-QUERY-PROVENANCE"
+  ]
+}

@@ -212,3 +212,7 @@ No other wording should imply a stronger level of confidence than the recorded e
 ## Framework process gate
 
 `pnpm verify:framework-change` checks BGA-408 policy and impact coverage offline. `pnpm framework:status` reports current holds; `pnpm framework:observe URL` performs one explicitly requested official lookup. `pnpm framework:review URL EVIDENCE REVIEWER CI_RUN` requires clean post-observation evidence and matching implementation/fixtures. `pnpm framework:release` is mandatory before new candidate creation or guidance publication; it fails closed without a reviewed, fresh baseline. Process simulations and full local checks cannot stand in for live observation. See [FRAMEWORK_CHANGES.md](FRAMEWORK_CHANGES.md).
+
+## Original-candidate security replay
+
+`pnpm review:security` requires an authenticated original packet, clean exact candidate source and a new assessment directory. The test harness selects those original bytes only in explicit security-review mode and records their digest separately from normal checkout evidence. `pnpm verify:security-review` checks the held/approved report and seeded integrity/admission controls; it cannot renew historical audit freshness or manufacture approval. See [the review procedure](verification/RELEASE_SECURITY_REVIEW.md).

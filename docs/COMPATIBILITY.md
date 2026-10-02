@@ -147,3 +147,7 @@ BGA-406 extends CLAIM-TRANSPORT-STDIO only with reporting-policy safeguards. Liv
 ## Framework review holds
 
 BGA-408 adds a separate [framework change process](FRAMEWORK_CHANGES.md). A changed, missing, unreachable or expired official source can hold affected claims stale for new publication while the recorded compatibility support contract is preserved. Source/fixture changes require official review and clean targeted retest. Process simulation does not certify live freshness; the initial ledger has no live baseline and refuses new candidates or inventory guidance until one is reviewed.
+
+## Exact-candidate security review
+
+BGA-405 replays selected security scenarios on the authenticated immutable candidate, with separate evidence from ordinary checkout tests. Held assessments do not grant security approval or expand the local-only capability set. Studio and adapters remain excluded; tests using stubs never stand in for live Studio evidence. [Security review scope](verification/RELEASE_SECURITY_REVIEW.md).
