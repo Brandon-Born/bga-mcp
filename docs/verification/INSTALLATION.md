@@ -7,7 +7,7 @@
 }
 ```
 
-The current [installation guide](../INSTALL.md) identifies the original signed `v1.0.0-rc.3` tarball, digest and finite retention, separately from rebuilt checkout packages. Download and authentication use the independently reviewed [rc.3 signing receipt](release-signing-v1.0.0-rc.3.json). Historical rc.1 observations below remain unchanged.
+The current [installation guide](../INSTALL.md) uses original signed `v1.0.0-rc.3` as a historical acquisition example with its own tarball, digest and finite retention. It does not identify the latest candidate. The standalone maintainer runner now selects the original rc.5 receipt; independently authenticate that candidate with the [rc.5 signing receipt](release-signing-v1.0.0-rc.5.json) before executing the marked installation recipes. Historical observations and acquisition identities remain unchanged.
 
 `E2E-INSTALL-GUIDE` reads the actual marked guide blocks, substitutes fresh consumer paths, and executes their commands and platform configuration. It installs the same tarball as the complete gate, checks the package-manager-created public command/version, discovers exactly the installed inventory, calls `inspect_project`, verifies missing-root refusal, closes each server process, repeats installation and first use, hashes the project before/after, removes the package, and checks both the public shim and dependency entry are absent. Its CI matrix is Ubuntu/macOS/Windows with Node 22/24. No named editor or agent support is inferred from this reference-client test.
 
@@ -18,3 +18,11 @@ Only repeat installation is measured; this runner does not test cross-version up
 ## Historical rc.1 verification
 
 The independent macOS/Node 22.17.1 run on 2026-09-30 reverified the original signature and provenance through the BGA-404 verifier, then followed this guide against the original tarball. The [sanitized receipt](install-guide-v1.0.0-rc.1.json) records passing installation, exact discovery, first use, root refusal, repeat installation, unchanged project, server exit and package removal. [Exact-commit CI 36772791627](https://github.com/Brandon-Born/bga-mcp/actions/runs/36772791627) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at `3a24f01ea370ef23f66e77dc926e6cde29f271d1`, each with 596 tests and 180 required scenarios. This includes the corrected Windows argv recipe, whose path strings are escaped by the client rather than pre-quoted. BGA-400 is verified for this guide and candidate.
+
+## Signed rc.5 recipe verification — 2026-10-02 UTC
+
+The standalone runner selects `release-candidate-v1.0.0-rc.5.json`, matching the signing verifier. A fresh independent macOS/Node 22.17.1 run authenticated original source `286f2bbb1bfff28726378098d9883058f19841e9` and signer `a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94`, acquired trust roots separately and checked all original signed subjects and provenance. Actual cryptographic probes refused changed bytes, the wrong signer and the wrong workflow before installation.
+
+The same unchanged marked guide recipes then installed original rc.5, checked exact installed discovery and first use, refused an unconfigured root, repeated installation and first use, preserved the project digest, closed each process and removed the command and dependency entry. The [sanitized candidate-specific receipt](install-guide-v1.0.0-rc.5-signed.json) binds the original artifact and guide digests to these observations. The historical rc.3 download/authentication commands are not exercised as rc.5 acquisition; no cross-version upgrade, named-client support, security approval or registry publication is inferred. Full local gate and exact-source CI for the selector change are pending.
+
+Sources reread for this handoff: [pnpm add](https://pnpm.io/cli/add) lists local tarballs as an installation source; [pnpm exec](https://pnpm.io/cli/exec) says “`node_modules/.bin` is added to the `PATH`”; [pnpm remove](https://pnpm.io/cli/remove) says “Removes packages from `node_modules` and from the project’s `package.json`.”
