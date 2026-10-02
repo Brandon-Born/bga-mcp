@@ -11,6 +11,14 @@ import { waitForProcessExit } from '../../tests/helpers/scenario.js';
 const installPlaceholder = '/absolute/path/to/bga-mcp-install';
 const artifactPlaceholder = '/absolute/path/to/verified/bga-mcp-1.0.0-rc.1.tgz';
 
+export function verifyInstalledVersion(output: string, packageVersion: string): void {
+  assert.equal(
+    output.trim(),
+    packageVersion,
+    'Public command version differs from installed package',
+  );
+}
+
 export async function digestDirectory(directory: string): Promise<string> {
   const hash = createHash('sha256');
   const walk = async (current: string): Promise<void> => {
@@ -78,7 +86,11 @@ export async function exerciseInstallGuide(artifact: string, repository: string)
     await rm(resolve(project, 'expected.json'), { force: true });
     const before = await digestDirectory(project);
     await command('install');
-    assert.match(await command('version'), /1\.0\.0-rc\.1/u);
+    const installedPackage = JSON.parse(
+      await readFile(resolve(installation, 'node_modules/bga-mcp/package.json'), 'utf8'),
+    ) as { name: string; version: string };
+    assert.equal(installedPackage.name, 'bga-mcp');
+    verifyInstalledVersion(await command('version'), installedPackage.version);
     const platform = process.platform === 'win32' ? 'windows' : 'posix';
     const recipe = JSON.parse(block(`${platform}-client`, 'json')) as {
       command: string;
@@ -144,6 +156,7 @@ export async function exerciseInstallGuide(artifact: string, repository: string)
     assert.equal(metadata.dependencies?.['bga-mcp'], undefined);
     return {
       schemaVersion: 1,
+      packageVersion: installedPackage.version,
       guideDigest: `sha256:${createHash('sha256').update(guide).digest('hex')}`,
       artifactDigest: `sha256:${createHash('sha256')
         .update(await readFile(artifact))

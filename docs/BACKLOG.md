@@ -1674,6 +1674,16 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Decision and implementation, 2026-10-01:** [Source-scope decision](verification/PROJECT_SOURCE_SCOPE.md) records the official production boundary: retain all source under `modules/` and independently retain documented root PHP/client forms; inventory other local source but report its execution scope as unsupported instead of reading it into contracts. No Git ignore interpretation or folder-name exclusion is introduced. The file reference explicitly says additional source outside those locations is not published in production; Studio-only execution remains unknown. Existing root selection is the explicit caller control. No new configuration, public schema, export or privilege is added. Original fixtures and installed-command scenarios cover copies, disabled samples, generators, ignored runtime modules, legacy/hybrid retention, budget separation and separately identified canonical roots. The full local gate passes (617 tests, 188 required scenarios). Real-client calls on the unchanged mixed root remove backup-generated contracts and retain one explicit scope finding for its 16 outside sources; tracked and separately selected production source sets are identified independently. Exact-source [CI 36932134751](https://github.com/Brandon-Born/bga-mcp/actions/runs/36932134751) passed all six Ubuntu/macOS/Windows Node 22/24 jobs at `02257ed9291a208be00edfc4b9eb0db9de651477`, each with 617 passing tests and 188 passing required scenarios, completing this bounded verification.
 
+### BGA-430 — Compare installation smoke with the installed candidate version
+
+- **Status:** implemented
+- **Priority:** P1
+- **Depends on:** BGA-400, BGA-401, BGA-424
+- **Finding, 2026-10-01:** Preparing the replacement candidate `1.0.0-rc.2` for BGA-424 fails `E2E-INSTALL-GUIDE`: the public command correctly prints `1.0.0-rc.2`, but the runner hardcodes a regular expression for `1.0.0-rc.1`. This is a smoke-runner defect, not a broken installation.
+- **Deliverable and acceptance:** Compare the public command's complete trimmed version output with the installed `bga-mcp` package identity. Accept both original and replacement candidate versions, refuse stale or decorated output, and preserve installation, root refusal, immutable project, repeat installation, and removal assertions. The historical rc.1 candidate remains immutable.
+- **Verification:** `E2E-INSTALL-GUIDE` must pass against the newly packed candidate; exact-version controls reject stale and substring-only matches. The changed runner digest requires a fresh native Codex smoke receipt under BGA-401 before the full gate and exact-source CI can verify this item. No public MCP contract or BGA framework behavior changes.
+- **Coordination:** BGA-403/BGA-404 retain replacement-candidate production/signing, and BGA-411 retains current public documentation. BGA-424 continues only with the explicitly identified evaluated artifact.
+
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
