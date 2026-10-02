@@ -98,3 +98,16 @@ production and independent original-byte consumer checks. Signing, candidate-spe
 client/usefulness/public evidence and security approval remain subsequent gates.
 No rc.4 candidate is claimed yet; the verified rc.3 install guide and historical
 receipts continue to identify their original bytes. No package is published.
+
+### Preparation CI and framework admission
+
+[Preparation CI 36976614262](rc4-preparation-ci.json) at
+`c2d8d9d6411011a8589281556be659386ccba50a` completed successfully in all six
+Ubuntu/macOS/Windows Node 22/24 jobs, each with 674 tests and 209 scenarios.
+Each sealed receipt identifies a clean checkout. All eight unchanged, previously
+read source decisions were explicitly re-admitted against that post-observation
+evidence; the actual framework release guard passes for the new implementation.
+The following handoff commit retains those admissions so a distinct clean tag
+can pass the producer guard. Actual candidate production and consumer verification
+remain pending. The earlier signed candidates and their historical receipts are
+unchanged.

@@ -1369,6 +1369,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Replacement preparation, 2026-10-02 UTC:** Package, runtime metadata and capability manifest are aligned at `1.0.0-rc.4` to include BGA-411/BGA-406 documentation and BGA-432 conservative initial-state handling. The existing public contract and release selection remain unchanged. The version change invalidates prior framework implementation admissions; fresh exact-source CI and explicit re-admission are required before a new clean tag can enter the non-publishing producer. Original rc.1/rc.2/rc.3 packets, signatures and historical receipts remain immutable. No rc.4 artifact, signature, current consumer result or publication is claimed by this preparation.
 
+- **Replacement preparation evidence, 2026-10-02 UTC:** [rc.4 preparation CI](verification/rc4-preparation-ci.json) passes all six jobs at `c2d8d9d`, with 674 tests / 209 scenarios. The eight unchanged previously read source decisions were explicitly re-admitted using that sealed clean evidence; the actual framework release guard passes. The ledger handoff still precedes the distinct tag, immutable producer and original-byte consumer result. No candidate evidence silently transfers from rc.3.
+
 ### BGA-404 — Sign and attest release artifacts
 
 - **Status:** verified

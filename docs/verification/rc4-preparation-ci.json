@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-403",
+  "recordedAt": "2026-10-02T07:12:52.963Z",
+  "sourceCommit": "c2d8d9d6411011a8589281556be659386ccba50a",
+  "packageVersion": "1.0.0-rc.4",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36976614262",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:489f9356cd23e4bdd4e3cc31e0d37026cb785f8317e83ddedafc64a23c43aaa9",
+      "packageDigest": "sha256:a422c57697bd09aca666f6255ba8513a26f6b8f9ad42fd5b164dd04d0550db72",
+      "generatedAt": "2026-10-02T07:07:43.846Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:1b985699fe9999075fc313448a632a923de80768bb199cc3bc8faa1d51996b6c",
+      "packageDigest": "sha256:a422c57697bd09aca666f6255ba8513a26f6b8f9ad42fd5b164dd04d0550db72",
+      "generatedAt": "2026-10-02T07:07:56.703Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:3899e77cb75d6d30e1b74d88f2b9cebe244fc4971ba4644b07fb678bb5fe2f03",
+      "packageDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+      "generatedAt": "2026-10-02T07:06:28.616Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:01b056b78aa4a3f95aff77bba873db41b4534361dde7ac8d868d6a72ee21a2a0",
+      "packageDigest": "sha256:662c23199cdfd62365b1e94c6ec28bb61374e9d11eafd606f1f29ba1ec6ad200",
+      "generatedAt": "2026-10-02T07:07:33.782Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:e8d4980f42af91328049ccc713b19d8f28d0a064bb1518d1838bf8091b9cd88c",
+      "packageDigest": "sha256:375454cb1d12cdaf29a9e577064e1c98a0f6eebd47cfdf494b9030edae0fec57",
+      "generatedAt": "2026-10-02T07:10:44.782Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:e080b7d11b9572d85df49c0651c866a5d21bb54be17546151083da27ca19b05f",
+      "packageDigest": "sha256:375454cb1d12cdaf29a9e577064e1c98a0f6eebd47cfdf494b9030edae0fec57",
+      "generatedAt": "2026-10-02T07:09:21.868Z",
+      "testsPassed": 674,
+      "scenariosPassed": 209
+    }
+  ],
+  "frameworkBaseline": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "implementationDigest": "sha256:1ef08fefbd381a12322da0d565218e8dfc81ec861f99e146cd4efb48e6941aad",
+    "evidenceDigest": "sha256:01b056b78aa4a3f95aff77bba873db41b4534361dde7ac8d868d6a72ee21a2a0",
+    "evidenceCommit": "c2d8d9d6411011a8589281556be659386ccba50a",
+    "releaseGuard": "passed"
+  },
+  "scope": "Preparation CI and re-admission for unchanged previously read documentation decisions after version metadata change. This does not identify a produced rc.4 candidate, signature, consumer verification, security approval or publication."
+}
