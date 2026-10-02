@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-411",
+  "recordedAt": "2026-10-02T11:51:52.776Z",
+  "status": "verified",
+  "candidateTag": "v1.0.0-rc.5",
+  "candidateCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+  "signerCommit": "a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94",
+  "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+  "rebuilt": false,
+  "registryPublished": false,
+  "signaturePrerequisite": {
+    "resultDigest": "sha256:a57c8a8f1d00ad7785c762ce02fcece2a935124033b7fa046a93ebb4e274d1f6",
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.5",
+    "candidateCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "originalArtifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+    "signerCommit": "a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false
+  },
+  "runnerSourceCommit": "ed02a9583fe51a3eeee6a90b3392d259b6abc284",
+  "runnerSourceClean": true,
+  "runnerDigest": "sha256:d68060166610525fd461c054491e88964c6c6a55325a6663f83d1fda3279c6b5",
+  "helperDigests": {
+    "scripts/lib/documentation.ts": "sha256:4b8863d05b7e1e632e929ac048377dba189ce60a7701ff3289255b847ab1a14a",
+    "scripts/lib/install-guide.ts": "sha256:dcbda4c10b4548ac1f5751e058dfea57ca95cb44048c45fd568602e52a53afd7",
+    "tests/helpers/mcp.ts": "sha256:cc0ec3d31dd94cc09cedbab64fcc71de8744e6002193d08151f575eff6615100",
+    "tests/helpers/process.ts": "sha256:5a6c82ba644365522e28f7926646d8e46299b2226a2934878c25b6d76ced9fd3",
+    "tests/helpers/scenario.ts": "sha256:c2656d665312391193f164009434103b1f8b508bb785947c7bb0e5aa4770855c"
+  },
+  "platform": "darwin",
+  "node": "v22.17.1",
+  "originalPackedGuides": {
+    "README.md": "sha256:eeeb67d522fb3e0c2107d92460ca2c79018891a68186639b09b2de25934063ce",
+    "AGENTS.md": "sha256:15b7d84f859fb1008bfa434fc7aa91ee0ad8d41c35ba8e890c7efa0827e188f2",
+    "CONTRIBUTING.md": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+    "SECURITY.md": "sha256:30252562af68169ebeb55cc1f2f8d05dd84f7cbf9e467c6be46a1ea4757c31ab",
+    "docs/INSTALL.md": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+    "docs/VERSIONING.md": "sha256:fcbcab8f6a678afa4021281526966d7c3747b88d6b899176e76cac0d6be6d1e0"
+  },
+  "originalPackedGuidesByteIdentical": true,
+  "localMarkdownAndHelpPaths": "passed",
+  "immutableRepositoryURLForms": "passed; remote URL availability not exercised",
+  "inventoryDocuments": ["README.md", "AGENTS.md", "docs/INSTALL.md"],
+  "profiles": {
+    "public": {
+      "tools": [
+        "inspect_project",
+        "validate_state_machine",
+        "validate_action_contracts",
+        "validate_notifications",
+        "audit_database_usage",
+        "validate_project",
+        "run_pre_release_audit"
+      ],
+      "templates": [],
+      "resources": ["bga://project/summary", "bga://project/states", "bga://project/diagnostics"],
+      "prompts": []
+    },
+    "development": {
+      "tools": [
+        "check_setup",
+        "inspect_project",
+        "validate_state_machine",
+        "validate_action_contracts",
+        "validate_notifications",
+        "audit_database_usage",
+        "validate_project",
+        "search_bga_docs",
+        "read_studio_logs",
+        "run_pre_release_audit"
+      ],
+      "templates": ["bga://docs/{topic}"],
+      "resources": [
+        "bga://project/summary",
+        "bga://project/states",
+        "bga://project/diagnostics",
+        "bga://framework/version",
+        "bga://docs/file-reference",
+        "bga://docs/game-logic",
+        "bga://docs/states",
+        "bga://docs/client",
+        "bga://docs/migration",
+        "bga://docs/studio",
+        "bga://docs/cookbook"
+      ],
+      "prompts": []
+    }
+  },
+  "developmentDefaultNetworkRefusal": "policy.network.disabled",
+  "helpDigests": {
+    "public": "sha256:7f0baef5cbf5908fb2d0a5c86da50605ce5d2cd316e74f47827ee948795e3b3b",
+    "development": "sha256:d554003bc3a994eb6fbca96cc92e5ee5924f0db63303becb1bd878a83ffcde99"
+  },
+  "negativeControls": [
+    "missing installed guide rejects README and help paths",
+    "refused installed inventory mutation: Tools: 7; -> Tools: 99;",
+    "refused installed inventory mutation: resource templates: 1; -> resource templates: 0;",
+    "refused installed inventory mutation: concrete resources: 11; -> concrete resources: 5;",
+    "refused installed inventory mutation: prompts: 0. -> prompts: 1.",
+    "refused installed inventory mutation: implemented 11 -> implemented 0",
+    "refused installed inventory mutation: experimental 1 -> experimental 0",
+    "refused installed inventory mutation: Network-backed entries: 11 -> Network-backed entries: 0",
+    "refused installed inventory mutation: inspect_project -> imaginary_tool",
+    "refused installed inventory mutation: TB-DOCS-NETWORK -> TB-LOCAL-FILESYSTEM",
+    "refused installed inventory mutation: | implemented | -> | verified |",
+    "missing reference definition path refused",
+    "mutable repository-only URL refused"
+  ],
+  "modifiedInstalledCopiesRestored": true,
+  "projectUnchanged": true,
+  "serverExited": true,
+  "removal": "passed",
+  "installGuide": {
+    "schemaVersion": 1,
+    "packageVersion": "1.0.0-rc.5",
+    "guideDigest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+    "platform": "darwin",
+    "node": "v22.17.1",
+    "install": "passed",
+    "discovery": "matched installed inventory",
+    "firstUse": "passed",
+    "unconfiguredRoot": "refused",
+    "repeatInstall": "passed",
+    "crossVersionUpgrade": "not evaluated: repeated same candidate",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed"
+  },
+  "scope": "original signed rc.5 documentation/discovery; marked install/removal recipes repeated, historical rc.3 acquisition commands not re-labelled; no cross-version upgrade, Studio, productivity, security approval or publication claim",
+  "usefulnessEvidence": "agent-evaluation-v1.0.0-rc.5.json; packed README retains explicitly historical rc.3 frozen-task example and its limits",
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37002702895",
+    "commit": "ed02a9583fe51a3eeee6a90b3392d259b6abc284",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:dc72623a45d172c0cea59826df4aa4b136917a728b888d805771e12763f7dd6d",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:47:36.076Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:196235a71bb2d9ad1c47db64b90838f56bf402bb503b8d8908dd09831217251c",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T11:49:16.268Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:d16069d732e5a0463c814ec0033f31d9732c395efffc5d52216c88e3cb139eb4",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:47:33.673Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:69e358d014987a09ae9ad79f249786ed7fc75cc1677ed95f59ba16acee198116",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T11:48:09.947Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:646a19cc3d560899988c1f0acb0dc1d21a9040534670e395c40e239de1758470",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:50:24.582Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:cd05635ffaf1d291bf6cbe0f864019919679cba4779f49f1718225dc1db31cfd",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T11:50:30.307Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "orchestrationScope": "temporary consumer runner outside the checkout; committed helpers and E2E scenarios are recorded separately",
+  "localGate": {
+    "command": "corepack pnpm check",
+    "testsPassed": 674,
+    "scenariosPassed": 209,
+    "conformance": "passed for public 2025-11-25 stdio",
+    "scope": "resulting documentation handoff; helper source identity recorded separately"
+  },
+  "frameworkAdmission": {
+    "sourceCount": 8,
+    "implementationDigest": "sha256:aeea8026edaba27d007b980602c00399dd915ba91e92f37fb04e36de61c1c0ed",
+    "evidenceCommit": "90565d57ea4cf9bbb25f35d79ea9727cc197a24d",
+    "evidenceDigest": "sha256:3eacdd964dd712390f83440b58c22b6c11433df50e080c666d6433893bc7465e",
+    "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36999384205",
+    "releaseGuard": "passed",
+    "scope": "existing admission unchanged; no implementation, fixtures, configuration or packed guide changes"
+  }
+}
