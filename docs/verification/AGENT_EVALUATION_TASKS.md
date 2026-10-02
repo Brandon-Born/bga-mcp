@@ -54,6 +54,14 @@ starting revision, expected result and MCP calls before repairing it. Do not
 insert a defect for the evaluation. If no genuine failure can be established,
 record that the diagnosis task remains unmet rather than manufacture one.
 
+The first frozen assertion uses game revision
+`532ff8a5e00aa7c59c83040c2a6796452e60a3d5`: a two-player persisted snapshot
+claiming `drafting`, with draft index zero and no revealed cards, must be rejected.
+Printed p. 8 requires the already revealed offer to exist before drafting; the
+round's declared constructor validates persisted representations. This assertion
+does not alter production code. The same agent authored the foundation, so this
+is not a blind or independent-author diagnosis.
+
 The oracle is round/card conservation under printed p. 8 and the documented
 persistence contract. Record whether MCP diagnostics locate the cause, merely
 provide structural context, or leave this game-specific defect undetected.
