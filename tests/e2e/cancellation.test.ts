@@ -153,7 +153,14 @@ function matrixCleanupObserved(events: readonly FilesystemMatrixEvent[], target:
     events.filter((event) => event.event === 'work:start').length ===
       events.filter((event) => event.event === 'work:end').length &&
     events.filter((event) => event.event === 'cleanup:start').length ===
-      events.filter((event) => event.event === 'cleanup:end').length
+      events.filter((event) => event.event === 'cleanup:end').length &&
+    // Iterator return releases the native directory, but the policy's finally
+    // still awaits close(). Observe that terminal cleanup too; an intermediate
+    // balanced transcript is not proof that no further cleanup will start.
+    events.filter((event) => event.event === 'directory:acquired').length ===
+      events.filter(
+        (event) => event.event === 'cleanup:end' && event.operation === 'walk:dir-close',
+      ).length
   );
 }
 
@@ -599,6 +606,17 @@ describe('packaged operation deadlines', () => {
     async ({ target, occurrence, completionMs }) => {
       const result = await filesystemMatrixProbe(target, occurrence, completionMs);
       expectMatrixDeadlineOrder(result, target, completionMs);
+      if (target === 'walk:dir-next') {
+        const events = matrixEvents(result.afterWait);
+        const returned = events.findIndex(
+          (event) => event.event === 'cleanup:end' && event.operation === 'walk:dir-return',
+        );
+        expect(returned).toBeGreaterThan(0);
+        // Reproduce the intermediate snapshot from macOS/Node 22 CI: released
+        // resources and balanced starts/ends must still wait for final close.
+        expect(matrixCleanupObserved(events.slice(0, returned + 1), target)).toBe(false);
+        expect(matrixCleanupObserved(events, target)).toBe(true);
+      }
     },
     180_000,
   );

@@ -144,6 +144,26 @@ attribution remains unproven, prior failed runs stay retained, and BGA-326
 remains implemented for its still-uncovered client-root, packaged-config and
 Studio-file paths. Original candidate/harness records remain historical.
 
+## Terminal directory cleanup observation, 2026-10-02 UTC
+
+[CI 37055009310](https://github.com/Brandon-Born/bga-mcp/actions/runs/37055009310)
+on `6bf9487` passed five jobs. macOS Node 22 failed the 600 ms
+`walk:dir-next` quiet-transcript assertion: the completion snapshot ended at
+`walk:dir-return`, and the following snapshot added the awaited
+`walk:dir-close` cleanup. The observer had accepted zero resources and balanced
+starts/ends between those two cleanup operations. This is an observation race;
+the retained log shows the final close, with no new project work.
+
+Completion now also requires a final close for each acquired directory. Both
+installed directory-next cases reject the actual intermediate return-only
+snapshot before accepting the complete transcript. The five-second observation
+limit, production cleanup ceiling, zero-resource and no-new-work assertions,
+quiet transcript, same-client call and installed mutation controls remain.
+The [cache lifecycle receipt](bga208-cache-lifecycle.json) retains the failed
+source, all six job outcomes and the failed log identity. The corrected harness passes all 53 cancellation tests and the fresh complete
+`pnpm check` at 768 tests / 234 required scenarios. Exact-source CI remains
+pending; prior candidate and historical matrix identities are unchanged.
+
 ## Sources
 
 [Node.js FileHandle.close](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandleclose)

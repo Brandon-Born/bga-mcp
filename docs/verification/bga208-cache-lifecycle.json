@@ -405,5 +405,81 @@
     },
     "gameplayVerified": false,
     "usefulnessEvaluationRepeated": false
+  },
+  "failedSourceCi": {
+    "id": 37055009310,
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37055009310",
+    "commit": "6bf9487e84df2c03a7bdab020526270b555a6829",
+    "status": "failure",
+    "jobs": [
+      {
+        "id": 110997447351,
+        "name": "windows-latest / Node 22",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447636,
+        "name": "macos-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447642,
+        "name": "windows-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447664,
+        "name": "ubuntu-latest / Node 22",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447750,
+        "name": "ubuntu-latest / Node 24",
+        "conclusion": "success"
+      },
+      {
+        "id": 110997447790,
+        "name": "macos-latest / Node 22",
+        "conclusion": "failure"
+      }
+    ],
+    "failure": {
+      "test": "E2E-FILESYSTEM-CANCELLATION walk:dir-next occurrence 1 with 600 ms completion",
+      "platform": "macos-latest / Node 22",
+      "testsPassed": 767,
+      "testsFailed": 1,
+      "log": "bga-cache-ci-macos22-failure.log",
+      "logDigest": "sha256:c768ed1dc1f6eaa4bd349b7735c94f6b8ad204a14180738d1be50ced84514d5a",
+      "observation": "Snapshot ended at iterator-return cleanup; final directory close appeared in the quiet-check snapshot",
+      "correction": "Require final walk:dir-close cleanup for each directory acquisition before declaring observed completion; both directory-next cases reject an intermediate return-only snapshot. Resource, work-start, deadline, unchanged-transcript and mutation controls remain."
+    }
+  },
+  "terminalCleanupFocused": {
+    "status": "passed",
+    "tests": 53,
+    "suites": 1,
+    "log": "bga-cache-ci-cancellation-fix.log"
+  },
+  "terminalCleanupFullGate": {
+    "status": "passed",
+    "sourceBase": "6bf9487e84df2c03a7bdab020526270b555a6829",
+    "sourceClean": false,
+    "generatedAt": "2026-10-02T19:47:49.484Z",
+    "testsPassed": 768,
+    "testsFailed": 0,
+    "requiredScenarios": 234,
+    "scenariosPassed": 234,
+    "claims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "artifactDigest": "sha256:a4e8482fcb01f50b95d4dd7f79e75ac9e11a6237856a776c950b5926fe7f46e2",
+    "evidenceDigest": "sha256:01d90d7da91ddbdf8cdf67f5555ae899a5e2aa612dcfd062d4bb8338a7bbcbf7",
+    "log": "bga-cache-terminal-cleanup-check.log",
+    "coverage": {
+      "statements": 91.42,
+      "branches": 81.56,
+      "functions": 92.44,
+      "lines": 91.51
+    }
   }
 }
