@@ -2,16 +2,22 @@ import { ResourceTemplate, type McpServer } from '@modelcontextprotocol/server';
 
 import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, retrieveDocumentation } from '../docs/retrieve.js';
-import { DOCUMENTATION_TOPICS, topicFor, topicNames } from '../docs/topics.js';
+import {
+  DOCUMENTATION_TOPICS,
+  topicFor,
+  topicNames,
+  documentationPassageQuery,
+} from '../docs/topics.js';
 import { readFrameworkVersions } from '../docs/versions.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
+import { redactText } from '../redaction.js';
 import { publishJson, publishResourceFailure } from '../publish.js';
 
 export const DOCS_TOPIC_TEMPLATE = 'bga://docs/{topic}';
 export const FRAMEWORK_VERSION_URI = 'bga://framework/version';
 
-const MAX_EXCERPT_CHARS = 2_000;
+const MAX_EXCERPT_CHARS = 1_200;
 
 async function readJson(
   policy: PolicyBoundary,
@@ -76,7 +82,11 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
     const result = await retrieveDocumentation(
       owning,
       cache,
-      { url: page.url, query: entry.summary, maxExcerptChars: MAX_EXCERPT_CHARS },
+      {
+        url: page.url,
+        query: documentationPassageQuery(entry, null),
+        maxExcerptChars: MAX_EXCERPT_CHARS,
+      },
       () =>
         Promise.resolve({
           url: page.url,
@@ -87,7 +97,17 @@ export function registerDocumentationResources(server: McpServer, policy: Policy
       undefined,
       signal,
     );
-    return { schemaVersion: 1, topic: entry.topic, summary: entry.summary, ...result };
+    return {
+      schemaVersion: 1,
+      topic: entry.topic,
+      summary: entry.summary,
+      ...result,
+      // Redaction may expand a token; bound the excerpt after that expansion.
+      excerpt: redactText(result.excerpt, {
+        ...policy.redactionOptions,
+        paths: 'known-locations',
+      }).slice(0, MAX_EXCERPT_CHARS),
+    };
   };
 
   server.registerResource(

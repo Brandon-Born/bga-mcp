@@ -1368,6 +1368,24 @@
       "case": "A raw-prefix mutation fails catalog, policy, provenance, search, resource and cache assertions",
       "boundary": "packaged",
       "scenarios": ["E2E-DOC-AUTHORITY-MUTATION"]
+    },
+    {
+      "item": "BGA-211",
+      "case": "Minimal reviewed fragments cover all original questions and fixed topics without lowering thresholds",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-RELEVANCE-CAPTURES"]
+    },
+    {
+      "item": "BGA-211",
+      "case": "An installed live client cannot reuse another question selection at the same URL",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-QUERY-CACHE"]
+    },
+    {
+      "item": "BGA-211",
+      "case": "The installed relevance oracle rejects a seeded navigation-selection regression",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-RELEVANCE-MUTATION"]
     }
   ]
 }

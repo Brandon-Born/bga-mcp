@@ -113,7 +113,8 @@
         "src/tools/validate-action-contracts.ts",
         "src/tools/validate-notifications.ts",
         "src/tools/validate-project.ts",
-        "src/tools/validate-state-machine.ts"
+        "src/tools/validate-state-machine.ts",
+        "docs/verification/DOCUMENTATION_RELEVANCE.md"
       ]
     },
     {
@@ -228,7 +229,19 @@
         "tests/unit/uncertainty.test.ts",
         "tsconfig.build.json",
         "tsconfig.json",
-        "vitest.config.ts"
+        "vitest.config.ts",
+        "tests/e2e/docs-relevance.test.ts",
+        "tests/unit/doc-relevance.test.ts",
+        "scripts/lib/documentation-evaluation.ts",
+        "scripts/lib/install-documentation-artifact.ts",
+        "tests/fixtures/docs/relevance/expectations.json",
+        "tests/fixtures/docs/relevance/cookbook.html",
+        "tests/fixtures/docs/relevance/client.html",
+        "tests/fixtures/docs/relevance/studio.html",
+        "tests/fixtures/docs/relevance/game-logic.html",
+        "tests/fixtures/docs/relevance/states.html",
+        "tests/fixtures/docs/relevance/migration.html",
+        "tests/fixtures/docs/relevance/file-reference.html"
       ]
     },
     {
@@ -464,7 +477,8 @@
         "tests/unit/doc-evaluation.test.ts",
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
-        "tests/unit/version-policy.test.ts"
+        "tests/unit/version-policy.test.ts",
+        "docs/verification/bga211-source-evaluation.json"
       ]
     }
   ],

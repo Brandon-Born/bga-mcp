@@ -202,6 +202,18 @@ the unsupported decision together when considering this wish; the current
 baseline maps eight catalog/foundational pages, not the entire wiki. No new
 retrieval or supported-form claim follows from this review.
 
+**BGA-211 implementation, 2026-10-02.** The installed development MCP now
+separates cached excerpt selections by question, budget and final source; uses
+reviewed paragraph/section hints; excludes navigation; and scores failed lookups
+as failures even for no-answer cases. A deliberate installed live run passes all
+nine unchanged questions and seven topics. Minimal attributed captures and an
+installed negative control make the development loop offline. The original
+historical five-question/three-topic replay remains unproven: the real old
+package has a different failure set against current minimal captures. The next
+bounded step is a reviewed historical source/ranking replay, retaining actual
+source revisions and refusing invented evidence. Full source gates and separate
+release admission still apply. See [relevance scope](verification/DOCUMENTATION_RELEVANCE.md).
+
 ## Capture wishes during real work
 
 Whenever I need a workaround during BGA-424, add or update an entry here with:
@@ -364,3 +376,19 @@ before I/O, pending completion, cleanup-ceiling and minimum-output-budget cases.
 **Observed CI diagnostic gap, 2026-10-02.** The post-BGA-433 metadata run `37025759118` failed Windows/Node 24's resource-root scenario because Node reported FileHandle garbage-collection cleanup. This run is not passing evidence. The current policy closes project/session descriptors in finally blocks, but that alone does not explain the observed warning. BGA-326's bounded follow-up is descriptor creation/explicit-close tracing in the installed resource scenario, with warning/leftover-handle controls and sanitized evidence. Do not suppress the warning or use an unchanged replay as proof of repair. This is lifecycle diagnosis, not a new game-inspection feature.
 
 **Observed documentation authority gap, 2026-10-02.** During BGA-423 inspection, both the catalog and search independently classified pages by a raw URL prefix, and the policy returned the original source after redirects. An agent could therefore receive a neighbour's content labelled with Cookbook authority and retention, or a redirect destination with its starting source. Desired help is one final-page decision shared by requests, citations and caches. BGA-423 verifies that bounded correction with original installed network fixtures, raw-prefix refusal controls and [all six source-CI jobs](verification/bga423-source-ci.json) on `7a84f79` at 752 tests / 223 required scenarios. BGA-211 relevance and the remaining lifecycle scope stay open. Alias routing remains unreviewed rather than inferred.
+
+## Avoid a full documentation fetch before a matching cache lookup
+
+**Observed need, BGA-211, 2026-10-02.** Search and fixed-topic resources fetch a
+page through policy before calling excerpt retrieval. A warm `cached: true`
+selection therefore still incurs the upstream request. The corrected cache
+prevents another question's excerpt from leaking into the answer; it does not
+currently reduce those page requests or make an unreachable upstream available
+through MCP readers.
+
+**Wish and next bounded step.** Under BGA-203/BGA-211's existing cache-lifecycle
+scope, design an installed test for warm request counts, conditional refresh,
+expiry and unavailable-upstream fallback without guessing redirect destinations
+or carrying an old page's authority to a new page. Keep final-source policy,
+explicit dates, per-source retention and no full-page storage. This is a new
+observed gap, not a claim that this behavior is already implemented.

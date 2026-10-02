@@ -318,7 +318,13 @@
           "E2E-DOC-AUTHORITY-RESOURCES",
           "E2E-DOC-AUTHORITY-CACHE",
           "E2E-DOC-AUTHORITY-REDIRECTS",
-          "E2E-DOC-AUTHORITY-MUTATION"
+          "E2E-DOC-AUTHORITY-MUTATION",
+          "UNIT-DOC-QUERY-CACHE",
+          "UNIT-DOC-RELEVANCE-ORACLE",
+          "E2E-DOC-RELEVANCE-CAPTURES",
+          "E2E-DOC-QUERY-CACHE",
+          "E2E-DOC-RELEVANCE-MUTATION",
+          "E2E-DOC-EXCERPT-BUDGET"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
@@ -491,7 +497,13 @@
           "E2E-DOC-AUTHORITY-RESOURCES",
           "E2E-DOC-AUTHORITY-CACHE",
           "E2E-DOC-AUTHORITY-REDIRECTS",
-          "E2E-DOC-AUTHORITY-MUTATION"
+          "E2E-DOC-AUTHORITY-MUTATION",
+          "UNIT-DOC-QUERY-CACHE",
+          "UNIT-DOC-RELEVANCE-ORACLE",
+          "E2E-DOC-RELEVANCE-CAPTURES",
+          "E2E-DOC-QUERY-CACHE",
+          "E2E-DOC-RELEVANCE-MUTATION",
+          "E2E-DOC-EXCERPT-BUDGET"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",

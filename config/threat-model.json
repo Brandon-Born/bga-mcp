@@ -986,7 +986,12 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-206",
-      "scenarios": ["UNIT-DOC-SNAPSHOT-DATE", "UNIT-DOC-DRIFT"]
+      "scenarios": [
+        "UNIT-DOC-SNAPSHOT-DATE",
+        "UNIT-DOC-DRIFT",
+        "UNIT-DOC-QUERY-CACHE",
+        "E2E-DOC-QUERY-CACHE"
+      ]
     },
     {
       "id": "TM-EVIDENCE-COVERAGE",

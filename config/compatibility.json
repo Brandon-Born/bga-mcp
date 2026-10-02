@@ -302,7 +302,7 @@
       "dimension": "environment",
       "value": "local",
       "support": "supported",
-      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate.",
+      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate. BGA-211 adds installed offline replay of minimal reviewed topic fragments, question-specific excerpt caching and refusal-aware scoring. This is development-profile relevance evidence, not complete historical replay, live source freshness, DNS/TLS or public documentation admission.",
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-DOCS-ADVERTISED",
@@ -327,7 +327,13 @@
         "E2E-DOC-AUTHORITY-RESOURCES",
         "E2E-DOC-AUTHORITY-CACHE",
         "E2E-DOC-AUTHORITY-REDIRECTS",
-        "E2E-DOC-AUTHORITY-MUTATION"
+        "E2E-DOC-AUTHORITY-MUTATION",
+        "UNIT-DOC-QUERY-CACHE",
+        "UNIT-DOC-RELEVANCE-ORACLE",
+        "E2E-DOC-RELEVANCE-CAPTURES",
+        "E2E-DOC-QUERY-CACHE",
+        "E2E-DOC-RELEVANCE-MUTATION",
+        "E2E-DOC-EXCERPT-BUDGET"
       ],
       "capabilities": [
         {
@@ -361,7 +367,13 @@
             "E2E-DOC-AUTHORITY-RESOURCES",
             "E2E-DOC-AUTHORITY-SEARCH",
             "E2E-DOCS-ADVERTISED",
-            "UNIT-DOC-AUTHORITY-PAGES"
+            "UNIT-DOC-AUTHORITY-PAGES",
+            "UNIT-DOC-QUERY-CACHE",
+            "UNIT-DOC-RELEVANCE-ORACLE",
+            "E2E-DOC-RELEVANCE-CAPTURES",
+            "E2E-DOC-QUERY-CACHE",
+            "E2E-DOC-RELEVANCE-MUTATION",
+            "E2E-DOC-EXCERPT-BUDGET"
           ]
         },
         {
@@ -390,7 +402,13 @@
             "E2E-DOC-AUTHORITY-REDIRECTS",
             "E2E-DOC-AUTHORITY-RESOURCES",
             "E2E-DOCS-TOPIC-LISTED",
-            "UNIT-DOC-AUTHORITY-PAGES"
+            "UNIT-DOC-AUTHORITY-PAGES",
+            "UNIT-DOC-QUERY-CACHE",
+            "UNIT-DOC-RELEVANCE-ORACLE",
+            "E2E-DOC-RELEVANCE-CAPTURES",
+            "E2E-DOC-QUERY-CACHE",
+            "E2E-DOC-RELEVANCE-MUTATION",
+            "E2E-DOC-EXCERPT-BUDGET"
           ]
         },
         {

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { DocumentationCache } from '../docs/cache.js';
 import { UNTRUSTED_NOTICE, provenanceOf, retrieveDocumentation } from '../docs/retrieve.js';
 import { readSearchResponse, searchParams } from '../docs/search.js';
-import { topicForQuery } from '../docs/topics.js';
+import { topicForQuery, documentationPassageQuery } from '../docs/topics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
@@ -253,10 +253,20 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
           // A matched topic knows the words that matter for its subject, which
           // the developer's question usually does not contain: "where does the
           // client logic live" never says "modules/js".
-          const topicMatch = sourceId === undefined ? topicForQuery(query, signal) : null;
-          // Filtering these to the distinctive keywords was tried on
-          // 2026-08-08 and measured worse, so all of them are used.
-          const excerptQuery = [query, ...(topicMatch?.keywords ?? [])].join(' ');
+          const instructionInsteadOfQuestion =
+            /\bignore (?:all |the |any )?previous instructions\b/iu.test(query) ||
+            /\b(?:list|read|show)\b.*\b(?:every|all)\b.*\bfiles?\b.*\b(?:this|my|local) (?:machine|computer)\b/iu.test(
+              query,
+            );
+          const topicMatch =
+            sourceId === undefined && !instructionInsteadOfQuestion
+              ? topicForQuery(query, signal)
+              : null;
+          // Narrow instruction-shaped local requests have no documentation answer.
+          // This is a heuristic for these shapes, not a prompt-injection detector.
+          // Still execute the source lookup below so an outage cannot masquerade
+          // as a successful empty answer.
+          const excerptQuery = documentationPassageQuery(topicMatch, query);
 
           const addPage = async (
             source: (typeof sources)[number],
@@ -300,7 +310,16 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
               undefined,
               signal,
             );
-            if (!mentionsQuery(retrieved.title, retrieved.excerpt, query)) {
+            const selectedReviewedPassage =
+              topicMatch !== null &&
+              new URL(page.url).pathname ===
+                new URL(topicMatch.path, source.canonicalUrl).pathname &&
+              mentionsQuery(retrieved.title, retrieved.excerpt, excerptQuery);
+            if (
+              instructionInsteadOfQuestion ||
+              (!selectedReviewedPassage &&
+                !mentionsQuery(retrieved.title, retrieved.excerpt, query))
+            ) {
               // A page that never mentions what was asked is noise, and
               // returning noise makes "the documentation cannot answer this"
               // impossible to say.
@@ -433,7 +452,18 @@ export function registerSearchBgaDocs(server: McpServer, policy: PolicyBoundary)
         return publishResult(
           policy,
           SEARCH_BGA_DOCS_TOOL,
-          SearchBgaDocsOutputSchema,
+          {
+            parse(value: unknown) {
+              const result = SearchBgaDocsOutputSchema.parse(value);
+              return {
+                ...result,
+                results: result.results.map((entry) => ({
+                  ...entry,
+                  excerpt: entry.excerpt.slice(0, MAX_EXCERPT_CHARS),
+                })),
+              };
+            },
+          },
           structuredContent,
           summarizeSearch,
         );

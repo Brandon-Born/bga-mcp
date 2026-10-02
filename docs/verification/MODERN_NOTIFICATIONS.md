@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-126, the correctness owner for the notification findings of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind": "run", "capabilities": 17, "scenarios": 223, "claims": 103, "tests": 752}
+{"kind": "run", "capabilities": 17, "scenarios": 229, "claims": 103, "tests": 760}
 ```
 
 ## What the installed package got wrong

@@ -1,6 +1,6 @@
 import type { DocumentationSource } from './catalog.js';
 import type { DocumentationCache, SourceAuthority } from './cache.js';
-import { excerptFor, htmlToText, titleOf } from './excerpt.js';
+import { excerptFor, htmlToText, titleOf, documentationPassageHtml } from './excerpt.js';
 import { cancellationCheckpoint } from '../deadline.js';
 
 /**
@@ -67,7 +67,14 @@ export async function retrieveDocumentation(
   signal?: AbortSignal,
 ): Promise<DocumentationResult> {
   cancellationCheckpoint(signal);
-  const cached = cache.read(request.url, source.retention.maxCacheDays, now);
+  // An excerpt answers one question under one budget, not every lookup of its URL.
+  const selection = JSON.stringify([
+    request.query,
+    request.maxExcerptChars,
+    source.id,
+    source.authority,
+  ]);
+  const cached = cache.readSelected(request.url, selection, source.retention.maxCacheDays, now);
   if (cached !== null && !cached.stale) {
     return toResult(source, cached, true);
   }
@@ -75,16 +82,19 @@ export async function retrieveDocumentation(
   try {
     const page = await fetchPage();
     cancellationCheckpoint(signal);
-    const text = htmlToText(page.body, signal);
-    const stored = cache.write({
-      url: page.url,
-      sourceId: source.id,
-      authority: source.authority,
-      retrievedAt: page.retrievedAt,
-      lastModified: page.lastModified,
-      title: titleOf(page.body, source.title, signal),
-      excerpt: excerptFor(text, request.query, request.maxExcerptChars, signal),
-    });
+    const text = htmlToText(documentationPassageHtml(page.body, request.query, signal), signal);
+    const stored = cache.writeSelected(
+      {
+        url: page.url,
+        sourceId: source.id,
+        authority: source.authority,
+        retrievedAt: page.retrievedAt,
+        lastModified: page.lastModified,
+        title: titleOf(page.body, source.title, signal),
+        excerpt: excerptFor(text, request.query, request.maxExcerptChars, signal),
+      },
+      selection,
+    );
     return toResult(source, { ...stored, ageDays: 0, stale: false }, false);
   } catch (error) {
     // A stale cache is a network fallback, not a way to turn a cancelled parse

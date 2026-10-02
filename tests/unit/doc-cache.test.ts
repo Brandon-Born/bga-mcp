@@ -158,6 +158,69 @@ describe('documentation retrieval', () => {
     lastModified: 'Mon, 27 Jul 2026 14:08:00 GMT',
   };
 
+  it('[UNIT-DOC-QUERY-CACHE] separates question, budget and source selections with bounded stale fallback', async () => {
+    const cache = new DocumentationCache({ maxEntries: 3, maxExcerptChars: 2000 });
+    const body =
+      '<title>Quasar Nebula</title><p>quasar navigation ' +
+      'A'.repeat(1000) +
+      '</p><p>context</p><p>nebula orbital ' +
+      'B'.repeat(1000) +
+      '</p>';
+    let fetches = 0;
+    const fetchPage = () => {
+      fetches += 1;
+      return Promise.resolve({ ...page, body });
+    };
+    const ask = (query: string, budget = 1200) =>
+      retrieveDocumentation(
+        source,
+        cache,
+        { url: page.url, query, maxExcerptChars: budget },
+        fetchPage,
+        NOW,
+      );
+    expect((await ask('quasar navigation')).excerpt).toContain('navigation');
+    expect((await ask('nebula orbital')).excerpt).toContain('orbital');
+    expect((await ask('nebula orbital')).cached).toBe(true);
+    expect(fetches).toBe(2);
+    expect((await ask('nebula orbital', 80)).excerpt.length).toBeLessThanOrEqual(80);
+    expect(fetches).toBe(3);
+    const late = new Date('2026-10-02T00:00:00Z');
+    const unavailable = () => Promise.reject(new Error('offline'));
+    const stale = await retrieveDocumentation(
+      source,
+      cache,
+      { url: page.url, query: 'nebula orbital', maxExcerptChars: 1200 },
+      unavailable,
+      late,
+    );
+    expect(stale).toMatchObject({ stale: true, cached: true });
+    expect(stale.excerpt).toContain('orbital');
+    await expect(
+      retrieveDocumentation(
+        source,
+        cache,
+        { url: page.url, query: 'different question', maxExcerptChars: 1200 },
+        unavailable,
+        late,
+      ),
+    ).rejects.toThrow('offline');
+    await expect(
+      retrieveDocumentation(
+        { ...source, id: 'community', authority: 'community' },
+        cache,
+        { url: page.url, query: 'nebula orbital', maxExcerptChars: 1200 },
+        unavailable,
+        late,
+      ),
+    ).rejects.toThrow('offline');
+    expect(cache.size).toBe(3);
+    await ask('different question');
+    expect(cache.size).toBe(3);
+    cache.forget(page.url);
+    expect(cache.size).toBe(0);
+  });
+
   it('[UNIT-DOC-PROVENANCE] labels every result with source, date, and untrusted trust', async () => {
     const cache = new DocumentationCache();
     const result = await retrieveDocumentation(
@@ -193,15 +256,18 @@ describe('documentation retrieval', () => {
 
   it('[UNIT-DOC-SNAPSHOT-DATE] serves a stale copy only when a refetch fails, and says so', async () => {
     const cache = new DocumentationCache();
-    cache.write({
-      url: page.url,
-      sourceId: 'wiki',
-      authority: 'official-maintained',
-      retrievedAt: '2026-06-01T11:00:00.000Z',
-      lastModified: null,
-      title: 'Studio',
-      excerpt: 'an old excerpt',
-    });
+    cache.writeSelected(
+      {
+        url: page.url,
+        sourceId: 'wiki',
+        authority: 'official-maintained',
+        retrievedAt: '2026-06-01T11:00:00.000Z',
+        lastModified: null,
+        title: 'Studio',
+        excerpt: 'an old excerpt',
+      },
+      JSON.stringify(['state classes', 500, source.id, source.authority]),
+    );
 
     const offline = await retrieveDocumentation(
       source,

@@ -1,106 +1,86 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-
-import { Client } from '@modelcontextprotocol/client';
-import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
-
 import {
-  scoreQuestion,
-  summarizeEvaluation,
-  type AnswerUnderTest,
-  type EvaluationQuestion,
-  type EvaluationThresholds,
-  type QuestionOutcome,
-} from '../src/docs/evaluation.js';
+  evaluateDocumentation,
+  type EvaluationSet,
+  type ReviewedExpectations,
+} from './lib/documentation-evaluation.js';
+import { installDocumentationArtifact } from './lib/install-documentation-artifact.js';
+import { connectStdio } from '../tests/helpers/mcp.js';
+import { waitForProcessExit } from '../tests/helpers/scenario.js';
+import { runCommand } from '../tests/helpers/process.js';
 
-const repositoryRoot = resolve(import.meta.dirname, '..');
-
-interface EvaluationSet {
-  readonly updatedAt: string;
-  readonly thresholds: EvaluationThresholds;
-  readonly questions: readonly EvaluationQuestion[];
-}
-
-interface SearchResult {
-  readonly results?: readonly {
-    readonly url?: string;
-    readonly provenance?: string;
-    readonly excerpt?: string;
-    readonly retrievedAt?: string;
-    readonly trust?: string;
-  }[];
-}
-
-/**
- * Runs the maintained question set against the live documentation.
- *
- * Deliberately not part of `pnpm check`. It needs the network and a third
- * party's wiki, so putting it in the commit gate would make every commit
- * depend on someone else's uptime and would send traffic nobody asked for.
- * It is run before a documentation release, and when the drift monitor
- * (BGA-206) reports a source has changed.
- */
+const root = resolve(import.meta.dirname, '..');
+/** Deliberate live evaluation; never part of the offline commit gate. */
 async function main(): Promise<void> {
-  const set = JSON.parse(
-    await readFile(resolve(repositoryRoot, 'config/doc-evaluation.json'), 'utf8'),
-  ) as EvaluationSet;
-
-  const transport = new StdioClientTransport({
-    command: process.execPath,
-    args: [resolve(repositoryRoot, 'dist/cli.js'), '--allow-network'],
-    stderr: 'pipe',
-  });
-  const client = new Client({ name: 'bga-mcp-doc-evaluation', version: '1.0.0' });
-  await client.connect(transport);
-
-  const outcomes: QuestionOutcome[] = [];
-  try {
-    for (const question of set.questions) {
-      const response = await client.callTool(
-        { name: 'search_bga_docs', arguments: { query: question.question, maxResults: 5 } },
-        { timeout: 60_000 },
-      );
-
-      // A refusal is not an answer; it is scored as one that did not arrive,
-      // so a capability that errors on everything cannot pass by returning
-      // nothing to questions that expect nothing.
-      const structured = (response.structuredContent ?? {}) as SearchResult;
-      const answers: AnswerUnderTest[] =
-        response.isError === true
-          ? []
-          : (structured.results ?? []).map((result) => ({
-              url: result.url ?? '',
-              provenance: result.provenance ?? '',
-              excerpt: result.excerpt ?? '',
-              retrievedAt: result.retrievedAt ?? '',
-              trust: result.trust ?? '',
-            }));
-
-      const outcome = scoreQuestion(question, answers, set.thresholds.maxExcerptChars);
-      outcomes.push(outcome);
-      const mark = outcome.answered ? 'PASS' : 'FAIL';
-      process.stdout.write(`${mark} ${question.id}: ${question.question}\n`);
-      for (const failure of outcome.failures) {
-        process.stdout.write(`     - ${failure}\n`);
-      }
-    }
-  } finally {
-    await client.close();
+  const args = process.argv.slice(2);
+  const artifactAt = args.indexOf('--artifact');
+  const outputAt = args.indexOf('--output');
+  for (let i = 0; i < args.length; i += 2) {
+    if (!['--artifact', '--output'].includes(args[i] ?? '') || args[i + 1] === undefined)
+      throw new Error('expected --artifact PATH or --output PATH');
   }
-
-  const summary = summarizeEvaluation(outcomes, set.thresholds);
-  process.stdout.write(
-    `\n${String(summary.answered)}/${String(summary.total)} answered ` +
-      `(threshold ${String(set.thresholds.minAnswered)}), ` +
-      `${String(summary.attributed)}/${String(summary.total)} attributed ` +
-      `(threshold ${String(set.thresholds.minAttributed)}). Set updated ${set.updatedAt}.\n`,
+  const set = JSON.parse(
+    await readFile(resolve(root, 'config/doc-evaluation.json'), 'utf8'),
+  ) as EvaluationSet;
+  const reviewed = JSON.parse(
+    await readFile(resolve(root, 'tests/fixtures/docs/relevance/expectations.json'), 'utf8'),
+  ) as ReviewedExpectations;
+  const source = await runCommand('git', ['rev-parse', 'HEAD'], { cwd: root });
+  const state = await runCommand('git', ['status', '--porcelain'], { cwd: root });
+  if (source.exitCode !== 0 || state.exitCode !== 0)
+    throw new Error('cannot identify evaluation source');
+  const installed = await installDocumentationArtifact(
+    root,
+    artifactAt < 0 ? undefined : resolve(args[artifactAt + 1] ?? ''),
   );
-  if (!summary.passed) {
-    process.stderr.write(
-      'Documentation retrieval is below its thresholds. Do not release documentation capabilities until this passes or the set is deliberately revised.\n',
+  try {
+    const connection = await connectStdio(process.execPath, [installed.cli, '--allow-network'], {
+      timeoutMs: 10_000,
+    });
+    let result;
+    const pid = connection.transport.pid;
+    try {
+      result = await evaluateDocumentation(connection.client, set, reviewed);
+    } finally {
+      await connection.client.close();
+      if (pid !== null) await waitForProcessExit(pid);
+    }
+    if (connection.stderr() !== '')
+      throw new Error('installed documentation server wrote to stderr');
+    const receipt = {
+      schemaVersion: 1,
+      mode: 'live-installed',
+      evaluatedAt: new Date().toISOString(),
+      harnessSourceCommit: source.stdout.trim(),
+      artifactSource:
+        artifactAt < 0 ? 'current-working-tree-package' : 'original-bytes-source-not-inferred',
+      sourceDirty: state.stdout.trim() !== '',
+      artifactDigest: installed.digest,
+      thresholds: set.thresholds,
+      rankingQuality: result,
+      sourceReview: {
+        captureReviewedAt: reviewed.reviewedAt,
+        captures: reviewed.captures.map(({ topic, url, revision }) => ({ topic, url, revision })),
+        driftStatus: 'not-inferred-from-ranking',
+        note: 'Changed or missing facts require a separate official-page drift review. Captures are never rewritten by this command.',
+      },
+      publicReleaseEvaluated: false,
+    };
+    for (const kind of ['questions', 'topics'] as const)
+      for (const outcome of result[kind]) {
+        process.stdout.write(
+          `${outcome.answered && outcome.attributed ? 'PASS' : 'FAIL'} ${kind}/${outcome.id}${outcome.failures.length === 0 ? '' : ': ' + outcome.failures.join('; ')}\n`,
+        );
+      }
+    process.stdout.write(
+      `${String(result.summary.answered)}/${String(result.summary.total)} questions; ${String(result.topics.filter((topic) => topic.answered).length)}/7 topics. Artifact ${installed.digest}.\n`,
     );
-    process.exitCode = 1;
+    if (outputAt >= 0)
+      await writeFile(resolve(args[outputAt + 1] ?? ''), JSON.stringify(receipt, null, 2) + '\n');
+    if (!result.passed) process.exitCode = 1;
+  } finally {
+    await installed.cleanup();
   }
 }
-
 await main();
