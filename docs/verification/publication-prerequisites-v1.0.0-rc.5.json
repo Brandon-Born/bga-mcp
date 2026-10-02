@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "recordedAt": "2026-10-02T12:28:32.019Z",
+  "status": "prerequisites aligned; publication held",
+  "candidate": {
+    "tag": "v1.0.0-rc.5",
+    "sourceCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac"
+  },
+  "review": {
+    "path": "docs/verification/security-review-v1.0.0-rc.5-clean.json",
+    "digest": "sha256:ae35df9136aa555be79d1263ab5c175bdffbcf1809434169580b5663cd8fd426",
+    "status": "held"
+  },
+  "guideDigest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+  "prerequisites": {
+    "installation": {
+      "path": "docs/verification/install-guide-v1.0.0-rc.5-signed.json",
+      "digest": "sha256:ba326bf3e4f8546f0e0aefb88632d0293c58b0ff82e0f8c4b5d4e2eefc502bd8"
+    },
+    "client": {
+      "path": "docs/verification/codex-client-v1.0.0-rc.5.json",
+      "digest": "sha256:38791adacdf2969a2fccd981e950c840aaf91ec35e9c40fccd11d09daac24ef1"
+    },
+    "evidence": {
+      "path": "docs/verification/release-evidence-v1.0.0-rc.5.json",
+      "digest": "sha256:b6aca5192b471ba499116e6e3514006b3b3a3077934a870b5103b9ff545cda7c"
+    },
+    "usefulness": {
+      "path": "docs/verification/agent-evaluation-v1.0.0-rc.5.json",
+      "digest": "sha256:384ecb654d70b021e8f5799aa0e3791424ed5247effa27b0ae74b2a2a8010f6f"
+    }
+  },
+  "unchangedReceiptsMatched": true,
+  "historicalSubstitutionRefusals": [
+    {
+      "kind": "installation",
+      "path": "docs/verification/install-guide-v1.0.0-rc.4-signed.json",
+      "digest": "sha256:83a08bc6075495e536c6272901d35141a8fd76bc8562162bb930c4e05da888f9",
+      "result": "refused"
+    },
+    {
+      "kind": "client",
+      "path": "docs/verification/codex-client-v1.0.0-rc.4-clean.json",
+      "digest": "sha256:f7c9e75842b50dcfd2887e179eaf49ad2a6306046ed55f84a64b238af0b91291",
+      "result": "refused"
+    },
+    {
+      "kind": "evidence",
+      "path": "docs/verification/release-evidence-v1.0.0-rc.4.json",
+      "digest": "sha256:46f441186d93d855c1ef597940bc0a96d4288762e9c5219b7a8d371aa6ee5943",
+      "result": "refused"
+    },
+    {
+      "kind": "usefulness",
+      "path": "docs/verification/agent-evaluation-v1.0.0-rc.4.json",
+      "digest": "sha256:3155be1a5ffc745cc2f4424e17cae4d4c063c0c332bcf5095f100c396dacef96",
+      "result": "refused"
+    }
+  ],
+  "sourceCommit": "ee9483a16c8a5ac9551d0b46d2a8c22e7a6749f0",
+  "sourceClean": true,
+  "runnerDigest": "sha256:76ff0787c566b72b50cb5a984b72d0dbb3789cef359fc7bcd3b5a6d23a606ac2",
+  "holds": [
+    "Release gate is pending: privateReportLifecycleVerified",
+    "Open blocking risk BLOCK-privateReportLifecycleVerified owned by Brandon-Born",
+    "BGA-405 approval is held",
+    "Package/registry/trusted-publisher decision and setup evidence are pending",
+    "Non-maintainer benign report lifecycle has not been observed",
+    "BGA-406 is not verified",
+    "BGA-408 current framework release review is held"
+  ],
+  "registryObservation": {
+    "method": "read-only pnpm view; no publisher operation",
+    "registry": "https://registry.npmjs.org",
+    "name": "bga-mcp",
+    "result": "HTTP 404; not proof of ownership or trusted-publisher setup"
+  },
+  "decision": null,
+  "registryWriteAttempted": false,
+  "identityBearingJobsStarted": false,
+  "rebuilt": false,
+  "scope": "actual retained prerequisite identity/guide checks and negative substitutions; no approval, reporting lifecycle, publisher setup, registry consumer or promotion claim"
+}

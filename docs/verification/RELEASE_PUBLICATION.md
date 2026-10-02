@@ -8,9 +8,9 @@ The manual `release-publication.yml` workflow prepares one authenticated, securi
 
 ## Current holds
 
-`corepack pnpm release:status` reads current release decisions, the pinned BGA-405 review, the BGA-406 lifecycle and BGA-408 framework ledger without registry writes. `config/publication.json` retains `decision: null`: package name/registry/publisher selection and account setup are not asserted. The current original rc.3 assessment remains held. Its guides predate the current package, non-maintainer private reporting is unverified and a fresh official-page framework review is pending. A distinct replacement candidate, signing, applicable client/usefulness carry-forward, per-release public evidence and exact-artifact approval must precede publication. The gate reads candidate-specific installation, native-client, public-distribution and usefulness receipts; current rc.1 client/public-evidence receipts cannot approve rc.3 or a replacement candidate. Their paths are explicit in `config/publication.json` and historical records are preserved. Existing candidate tags and packets remain immutable.
+`corepack pnpm release:status` reads current release decisions, the pinned BGA-405 review, the BGA-406 lifecycle and BGA-408 framework ledger without registry writes. `config/publication.json` retains `decision: null`: package name/registry/publisher selection and account setup are not asserted. The selected original rc.5 clean assessment remains held on BGA-406's unobserved independent report lifecycle. Actual rc.5 signed installation, native-client, public-distribution and usefulness receipts match that candidate and the current guide digest. Historical records remain separate; they cannot approve another candidate. The eight unchanged official framework decisions are admitted against the six-job exact-source CI retained below. Security approval and the package/registry/publisher decision remain separate gates. Existing candidate tags and packets remain immutable.
 
-The suggested decision is existing name `bga-mcp`, `https://registry.npmjs.org`, GitHub repository `Brandon-Born/bga-mcp`, workflow filename `release-publication.yml`, environment `npm-publication`. Record explicit owner authorization and non-secret evidence of package ownership and trusted-publisher configuration before replacing null. Configure direct `npm publish` and `npm dist-tag` permissions independently; stage-only permission cannot run this workflow. Do not add a token fallback. Account settings and initial package bootstrap have not been exercised; the documentation describes package settings but does not prove this account can establish the first package without an existing published version. Any required bootstrap must preserve the approved artifact and receive explicit authorization, never substitute a placeholder package or infer ownership from name availability.
+The suggested decision is existing name `bga-mcp`, `https://registry.npmjs.org`, GitHub repository `Brandon-Born/bga-mcp`, workflow filename `release-publication.yml`, environment `npm-publication`. Record explicit owner authorization and non-secret evidence of package ownership and trusted-publisher configuration before replacing null. Configure direct `npm publish` and `npm dist-tag` permissions independently; stage-only permission cannot run this workflow. Do not add a token fallback. Account settings and initial package bootstrap have not been exercised. The current [npm trust prerequisites](https://docs.npmjs.com/cli/v12/commands/npm-trust/) say: “The package you're configuring must already exist on the npm registry.” A read-only registry lookup returned HTTP 404 for `bga-mcp`; that proves neither ownership nor availability. [Staging a new package](https://docs.npmjs.com/staged-publishing/) creates a public `0.0.0-stage` placeholder. This repository's prohibition on placeholder bootstrap therefore leaves the initial publication path unresolved; staging is not a private setup operation. Any required bootstrap must preserve the approved artifact and receive explicit authorization, never substitute a placeholder package or infer ownership from name availability.
 
 ## Admission and separated identities
 
@@ -67,8 +67,18 @@ publisher setup or registry provenance.
 The actual read-only preparation status no longer reports candidate-prerequisite
 mismatches. It still holds on BGA-406's independent report lifecycle, BGA-405
 approval and the null package/registry/trusted-publisher decision. Changing
-configuration and its refusal test also requires clean exact-source CI and
+configuration and its refusal test required clean exact-source CI and
 explicit framework re-admission under the existing broad implementation guard.
+[CI 37006603439](rc5-publication-preparation-ci.json) passes all six jobs at
+`ee9483a16c8a5ac9551d0b46d2a8c22e7a6749f0`, each with 674 tests and 209
+required scenarios. Every downloaded sealed record passes trusted-schema,
+integrity, clean source, CI-environment and conformance checks. All eight
+unchanged previously read official decisions are explicitly re-admitted and
+the actual framework release guard passes.
+[The preparation observation](publication-prerequisites-v1.0.0-rc.5.json)
+retains the clean source, actual receipt digests, four historical substitutions
+and the earlier pre-admission framework hold; it is not rewritten to imply
+that the later admission had already happened.
 The private reporter, publisher setup, registry publication and independent
 public consumer remain unverified. A current hosted dry run must follow that
 admission; no identity-bearing job or registry write is authorized by alignment.
