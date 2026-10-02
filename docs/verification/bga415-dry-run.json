@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "d2e4efbc1593ced293530501a1b32c015a22a94b",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36972306385",
+    "event": "workflow_dispatch",
+    "ref": "refs/heads/main",
+    "requestedMode": "dry-run",
+    "conclusion": "failure"
+  },
+  "status": "held-as-expected",
+  "jobs": [
+    {
+      "name": "prepare",
+      "conclusion": "failure",
+      "failedStep": "Authenticate original signed packet and admit fresh reviewed bytes",
+      "message": "Publication preflight failed; no registry write is permitted. Run release:status for owned holds."
+    },
+    {
+      "name": "publish",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "verify",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "promote",
+      "conclusion": "skipped"
+    }
+  ],
+  "identityBearingJobsStarted": false,
+  "registryWriteAttempted": false,
+  "scope": "Actual default-mode workflow reached admission after full local checks and exact source checkout/install; current release holds stopped it before packet acquisition or publication. Skipped publish/promote jobs minted no publication identity. This expected refusal is not a successful publication or an approved candidate."
+}

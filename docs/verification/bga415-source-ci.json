@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "d2e4efbc1593ced293530501a1b32c015a22a94b",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36972213912",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:02d799f00424aaa9012d39949dabecfdb012187068bffa194210fb35eef6e64f",
+      "packageDigest": "sha256:966b32ad33b2e05cfbe25ed27ffdc49c9bbe34e72207b22ae170d4b6a564d779",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:27b1b4e6145fca38002714b640673d3317ae128832084fb47dd80b54581e6b8e",
+      "packageDigest": "sha256:966b32ad33b2e05cfbe25ed27ffdc49c9bbe34e72207b22ae170d4b6a564d779",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:fd335f739861b61b78e0108d0fe39e6d7ddecbdbfd689f136a4acd6b58bbd4ea",
+      "packageDigest": "sha256:aa4bda4993925ae21a070ca263d21fa62832f144f5e5b6a03824bda6a0c4b54c",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:d891ea6acb78fc550e69218076cc380bf19f0a8355029dcf4bf4d44471718f24",
+      "packageDigest": "sha256:aa4bda4993925ae21a070ca263d21fa62832f144f5e5b6a03824bda6a0c4b54c",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:aa2a15c8667c4a2a6c9786d8b771df8b22931a3094846e31a83bd7aaa44ebc97",
+      "packageDigest": "sha256:9283720ff0d03a14c3b72051be22f30cd68471a512273ffa16823c2dbb6d4647",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:38d393e1384c794739b2c9df7fdb3c5f650d80263fabdd6b7a5f7daa9d23868d",
+      "packageDigest": "sha256:9283720ff0d03a14c3b72051be22f30cd68471a512273ffa16823c2dbb6d4647",
+      "testsPassed": 673,
+      "scenariosPassed": 208,
+      "capabilities": 17,
+      "retainedClaims": 102
+    }
+  ],
+  "scope": "Exact implementation CI verifies offline admission, permission/provenance policy, refusal controls and the shared packaged consumer guide. It does not verify a registry account, actual publication, npm certified provenance or live promotion."
+}
