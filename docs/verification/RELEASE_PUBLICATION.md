@@ -126,3 +126,7 @@ framework release guard passes. The read-only publication status then reports
 only the existing reporting, security-approval and publisher-setup holds,
 without a candidate-prerequisite or framework mismatch; `published` is false.
 This does not repeat the hosted dry run or execute any identity-bearing job.
+
+## rc.6 prerequisite preparation — 2026-10-02 UTC
+
+Actual clean rc.6 security, signed installation, native-client and frozen-task records are retained. Publication configuration keeps its historical rc.5 prerequisites until the complete rc.6 evidence set exists; no placeholder public-evidence receipt is created. The rc.6 clean security assessment is held for the final independent reporting lifecycle, the usefulness handoff still awaits integrated CI, and rc.6 public metadata distribution remains pending. The publisher decision remains null. The npm route requires an existing package for trusted-publisher setup; no bootstrap placeholder or token fallback is authorized. A channel/policy decision is pending. No installable package has been distributed.

@@ -626,5 +626,25 @@
     "published": false,
     "verifiedBeforeInstallAndCalls": true,
     "resultDigest": "sha256:1de6b5eee9d173396a290fa7967af70926297189298c5abf71f4498dbddf94f2"
+  },
+  "publicCommandProbe": {
+    "receipt": "bga431-fixed-v1.0.0-rc.6.json",
+    "fixtureDigest": "sha256:ce7ffef66d95260da67a375f4ea4a1dbde585f1fb7b11afebe8c73488102f04a",
+    "runnerDigest": "sha256:d330a5b16c060a7b8ba1835b77b4a9591c6342d4831d7c2f05dc249cc0c62131",
+    "assertionsPassed": 3,
+    "projectUnchanged": true,
+    "serverExited": true
+  },
+  "integratedLocalGate": {
+    "sourceCommit": "0a542e679d5d6957d465d3fc80bf0a3b25bce619",
+    "sourceClean": false,
+    "testsPassed": 768,
+    "scenariosPassed": 234,
+    "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+    "evidenceDigest": "sha256:d61eb4ca6de6178dc77f3cd0959aaa314e4946f1e32a9fdef1153e9e8ae160f7",
+    "logDigest": "sha256:8221eaf95229a9a9943a909da6d874313d4203d6b352cd442358afa305580e60",
+    "conformance": "passed",
+    "initialFailure": "Premature publication reference to absent rc.6 public-evidence receipt; deferred reference, passing 8-test boundary repeat, then passing full gate",
+    "scope": "Integrated reviewer tree; original signed candidate remains unchanged; exact-source CI pending"
   }
 }
