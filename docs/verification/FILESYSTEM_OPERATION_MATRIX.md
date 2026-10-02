@@ -161,8 +161,13 @@ limit, production cleanup ceiling, zero-resource and no-new-work assertions,
 quiet transcript, same-client call and installed mutation controls remain.
 The [cache lifecycle receipt](bga208-cache-lifecycle.json) retains the failed
 source, all six job outcomes and the failed log identity. The corrected harness passes all 53 cancellation tests and the fresh complete
-`pnpm check` at 768 tests / 234 required scenarios. Exact-source CI remains
-pending; prior candidate and historical matrix identities are unchanged.
+`pnpm check` at 768 tests / 234 required scenarios. [Exact-source CI 37056579093](https://github.com/Brandon-Born/bga-mcp/actions/runs/37056579093)
+passes all six OS/Node pairs on clean `e75be74a24de80b412cecaa9198dfdbfbcc3c6e9`.
+Each downloaded record independently validates schema, integrity, source,
+installed-artifact identity, the filesystem cancellation scenario and applicable
+conformance at 768 tests / 234 required scenarios. This closes the observed
+terminal-cleanup race; prior candidate and historical matrix identities are
+unchanged, and the complete native-matrix coverage limits still apply.
 
 ## Sources
 

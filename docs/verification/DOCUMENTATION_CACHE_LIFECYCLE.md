@@ -62,8 +62,17 @@ inspection of clean Dino Racer `83e2e50` again returns modern layout, zero
 errors/warnings and one explicit source-scope limitation; tracked file digests,
 Git state and empty stderr are verified before/after. This is inspection rather
 than gameplay or a repeated BGA-424 evaluation. The bounded receipt retains
-the dirty local source base, failed attempts and final observations. Exact-source
-CI for this implementation remains pending. The earlier relevance CI receipt at
+the dirty local source base, failed attempts and final observations. [Exact-source CI 37056579093](https://github.com/Brandon-Born/bga-mcp/actions/runs/37056579093)
+passes all six OS/Node pairs on clean `e75be74a24de80b412cecaa9198dfdbfbcc3c6e9`,
+each at 768 tests / 234 scenarios, 103 claims and 17 capabilities. The downloaded
+records independently pass schema, integrity, source, installed-artifact,
+cache/contract/cancellation scenario and conformance checks. The receipt
+preserves each platform's actual package digest. The earlier cache-source CI
+`37055009310` passed five jobs and failed macOS Node 22's existing cancellation
+observer between iterator return and final directory close. The observer now
+waits for final close, and both installed directory-next cases reject that
+intermediate snapshot; unchanged resource, deadline and mutation controls pass.
+This later source CI verifies that correction together with the cache implementation. The earlier relevance CI receipt at
 `6f1d01d` proves that earlier implementation only. BGA-211 remains implemented
 while its exact historical failure-identity replay remains unproven. This scope
 does not promote development documentation, refresh framework admission, transfer
