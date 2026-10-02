@@ -1,9 +1,36 @@
 # Original candidate signing — BGA-404
 
+## rc.6 signing preparation — 2026-10-02 UTC
+
+The signing workflow and its signed-artifact/installation harnesses select the actual [original rc.6 producer receipt](release-candidate-v1.0.0-rc.6.json). It records clean tagged source `36a7d86`, successful producer `37067227890`, all-six-jobs exact-tag CI `37067230778`, archive `sha256:81e509db2f451e4ed4a2bed975c0cb2f0db1e3ff62444350c6fbbd75eb72fc97` and tarball `sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea`. The actual read-only signing preflight independently downloads and validates the named hosted archive, producer, source CI and tag, then verifies original subjects and retention material. It succeeds without signing, rebuilding or publication.
+
+Identity permission remains confined to the main-only dependency-free signing job; no token fallback, registry write or broader signature policy is added. The controlled-client runner stays at its retained rc.5 identity until the signed rc.6 artifact exists and actual re-execution can renew it. The separately prepared client pin is not treated as current client proof. Old signatures and receipts remain historical; a fresh integrated check and reviewed main handoff precede the actual rc.6 signing workflow and independent cryptographic consumer verification.
+
 ```verification-record
 {
   "kind": "review",
-  "scope": "BGA-404 original-byte keyless signing, provenance, identity verification and fresh consumer evidence"
+  "scope": "BGA-404 original-byte keyless signing, provenance, identity verification and fresh consumer evidence",
+  "rc6Preparation": {
+    "sourceBase": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+    "sourceClean": false,
+    "focusedTests": 7,
+    "focusedSuites": 3,
+    "completeGate": "passed",
+    "testsPassed": 768,
+    "requiredScenarios": 234,
+    "scenariosPassed": 234,
+    "claims": 103,
+    "capabilities": 17,
+    "conformance": "passed",
+    "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+    "evidenceDigest": "sha256:667235ecfc92e2ff4d82566d9b6f76eb52486c022b0b54f8c3cf578d945fa06f",
+    "logDigest": "sha256:ed72e065cd9293d893a9683e1ff6696888b9cb6096c724b420f7e870a9fef845",
+    "actualReadOnlySigningPreflight": "passed",
+    "originalCandidateRebuilt": false,
+    "signatureCreated": false,
+    "registryPublished": false,
+    "cleanSourceCi": "pending"
+  }
 }
 ```
 
