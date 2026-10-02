@@ -19,7 +19,7 @@
   "signaturePrerequisite": "fresh original signature/identity/subjects/provenance verification passed before install",
   "rebuilt": false,
   "owner": "BGA-400",
-  "recordedAt": "2026-10-02T10:51:14.118287Z",
+  "recordedAt": "2026-10-02T10:53:45.141591Z",
   "signerCommit": "a0ac5f3a919f2ded6c6c63ca74c494bb03fa0d94",
   "signatureVerification": {
     "receipt": "release-signing-v1.0.0-rc.5.json",
@@ -30,5 +30,82 @@
     "wrongSignerWorkflow": "refused"
   },
   "scope": "current marked guide recipes on independently authenticated original rc.5; versioned rc.3 acquisition commands remain historical, not exercised as rc.5 acquisition",
-  "registryPublished": false
+  "registryPublished": false,
+  "runnerSourceCommit": "1cc2936cf0fc86b1fd61c18652b66a515eff8a63",
+  "runnerSourceClean": true,
+  "runnerDigest": "sha256:53038d35ea3c6b27cc80f3b1265a5cbe2868c8450405f752a7c5b642d5abd6be",
+  "helperDigest": "sha256:dcbda4c10b4548ac1f5751e058dfea57ca95cb44048c45fd568602e52a53afd7",
+  "originalPackedGuides": {
+    "README.md": "sha256:eeeb67d522fb3e0c2107d92460ca2c79018891a68186639b09b2de25934063ce",
+    "AGENTS.md": "sha256:15b7d84f859fb1008bfa434fc7aa91ee0ad8d41c35ba8e890c7efa0827e188f2",
+    "CONTRIBUTING.md": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+    "SECURITY.md": "sha256:30252562af68169ebeb55cc1f2f8d05dd84f7cbf9e467c6be46a1ea4757c31ab",
+    "docs/INSTALL.md": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+    "docs/VERSIONING.md": "sha256:fcbcab8f6a678afa4021281526966d7c3747b88d6b899176e76cac0d6be6d1e0"
+  },
+  "originalPackedGuidesByteIdentical": true,
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36997900835",
+    "commit": "1cc2936cf0fc86b1fd61c18652b66a515eff8a63",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:9bf6d9f44dce0d121c1234902ef110bba50d63dcf1c2184a38003e948955ea41",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T10:57:20.657Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:ece4e3048003617567739cd8ff7534db1c76278d6f6dc425ff857d4b5e198889",
+        "packageDigest": "sha256:73ff39cf8f07e542a8cabefcddf3b965e96d600d0cd86c5e545dc2c7cc4fac0d",
+        "generatedAt": "2026-10-02T10:56:27.942Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:55d465ebae9af67f069e8a9e13faefb95dc32da6299f4490d0322a74e09a5801",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T10:55:19.141Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:264f42f88003016798e1eedf023d5eb01d77efb72b89cb3978a6fd873e0e4359",
+        "packageDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac",
+        "generatedAt": "2026-10-02T10:55:16.734Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:b0654ef9a4b69438f399f6d1ec6a2f22b3e4c1c46263a964e8ea4580cf8d18ef",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T10:58:35.530Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:b596abddf7e680e986efbeb50757a46fb8341dbeeb5c034875cc14c0056136fb",
+        "packageDigest": "sha256:3682ffbf750f2332623e7c881a2d1b3f96cb21d5b2fd93669776954bc9d1d01e",
+        "generatedAt": "2026-10-02T10:57:51.148Z",
+        "testsPassed": 674,
+        "scenariosPassed": 209
+      }
+    ]
+  },
+  "frameworkReadmission": {
+    "reviewer": "Codex",
+    "sourceCount": 8,
+    "implementationDigest": "sha256:9fc5773be406fae04c2c540e34b923298fe83b96cecbc526de03ed6a7552892e",
+    "evidenceDigest": "sha256:264f42f88003016798e1eedf023d5eb01d77efb72b89cb3978a6fd873e0e4359",
+    "evidenceCommit": "1cc2936cf0fc86b1fd61c18652b66a515eff8a63",
+    "releaseGuard": "passed",
+    "scope": "unchanged previously read wording; installation-only selector change retested; no new BGA behavior or security/publication approval"
+  }
 }

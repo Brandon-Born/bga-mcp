@@ -216,6 +216,14 @@ CI. [The signing receipt](verification/release-signing-v1.0.0-rc.5.json) retains
 that actual guard result. The preparation friction persists; no selection or
 impact-scoped reuse feature has been implemented.
 
+**BGA-400 confirmation, 2026-10-02 UTC.** The standalone installation runner
+still selected rc.3 after the signing verifier advanced to rc.5. Its selector is
+now aligned, and a clean committed run authenticates original rc.5 before
+executing the unchanged guide recipes. The same broad framework digest again
+requires eight unchanged decisions to be admitted against exact-source CI. This
+is another observed instance of the existing wish, not an implemented central
+selection feature.
+
 **Wish.** A single reviewed, immutable candidate selection receipt with an
 explanation of the downstream identities that still differ. Any impact-scoped
 review reuse should show which implementation and fixture dependencies changed,
