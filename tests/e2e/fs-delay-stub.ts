@@ -1,7 +1,10 @@
 /**
  * Delays one filesystem primitive before the installed policy module binds its
- * named imports. This file is loaded only through a test process's `--import`;
- * it is not packed and adds no production switch or callback.
+ * named imports. The test-only clock holds the first operation's deadline until
+ * the delayed primitive is in flight, then invokes its actual expiry callback.
+ * This file is loaded only through a test process's `--import`; it is not packed
+ * and adds no production switch or callback. Real timer latency is tested by
+ * the separate uninstrumented deadline case.
  */
 import { appendFileSync } from 'node:fs';
 import type { lstat as lstatFunction, open as openFunction } from 'node:fs/promises';
@@ -14,16 +17,22 @@ interface FsPromises {
 
 const operation = process.env.BGA_MCP_FS_DELAY_OPERATION;
 const delayMs = Number.parseInt(process.env.BGA_MCP_FS_DELAY_MS ?? '', 10);
+const deadlineMs = Number.parseInt(process.env.BGA_MCP_FS_DEADLINE_MS ?? '', 10);
+const setupDelayMs = Number.parseInt(process.env.BGA_MCP_FS_SETUP_DELAY_MS ?? '', 10);
 const transcript = process.env.BGA_MCP_FS_DELAY_TRANSCRIPT;
 
 if (
   (operation !== 'lstat' && operation !== 'handle-read') ||
   !Number.isInteger(delayMs) ||
   delayMs <= 0 ||
+  !Number.isInteger(deadlineMs) ||
+  deadlineMs <= 0 ||
+  !Number.isInteger(setupDelayMs) ||
+  setupDelayMs <= deadlineMs ||
   transcript === undefined
 ) {
   throw new Error(
-    'The filesystem delay probe requires an operation, positive delay, and transcript',
+    'The filesystem probe requires an operation, delays, a positive deadline, and transcript; setup must exceed the deadline',
   );
 }
 const transcriptPath = transcript;
@@ -32,10 +41,101 @@ function record(event: string): void {
   appendFileSync(transcriptPath, `${event}\t${String(Date.now())}\n`, { encoding: 'utf8' });
 }
 
-async function delay(): Promise<void> {
+const originalNow = performance.now.bind(performance);
+const originalSetTimeout = globalThis.setTimeout;
+let expireDeadline: (() => void) | undefined;
+let expired = false;
+let setupDelayed = false;
+let timeoutPublished = false;
+
+// Observe the child publishing its timeout before transport scheduling can make
+// a late native completion appear to have preceded the response at the client.
+const originalWrite = process.stdout.write.bind(process.stdout);
+process.stdout.write = ((...arguments_: Parameters<typeof originalWrite>) => {
+  const chunk = arguments_[0];
+  const text = typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf8');
+  if (!timeoutPublished && text.includes('policy.timeout.exceeded')) {
+    for (const line of text.split('\n')) {
+      try {
+        const frame: unknown = JSON.parse(line);
+        if (
+          typeof frame === 'object' &&
+          frame !== null &&
+          'result' in frame &&
+          typeof frame.result === 'object' &&
+          frame.result !== null &&
+          'isError' in frame.result &&
+          frame.result.isError === true
+        ) {
+          timeoutPublished = true;
+          record('response:timeout');
+        }
+      } catch {
+        // Non-JSON output is not evidence of a published tool response.
+      }
+    }
+  }
+  return originalWrite(...arguments_);
+}) as typeof process.stdout.write;
+
+Object.defineProperty(performance, 'now', {
+  configurable: true,
+  value: function filesystemProbeClock(): number {
+    const stack = new Error().stack ?? '';
+    if (stack.includes('registerDeadline') || stack.includes('cancellationCheckpoint')) {
+      return expired ? deadlineMs + 1 : 0;
+    }
+    return originalNow();
+  },
+});
+
+// Capture only the first operation's real expiry callback. Its returned timer
+// stays a real Node handle that production clears normally. Letting it fire a
+// no-op cannot expire the operation before the primitive has been issued.
+globalThis.setTimeout = ((
+  callback: (...arguments_: unknown[]) => void,
+  milliseconds?: number,
+  ...arguments_: unknown[]
+) => {
+  if (
+    expireDeadline === undefined &&
+    milliseconds === deadlineMs &&
+    (new Error().stack ?? '').includes('runWithTimeout')
+  ) {
+    record('deadline:register');
+    expireDeadline = () => {
+      if (!expired) {
+        expired = true;
+        record('deadline:expire');
+        callback(...arguments_);
+      }
+    };
+    return originalSetTimeout(() => undefined, milliseconds);
+  }
+  return originalSetTimeout(callback, milliseconds, ...arguments_);
+}) as typeof setTimeout;
+
+async function delay(milliseconds: number): Promise<void> {
   await new Promise<void>((resolve) => {
-    setTimeout(resolve, delayMs);
+    originalSetTimeout(resolve, milliseconds);
   });
+}
+
+async function slowSetup(): Promise<void> {
+  if (expireDeadline !== undefined && !setupDelayed) {
+    setupDelayed = true;
+    record('setup:start');
+    await delay(setupDelayMs);
+    record('setup:end');
+  }
+}
+
+function start(event: string): void {
+  record(event);
+  if (expireDeadline !== undefined && !expired) {
+    // The async syscall wrapper returns its pending promise before expiry.
+    queueMicrotask(expireDeadline);
+  }
 }
 
 const require = createRequire(import.meta.url);
@@ -44,8 +144,9 @@ const fsPromises = require('node:fs/promises') as FsPromises;
 if (operation === 'lstat') {
   const original = fsPromises.lstat;
   fsPromises.lstat = (async (...arguments_: Parameters<typeof original>) => {
-    record('lstat:start');
-    await delay();
+    await slowSetup();
+    start('lstat:start');
+    await delay(delayMs);
     try {
       return await original(...arguments_);
     } finally {
@@ -55,11 +156,12 @@ if (operation === 'lstat') {
 } else {
   const originalOpen = fsPromises.open;
   fsPromises.open = async (...arguments_: Parameters<typeof originalOpen>) => {
+    await slowSetup();
     const handle = await originalOpen(...arguments_);
     const originalRead = handle.read.bind(handle);
     handle.read = async (...readArguments: Parameters<typeof originalRead>) => {
-      record('read:start');
-      await delay();
+      start('read:start');
+      await delay(delayMs);
       try {
         return await originalRead(...readArguments);
       } finally {

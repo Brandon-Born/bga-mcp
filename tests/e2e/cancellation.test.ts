@@ -18,9 +18,11 @@ import {
  * socket while the installed server and the same MCP client are still alive.
  * The filesystem probes load a test-only pre-import before the installed
  * policy module binds its named imports. It delays and records the actual
- * `lstat` or descriptor `read`, then the test snapshots that transcript while
- * the same server stays alive. The shim is absent from the tarball and exposes
- * no production flag or callback.
+ * `lstat` or descriptor `read`, then expires the controlled deadline while that
+ * promise is pending. Setup deliberately outlasts the nominal deadline without
+ * expiring it, so platform latency cannot skip the measured operation. The test
+ * snapshots the transcript while the same server stays alive. The shim is absent
+ * from the tarball and exposes no production flag or callback.
  *
  * The 2026-08-08 review measured the difference: a five-millisecond probe
  * returned `policy.timeout.exceeded` while the operation ran on to completion,
@@ -168,12 +170,78 @@ async function filesystemProbe(
       env: {
         ...process.env,
         BGA_MCP_FS_DELAY_OPERATION: operation,
-        BGA_MCP_FS_DELAY_MS: '250',
+        BGA_MCP_FS_DELAY_MS: '150',
+        BGA_MCP_FS_DEADLINE_MS: '100',
+        BGA_MCP_FS_SETUP_DELAY_MS: '200',
         BGA_MCP_FS_DELAY_TRANSCRIPT: transcriptPath,
       },
     },
   );
   return { ...result, stderr };
+}
+
+function expectFilesystemDeadlineOrder(transcript: string, primitive: 'lstat' | 'read'): void {
+  const events = transcript
+    .trim()
+    .split('\n')
+    .map((line) => line.split('\t')[0]);
+  const registration = events.indexOf('deadline:register');
+  const setup = events.indexOf('setup:start');
+  const setupEnd = events.indexOf('setup:end');
+  const started = events.indexOf(`${primitive}:start`, setupEnd);
+  const expired = events.indexOf('deadline:expire');
+  const ended = events.indexOf(`${primitive}:end`, started);
+  const published = events.indexOf('response:timeout');
+  expect(registration).toBeGreaterThanOrEqual(0);
+  expect(setup).toBeGreaterThan(registration);
+  expect(setupEnd).toBeGreaterThan(setup);
+  expect(started).toBeGreaterThan(setupEnd);
+  expect(expired).toBeGreaterThan(started);
+  expect(ended).toBeGreaterThan(expired);
+  expect(published).toBeGreaterThan(ended);
+  expect(events.filter((event) => event === 'deadline:expire')).toHaveLength(1);
+}
+
+/** Remove only the installed cleanup await; the same probe must expose it. */
+async function filesystemCleanupControl(root: string, operation: 'lstat' | 'handle-read') {
+  const policyModule = resolve(dirname(server.cli), 'policy.js');
+  const original = await readFile(policyModule, 'utf8');
+  const neutralized = original.replace(
+    'await Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
+    'void Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
+  );
+  expect(neutralized, 'the mutation control did not find the installed cleanup await').not.toBe(
+    original,
+  );
+  try {
+    await writeFile(policyModule, neutralized);
+    return await filesystemProbe(root, operation);
+  } finally {
+    await writeFile(policyModule, original);
+    expect(await readFile(policyModule, 'utf8')).toBe(original);
+  }
+}
+
+function expectUnawaitedFilesystemControl(
+  result: Awaited<ReturnType<typeof filesystemProbe>>,
+  primitive: 'lstat' | 'read',
+): void {
+  expect(result.response.isError).toBe(true);
+  expect(result.response.text).toContain('policy.timeout.exceeded');
+  const events = result.afterWait
+    .trim()
+    .split('\n')
+    .map((line) => line.split('\t')[0]);
+  const started = events.indexOf(`${primitive}:start`, events.indexOf('setup:end'));
+  const expired = events.indexOf('deadline:expire');
+  const published = events.indexOf('response:timeout');
+  const ended = events.indexOf(`${primitive}:end`, started);
+  expect(started).toBeGreaterThanOrEqual(0);
+  expect(expired).toBeGreaterThan(started);
+  expect(published).toBeGreaterThan(expired);
+  expect(ended).toBeGreaterThan(published);
+  expect(result.setup.isError, result.setup.text).toBe(false);
+  expect(result.stderr).not.toContain('Unhandled');
 }
 
 interface ParserDeadlineEvent {
@@ -540,9 +608,12 @@ describe('packaged operation deadlines', () => {
     expect(result.response.text).toContain('policy.timeout.exceeded');
     expect(result.atSettlement).toContain('lstat:start');
     expect(result.atSettlement).toContain('lstat:end');
+    expectFilesystemDeadlineOrder(result.atSettlement, 'lstat');
     expect(result.afterWait).toBe(result.atSettlement);
     expect(result.setup.isError, result.setup.text).toBe(false);
     expect(result.stderr).not.toContain('Unhandled');
+
+    expectUnawaitedFilesystemControl(await filesystemCleanupControl(root, 'lstat'), 'lstat');
   }, 180_000);
 
   it('[E2E-FILESYSTEM-CANCELLATION] awaits a delayed descriptor read before publishing timeout', async () => {
@@ -553,9 +624,12 @@ describe('packaged operation deadlines', () => {
     expect(result.response.text).toContain('policy.timeout.exceeded');
     expect(result.atSettlement).toContain('read:start');
     expect(result.atSettlement).toContain('read:end');
+    expectFilesystemDeadlineOrder(result.atSettlement, 'read');
     expect(result.afterWait).toBe(result.atSettlement);
     expect(result.setup.isError, result.setup.text).toBe(false);
     expect(result.stderr).not.toContain('Unhandled');
+
+    expectUnawaitedFilesystemControl(await filesystemCleanupControl(root, 'handle-read'), 'read');
   }, 180_000);
 
   it('[E2E-POLICY-PARSER-DEADLINE] expires inside an installed non-yielding parser checkpoint', async () => {

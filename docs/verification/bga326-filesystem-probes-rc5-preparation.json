@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-326",
+  "recordedAt": "2026-10-02T13:08:37.680Z",
+  "sourceCommit": "ad420726ab21cb61e37b71c553f94a57cd9f4db1",
+  "sourceClean": false,
+  "candidate": {
+    "tag": "v1.0.0-rc.5",
+    "sourceCommit": "286f2bbb1bfff28726378098d9883058f19841e9",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac"
+  },
+  "harness": {
+    "tests/e2e/cancellation.test.ts": "sha256:65b86948318d18f2860e2df540c677c2b048b15b87927fff0996db75bafc9a85",
+    "tests/e2e/fs-delay-stub.ts": "sha256:b7f1e9c38b8949e56195c38518a45137c318be96e7816d4fc592785c9e59d7bc"
+  },
+  "resultDigest": "sha256:979f333b54a92edc6f050c62de1b0a04cfb165df44a5e652e69901419a15dbe8",
+  "testsPassed": 2,
+  "testsFailed": 0,
+  "scenario": "E2E-FILESYSTEM-CANCELLATION",
+  "primitives": ["lstat", "FileHandle.read"],
+  "setupDelayMs": 200,
+  "nominalDeadlineMs": 100,
+  "pendingDelayMs": 150,
+  "outcomes": {
+    "controlledExpiryAfterPrimitiveStart": "passed",
+    "primitiveEndsBeforeTimeoutPublication": "passed",
+    "transcriptUnchangedAfterSettlement": "passed",
+    "sameClientResponsive": "passed",
+    "noUnhandledErrors": "passed",
+    "cleanupAwaitRemovalControls": {
+      "lstat": "timeout published before primitive completion; detected",
+      "descriptorRead": "timeout published before primitive completion; detected",
+      "installedModuleRestored": "passed"
+    }
+  },
+  "signatureScope": "Original digest matches retained signed rc.5 identity; this probe did not repeat cryptographic signature verification.",
+  "scope": "Actual installed original tarball with current test-only instrumentation. First expiry callback and monotonic clock are controlled until pending syscall entry. Child publication order is observed before IPC delivery; the real 250 ms cleanup ceiling is unchanged. Two installed-module mutation controls restore original bytes. No new package, production callback, full filesystem matrix, real-time latency, fresh full security assessment or Studio claim."
+}
