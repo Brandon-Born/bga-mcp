@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-411",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "8c034d8cd1596ac3265b40b9fed6419a54f9efd5",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36958128036",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:b200a58d87d0a8a7c294a12ce1c9ae267b7a77ebfeabcb047f4ddfa64d50a7fc",
+      "packageDigest": "sha256:5a1213102c0f53961d9a7490cea3503d63ca1c0d2a8852d5b5734cf581768b6c",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:d62a65cd7967c526cf6a10f22b1257041a0983526667b05ac6a2cc502107315c",
+      "packageDigest": "sha256:5a1213102c0f53961d9a7490cea3503d63ca1c0d2a8852d5b5734cf581768b6c",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:49095227c21d57043051647d9bce327b75ba57495178d8396347a8bec7fd2547",
+      "packageDigest": "sha256:f3af05174133b729abfcd4f58f55edec2b1276fe7333b7be3d6ea398b850de96",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:1357ffc0a000a577c76f8dad3d7d0a6d04bd02e6c5551aac15e06b3fc7777104",
+      "packageDigest": "sha256:f3af05174133b729abfcd4f58f55edec2b1276fe7333b7be3d6ea398b850de96",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:4d02bf2bf49a5dcd105d9815ecc073d2cf04d3fed645049363691fd56f223f19",
+      "packageDigest": "sha256:893e91c1815f03be06f234a1aea9f9ce93eeaf390f64cfd514653be7e4a2a451",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:2c8562e7d60a563a8a2c16492871f4e4add99a83ca088f3c1ecf9252523043d6",
+      "packageDigest": "sha256:893e91c1815f03be06f234a1aea9f9ce93eeaf390f64cfd514653be7e4a2a451",
+      "testsPassed": 654,
+      "scenariosPassed": 196,
+      "capabilities": 17,
+      "retainedClaims": 100
+    }
+  ],
+  "scope": "Exact implementation CI on Ubuntu/macOS/Windows Node 22/24; freshly packed checkout, not the immutable signed rc.3 artifact. No publication or new signing claim."
+}
