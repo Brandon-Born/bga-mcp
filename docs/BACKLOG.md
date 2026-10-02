@@ -1593,6 +1593,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Clean baseline evidence, 2026-10-02 UTC:** [CI 37007946504](verification/rc5-publication-baseline-ci.json) at `50d19f1` concludes successfully after one unchanged failed-job replay. All six downloaded sealed records independently validate trusted schema, integrity, exact clean source, CI environment, 674 tests / 209 required scenarios and conformance. The initial Windows/Node 24 missing injected-read precondition remains retained under BGA-326; passing replay is not a claimed timing fix. This proves the committed dry-run baseline, not registry publication or final security approval.
 
+- **Final-probe assessment reference, 2026-10-02 UTC:** After the separate BGA-405 assessment handoff and full gate passed, publication selects [the clean final-probe assessment](verification/security-review-v1.0.0-rc.5-final-probes.json) of the same unchanged original rc.5. Reporting lifecycle, explicit security approval and null publisher setup still hold admission. The four candidate-specific prerequisites remain unchanged; clean exact-source CI and explicit framework re-admission are required for this reference change. Historical assessments and the earlier hosted dry-run source remain intact. No approval, identity-bearing job, package rebuild or registry write follows from receipt selection.
+
 ### BGA-416 — Bind the installed public executable to the frozen release profile
 
 - **Status:** verified

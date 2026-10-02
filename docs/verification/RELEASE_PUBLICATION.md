@@ -97,3 +97,21 @@ records validate trusted schema, integrity, exact clean source, CI environment,
 failure had no injected `read:start` event before the 100 ms deadline. Its
 failure and log digest remain recorded under BGA-326; setup timing is plausible,
 not a confirmed root cause or a repaired deterministic probe.
+
+## Final-probe security receipt handoff
+
+The publication preflight now selects the [separate final-probe assessment](security-review-v1.0.0-rc.5-final-probes.json)
+from clean reviewer `b07ea15`. It authenticates and tests the same immutable
+original rc.5 artifact using the strengthened filesystem probes, with all
+27 security tests, 11 required scenarios and 274 text-file scans passing.
+Fresh exact-source dependency audits report zero findings. The four existing
+candidate-specific prerequisite receipts remain unchanged and are checked
+against this selected assessment; historical substitutions remain refused.
+
+This is a receipt-reference change, not an approval or publication decision.
+The selected assessment is held on the independent private-report lifecycle,
+and the package/registry/trusted-publisher decision remains null. Changing
+configuration also requires clean exact-source CI and explicit framework
+re-admission before the framework release guard clears. No registry or account
+operation is performed by this handoff; the earlier hosted dry-run observation
+retains its original source and does not claim to test this later reference.
