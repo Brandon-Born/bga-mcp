@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-326",
+  "recordedAt": "2026-10-02T14:12:13.853Z",
+  "sourceBase": "7525b8821f44b5d85230ba806bb1a1a4fea1b207",
+  "sourceClean": false,
+  "candidate": {
+    "tag": "v1.0.0-rc.5",
+    "artifactDigest": "sha256:b7cc226a512a4aab433f8daddf49f54ee00323f3dc7da6960490be1c0727eeac"
+  },
+  "harness": {
+    "tests/e2e/cancellation.test.ts": "sha256:6d0bb6003e686f790c565260cebaab0947516bfbfcb17bb9e8b5124f223663ec",
+    "tests/e2e/fs-matrix-stub.ts": "sha256:e8dc3785e25757aae4ff91255cd8d8b223eb2422088cf04601214bf8958eff97"
+  },
+  "resultDigest": "sha256:8435f907bad0fc1ab3151b97dfff372833c942e9bee135a18b09ec7c4ca9e013",
+  "testsPassed": 38,
+  "testsFailed": 0,
+  "scenario": "E2E-FILESYSTEM-CANCELLATION",
+  "positions": 17,
+  "completionDelaysMs": [150, 600],
+  "delayedCleanupMs": 400,
+  "outcomes": {
+    "withinCeiling": "awaited before publication",
+    "beyondCeiling": "already-issued completion and cleanup only; no new work",
+    "resourceRelease": "zero remaining after bounded observation",
+    "sameClientResponsive": true,
+    "projectUnchanged": true,
+    "mutationControls": ["removed wait", "removed checkpoints", "removed descriptor close"],
+    "installedModulesRestored": true,
+    "productionInstrumentationAbsent": true
+  },
+  "scope": "Uncommitted preparation harness; project-filesystem positions only. Original archive remains unchanged. No fresh signature verification, full native matrix, security approval, current packed-guide identity or framework admission claim."
+}

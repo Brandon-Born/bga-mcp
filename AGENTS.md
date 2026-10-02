@@ -94,6 +94,18 @@ Community sources may inform a search but never justify a rule on their own. A r
 
 A change to public behavior updates, in the same change: the capability manifest (`config/capabilities.json`), its end-to-end scenario, the compatibility matrix (`config/compatibility.json` and `docs/COMPATIBILITY.md`), and the affected backlog item. Backlog IDs are permanent — supersede, never delete or reuse.
 
+## Execution and verification cadence
+
+The user approved this policy on 2026-10-02 to reduce repeated release administration while preserving correctness and release admission.
+
+- During implementation, run the affected tests. Run one complete `pnpm check` on the integrated implementation handoff; repeat it for relevant subsequent changes, failures or unresolved concerns. Follow the workflow-only documentation exception in `docs/TESTING.md` for changes limited to agent instructions, execution order or future-work proposals.
+- Assemble code, required documentation, manifests and known receipt-reference changes before that handoff. Retain results with their actual source and artifact identity. A later evidence-only commit does not make older CI evidence cover its new HEAD; do not start a recursive check/CI/receipt cycle solely to make every metadata commit name itself.
+- Await exact-source CI when an acceptance criterion, compatibility claim, framework admission or release requires it. Otherwise continue independent useful work while CI runs. Leave an active run alone; avoid a push that would cancel a run still needed as evidence. Automatic CI may run on documentation commits without requiring another retained receipt for each one.
+- Repeat original-candidate installation, signing, security and client evaluations when the candidate, relevant harness, dependency assessment, claim or release freshness requirement changes. Do not repeat them solely because an unrelated backlog note or evidence receipt was committed.
+- Separate engineering readiness, real-project usefulness and publication readiness. An external reporting or publisher-setup hold does not prohibit independent MCP work or already-authorized local game development with the verified inventory. Preserve the user's MCP-first priority and all live Studio, rights and publication requirements; do not call the whole MCP or game complete from a narrower milestone.
+- Implement impact-scoped framework-review invalidation under BGA-433. Until its replacement gate is tested, the current broad framework guard remains authoritative; never bypass it or relabel a held review as current.
+- Keep missing MCP functionality in `docs/AGENT_WISHLIST.md`, with an observed need and its next bounded implementation step. Prefer a useful code or real-project result over another unchanged release-status restatement.
+
 ## Boundaries that fail CI if crossed
 
 - Only `src/policy.ts` may import filesystem, network, or subprocess modules.
@@ -110,4 +122,4 @@ pnpm test:unit      # or test:integration, test:e2e
 pnpm verify:compatibility   # and verify:scenarios, verify:rule-catalog, verify:threat-model
 ```
 
-Run `pnpm check` before calling work done.
+Run `pnpm check` before calling an implementation handoff done. Workflow-only documentation follows the scoped checks in `docs/TESTING.md`; it cannot promote a capability, compatibility claim or release to `verified`.

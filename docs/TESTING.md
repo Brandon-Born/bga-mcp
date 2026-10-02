@@ -143,6 +143,20 @@ Mutating capabilities additionally require:
 - Recovery or cleanup after failure.
 - Repeat-call behavior.
 
+## Verification cadence and workflow-only documentation
+
+User-approved execution policy, 2026-10-02: verification must match the changed behavior and the claim being made. Passing evidence retains its exact source, environment, harness and artifact scope. This section changes agent scheduling and handoff practice; it does not change the executable release or framework guards.
+
+During implementation, use the affected suites for feedback. Assemble the implementation, required manifest/compatibility/documentation updates and known reference changes before one complete `pnpm check` at the integrated handoff. Repeat the full gate when subsequent implementation or contract changes invalidate it, when a check fails, or when an unresolved concern requires broader coverage. Do not repeat it merely to attach another source hash to unchanged prose or retained evidence.
+
+A workflow-only documentation change may finish with formatting of the owned files, `pnpm verify:documentation` and `git diff --check` instead of another full runtime suite. This exception is limited to agent instructions, execution order and future-work proposals. It excludes changed BGA semantic source decisions, supported behavior, schemas, security controls, release admission, executable code, dependencies, scenarios, manifest claims, or evidence edits that alter an asserted result. Those changes keep their applicable full gates. A workflow-policy handoff does not establish new capability verification or release approval. In a shared checkout, inspect and stage only the owned paths; the implementation owner performs the integrated full gate rather than two agents running competing package builds.
+
+Wait for exact-source CI where a claim or admission rule requires it. Other independent authorized work can proceed while the run stays active. Retain the final relevant run once, preserving failures and narrowly stated scope. An evidence-only follow-up commit may cite the implementation commit it proves without claiming that evidence covers its own new HEAD. Automatic CI on that follow-up is allowed to finish without another documentation commit recording it. Do not recursively regenerate receipts for receipts.
+
+Repeat a candidate evaluation only for a changed candidate, relevant harness or claim, a failed or incomplete observation, or the freshness requirement at actual review/publication. Preserve all immutable originals and historical assessments. A changed packed guide still needs a replacement candidate before publication; collect guide changes with the next substantive candidate preparation rather than immediately rerunning the entire release chain for every policy edit. This is scheduling, not permission to publish stale guides or waive signature, audit, reporting, framework or consumer gates.
+
+BGA-433 owns replacement of the broad framework implementation digest with explicit impact-scoped dependencies. Until that implementation and its counterexamples pass, current guards still apply. An unrelated metadata change is not a reason to invent a framework rule, silently exclude a file from review, or manufacture current approval.
+
 ## Release gates
 
 A change cannot be considered complete when any applicable gate is missing or failing:

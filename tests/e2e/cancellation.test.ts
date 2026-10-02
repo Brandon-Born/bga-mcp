@@ -1,11 +1,12 @@
 import { createServer, type Server, type ServerResponse } from 'node:http';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
 
 import {
   callTool,
+  digestDirectory,
   installPackagedServer,
   withPackagedServer,
   type PackagedServer,
@@ -45,6 +46,145 @@ import {
 const stubModule = new URL('./doc-network-stub.ts', import.meta.url).href;
 const dnsStubModule = new URL('./dns-stub.ts', import.meta.url).href;
 const fsDelayModule = new URL('./fs-delay-stub.ts', import.meta.url).href;
+const fsMatrixModule = new URL('./fs-matrix-stub.ts', import.meta.url).href;
+const filesystemStages = [
+  ['resolveProjectRoot:realpath', 1],
+  ['resolveWithinProject:realpath', 1],
+  ['walk:lstat', 1],
+  ['walk:lstat', 2],
+  ['walk:lstat', 3],
+  ['walk:opendir', 1],
+  ['walk:realpath', 1],
+  ['walk:dir-next', 1],
+  ['readProjectFile:lstat', 1],
+  ['readProjectFile:lstat', 2],
+  ['readProjectFile:open', 1],
+  ['readProjectFile:realpath', 1],
+  ['readProjectFile:stat', 1],
+  ['readProjectFile:stat', 2],
+  ['readProjectFile:read', 1],
+  ['readProjectFile:read', 2],
+  ['readProjectFile:close', 1],
+] as const;
+interface FilesystemMatrixEvent {
+  readonly sequence: number;
+  readonly event: string;
+  readonly operation?: string;
+  readonly expired: boolean;
+  readonly files: number;
+  readonly directories: number;
+  readonly time: number;
+}
+function matrixEvents(text: string): FilesystemMatrixEvent[] {
+  return text
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line) as FilesystemMatrixEvent);
+}
+
+async function filesystemMatrixProbe(
+  target: string,
+  occurrence: number,
+  completionMs: number,
+  cleanupMs = 0,
+) {
+  const log = resolve(server.temporaryRoot, 'filesystem-matrix.log');
+  await writeFile(log, '');
+  const root = server.projects.legacy;
+  const before = await digestDirectory(root);
+  const { result, stderr } = await withPackagedServer(
+    server.cli,
+    ['--project-root', root, '--operation-timeout-ms', '100'],
+    async (client) => {
+      const response = await callTool(client, 'inspect_project', {}, 30_000);
+      const atSettlement = await readFile(log, 'utf8');
+      await new Promise<void>((ready) => {
+        setTimeout(ready, 700);
+      });
+      const afterWait = await readFile(log, 'utf8');
+      await new Promise<void>((ready) => {
+        setTimeout(ready, 100);
+      });
+      const afterQuiescence = await readFile(log, 'utf8');
+      const setup = await callTool(client, 'check_setup', {}, 30_000);
+      return { response, atSettlement, afterWait, afterQuiescence, setup };
+    },
+    {
+      nodeArguments: ['--import', 'tsx', '--import', fsMatrixModule],
+      env: {
+        ...process.env,
+        BGA_MCP_FS_MATRIX_TARGET: target,
+        BGA_MCP_FS_MATRIX_OCCURRENCE: String(occurrence),
+        BGA_MCP_FS_MATRIX_COMPLETION_MS: String(completionMs),
+        BGA_MCP_FS_MATRIX_CLEANUP_MS: String(cleanupMs),
+        BGA_MCP_FS_MATRIX_TRANSCRIPT: log,
+      },
+    },
+  );
+  expect(await digestDirectory(root)).toBe(before);
+  return { ...result, stderr };
+}
+
+function expectMatrixQuiescence(result: Awaited<ReturnType<typeof filesystemMatrixProbe>>) {
+  expect(result.response.isError, result.response.text).toBe(true);
+  expect(result.response.text).toContain('policy.timeout.exceeded');
+  expect(result.setup.isError, result.setup.text).toBe(false);
+  expect(result.stderr).not.toContain('Unhandled');
+  expect(result.stderr).not.toContain('Closing file descriptor');
+  const events = matrixEvents(result.afterWait);
+  expect(events.map((event) => event.sequence)).toEqual(events.map((_, index) => index + 1));
+  expect(events.filter((event) => event.event === 'selected:issued')).toHaveLength(1);
+  const issued = events.findIndex((event) => event.event === 'selected:issued');
+  const expired = events.findIndex((event) => event.event === 'deadline:expire');
+  expect(expired).toBeGreaterThan(issued);
+  expect(events.filter((event) => event.event === 'work:start' && event.expired)).toEqual([]);
+  expect(events.at(-1)).toMatchObject({ files: 0, directories: 0 });
+  expect(result.afterQuiescence).toBe(result.afterWait);
+  return events;
+}
+
+function expectMatrixDeadlineOrder(
+  result: Awaited<ReturnType<typeof filesystemMatrixProbe>>,
+  target: string,
+  completionMs: number,
+): void {
+  const events = expectMatrixQuiescence(result);
+  const published = events.findIndex((event) => event.event === 'response:timeout');
+  const expired = events.findIndex((event) => event.event === 'deadline:expire');
+  const completed = events.findIndex(
+    (event, index) =>
+      index > expired &&
+      (event.event === 'work:end' || event.event === 'cleanup:end') &&
+      event.operation === target,
+  );
+  expect(published).toBeGreaterThan(expired);
+  expect(completed).toBeGreaterThan(expired);
+  if (completionMs === 150) {
+    expect(published).toBeGreaterThan(completed);
+    expect(result.afterWait).toBe(result.atSettlement);
+    expect(matrixEvents(result.atSettlement).at(-1)).toMatchObject({ files: 0, directories: 0 });
+  } else {
+    expect(completed).toBeGreaterThan(published);
+    const publication = events[published];
+    const expiry = events[expired];
+    if (!publication || !expiry) throw new Error('Missing timeout/expiry transcript events');
+    expect(publication.time - expiry.time).toBeGreaterThanOrEqual(200);
+  }
+}
+
+async function matrixMutation(target: string, replace: (source: string) => string) {
+  const path = resolve(dirname(server.cli), 'policy.js');
+  const original = await readFile(path, 'utf8');
+  const modified = replace(original);
+  expect(modified).not.toBe(original);
+  try {
+    await writeFile(path, modified);
+    return await filesystemMatrixProbe(target, 1, 150);
+  } finally {
+    await writeFile(path, original);
+    expect(await readFile(path, 'utf8')).toBe(original);
+  }
+}
 const parserDeadlineModule = new URL('./parser-deadline-stub.ts', import.meta.url).href;
 const PARSER_DEADLINE_MS = 5_000;
 const PARSER_EXPIRY_CHECKPOINT = 5;
@@ -386,6 +526,71 @@ afterAll(async () => {
 });
 
 describe('packaged operation deadlines', () => {
+  it.each(
+    filesystemStages.flatMap(([target, occurrence]) =>
+      [150, 600].map((completionMs) => ({ target, occurrence, completionMs })),
+    ),
+  )(
+    '[E2E-FILESYSTEM-CANCELLATION] observes $target occurrence $occurrence with $completionMs ms completion',
+    async ({ target, occurrence, completionMs }) => {
+      const result = await filesystemMatrixProbe(target, occurrence, completionMs);
+      expectMatrixDeadlineOrder(result, target, completionMs);
+    },
+    180_000,
+  );
+
+  it.each(['walk:opendir', 'readProjectFile:open'])(
+    '[E2E-FILESYSTEM-CANCELLATION] bounds delayed handle cleanup after %s expiry',
+    async (target) => {
+      const result = await filesystemMatrixProbe(target, 1, 150, 400);
+      const events = expectMatrixQuiescence(result);
+      const published = events.findIndex((event) => event.event === 'response:timeout');
+      expect(
+        events.findIndex((event, index) => index > published && event.event === 'cleanup:end'),
+      ).toBeGreaterThan(published);
+    },
+    180_000,
+  );
+
+  it('[E2E-FILESYSTEM-CANCELLATION] detects removed waiting, checkpoints and descriptor cleanup in installed mutation controls', async () => {
+    const unawaited = await matrixMutation('readProjectFile:open', (source) =>
+      source.replace(
+        'await Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
+        'void Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
+      ),
+    );
+    const events = matrixEvents(unawaited.afterWait);
+    const published = events.findIndex((event) => event.event === 'response:timeout');
+    expect(
+      events.findIndex((event, index) => index > published && event.event === 'work:end'),
+    ).toBeGreaterThan(published);
+    expect(() => expectMatrixDeadlineOrder(unawaited, 'readProjectFile:open', 150)).toThrow();
+    const unchecked = await matrixMutation('walk:dir-next', (source) =>
+      source.replaceAll('cancellationCheckpoint(options.signal);', 'void options.signal;'),
+    );
+    expect(
+      matrixEvents(unchecked.afterWait).some(
+        (event) => event.event === 'work:start' && event.expired,
+      ),
+    ).toBe(true);
+    expect(() => expectMatrixQuiescence(unchecked)).toThrow();
+    const unclosed = await matrixMutation('readProjectFile:read', (source) =>
+      source.replace('await handle.close();', 'void handle;'),
+    );
+    expect(matrixEvents(unclosed.afterWait).at(-1)?.files).toBeGreaterThan(0);
+    expect(() => expectMatrixQuiescence(unclosed)).toThrow();
+  }, 180_000);
+
+  it('[E2E-FILESYSTEM-CANCELLATION] keeps matrix instrumentation absent from the installed production files', async () => {
+    const dist = dirname(server.cli);
+    for (const name of await readdir(dist, { recursive: true })) {
+      if (!name.endsWith('.js')) continue;
+      const source = await readFile(resolve(dist, name), 'utf8');
+      expect(source).not.toContain('BGA_MCP_FS_MATRIX_');
+      expect(source).not.toContain('fs-matrix-stub');
+    }
+  });
+
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] closes a socket the deadline abandoned', async () => {
     transcript = [];
     const root = await bigProject('stalled-body', 5);

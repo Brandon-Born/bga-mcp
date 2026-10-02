@@ -208,6 +208,10 @@ project writes, test execution by the server, or Studio operations.
 
 ## Advance one reviewed candidate without scattered selectors
 
+**Additional observed bookkeeping, 2026-10-02.** The BGA-326 matrix raised the passing suite total from 674 to 712. The final evidence gate then refused six active verification-summary headers with the old total, requiring manual numeric edits although their dated scenario results and framework interpretations were unchanged. Desired help is a single generated current-run summary beside immutable historical observations. The next bounded step is to inventory which records are current summaries and which are historical, then propose generation and refusal controls that preserve source/artifact identity rather than rewriting dated evidence. This is repository verification tooling, not a project-writing MCP capability; no generator or gate change is implemented by this note.
+
+**User-approved follow-through, 2026-10-02.** The framework impact-scoping portion is promoted to BGA-433 with dependency, counterexample and migration acceptance. Agent execution policy now avoids recursive receipt handoffs and unrelated replays. The executable broad guard remains in place until BGA-433 passes; central candidate selection remains a separate unimplemented wish. This promotion does not claim either feature is implemented or verified.
+
 **Observed during rc.4 signing preparation.** Selecting the verified original
 packet requires matching receipt constants in `release-signing.ts` and
 `test-signed-release.ts`, plus the workflow concurrency group. Downstream
