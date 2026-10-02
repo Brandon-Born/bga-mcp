@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-406",
+  "recordedAt": "2026-10-02",
+  "sourceCommit": "8397d9320d2b66d13f4bddaeac44ef218ed0a992",
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36962340356",
+    "conclusion": "success"
+  },
+  "jobs": [
+    {
+      "job": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:49814e58b74f0d25ce97a14119e5bf67ff0c04a80e55a56d15828fad5393ea1d",
+      "packageDigest": "sha256:1758691fb71a61723d3c42f640dc554826d9bca4c1209bf153fdbb36575833fa",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:5b99590ee61361d15f7c42ac22eeb1725d1d274862c08c4b4751296ce1b73728",
+      "packageDigest": "sha256:1758691fb71a61723d3c42f640dc554826d9bca4c1209bf153fdbb36575833fa",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:e21d29b6adb950197ba0d2e908d33444a280f0ad049ccb6cf73d124273d9a4c4",
+      "packageDigest": "sha256:40bc51e36d6830ca8f6b1906fa55b961040587bef9865db2cf2feb5fd15804be",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:cf9eac454ca297196f7212fdaca3aba6b32aa00f563ed569ea54930cca82236d",
+      "packageDigest": "sha256:40bc51e36d6830ca8f6b1906fa55b961040587bef9865db2cf2feb5fd15804be",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:b7d700e90e78f31c75b40bc3d00b4c187113593c4945cbce253199fd3259734d",
+      "packageDigest": "sha256:7f02eb8339f0dae4f0d350d90d5b9dada3c08eed1d150f7fe8e2ff04534ca439",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    },
+    {
+      "job": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:d8856bc16deaba55b5bfefe660d4c7dd3a13948e0a892d9032a83356f5e4cca9",
+      "packageDigest": "sha256:7f02eb8339f0dae4f0d350d90d5b9dada3c08eed1d150f7fe8e2ff04534ca439",
+      "testsPassed": 656,
+      "scenariosPassed": 198,
+      "capabilities": 17,
+      "retainedClaims": 100
+    }
+  ],
+  "scope": "Exact source CI for reporting policy and synthetic safeguard controls. No real non-maintainer report lifecycle proof, new signature or publication."
+}
