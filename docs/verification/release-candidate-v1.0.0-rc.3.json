@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-02T02:12:13.232Z",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.3",
+    "sourceCommit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.3",
+    "artifactName": "bga-mcp-1.0.0-rc.3.tgz",
+    "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:634779eead9d0bc59d15ba04238b82e774ca426fd1d559cf6536e45fe1c194e3",
+      "verificationEvidence": "sha256:49d94863ac455e9f60a54ce53d1bc1acfedc1ede1def1b253ffb9344bc52cfb2",
+      "artifact": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+      "securityAudit": "sha256:b7de15660685aed9ba7d7fcdc6da8f299ec2889518a27c0eff0bba83380bd6c9"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36954183424",
+    "conclusion": "success",
+    "artifactId": 11204908680,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.3",
+    "archiveDigest": "sha256:67fadf2f72f2aaff151369a0067a359bd8c9fa75607aec5e9f5f6dfe78521103",
+    "expiresAt": "2026-12-31T02:07:49Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36953654315",
+    "commit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:0ab2d9080c6083cb323307f22c975ef4a22bef1c458a9bc62a168f6c8e72a6c6",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:0ab2d9080c6083cb323307f22c975ef4a22bef1c458a9bc62a168f6c8e72a6c6",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:d6eab77f607c36a877ed9f47fc8e464894d3ab01e4c958b1acc0419e73004664",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:d6eab77f607c36a877ed9f47fc8e464894d3ab01e4c958b1acc0419e73004664",
+        "testsPassed": 651,
+        "scenariosPassed": 193
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-02T02:11:00.656Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentConsumer": {
+    "archiveDigestVerified": true,
+    "checksumsVerified": 6,
+    "discovery": "matched installed inventory",
+    "client": "codex-cli 0.159.2",
+    "node": "v22.17.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "artifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+    "calls": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "schemaRefusal": true,
+    "outsideRootRefusal": true,
+    "excludedToolRefusal": true,
+    "projectUnchanged": true,
+    "userConfigurationUnchanged": true,
+    "appServerExited": true,
+    "serverProcessesExited": true,
+    "removal": true,
+    "originalReproducer": "passed",
+    "probeDigest": "sha256:a93b2aa0b4bc4d0c4adebd33560927ec9534b8bfdafe0d3a5cdf9d386eb1b901",
+    "runnerDigest": "sha256:432408113bd077e24aa0fb690c018182ffdad5bc4af5445e50d60e98b53dc922",
+    "stderrDiagnosticsObserved": true
+  },
+  "localRetention": ".artifacts/release-candidates/v1.0.0-rc.3",
+  "published": false,
+  "signed": false
+}

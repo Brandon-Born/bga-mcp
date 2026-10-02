@@ -51,7 +51,7 @@ async function main(): Promise<void> {
   const signer = process.env.BGA_MCP_SIGNER_COMMIT;
   assert(directory && signer);
   const receipt = JSON.parse(
-    await readFile(resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.2.json'), 'utf8'),
+    await readFile(resolve(root, 'docs/verification/release-candidate-v1.0.0-rc.3.json'), 'utf8'),
   ) as unknown;
   const candidate = await readSigningCandidate(directory, receipt);
   const scratch = await mkdtemp(resolve(tmpdir(), 'bga-signed-consumer-'));

@@ -56,3 +56,29 @@ BGA-404 subsequently verified signing of these same seven original files; [the s
 - [pnpm pack](https://pnpm.io/cli/pack) says “Create a tarball from a package” and documents `--pack-destination`.
 - [GitHub manual workflows](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow) documents `workflow_dispatch`, explicit inputs and selecting a workflow ref.
 - [GitHub workflow artifacts](https://docs.github.com/en/actions/tutorials/store-and-share-data) documents retained artifacts, retention limits and download digest validation. The workflow artifact is a candidate for later signing and review; this item grants no publication or identity-token permission.
+
+## BGA-431 replacement: rc.3
+
+The original `v1.0.0-rc.3` tarball was produced from exact source
+`c7ad5c2962e608a82b532dd0d1882040d1ba31ea` by
+[candidate run 36954183424](https://github.com/Brandon-Born/bga-mcp/actions/runs/36954183424).
+[Source CI 36953654315](https://github.com/Brandon-Born/bga-mcp/actions/runs/36953654315)
+passed all six platform/Node jobs, each with 651 tests and 193 required scenarios.
+The producer required identical Ubuntu/Node 24 reconstruction and fresh production
+and full-graph audits, both with zero findings. Cross-platform packing retains
+individual hashes; no cross-platform byte-equality claim is made.
+
+The [rc.3 receipt](release-candidate-v1.0.0-rc.3.json) binds original tarball
+SHA-256 `598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3`,
+archive digest, six source receipts, lockfile, manifest, sealed evidence and audit.
+Independent download verified all six checksum entries and their source
+relationships. A fresh native Codex 0.159.2 consumer discovered/called all seven
+tools, read all three resources, refused malformed/outside/excluded requests,
+proved unchanged project/configuration and exited cleanly. Removal removed the
+command. The original BGA-431 public-command/prototype probe also passed against
+these exact bytes; [the fixed observation](bga431-fixed-v1.0.0-rc.3.json) remains
+separate from rc.2's historical failure.
+
+Only after this verification are signing selectors advanced to rc.3. Signing and
+frozen BGA-424 carry-forward remain subsequent observations. Original rc.1/rc.2
+packets and receipts remain unchanged; no package is published.

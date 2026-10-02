@@ -1,0 +1,44 @@
+{
+  "owner": "BGA-431",
+  "sourceCommit": "c7ad5c2962e608a82b532dd0d1882040d1ba31ea",
+  "ci": "https://github.com/Brandon-Born/bga-mcp/actions/runs/36953654315",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "verification-macos-latest-node-22",
+      "evidenceDigest": "sha256:418e3c8d98a36b62afdbfb7cec80bb2dd889f3ab9288043819a86c7c6c63e3f6",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    },
+    {
+      "name": "verification-macos-latest-node-24",
+      "evidenceDigest": "sha256:29cc1eb459eeed641096affe22eda1af7e79d79ea3531c912f7561bf4bbd96e4",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    },
+    {
+      "name": "verification-ubuntu-latest-node-22",
+      "evidenceDigest": "sha256:198fa8f387954306f3de35b0a09a0fb4a5c7d0014f08011287c409ce22bbc1f2",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    },
+    {
+      "name": "verification-ubuntu-latest-node-24",
+      "evidenceDigest": "sha256:bdd28acbf7647d31ab08ae0295137ed69126835c2ff3d9360540b755421a0e09",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    },
+    {
+      "name": "verification-windows-latest-node-22",
+      "evidenceDigest": "sha256:39ef85f14fee07fc6eb7efaaa3dc29cb2b6464fe4238362f5e8eb235f6f40c3e",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    },
+    {
+      "name": "verification-windows-latest-node-24",
+      "evidenceDigest": "sha256:5168f82a53e747a2c8d8efb477fccb89394ee7f07c86f683c47cf0948d7e909e",
+      "testsPassed": 651,
+      "scenariosPassed": 193
+    }
+  ]
+}

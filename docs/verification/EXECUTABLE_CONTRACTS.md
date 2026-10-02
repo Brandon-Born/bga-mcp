@@ -91,3 +91,16 @@ legacy/modern/hybrid and seeded uncertainty controls. Coverage, package lint,
 applicable official conformance, policy/threat-model and secret/artifact gates
 passed. This dirty-source local run precedes the clean committed CI observation;
 it is not yet a candidate-production or signing receipt.
+
+## Clean source and retained candidate observations
+
+[Exact-source CI](bga431-source-ci.json) passed all six jobs at `c7ad5c2`.
+The [rc.3 candidate receipt](release-candidate-v1.0.0-rc.3.json) records the actual
+non-publishing producer, fresh audits and identical reconstruction. The
+[fixed original probe](bga431-fixed-v1.0.0-rc.3.json) reports no handler, only live
+PHP methods and the missing-handler warning; all three previous failures are
+absent. Its fixture and runner digests match the historical rc.2 observation.
+All projects and client configuration were unchanged and processes exited.
+BGA-431's parser correction is verified for the identified source and original
+candidate bytes. Signing and explicit frozen-task carry-forward still gate
+BGA-424 closure; code verification alone does not transfer that evaluation.

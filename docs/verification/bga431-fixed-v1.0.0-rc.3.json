@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-431",
+  "recordedAt": "2026-10-02T02:12:47.342Z",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.3.json",
+  "candidateArtifactDigest": "sha256:598cad2186c60e8110d8906ffb91739893c357ebed69cad0529c8a5a367907a3",
+  "fixtureDigest": "sha256:ce7ffef66d95260da67a375f4ea4a1dbde585f1fb7b11afebe8c73488102f04a",
+  "runnerDigest": "sha256:d330a5b16c060a7b8ba1835b77b4a9591c6342d4831d7c2f05dc249cc0c62131",
+  "resultDigest": "sha256:a93b2aa0b4bc4d0c4adebd33560927ec9534b8bfdafe0d3a5cdf9d386eb1b901",
+  "livePrototypeHandlers": [],
+  "reportedHandlers": [],
+  "reportedGameMethods": ["changeMarker"],
+  "findingCodes": ["notification.sent.not-handled"],
+  "failures": [],
+  "projectUnchanged": true,
+  "serverExited": true,
+  "tools": [
+    "validate_notifications",
+    "validate_action_contracts",
+    "validate_project",
+    "run_pre_release_audit"
+  ],
+  "resources": ["bga://project/diagnostics", "bga://project/summary"]
+}
