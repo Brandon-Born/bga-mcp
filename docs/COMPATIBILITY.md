@@ -143,3 +143,7 @@ carry-forward close BGA-424 for its bounded sample. See [implementation evidence
 BGA-411 extends CLAIM-TRANSPORT-STDIO with installed documentation checks: all shipped guide/help paths resolve, public and development discovery match generated names/counts/stabilities/boundaries, and omitted-file/stale-inventory controls fail. Templates and concrete resources are distinct. This adds no network, named-client, productivity or game-correctness claim.
 
 BGA-406 extends CLAIM-TRANSPORT-STDIO only with reporting-policy safeguards. Live channel enablement is observed, but the external non-maintainer report lifecycle remains unverified. Admin-created drafts and synthetic controls cannot satisfy it; no runtime, client or security approval claim is added.
+
+## Framework review holds
+
+BGA-408 adds a separate [framework change process](FRAMEWORK_CHANGES.md). A changed, missing, unreachable or expired official source can hold affected claims stale for new publication while the recorded compatibility support contract is preserved. Source/fixture changes require official review and clean targeted retest. Process simulation does not certify live freshness; the initial ledger has no live baseline and refuses new candidates or inventory guidance until one is reviewed.

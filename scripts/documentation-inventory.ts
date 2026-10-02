@@ -1,3 +1,4 @@
+import { frameworkReleaseGuard } from './framework-change.js';
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -24,6 +25,7 @@ const release = JSON.parse(
 ) as ReleaseInventory;
 const documents = await readDocumentation(root);
 if (process.argv.includes('--write')) {
+  await frameworkReleaseGuard();
   for (const file of INVENTORY_DOCUMENTS) {
     // Keep the same formatting as the repository gate, without requiring callers to repair it.
     const updated = replaceInventory(documents[file] ?? '', inventoryBlock(manifest, release));

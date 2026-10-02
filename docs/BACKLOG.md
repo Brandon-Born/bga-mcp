@@ -73,7 +73,7 @@ The first public release queue is:
 11. `BGA-405` — security review of the exact signed candidate.
 12. `BGA-415` — publish and independently reinstall the first release.
 
-BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 private vulnerability reporting is next; later release operations retain their separate artifact and publication gates.
+BGA-431 is verified and signed rc.3 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against installed discovery and exact-source CI. BGA-406 is implemented with exact-source CI and an external benign-report lifecycle still pending. BGA-408 is the next separately implemented process item; later release operations retain their separate artifact and publication gates.
 
 BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
@@ -921,6 +921,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** `pnpm docs:drift` retrieves every tracked topic through the policy boundary and compares it with the baseline it was reviewed at, reporting changed text, an edit that changed no text, a page that could not be read, a tracked page that has gone, and a page nobody reviewed. It never writes a baseline as a side effect: recording one is `--record`, run by a person after reading what changed, because "the wiki changed" and "the new text is correct" are different claims and only the second one needs judgement. Changed, missing, and untracked pages fail the run and the message says the derived guidance is stale until it is re-read and `pnpm test:docs-eval` passes again. The digest covers extracted text rather than markup, so a formatting edit is reported as an edit and not as drift. `UNIT-DOC-DRIFT` covers all five outcomes, including that an unreachable page is never treated as unchanged.
 - **Note:** `implemented`. The comparison is fully covered offline; running it needs the network, so like the evaluation set it is a scheduled and pre-release command rather than a commit gate.
 
+- **BGA-408 process integration, 2026-10-02:** The historical multi-topic `docs:drift --record` command above is retired. `docs:drift status/observe URL/review URL EVIDENCE REVIEWER CI_RUN` delegates to the single-page framework ledger. Detection now holds publication and unavailable sources fail closed. The original pure comparison tests remain historical detector coverage; BGA-408 owns process admission and installed retest.
+
 ### BGA-314 — Take project roots from the client instead of a flag
 
 - **Status:** implemented
@@ -1417,12 +1419,15 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-408 — Establish the BGA framework change process
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P1
 - **Depends on:** BGA-009, BGA-206, BGA-402
 - **Deliverable:** Ownership, monitoring cadence, compatibility review, fixture updates, deprecation handling, and emergency response for BGA changes.
 - **Acceptance:** Detected changes can mark affected support claims stale and trigger targeted tests before new guidance or packages are published.
 - **Verification:** A simulated framework change proves detection, impact mapping, stale-state behavior, fixture update, retest, and restored verification.
+
+- **Implementation, 2026-10-02 UTC:** [Owned framework change process](FRAMEWORK_CHANGES.md), conservative rule-source/claim/scenario mapping, single-page metadata-only observation and a separate stale/expired/unavailable release ledger. Candidate creation and new inventory guidance generation refuse uncleared holds. Explicit review requires original fixtures and clean, post-observation, matching-source evidence for all targeted scenarios. Recovery/reversion cannot erase a detected hold. [Simulated installed-package lifecycle and controls](verification/FRAMEWORK_CHANGE_PROCESS.md) pass with the full local gate: 661 tests and 202 required scenarios. Exact-source CI is pending. No live baseline is asserted; missing review holds new publication. Existing support contracts and immutable candidates are preserved.
+- **Sources:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), fetched 2026-10-02 UTC, says “These files are deprecated”; [migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says “Then you can safely delete the gameoptions.inc.php file” after generating replacements. Deprecation does not establish removal; independent legacy/modern forms remain covered.
 
 ### BGA-409 — Decide on a remote documentation-only transport
 

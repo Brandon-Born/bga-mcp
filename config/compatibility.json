@@ -548,7 +548,7 @@
       "dimension": "transport",
       "value": "stdio",
       "support": "supported",
-      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests. BGA-404 adds isolated original-byte attestation and a separate signature-verified consumer workflow; ordinary scenario tests exercise offline policy only. BGA-407 publishes signed original observations with exact frozen-inventory coverage and explicit exclusions; release-tool network reads add no network access to the local server. BGA-411 checks shipped guides, help paths, and manifest-derived public/development inventory against installed MCP discovery; templates and concrete resources are counted separately. These documentation checks add no client or game-correctness claim. BGA-406 adds a private reporting process and offline safeguards against mistaking configured access or a maintainer draft for a verified external report. No MCP/runtime or external reporting-lifecycle support claim is added.",
+      "notes": "The only product transport. Launched as a subprocess by the MCP client. The local-only release entry point is installed and discovered over the same transport against its frozen inventory. Release tooling separately requires a current production/full-graph advisory assessment under BGA-422; this adds no network access to the installed local server. BGA-403 verified the v1.0.0-rc.1 tagged candidate and independently installed its retained bytes; docs/verification/RELEASE_CANDIDATE.md records the source, CI and artifact digests. BGA-404 adds isolated original-byte attestation and a separate signature-verified consumer workflow; ordinary scenario tests exercise offline policy only. BGA-407 publishes signed original observations with exact frozen-inventory coverage and explicit exclusions; release-tool network reads add no network access to the local server. BGA-411 checks shipped guides, help paths, and manifest-derived public/development inventory against installed MCP discovery; templates and concrete resources are counted separately. These documentation checks add no client or game-correctness claim. BGA-406 adds a private reporting process and offline safeguards against mistaking configured access or a maintainer draft for a verified external report. No MCP/runtime or external reporting-lifecycle support claim is added. BGA-408 scenarios verify repository publication holds and a simulated framework-review lifecycle; they do not certify live BGA source freshness or alter runtime transport.",
       "scenarios": [
         "E2E-RELEASE-PUBLIC-EXECUTABLE",
         "E2E-STDIO-SHUTDOWN",
@@ -564,7 +564,11 @@
         "E2E-DOCUMENTATION-DEVELOPMENT",
         "E2E-DOCUMENTATION-NEGATIVE",
         "GATE-PRIVATE-REPORTING",
-        "INT-PRIVATE-REPORTING-LIFECYCLE"
+        "INT-PRIVATE-REPORTING-LIFECYCLE",
+        "GATE-FRAMEWORK-CHANGE",
+        "INT-FRAMEWORK-CHANGE",
+        "INT-FRAMEWORK-RETEST",
+        "E2E-FRAMEWORK-CHANGE-LIFECYCLE"
       ]
     },
     {

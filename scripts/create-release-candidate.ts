@@ -1,3 +1,4 @@
+import { frameworkReleaseGuard } from './framework-change.js';
 import { execFile } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdir, mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
@@ -109,6 +110,8 @@ async function main(): Promise<void> {
       'Candidate output must be outside the source tree so retention cannot dirty it',
     );
   }
+
+  await frameworkReleaseGuard();
 
   const policy = await loadJson<VersionPolicySummary>('config/version-policy.json');
   const source = await candidateSource(tag);

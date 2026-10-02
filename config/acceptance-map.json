@@ -1176,6 +1176,24 @@
       "case": "Retained evidence of the real non-maintainer private report receipt, acknowledgement, triage and closure is available; synthetic verifier controls cannot supply it",
       "boundary": "repository",
       "missing": "External non-maintainer report and authorized acknowledgement/triage/closure are not yet observed."
+    },
+    {
+      "item": "BGA-408",
+      "case": "Owned weekly single-page monitoring and conservative source impact mapping preserve compatibility contracts while unavailable, changed, expired or unreviewed guidance holds publication",
+      "boundary": "repository",
+      "scenarios": ["GATE-FRAMEWORK-CHANGE", "INT-FRAMEWORK-CHANGE"]
+    },
+    {
+      "item": "BGA-408",
+      "case": "Clean post-observation exact-source evidence with all targeted scenarios is required before explicit review restores held claims",
+      "boundary": "repository",
+      "scenarios": ["INT-FRAMEWORK-RETEST"]
+    },
+    {
+      "item": "BGA-408",
+      "case": "Simulated framework change detects stale claims, exposes an outdated fixture assertion, updates original fixtures, retests documented forms through installed MCP and restores only after review",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FRAMEWORK-CHANGE-LIFECYCLE"]
     }
   ]
 }

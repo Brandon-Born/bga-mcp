@@ -208,3 +208,7 @@ No other wording should imply a stronger level of confidence than the recorded e
 ## Client smoke release evidence
 
 `pnpm verify:clients` checks the [client matrix](CLIENTS.md) and proves it refuses unsupported claims before accepting the real matrix. Maintained clients run their packaged smoke flow in every claimed CI environment. Controlled evaluations retain exact candidate/client/platform and runner identities, without raw transcripts or credentials. The native Codex runner uses documented app-server APIs without an inference turn; its smoke is not a substitute for BGA-424 development evaluation. A runner change requires re-execution before its receipt is accepted.
+
+## Framework process gate
+
+`pnpm verify:framework-change` checks BGA-408 policy and impact coverage offline. `pnpm framework:status` reports current holds; `pnpm framework:observe URL` performs one explicitly requested official lookup. `pnpm framework:review URL EVIDENCE REVIEWER CI_RUN` requires clean post-observation evidence and matching implementation/fixtures. `pnpm framework:release` is mandatory before new candidate creation or guidance publication; it fails closed without a reviewed, fresh baseline. Process simulations and full local checks cannot stand in for live observation. See [FRAMEWORK_CHANGES.md](FRAMEWORK_CHANGES.md).

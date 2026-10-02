@@ -4,9 +4,9 @@
 {
   "kind": "run",
   "capabilities": 17,
-  "scenarios": 198,
+  "scenarios": 202,
   "claims": 100,
-  "tests": 656
+  "tests": 661
 }
 ```
 
