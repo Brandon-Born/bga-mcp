@@ -1377,6 +1377,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Versioned-guide replacement preparation, 2026-10-02 UTC:** Package, runtime metadata and capability manifest advance together to `1.0.0-rc.5` so a distinct candidate can carry the corrected versioned acquisition example. The public inventory, schemas, protocol/support contract and BGA reader behavior are unchanged. Original rc.4 security replay and client/installation/public-evidence/usefulness receipts remain scoped to their own bytes. Fresh clean version-preparation CI and explicit admission of the unchanged previously read framework decisions must pass before tagging/producing rc.5. No new candidate bytes, signature, approval or publication are claimed by metadata preparation; historical receipts remain immutable.
 
+- **rc.5 preparation CI/admission, 2026-10-02 UTC:** [Six-platform CI 36987676558](verification/rc5-preparation-ci.json) passes at `e04810a`, each job with 674 tests / 209 scenarios and sealed clean evidence. All eight unchanged previously read source decisions are explicitly re-admitted against this final preparation source and the actual framework release guard passes. The distinct clean tag, non-publishing producer and original-byte consumer are next; rc.4 proof is not transferred.
+
 ### BGA-404 — Sign and attest release artifacts
 
 - **Status:** verified

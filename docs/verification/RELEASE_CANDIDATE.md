@@ -183,3 +183,11 @@ tag can enter the non-publishing producer. Prior clean-reference CI is retained
 separately, not reused to cover the new version metadata. Original candidate
 creation, independent consumer checks, signing, public evidence, usefulness,
 security and owned external release gates still require rc.5-specific proof.
+
+[Preparation CI 36987676558](rc5-preparation-ci.json) passed all six jobs at
+`e04810a45721008cec95f5b190252d08cbf48c4f`, each with 674 tests and 209 scenarios.
+All downloaded records passed trusted schema, clean exact-source, integrity and
+applicable-conformance checks. The eight unchanged previously read framework
+source decisions were explicitly re-admitted using that sealed evidence;
+the actual release guard passes. This ledger handoff precedes tagging, the
+immutable producer and independent original-byte consumption.
