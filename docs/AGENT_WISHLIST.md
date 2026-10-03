@@ -84,6 +84,8 @@ limits from that receipt without assembling a separate inventory. The current
 [source-scope workflow](verification/PROJECT_SOURCE_SCOPE.md) is the workaround;
 selection controls need a separate backlog owner and contract review.
 
+**BGA-436 bounded follow-up, 2026-10-03.** Source-set investigation exposed a silent contract-read budget: an oversized eligible module stopped later reads without recording uncertainty. The shared loader now retains omitted paths and limits, reads later sources that fit, and prevents partial coverage from supporting absence-based conclusions. This improves existing validators and their located diagnostics; it does not yet provide a complete source receipt or caller-selected source set. The unchanged Dino Racer before/after comparison and installed boundary controls remain required evidence.
+
 ## Explain what remains unchecked
 
 **Observed.** One unreadable setup query leaves multiple pre-release checks

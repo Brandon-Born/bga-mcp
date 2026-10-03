@@ -185,3 +185,11 @@ argument values, escaping, namespace resolution and SQL execution are not proved
 Dynamic identifiers, other format directives, concatenated templates and custom
 qualified formatters are outside this subset. No public output schema changes.
 The aggregate and pre-release results preserve incomplete database coverage.
+
+BGA-436 preserves the existing legacy, modern and hybrid source eligibility.
+Eligible sources omitted by contract-read budgets now remain located unsupported
+coverage; later fitting sources are read and absence-dependent conclusions are
+withheld. Structural inventory and per-validator read coverage remain distinct.
+`E2E-PROJECT-SOURCE-BYTE-LIMIT` covers all three layouts;
+`E2E-PROJECT-SOURCE-FILE-LIMIT` covers the modern layout and privacy/budget controls.
+No schema, supported BGA form, source-exclusion permission or release changes.

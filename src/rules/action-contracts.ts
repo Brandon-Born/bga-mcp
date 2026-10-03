@@ -217,8 +217,20 @@ export function validateActionContracts(
   phpSources: readonly ActionContractSource[],
   signal?: AbortSignal,
 ): ActionContractTrace {
-  const findings: DiagnosticFinding[] = model.diagnostics.findings.filter(
-    (finding) => finding.code === 'project.source.unsupported-syntax',
+  const findings: DiagnosticFinding[] = model.diagnostics.findings.filter((finding) =>
+    finding.code.startsWith('project.source.'),
+  );
+  const phpComplete = !findings.some(
+    (finding) =>
+      finding.code === 'project.source.read-limit' &&
+      finding.kind === 'unsupported-syntax' &&
+      finding.syntax.language === 'php',
+  );
+  const clientComplete = !findings.some(
+    (finding) =>
+      finding.code === 'project.source.read-limit' &&
+      finding.kind === 'unsupported-syntax' &&
+      finding.syntax.language === 'client',
   );
 
   const clientCalls: (ClientActionCall & { source: string })[] = [];
@@ -310,7 +322,7 @@ export function validateActionContracts(
     entryPoints.filter((entry) => gameClassPaths.has(entry.source)).map((entry) => entry.action),
   );
 
-  let methodsComplete = true;
+  let methodsComplete = phpComplete;
   const gameMethods = new Set<string>();
   for (const source of phpSources.filter((source) => !source.path.endsWith('.action.php'))) {
     const outcome = readPhpMethodNames(source.text, signal);
@@ -370,7 +382,7 @@ export function validateActionContracts(
     cancellationCheckpoint(signal);
     const unresolvedDocumentedForm =
       conflictingActions.has(call.action) && !declaredByActionClass.has(call.action);
-    if (!unresolvedDocumentedForm && !ACTION_PREFIX.test(call.action)) {
+    if (phpComplete && !unresolvedDocumentedForm && !ACTION_PREFIX.test(call.action)) {
       findings.push(
         certain(
           'action.name.convention',
@@ -389,6 +401,7 @@ export function validateActionContracts(
     // in any state, so no state has to list it.
     if (
       statesReadable &&
+      phpComplete &&
       !unresolvedDocumentedForm &&
       declaredActions.size > 0 &&
       !declaredActions.has(call.action) &&
@@ -405,7 +418,12 @@ export function validateActionContracts(
       );
     }
 
-    if (entryPointsReadable && !unresolvedDocumentedForm && !knownEntryActions.has(call.action)) {
+    if (
+      phpComplete &&
+      entryPointsReadable &&
+      !unresolvedDocumentedForm &&
+      !knownEntryActions.has(call.action)
+    ) {
       findings.push(
         heuristic(
           'action.entry-point.missing',
@@ -437,7 +455,8 @@ export function validateActionContracts(
       signatures.size <= 1
         ? [...applicable].sort((left, right) => left.source.localeCompare(right.source))[0]
         : undefined;
-    if (entry !== undefined && call.argumentShape === 'known') {
+    // An omitted legacy dispatcher could override the apparent modern entry.
+    if (phpComplete && entry !== undefined && call.argumentShape === 'known') {
       const sent = new Set(call.argumentNames);
       const read = new Set(entry.argumentNames);
       for (const argument of [...sent].filter((name) => !read.has(name)).sort()) {
@@ -507,7 +526,7 @@ export function validateActionContracts(
     }
   }
 
-  if (statesReadable && clientReadable && declaredActions.size > 0) {
+  if (clientComplete && statesReadable && clientReadable && declaredActions.size > 0) {
     const called = new Set(clientCalls.map((call) => call.action));
     for (const action of [...declaredActions].sort()) {
       cancellationCheckpoint(signal);

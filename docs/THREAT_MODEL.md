@@ -290,3 +290,17 @@ BGA-208/BGA-211 move the existing bounded excerpt lookup ahead of page I/O withi
 On 2026-10-03 UTC the owner selected signed GitHub downloads for the first publication within reviewed TB-SUPPLY-CHAIN. BGA-407's metadata-only writer remains separate and cannot publish packages. BGA-415's new manual `release-github.yml` uses the shared exact-candidate approval/reporting/framework/advisory preflight. Only publish and successful-receipt retention have contents-write, and those jobs use builtins plus GitHub CLI without dependency installation, package execution, OIDC or npm tokens. Dry runs never start either writer. The publisher reuses the retained numeric release identity, validates existing metadata IDs/digests, uploads only missing original bytes and the digest-bound external acquisition companion, and refuses conflicts/foreign assets without deletion or overwrite.
 
 The read-only consumer has fresh configuration/cache and no inherited tokens; it downloads fixed public HTTPS URLs, authenticates downloaded subjects with independently refreshed trust roots and the original certified signer/source/provenance, then verifies real installed discovery/use/refusal/repeat/removal, process exit and unchanged fixture project. Only a successful digest-bound consumer receipt can be retained as release-lifetime public evidence. A failed public consumer stops endorsement and preserves assets for investigation; no registry dist-tag or stable promotion is performed. Hosting mutability/availability, authorized deletion, trusted main, GitHub CLI and trust-root compromise remain existing supply-chain risks. New package defects require a new approved candidate. The runtime MCP remains local-only and read-only. npm ownership/trusted publishing is deferred, not inferred from GitHub permission.
+
+## Contract-source limit reporting — BGA-436
+
+This correction remains inside reviewed TB-LOCAL-FILESYSTEM and TB-OUTPUT.
+The existing bounded inventory and policy reads are unchanged. The shared
+contract loader skips eligible bodies that exceed the existing byte/file
+budget, retains their relative paths as unsupported coverage, and can read
+later files that fit without increasing either budget. Unknown-scope sources,
+IDE helpers and unrequested languages remain excluded from that pass. No
+Git ignore configuration, execution graph, network access, source writes or
+persistent retention is introduced. Located omissions pass the existing final
+redaction/output boundary. Installed boundary, privacy, cancellation and
+immutability controls distinguish partial contract reads from structural
+inventory; they do not establish whole-project or native-I/O completeness.

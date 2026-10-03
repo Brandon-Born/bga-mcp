@@ -247,7 +247,9 @@
         "tests/fixtures/docs/relevance/migration.html",
         "tests/fixtures/docs/relevance/file-reference.html",
         "tests/e2e/pre-release-explanations.test.ts",
-        "tests/unit/pre-release-explanations.test.ts"
+        "tests/unit/pre-release-explanations.test.ts",
+        "tests/e2e/source-read-coverage.test.ts",
+        "tests/unit/source-read-coverage.test.ts"
       ]
     },
     {

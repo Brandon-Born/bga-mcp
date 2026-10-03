@@ -145,3 +145,29 @@ source, 617 passing tests and 188 passing required scenarios in every environmen
 BGA-429 is verified for the bounded production-contract scope above.
 The original signed candidate remains unchanged and unpromoted. This regression
 rerun does not complete BGA-424's independent development evaluation.
+
+## Contract-source read limits — BGA-436
+
+The shared contract loader now reports each eligible PHP/client source omitted
+by its existing shared 262,144-byte or 200-file limit as
+`project.source.read-limit`. It records relative locations, the applicable limit
+and language without reading skipped bodies. An oversized file is skipped;
+later files that fit remain eligible. Empty files count toward the file limit.
+These limits cover the contract-source pass; they are not a claim about every
+structural-model read or OS primitive.
+
+Individual validators and the state/diagnostics resources retain these findings.
+Pre-release checks retain group-wide uncertainty with BGA-435's explanations.
+Readable traces and independent state/schema defects remain visible; conclusions
+that require missing declarations or all queries are withheld. Notification
+heuristics are conservatively withheld on partial source coverage. Omitted PHP
+also prevents action naming/argument comparisons where unread resolution could
+change the applicable entry point. A model-only inspection/summary is a distinct
+structural inventory and does not pretend to have requested every contract body.
+
+The source-set workflow above still applies. No caller exclusion, snapshot write,
+network permission, new public schema or whole-game correctness is introduced.
+The installed byte-limit scenario covers modern/legacy/hybrid projects; the
+file-limit scenario covers the modern layout, redaction and output refusal.
+Controlled original modules prove this limit; unchanged Dino Racer currently
+fits within it and remains a separate before/after verification subject.

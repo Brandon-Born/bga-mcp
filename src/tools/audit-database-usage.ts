@@ -158,9 +158,18 @@ export function registerAuditDatabaseUsage(
             })),
             diagnostics: summarizeFindings(
               [
-                ...audit.diagnostics.findings,
-                ...project.model.diagnostics.findings.filter(
-                  (finding) => finding.code === 'project.source.unsupported-syntax',
+                ...audit.diagnostics.findings.filter(
+                  (finding) =>
+                    finding.code !== 'database.column.unused' ||
+                    !project.model.diagnostics.findings.some(
+                      (entry) =>
+                        entry.code === 'project.source.read-limit' &&
+                        entry.kind === 'unsupported-syntax' &&
+                        entry.syntax.language === 'php',
+                    ),
+                ),
+                ...project.model.diagnostics.findings.filter((finding) =>
+                  finding.code.startsWith('project.source.'),
                 ),
               ],
               signal,
