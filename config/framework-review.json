@@ -7,7 +7,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
       "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-      "observedAt": "2026-10-03T01:50:36.894Z",
+      "observedAt": "2026-10-03T04:01:20.889Z",
       "review": {
         "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
         "implementationDigest": "sha256:5863cdcf4cd8914974eb02aba1f83706b072db8827d1b538f98cfc291ff2665c",
@@ -2324,7 +2324,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
       "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-      "observedAt": "2026-10-03T01:50:59.659Z",
+      "observedAt": "2026-10-03T04:01:21.531Z",
       "review": {
         "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
         "implementationDigest": "sha256:1d1db2db5ccb28af2bd45f190b78249ee8ce95b0c492297cd2f86532508eea3b",
@@ -4609,7 +4609,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
       "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
-      "observedAt": "2026-10-03T01:50:46.416Z",
+      "observedAt": "2026-10-03T04:01:22.197Z",
       "review": {
         "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
         "implementationDigest": "sha256:8fe290c1ba8573ee27e536fb6282f7af7dc1398fc1a356682b3681083939942d",
@@ -6926,7 +6926,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
       "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
-      "observedAt": "2026-10-03T01:50:41.642Z",
+      "observedAt": "2026-10-03T04:01:22.945Z",
       "review": {
         "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
         "implementationDigest": "sha256:7049661ec634546cde8be41ec96e4568fb034d3d6497245a846a8e35acc2a3cc",
@@ -9243,7 +9243,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
       "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-      "observedAt": "2026-10-03T01:50:54.545Z",
+      "observedAt": "2026-10-03T04:01:23.500Z",
       "review": {
         "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
         "implementationDigest": "sha256:8ad6cf47745e8ca51b0dc4962398ab4d593e793951cf55096440e54654d01608",
@@ -11560,7 +11560,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Studio",
       "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-      "observedAt": "2026-10-03T01:51:03.776Z",
+      "observedAt": "2026-10-03T04:01:24.164Z",
       "review": {
         "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
         "implementationDigest": "sha256:a5c1dceb99107d2fc3fea431aaec8b71ee23ab7c309d99afad6323bba53acced",
@@ -13877,7 +13877,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
       "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-      "observedAt": "2026-10-03T01:50:16.920Z",
+      "observedAt": "2026-10-03T04:01:19.493Z",
       "review": {
         "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
         "implementationDigest": "sha256:86fb6f224f170e4dd325f883dd4deece2fc536d975cb139db0b0f7a3fcd0ddcb",
@@ -16194,7 +16194,7 @@
     {
       "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
       "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-      "observedAt": "2026-10-03T01:50:50.310Z",
+      "observedAt": "2026-10-03T04:01:24.727Z",
       "review": {
         "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
         "implementationDigest": "sha256:85779897085795579069ca2b647d5d8ee1e517904057d96028bed6e4191dfc5c",

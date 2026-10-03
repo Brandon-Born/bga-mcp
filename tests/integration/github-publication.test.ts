@@ -109,13 +109,23 @@ it('[GATE-PUBLICATION] GitHub publication refuses automatic writes, dry-run cred
   ])
     expect(verifyGitHubPublicationWorkflow(changed).failed).toBe(true);
 });
-it('[INT-PUBLICATION-BOUNDARIES] selects GitHub without approving the reporting/security holds or allowing the npm path', async () => {
+it('[INT-PUBLICATION-BOUNDARIES] selects GitHub without overriding the real reporting/security status or allowing the npm path', async () => {
   const { plan } = await control();
   expect(() => readPublicationPlan(plan)).not.toThrow();
   expect(() => verifyRegistryArtifact({}, bytes, plan)).toThrow();
   const holds = await publicationHolds();
-  expect(holds).toContain('BGA-405 approval is held');
-  expect(holds).toContain('BGA-406 is not verified');
+  // The real lifecycle advances; channel selection never overrides either owned status.
+  const selected = readPublicationConfig(
+    JSON.parse(await readFile(resolve(root, 'config/publication.json'), 'utf8')),
+  );
+  const review = JSON.parse(await readFile(resolve(root, selected.reviewReceipt), 'utf8')) as {
+    status: string;
+  };
+  const reporting = JSON.parse(
+    await readFile(resolve(root, 'config/security-reporting.json'), 'utf8'),
+  ) as { status: string };
+  expect(holds.includes('BGA-405 approval is held')).toBe(review.status !== 'approved');
+  expect(holds.includes('BGA-406 is not verified')).toBe(reporting.status !== 'verified');
   expect(holds).not.toContain(
     'Package/registry/trusted-publisher decision and setup evidence are pending',
   );
