@@ -1610,5 +1610,151 @@
       "releaseGuard": "passed",
       "scope": "Unchanged bounded framework interpretations re-admitted against completed-release record/assertion/status source. Metadata additions do not rename the CI source or change the original package."
     }
+  },
+  "backlogReconciliation": {
+    "recordedAt": "2026-10-03T12:44:43.878977+00:00",
+    "scope": "Reconcile existing backlog dispositions against retained evidence; no runtime, public inventory, guide, candidate or publication change",
+    "auditedItems": 124,
+    "changedStatuses": [
+      {
+        "item": "BGA-006",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-011",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-017",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-106",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-107",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-108",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-109",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-113",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-118",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-119",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-124",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-125",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-126",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-128",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-208",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-313",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-433",
+        "from": "implemented",
+        "to": "verified"
+      }
+    ],
+    "permanentIdsAndOriginalCriteriaPreserved": true,
+    "reconciledItems": 42,
+    "currentCounts": {
+      "verified": 81,
+      "implemented": 22,
+      "planned": 14,
+      "blocked": 2,
+      "ready": 1,
+      "superseded": 4
+    },
+    "retainedEvidenceSources": ["37099767743", "37024199811", "37056579093", "37049613335"],
+    "retainedClosureJobsValidated": 6,
+    "retainedClosureValidation": [
+      "trusted-schema",
+      "integrity",
+      "clean-exact-source",
+      "CI-environment",
+      "775-tests",
+      "234-scenarios",
+      "official-conformance"
+    ],
+    "initialGate": {
+      "status": "failed",
+      "testsPassed": 774,
+      "testsFailed": 1,
+      "logDigest": "sha256:e913588d981858409546bd22e68c83d9d33e2175bc16efacd747fdf10b838e60",
+      "reason": "Historical publication-plan assertion incorrectly used the current clock after the one-hour admission expired"
+    },
+    "correction": "Validate retained original plan at recorded hosted-consumer time and separately refuse that plan beyond its unchanged one-hour freshness limit; no new authorization or timestamp rewrite",
+    "focusedGate": {
+      "status": "passed",
+      "testsPassed": 7,
+      "logDigest": "sha256:a1da6974d95798d57382878dd5a66ee006cec4824fec266625e407103760dd98"
+    },
+    "localFullGate": {
+      "status": "passed",
+      "source": {
+        "commit": "7b9d1c6617089b2508a0d6e89170d77c5133cf12",
+        "clean": false
+      },
+      "generatedAt": "2026-10-03T12:43:57.854Z",
+      "testsPassed": 775,
+      "requiredScenariosPassed": 234,
+      "conformance": "passed",
+      "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+      "evidenceDigest": "sha256:959e3527ed6c91d9fbd12eef3b002af321c43404a650ef9458776dc5ddd799be",
+      "logDigest": "sha256:3109b0605971c21f971cd61654768df5c12920dd4e7ebf57b782f0d28aa4614e"
+    },
+    "originalPublicArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "originalPublicBytesAndPackedGuidesChanged": false,
+    "externalGapsWaived": false,
+    "exactSourceCi": null,
+    "frameworkAdmission": null,
+    "metadataCommitClaimsItsOwnExactSourceCi": false
   }
 }

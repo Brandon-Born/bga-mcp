@@ -114,13 +114,21 @@ it('[GATE-PUBLICATION] GitHub publication refuses automatic writes, dry-run cred
   expect(actual.workflow.jobs).toHaveLength(4);
   expect(actual.workflow.jobs.every((job) => job.conclusion === 'success')).toBe(true);
   expect(sha256(actual.admissionPlanJson)).toBe(actual.planDigest);
-  const actualPlan = readPublicationPlan(JSON.parse(actual.admissionPlanJson));
+  // Retained evidence proves historical admission, not authorization to publish again today.
+  const verificationTime = new Date(actual.hostedConsumer.verifiedAt);
+  const actualPlan = readPublicationPlan(JSON.parse(actual.admissionPlanJson), verificationTime);
+  expect(() =>
+    readPublicationPlan(
+      JSON.parse(actual.admissionPlanJson),
+      new Date(Date.parse(actualPlan.preparedAt) + 3_600_001),
+    ),
+  ).toThrow('Publication preflight expired or future-dated');
   expect(() =>
     verifyGitHubConsumerReceipt(
       actual.hostedConsumer,
       actualPlan,
       actual.planDigest,
-      new Date(actual.hostedConsumer.verifiedAt),
+      verificationTime,
     ),
   ).not.toThrow();
   expect(sha256(`${JSON.stringify(actual.hostedConsumer, null, 2)}\n`)).toBe(
