@@ -1,7 +1,16 @@
 {
   "schemaVersion": 1,
   "owner": "BGA-415",
-  "decision": null,
+  "decision": {
+    "channel": "github-downloads",
+    "packageName": "bga-mcp",
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-github.yml",
+    "authorizedBy": "Brandon-Born",
+    "authorizedAt": "2026-10-03T01:28:07Z",
+    "authorization": "Signed GitHub downloads sounds good to me",
+    "publisherSetupEvidence": "docs/verification/github-download-decision.json"
+  },
   "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.6-clean.json",
   "prerequisites": {
     "installation": "docs/verification/install-guide-v1.0.0-rc.6-signed.json",

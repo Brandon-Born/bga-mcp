@@ -42,6 +42,14 @@ export async function publicationHolds(): Promise<string[]> {
   if (review.status !== 'approved') failures.push('BGA-405 approval is held');
   if (config.decision === null)
     failures.push('Package/registry/trusted-publisher decision and setup evidence are pending');
+  else if ('channel' in config.decision) {
+    const setup = object(await load(config.decision.publisherSetupEvidence));
+    assert.equal(setup.repository, SIGNING_REPOSITORY);
+    assert.equal(setup.channel, 'github-downloads');
+    assert.equal(setup.visibility, 'public');
+    assert.equal(setup.maintainerCanPush, true);
+    assert.equal(setup.authorization, config.decision.authorization);
+  }
   try {
     const prerequisites = {
       installation: await load(config.prerequisites.installation),
@@ -100,6 +108,10 @@ async function prepare(output: string): Promise<void> {
   assert.equal(process.env.GITHUB_REPOSITORY, SIGNING_REPOSITORY);
   assert.equal(process.env.GITHUB_REF, 'refs/heads/main');
   assert.equal(process.env.GITHUB_EVENT_NAME, 'workflow_dispatch');
+  assert.equal(
+    process.env.GITHUB_WORKFLOW_REF,
+    `${SIGNING_REPOSITORY}/${config.decision.workflow}@refs/heads/main`,
+  );
   assert.equal(
     (await execute('git', ['rev-parse', 'HEAD'], { cwd: source })).stdout.trim(),
     review.candidate.sourceCommit,
@@ -178,7 +190,15 @@ async function prepare(output: string): Promise<void> {
     }
     files.set('approval.json', reviewBytes);
     files.set('fresh-audit.json', Buffer.from(`${JSON.stringify(fresh.audit, null, 2)}\n`));
-    for (const name of ['approval.json', 'fresh-audit.json']) {
+    const additional = ['approval.json', 'fresh-audit.json'];
+    if ('channel' in config.decision) {
+      files.set(
+        'GITHUB_DOWNLOADS.md',
+        await readFile(resolve(root, 'docs/verification/GITHUB_DOWNLOADS.md')),
+      );
+      additional.push('GITHUB_DOWNLOADS.md');
+    }
+    for (const name of additional) {
       const bytes = files.get(name);
       assert(bytes);
       assert.equal(scanText(bytes.toString('utf8'), name).length, 0);

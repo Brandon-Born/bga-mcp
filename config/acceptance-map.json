@@ -1227,15 +1227,15 @@
     },
     {
       "item": "BGA-415",
-      "case": "The approved exact signed artifact is published through configured trusted publishing and its public registry bytes, signatures, certified publisher identity and provenance are independently verified",
+      "case": "The owner-selected GitHub download publishes the approved original signed artifact and its fixed public bytes, certified original signer/source and provenance are independently verified; npm trusted publication is deferred",
       "boundary": "repository",
-      "missing": "Package/registry decision and publisher setup, replacement candidate, BGA-406 lifecycle, current framework baseline and BGA-405 approval are pending; no registry package was published."
+      "missing": "GitHub channel approved; independent reporting lifecycle, fresh final security approval, actual package upload and public consumer remain unobserved. No npm publication is claimed."
     },
     {
       "item": "BGA-415",
-      "case": "A live successful public consumer receipt permits promotion of the immutable version and the resulting registry tag and release receipt are observed",
+      "case": "A live successful public consumer receipt is retained with the immutable GitHub download and its public release identity is observed; registry tag promotion is deferred",
       "boundary": "repository",
-      "missing": "No actual publication, public consumer or promotion has run. Offline controls do not supply live evidence."
+      "missing": "No installable public GitHub download or successful public package consumer receipt is yet observed. Offline controls do not supply live evidence."
     },
     {
       "item": "BGA-432",

@@ -37,6 +37,7 @@ async function main(): Promise<void> {
     bytes = await readFile(resolve(packet, 'plan.json'));
   assert.equal(sha256(bytes), expectedDigest);
   const plan = readPublicationPlan(JSON.parse(bytes.toString('utf8')));
+  assert('registry' in plan.decision, 'npm consumer is not the selected channel');
   const admitted = new Map<string, Buffer>();
   for (const file of plan.files)
     admitted.set(file.name, await readFile(resolve(packet, file.name)));
