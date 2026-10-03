@@ -5,7 +5,8 @@ import { inject } from 'vitest';
 import { runCommand } from '../helpers/process.js';
 import { object } from '../../scripts/lib/publication.js';
 import { recordInstalledArtifact } from '../helpers/packaged.js';
-it('[E2E-PUBLICATION-CONSUMER] uses and removes the shared immutable artifact through the consumer guide', async () => {
+import { prepareGitHubConsumerEnvironment } from '../../scripts/verify-github-consumer.js';
+it('[E2E-PUBLICATION-CONSUMER] uses and removes the shared immutable artifact through the guide in a fresh pinned consumer workspace', async () => {
   const artifact = inject('packedArtifact');
   await recordInstalledArtifact('publication-consumer', artifact);
   const bytes = await readFile(artifact);
@@ -25,7 +26,11 @@ it('[E2E-PUBLICATION-CONSUMER] uses and removes the shared immutable artifact th
         root,
         output,
       ],
-      { cwd: root, timeoutMs: 150_000 },
+      {
+        cwd: scratch,
+        env: await prepareGitHubConsumerEnvironment(scratch),
+        timeoutMs: 150_000,
+      },
     );
     expect(run.exitCode, run.stderr).toBe(0);
     result = object(JSON.parse(await readFile(output, 'utf8')) as unknown);

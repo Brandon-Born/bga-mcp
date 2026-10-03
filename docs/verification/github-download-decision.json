@@ -603,5 +603,158 @@
     },
     "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
     "scope": "Actual fresh original-artifact assessment, not a synthetic control. Immutable candidate and prior held assessments preserved; public package consumer still required."
+  },
+  "firstPackagePublicationAttempt": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37096261163",
+    "sourceCommit": "1c3482937252b949a175da0926fe459e93917623",
+    "conclusion": "failure",
+    "jobs": [
+      {
+        "name": "prepare",
+        "conclusion": "success"
+      },
+      {
+        "name": "publish",
+        "conclusion": "success"
+      },
+      {
+        "name": "verify",
+        "conclusion": "failure"
+      },
+      {
+        "name": "retain",
+        "conclusion": "skipped"
+      }
+    ],
+    "planDigest": "sha256:148ad2fe3067ddb3d40c85fae8c3ab2b02a6da495b4ae71fafa7c968943b5016",
+    "originalNineFilesByteIdentical": true,
+    "actualApprovedReceiptMatched": true,
+    "freshExactSourceAuditPassed": true,
+    "uploadedOnlyMissingAssets": true,
+    "existingReleasePreserved": 402216124,
+    "failureLogDigest": "sha256:efeb892552f03330d7a353a7e42b6c1f660670ce75eedd8474763041eb2dbd75",
+    "consumerFailure": "Fresh home/cwd omitted the documented pnpm 11.15.1 prerequisite; global-default pnpm 12.8.1 entry point missing. Verification failed; no success receipt retained."
+  },
+  "freshConsumerRecovery": {
+    "sourceBase": "1c3482937252b949a175da0926fe459e93917623",
+    "sourceClean": false,
+    "consumerScriptDigest": "sha256:399b44a53288ae9270fc3af7dba1c3c2805cd6b1a759b2eb16bd6d716e8d74e2",
+    "regression": "E2E-PUBLICATION-CONSUMER now runs the actual packaged guide from the fresh pinned consumer home/cwd.",
+    "originalPacketAndGuidesUnchanged": true,
+    "originalSecurityHarnessUnchanged": true,
+    "independentMacPublicConsumer": {
+      "schemaVersion": 1,
+      "owner": "BGA-415",
+      "channel": "github-downloads",
+      "status": "verified",
+      "verifiedAt": "2026-10-03T04:35:58.442Z",
+      "candidate": {
+        "name": "bga-mcp",
+        "version": "1.0.0-rc.6",
+        "tag": "v1.0.0-rc.6",
+        "sourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+        "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea"
+      },
+      "publisherCommit": "1c3482937252b949a175da0926fe459e93917623",
+      "workflowRun": "37096261163",
+      "planDigest": "sha256:148ad2fe3067ddb3d40c85fae8c3ab2b02a6da495b4ae71fafa7c968943b5016",
+      "approvalDigest": "sha256:74aeea5144337829e18beef0eca27b8412c9e603cca6ebed0a8599d6bc8bc6cb",
+      "auditDigest": "sha256:65beb520e06a0a1b3ec415739d439b42612eeed3b43176460793e32887df1709",
+      "downloadUrl": "https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/bga-mcp-1.0.0-rc.6.tgz",
+      "publicBytesMatched": true,
+      "signatureVerified": true,
+      "provenanceVerified": true,
+      "inventoryMatched": true,
+      "firstUsePassed": true,
+      "rootRefusalPassed": true,
+      "projectUnchanged": true,
+      "serverExited": true,
+      "removed": true,
+      "credentialFree": true,
+      "scope": "Token-free public GitHub bytes; original certified signer/source and retention provenance, installed guide lifecycle. Prerelease only; no npm publisher or Studio claim."
+    },
+    "independentConsumerDigest": "sha256:02f20bac359c334828394ecdec8a33e4a77f789af0340564658fbf3037fa74b2",
+    "controlScope": "Actual public original consumed by the dirty corrected verifier; not hosted lifetime-retention proof.",
+    "fullGate": "passed",
+    "testsPassed": 775,
+    "requiredScenariosPassed": 234,
+    "fullGateLogDigest": "sha256:ecebaabf07990048b9f74f9942ad64e72ae9bf1836837a5ce2c4731db92c32b7",
+    "localEvidenceDigest": "sha256:a7502fa69d791a46377fa4a383b3b45bb4ed8fc57a4114bd00253331263ae7ba",
+    "publicationStillUnverified": true,
+    "exactSourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37097326078",
+      "commit": "7fc9d267ad729458d96308a3fc8069720b466c30",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:88df0314d45c56da7956f13a2d9bb4a6bd8702454d0fe2562ce0e232ad17ad27",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T04:44:24.018Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:78a4dc3a3e545860bab6672109a201143cacc87a1d47ad48f8f5e7e2280719e2",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T04:46:21.565Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:b60a5769722cbbdd14ab9c64bee1115ee566c4a3204a7589116217819518332e",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T04:44:15.584Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:b23219bf8e8dda4d1a09e0f3643a0ca2955b625c735d88a9f7e95a10b394bf56",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T04:45:11.581Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:9fe0cfba707156f6c5e55c73d78dac904ea7712eb2edcc428cb53e2d793d9444",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T04:45:15.595Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:67f3ed1f3cd036a50d86482e4041a6d079f7b9a5cd51408c8ca7eb7990c8d810",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T04:47:43.020Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "evidenceSource": "7fc9d267ad729458d96308a3fc8069720b466c30",
+      "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37097326078",
+      "pages": 8,
+      "reviewer": "Codex",
+      "releaseGuard": "passed",
+      "scope": "Existing unchanged bounded interpretations re-admitted using post-observation exact-source recovery evidence; no framework or candidate behavior changed."
+    }
   }
 }
