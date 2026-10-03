@@ -680,6 +680,81 @@
     "requiredScenariosPassed": 234,
     "fullGateLogDigest": "sha256:ecebaabf07990048b9f74f9942ad64e72ae9bf1836837a5ce2c4731db92c32b7",
     "localEvidenceDigest": "sha256:a7502fa69d791a46377fa4a383b3b45bb4ed8fc57a4114bd00253331263ae7ba",
-    "publicationStillUnverified": true
+    "publicationStillUnverified": true,
+    "exactSourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37097326078",
+      "commit": "7fc9d267ad729458d96308a3fc8069720b466c30",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:88df0314d45c56da7956f13a2d9bb4a6bd8702454d0fe2562ce0e232ad17ad27",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T04:44:24.018Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:78a4dc3a3e545860bab6672109a201143cacc87a1d47ad48f8f5e7e2280719e2",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T04:46:21.565Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:b60a5769722cbbdd14ab9c64bee1115ee566c4a3204a7589116217819518332e",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T04:44:15.584Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:b23219bf8e8dda4d1a09e0f3643a0ca2955b625c735d88a9f7e95a10b394bf56",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T04:45:11.581Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:9fe0cfba707156f6c5e55c73d78dac904ea7712eb2edcc428cb53e2d793d9444",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T04:45:15.595Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:67f3ed1f3cd036a50d86482e4041a6d079f7b9a5cd51408c8ca7eb7990c8d810",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T04:47:43.020Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "evidenceSource": "7fc9d267ad729458d96308a3fc8069720b466c30",
+      "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37097326078",
+      "pages": 8,
+      "reviewer": "Codex",
+      "releaseGuard": "passed",
+      "scope": "Existing unchanged bounded interpretations re-admitted using post-observation exact-source recovery evidence; no framework or candidate behavior changed."
+    }
   }
 }
