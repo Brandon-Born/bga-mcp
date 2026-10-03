@@ -91,10 +91,178 @@
         "unchanged": true
       }
     ],
-    "ci": "pending",
-    "frameworkAdmission": "pending",
-    "hostedDryRun": "pending",
+    "ci": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37088488791",
+      "commit": "211a5a837b40244cc115da68f58b0eff8e617c02",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:e7a427ac71fd056b06f6fbbc678eea64c7d1bd851fd8f16d7c0a95e3aef5f2ec",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T02:08:29.194Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:57e2281db4e28199b3faaf36daab1e2fa49783369d53886e971bd1b2dd773994",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T02:10:06.691Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:2b96a1fb3545a06595fefbfb3f251e0905dcbdd1fcdfd4a7d2bd585431ae98c6",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T02:08:24.607Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:1e3411a3067adf103006f115b95dea5768289bf584fffad8acc07d5d83a04cad",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T02:08:57.989Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:e3427779f1bcaf42e3d3d0a3887970beca6edbc003d1b685f4d0292bcad67aaa",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T02:11:42.357Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:2bf95e9c9ccc4ff94b4ab0db673f2f598e0509bd7aa67205c7567c2930a6a030",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T02:11:01.895Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "status": "passed",
+      "sources": 8,
+      "evidenceCommit": "211a5a837b40244cc115da68f58b0eff8e617c02",
+      "ciRun": "37088488791",
+      "ledgerDigest": "sha256:90f8caaa645af86dc7448b92e9b542d2e94fcbf71e6cbaec118b2f672b529df8",
+      "scope": "Eight unchanged official interpretations explicitly admitted after fresh observation and exact-source CI; no candidate/security/publication approval"
+    },
+    "hostedDryRun": "pending explicit merge approval; workflow must be on main",
     "publicInstallablePackage": "not published",
-    "runtimeScope": "unchanged; seven local tools and three project resources"
+    "runtimeScope": "unchanged; seven local tools and three project resources",
+    "prChecks": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37087760793",
+      "commit": "98aa67718ddddd171ee7beaa807f9e8121dccbe3",
+      "pullRequestHead": "211a5a837b40244cc115da68f58b0eff8e617c02",
+      "scope": "Actual merge-preview checks; not exact branch-source framework admission",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:e8900921da353ec680752e8b4f090cbffcf5c2e6b8e7d7182d7cf93f84619d01",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T01:56:47.678Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:9f4c4c66e37eeaa5b1171c3f3701e1564c5e716b77c4a18e30e15ffb15dfde6a",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T01:56:56.358Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:0e3af4c1defd8dbc2ec674327e4b45cf131185839460aa6e808b8cb5ef68f19d",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T01:56:52.444Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:cf4d80804ac78f9f6e024dd5979bc34891e078a2219689436cd2a112d9dd4515",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T01:57:32.116Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:5d11f8cdd41662d8fe46dc6f8206046553b5f35cd7df857fb2f110c29e275207",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T02:00:12.611Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:221a9c6f37a4c908e747c7810990700c3ea4a7648e8224a1229ae1a229f4c1cb",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T01:59:21.115Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "anonymousSignatureProbe": {
+      "status": "passed",
+      "freshHome": true,
+      "inheritedTokens": false,
+      "rootsDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+      "signatureExitCode": 0,
+      "signatureVerified": true,
+      "signatureOutputDigest": "sha256:2c8cd58fd04b9face17cbd5a9c05812654a3d7052ef370a11428aff3d1c9adb3",
+      "scratchRemoved": true
+    },
+    "localAdmissionObservation": {
+      "observedAt": "2026-10-03T02:16:22.422972+00:00",
+      "status": "held",
+      "holds": [
+        "Release gate is pending: privateReportLifecycleVerified",
+        "Open blocking risk BLOCK-privateReportLifecycleVerified owned by Brandon-Born",
+        "BGA-405 approval is held",
+        "Non-maintainer benign report lifecycle has not been observed",
+        "BGA-406 is not verified"
+      ],
+      "prepareExitCode": 1,
+      "outputDirectoryCreated": false,
+      "outputDigest": "sha256:acd62739335b862b2576b8ccf4cd718843f81b3a63edbdce8a08cdbff228b3e9",
+      "scope": "Actual local owned-hold refusal before source/signature acquisition; not a hosted dry run or public consumer"
+    },
+    "merge": "PR #13 remains draft; automatic approval review rejected protected/default branch mutation without explicit new-PR approval"
   }
 }
