@@ -70,6 +70,15 @@ function sealed(review: SecurityReview): SecurityReview {
   return { ...review, integrity: reviewIntegrity(review) };
 }
 it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidence despite rewritten integrity fields', async () => {
+  const selection = JSON.parse(
+    await readFile(resolve(root, 'config/publication.json'), 'utf8'),
+  ) as { reviewReceipt: string };
+  const actual = SecurityReviewSchema.parse(
+    JSON.parse(await readFile(resolve(root, selection.reviewReceipt), 'utf8')),
+  );
+  expect(verifyReviewRecord(actual, plan).failures).toEqual([]);
+  if (actual.status === 'approved')
+    expect(verifyReviewApproval(actual, plan, new Date(actual.reviewedAt)).failures).toEqual([]);
   const review = control();
   expect(verifyReviewRecord(review, plan).failures).toEqual([]);
   const historical = JSON.parse(

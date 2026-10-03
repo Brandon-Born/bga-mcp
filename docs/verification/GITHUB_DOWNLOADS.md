@@ -1,7 +1,7 @@
 # Signed bga-mcp GitHub download: v1.0.0-rc.6
 
 ```verification-record
-{"kind":"review","scope":"Owner-selected GitHub acquisition companion for original signed rc.6; publication, final approval and independent public-package verification remain held"}
+{"kind":"review","scope":"Owner-selected GitHub acquisition companion for original signed rc.6; publication requires final approval and a successful retained independent public-package verification"}
 ```
 
 This is the first-download channel selected by the owner. It distributes a prerelease of the frozen local-only MCP: seven tools, three project resources and stdio protocol `2025-11-25`. npm publication is deferred. The source archives GitHub generates are not the signed installable package.

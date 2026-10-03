@@ -106,8 +106,18 @@ it('[INT-PUBLICATION-BOUNDARIES] keeps missing decisions and real external relea
   ])
     expect(() => readPublicationConfig(changed)).toThrow();
   const holds = await publicationHolds();
-  expect(holds).toContain('BGA-405 approval is held');
-  expect(holds).toContain('BGA-406 is not verified');
+  // The real lifecycle advances; channel selection never overrides either owned status.
+  const selected = readPublicationConfig(
+    JSON.parse(await readFile(resolve(root, 'config/publication.json'), 'utf8')),
+  );
+  const review = JSON.parse(await readFile(resolve(root, selected.reviewReceipt), 'utf8')) as {
+    status: string;
+  };
+  const reporting = JSON.parse(
+    await readFile(resolve(root, 'config/security-reporting.json'), 'utf8'),
+  ) as { status: string };
+  expect(holds.includes('BGA-405 approval is held')).toBe(review.status !== 'approved');
+  expect(holds.includes('BGA-406 is not verified')).toBe(reporting.status !== 'verified');
 });
 it('[INT-PUBLICATION-BOUNDARIES] refuses substituted, missing or expired prepared files before a registry write', () => {
   const plan = control();

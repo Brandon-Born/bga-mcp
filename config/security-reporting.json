@@ -3,7 +3,7 @@
   "owner": "BGA-406",
   "repository": "Brandon-Born/bga-mcp",
   "maintainer": "Brandon-Born",
-  "status": "implemented",
+  "status": "verified",
   "channel": "https://github.com/Brandon-Born/bga-mcp/security/advisories/new",
   "acknowledgementBusinessDays": 3,
   "initialTriageBusinessDays": 7,
