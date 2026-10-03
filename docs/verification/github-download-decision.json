@@ -1610,5 +1610,348 @@
       "releaseGuard": "passed",
       "scope": "Unchanged bounded framework interpretations re-admitted against completed-release record/assertion/status source. Metadata additions do not rename the CI source or change the original package."
     }
+  },
+  "backlogReconciliation": {
+    "recordedAt": "2026-10-03T12:44:43.878977+00:00",
+    "scope": "Reconcile existing backlog dispositions against retained evidence; no runtime, public inventory, guide, candidate or publication change",
+    "auditedItems": 124,
+    "changedStatuses": [
+      {
+        "item": "BGA-006",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-011",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-017",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-106",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-107",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-108",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-109",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-113",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-118",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-119",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-124",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-125",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-126",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-128",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-208",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-313",
+        "from": "implemented",
+        "to": "verified"
+      },
+      {
+        "item": "BGA-433",
+        "from": "implemented",
+        "to": "verified"
+      }
+    ],
+    "permanentIdsAndOriginalCriteriaPreserved": true,
+    "reconciledItems": 42,
+    "currentCounts": {
+      "verified": 81,
+      "implemented": 22,
+      "planned": 14,
+      "blocked": 2,
+      "ready": 1,
+      "superseded": 4
+    },
+    "retainedEvidenceSources": ["37099767743", "37024199811", "37056579093", "37049613335"],
+    "retainedClosureJobsValidated": 6,
+    "retainedClosureValidation": [
+      "trusted-schema",
+      "integrity",
+      "clean-exact-source",
+      "CI-environment",
+      "775-tests",
+      "234-scenarios",
+      "official-conformance"
+    ],
+    "initialGate": {
+      "status": "failed",
+      "testsPassed": 774,
+      "testsFailed": 1,
+      "logDigest": "sha256:e913588d981858409546bd22e68c83d9d33e2175bc16efacd747fdf10b838e60",
+      "reason": "Historical publication-plan assertion incorrectly used the current clock after the one-hour admission expired"
+    },
+    "correction": "Validate retained original plan at recorded hosted-consumer time and separately refuse that plan beyond its unchanged one-hour freshness limit; no new authorization or timestamp rewrite",
+    "focusedGate": {
+      "status": "passed",
+      "testsPassed": 7,
+      "logDigest": "sha256:a1da6974d95798d57382878dd5a66ee006cec4824fec266625e407103760dd98"
+    },
+    "localFullGate": {
+      "status": "passed",
+      "source": {
+        "commit": "7b9d1c6617089b2508a0d6e89170d77c5133cf12",
+        "clean": false
+      },
+      "generatedAt": "2026-10-03T12:43:57.854Z",
+      "testsPassed": 775,
+      "requiredScenariosPassed": 234,
+      "conformance": "passed",
+      "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+      "evidenceDigest": "sha256:959e3527ed6c91d9fbd12eef3b002af321c43404a650ef9458776dc5ddd799be",
+      "logDigest": "sha256:3109b0605971c21f971cd61654768df5c12920dd4e7ebf57b782f0d28aa4614e"
+    },
+    "originalPublicArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "originalPublicBytesAndPackedGuidesChanged": false,
+    "externalGapsWaived": false,
+    "exactSourceCi": {
+      "id": 37123945413,
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37123945413",
+      "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+      "status": "passed",
+      "jobsValidated": 6,
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "darwin",
+          "node": "v22.23.2",
+          "generatedAt": "2026-10-03T12:50:43.588Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "evidenceDigest": "sha256:9dfcef29e8ae9600a78cbce7a7ff1b3c4be68da44fe45e57204a1ba3af50fd1e",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "darwin",
+          "node": "v24.20.0",
+          "generatedAt": "2026-10-03T12:50:30.586Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "evidenceDigest": "sha256:cebbfa917a6d700ca0906cfe5e6a1ebc16770ece4db93769c2bd43f6c192b99a",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "linux",
+          "node": "v22.23.3",
+          "generatedAt": "2026-10-03T12:51:03.799Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "evidenceDigest": "sha256:1e8f819726a39b15d9fc1e5f44dd3bd56d0155aebbc13e30ae1299bd9c5f8b20",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "linux",
+          "node": "v24.21.0",
+          "generatedAt": "2026-10-03T12:50:50.845Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "win32",
+          "node": "v22.23.3",
+          "generatedAt": "2026-10-03T12:51:53.414Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "evidenceDigest": "sha256:083bf23c247471384d44e7c60421b8b77fc8e8b49bd008f418db4cc240128022",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "source": {
+            "commit": "23f2736a9f3405e76aab00cd600658599af45120",
+            "clean": true
+          },
+          "platform": "win32",
+          "node": "v24.21.0",
+          "generatedAt": "2026-10-03T12:52:30.743Z",
+          "testsPassed": 775,
+          "scenariosPassed": 234,
+          "conformance": "passed",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "evidenceDigest": "sha256:c90deddf6a71c32e02cadc7c963d06d983d823493960846281fd6580afff8e61",
+          "schemaValidated": true,
+          "integrityValidated": true,
+          "installedArtifactConsistencyValidated": true,
+          "restoredStatusAndHistoricalReceiptScenariosValidated": true
+        }
+      ],
+      "lockDigestValidated": true
+    },
+    "frameworkAdmission": {
+      "status": "passed",
+      "sourceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+      "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37123945413",
+      "ledgerSchemaVersion": 2,
+      "sourcesAdmitted": 8,
+      "holds": 0,
+      "logDigest": "sha256:474eafbb719671d6daf3d60bb1ee9d977c9b69b274534df3c324722a15256100",
+      "observations": [
+        {
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+          "observedAt": "2026-10-03T04:01:20.889Z",
+          "reviewedAt": "2026-10-03T12:54:55.293Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+          "observedAt": "2026-10-03T04:01:21.531Z",
+          "reviewedAt": "2026-10-03T12:54:56.100Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+          "observedAt": "2026-10-03T04:01:22.197Z",
+          "reviewedAt": "2026-10-03T12:54:56.864Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+          "observedAt": "2026-10-03T04:01:22.945Z",
+          "reviewedAt": "2026-10-03T12:54:57.652Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+          "observedAt": "2026-10-03T04:01:23.500Z",
+          "reviewedAt": "2026-10-03T12:54:58.415Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Studio",
+          "observedAt": "2026-10-03T04:01:24.164Z",
+          "reviewedAt": "2026-10-03T12:54:59.169Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+          "observedAt": "2026-10-03T04:01:19.493Z",
+          "reviewedAt": "2026-10-03T12:54:59.925Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+          "observedAt": "2026-10-03T04:01:24.727Z",
+          "reviewedAt": "2026-10-03T12:55:00.680Z",
+          "evidenceCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+          "evidenceDigest": "sha256:0b8a1c050c62122abd25278026d13c355fd3d7e88a6e8451dd1c06b922638f5c"
+        }
+      ]
+    },
+    "metadataCommitClaimsItsOwnExactSourceCi": false,
+    "prChecks": {
+      "id": 37123914508,
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37123914508",
+      "conclusion": "success",
+      "jobsPassed": 6,
+      "headCommit": "23f2736a9f3405e76aab00cd600658599af45120",
+      "scope": "PR matrix; separate from clean workflow-dispatch source evidence"
+    }
   }
 }
