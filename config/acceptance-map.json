@@ -1211,7 +1211,7 @@
       "item": "BGA-405",
       "case": "The final candidate that includes current shipped documentation has passed exact-artifact security review with all release-blocking risks resolved",
       "boundary": "repository",
-      "missing": "Original signed rc.6 includes current packed guides; actual non-maintainer reporting is complete. Fresh clean final security approval and current framework admission remain required."
+      "scenarios": ["GATE-SECURITY-REVIEW"]
     },
     {
       "item": "BGA-415",
@@ -1229,13 +1229,13 @@
       "item": "BGA-415",
       "case": "The owner-selected GitHub download publishes the approved original signed artifact and its fixed public bytes, certified original signer/source and provenance are independently verified; npm trusted publication is deferred",
       "boundary": "repository",
-      "missing": "GitHub channel approved and independent reporting lifecycle observed; fresh final security approval, actual package upload and public consumer remain required. No npm publication is claimed."
+      "scenarios": ["GATE-PUBLICATION"]
     },
     {
       "item": "BGA-415",
       "case": "A live successful public consumer receipt is retained with the immutable GitHub download and its public release identity is observed; registry tag promotion is deferred",
       "boundary": "repository",
-      "missing": "No installable public GitHub download or successful public package consumer receipt is yet observed. Offline controls do not supply live evidence."
+      "scenarios": ["GATE-PUBLICATION"]
     },
     {
       "item": "BGA-432",

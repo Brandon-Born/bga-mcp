@@ -79,7 +79,7 @@ The first public release queue is:
 11. `BGA-405` — security review of the exact signed candidate.
 12. `BGA-415` — publish and independently reinstall the first release.
 
-BGA-431 is verified and signed rc.5 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against original rc.5 installed discovery, current packed guides and exact-source CI. BGA-406 now retains the completed independent benign-report lifecycle; see its candidate-independent channel receipt and handoff below. BGA-408 is verified for its scoped process and simulated lifecycle. BGA-405 is implemented with retained clean-reviewer replay and exact-source CI; BGA-415 is implemented with publication still held; external reporting, exact artifact and publication gates remain separate. The eight mapped live framework sources have since been admitted with BGA-432's correction and fresh CI; see BGA-408.
+BGA-431 is verified and signed rc.5 passed BGA-424's bounded frozen-task carry-forward. BGA-411 is verified against original rc.5 installed discovery, current packed guides and exact-source CI. BGA-406 is verified with the completed independent benign-report lifecycle. BGA-408 remains verified for its scoped process and actual framework admission. BGA-405 is verified against the approved original signed rc.6; BGA-415 is verified for the owner-selected public signed GitHub download, independent installed consumers and retained success receipt. The first local-only prerelease is public; npm and Studio remain outside this completed shipping scope. The eight mapped live framework sources have since been admitted with BGA-432's correction and fresh CI; see BGA-408.
 
 BGA-424 informs the first release's usefulness claims after installation and client smoke evidence exist; it does not replace capability-specific verification or authorize Studio access. BGA-425 is later-release research into reading developer-owned runtime test evidence and does not enter this local-only release queue. BGA-308 through BGA-311 retain ownership of Studio test-table, perspective, and saved-state feasibility and operations.
 
@@ -1442,7 +1442,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-405 — Complete release security review
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-013, BGA-014, BGA-403, BGA-404, BGA-407, BGA-414, all capabilities in the release
 - **Deliverable:** Review of threat mitigations, dependencies, permissions, data handling, adapters, release pipeline, and residual risks.
@@ -1466,6 +1466,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Final-probe clean rc.5 assessment, 2026-10-02 UTC:** [Separately retained assessment](verification/security-review-v1.0.0-rc.5-final-probes.json) records clean reviewer `b07ea15` and the strengthened filesystem-probe harness. Fresh independent signature/subjects/provenance verification, exact-source production/full-graph audits with zero findings, all 27 tests / 11 required security scenarios and the 274-file scan pass against the unchanged original signed tarball. Both cleanup-await removal controls run within the filesystem cases; this does not fill BGA-326's complete native matrix. Current packed guides and the actual framework guard pass. The sole blocking assessment risk remains BGA-406's independent report lifecycle; status is held. Prior assessments are preserved, with no final approval, package rebuild, registry write or publication receipt selection implied by this repeat.
 
 - **Final-probe reviewer CI, 2026-10-02 UTC:** [Exact-reviewer CI 37015034964](verification/bga405-final-probes-reviewer-ci.json) passes all six jobs at clean `b07ea15`, each with 674 tests and 209 required scenarios. All downloaded records validate trusted schema, integrity, exact source, matching matrix environment, applicable conformance and unchanged platform package digests. This supports the committed reviewer and is separate from the original-candidate replay and approval holds.
+
+- **Final security approval, 2026-10-03 UTC:** [Actual approved assessment](verification/security-review-v1.0.0-rc.6-final-probes.json) from clean reviewer `92b94a0` authenticates the unchanged original signed rc.6, repeats exact-source production/full-graph audits with zero findings, passes 68 tests / 11 required security scenarios and scans 274 package text files. Current packed guides, completed real reporting and actual framework admission all pass; no release-blocking risk remains in the frozen local-only scope. [Exact selected-review CI 37095819724](https://github.com/Brandon-Born/bga-mcp/actions/runs/37095819724) passes six jobs at clean `b067db4`, 775 tests / 234 scenarios each. Prior held assessments and original bytes are preserved; Studio remains excluded.
 
 ### BGA-406 — Establish private vulnerability reporting
 
@@ -1601,7 +1603,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-415 — Publish and independently verify the first release
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P0
 - **Depends on:** BGA-400, BGA-401, BGA-403, BGA-404, BGA-405, BGA-406, BGA-407, BGA-408, BGA-411, BGA-414, BGA-416 through BGA-420, BGA-422, BGA-424
 - **Deliverable:** Publish the exact signed and security-reviewed BGA-403 candidate without rebuilding it, then verify the public artifact as an unrelated consumer would.
@@ -1630,6 +1632,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **First public consumer recovery, 2026-10-03 UTC:** [Actual publication run 37096261163](https://github.com/Brandon-Born/bga-mcp/actions/runs/37096261163) at `1c34829` passed complete preparation, original packet authentication, fresh exact-source audit and the isolated upload. Three missing original/package companion assets were added to the existing release without overwrite. Public verification then failed and success retention was skipped. Independent read-only reproduction located missing global-default pnpm 12.8.1 under the consumer's empty home; pinning the documented pnpm 11.15.1 prerequisite in its disposable working directory made the same public original signature/provenance and installed guide lifecycle pass. The consumer now creates that pinned workspace before running the unchanged guide; `E2E-PUBLICATION-CONSUMER` executes the real guide from the same fresh home/cwd so repository tooling caches cannot hide this defect. The package, packed guides, original security-review harness and signed assets are unchanged. BGA-415 remains implemented until the corrected hosted public consumer and lifetime retention pass.
 - **Recovery source:** [Corepack](https://github.com/nodejs/corepack#when-authoring-packages) says “Set your package's manager with the packageManager field in package.json”; unconfigured projects select a known-good release. The observed default-version failure and single pinned-workspace control support this tooling correction; no BGA construct changes.
+
+- **First installable release verified, 2026-10-03 UTC:** [Recovered workflow 37097931562](https://github.com/Brandon-Born/bga-mcp/actions/runs/37097931562) at `0689d61` passes prepare/publish/verify/retain. Fresh original-signature and exact-source audit admission precedes exact existing-asset reconciliation; the same release `402216124` retains all original assets without overwrite or duplicate creation. The corrected token-free hosted public consumer downloads the original signed bytes, verifies certified signer/source and provenance, installs from the unchanged guide, discovers the frozen inventory, performs first use/root refusal, observes an unchanged project and server exit, and removes the package. [Its successful public receipt](https://github.com/Brandon-Born/bga-mcp/releases/download/v1.0.0-rc.6/github-consumer-37097931562.json) is retained for release lifetime and independently downloaded byte-for-byte. A clean macOS verifier independently repeats the same public lifecycle with an empty account configuration and no tokens. [Complete publication record](verification/github-download-decision.json) preserves both attempts, actual plan/approval/audit/asset identities and the separate observations. The [installable signed rc.6](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.6) stays a local-only prerelease; npm, Studio and game publication are not claimed.
 
 ### BGA-416 — Bind the installed public executable to the frozen release profile
 
