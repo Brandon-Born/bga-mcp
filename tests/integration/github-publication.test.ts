@@ -89,6 +89,54 @@ async function control() {
   return { plan, files, retained, release };
 }
 it('[GATE-PUBLICATION] GitHub publication refuses automatic writes, dry-run credentials, broad permissions, dependency execution and success retention before verification', async () => {
+  // Actual hosted/public observations are separate from the synthetic refusal controls below.
+  const observed = JSON.parse(
+    await readFile(resolve(root, 'docs/verification/github-download-decision.json'), 'utf8'),
+  ) as {
+    publicationApproved: boolean;
+    publication: {
+      status: string;
+      admissionPlanJson: string;
+      planDigest: string;
+      approvalReceipt: string;
+      metadataReceipt: string;
+      workflow: { conclusion: string; jobs: { conclusion: string }[] };
+      hostedConsumer: { verifiedAt: string };
+      consumerAsset: { id: number; name: string; digest: string };
+      releaseSnapshot: GitHubRelease;
+      publicReceiptBytesMatched: boolean;
+    };
+  };
+  expect(observed.publicationApproved).toBe(true);
+  const actual = observed.publication;
+  expect(actual.status).toBe('verified');
+  expect(actual.workflow.conclusion).toBe('success');
+  expect(actual.workflow.jobs).toHaveLength(4);
+  expect(actual.workflow.jobs.every((job) => job.conclusion === 'success')).toBe(true);
+  expect(sha256(actual.admissionPlanJson)).toBe(actual.planDigest);
+  const actualPlan = readPublicationPlan(JSON.parse(actual.admissionPlanJson));
+  expect(() =>
+    verifyGitHubConsumerReceipt(
+      actual.hostedConsumer,
+      actualPlan,
+      actual.planDigest,
+      new Date(actual.hostedConsumer.verifiedAt),
+    ),
+  ).not.toThrow();
+  expect(sha256(`${JSON.stringify(actual.hostedConsumer, null, 2)}\n`)).toBe(
+    actual.consumerAsset.digest,
+  );
+  expect(sha256(await readFile(resolve(root, actual.approvalReceipt)))).toBe(
+    actualPlan.approvalDigest,
+  );
+  expect(actual.publicReceiptBytesMatched).toBe(true);
+  expect(
+    actual.releaseSnapshot.assets.find((asset) => asset.id === actual.consumerAsset.id),
+  ).toMatchObject(actual.consumerAsset);
+  const metadata: unknown = JSON.parse(
+    await readFile(resolve(root, actual.metadataReceipt), 'utf8'),
+  );
+  expect(reconcileGitHubRelease(actual.releaseSnapshot, metadata, actualPlan)).toEqual([]);
   const source = await readFile(resolve(root, '.github/workflows/release-github.yml'), 'utf8');
   expect(verifyGitHubPublicationWorkflow(source).failures).toEqual([]);
   for (const changed of [
