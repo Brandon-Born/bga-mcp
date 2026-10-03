@@ -478,7 +478,7 @@
             "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
             "owner": "Brandon Born",
             "disposition": "excluded",
-            "evidence": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+            "evidence": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
           },
           {
             "id": "RR-POLICY-TRAVERSAL-OPENAT",
@@ -583,5 +583,25 @@
         }
       ]
     }
+  },
+  "finalSecurityApproval": {
+    "receipt": "docs/verification/security-review-v1.0.0-rc.6-final-probes.json",
+    "reviewedAt": "2026-10-03T04:11:32.556Z",
+    "reviewer": {
+      "sourceCommit": "92b94a0e2e75f50a03e74952884e181d540c24e8",
+      "sourceClean": true,
+      "harnessDigest": "sha256:b61ea0a0a9a9921665be9f911e2e7b1cb7c53c77c4cb628d49edc014302cabb1"
+    },
+    "status": "approved",
+    "testsPassed": 68,
+    "requiredSecurityScenariosPassed": 11,
+    "scannedPackageTextFiles": 274,
+    "releaseGates": {
+      "candidateDocumentationCurrent": true,
+      "privateReportLifecycleVerified": true,
+      "frameworkReviewCurrent": true
+    },
+    "originalArtifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+    "scope": "Actual fresh original-artifact assessment, not a synthetic control. Immutable candidate and prior held assessments preserved; public package consumer still required."
   }
 }
