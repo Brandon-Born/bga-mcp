@@ -102,6 +102,15 @@ official source and distinguish a documented rule from a heuristic.
 correct next action without manually reconstructing the dependency. BGA-113 owns
 explicit uncertainty; any richer explanation work needs scoped triage.
 
+**BGA-435 implementation, 2026-10-03.** Pre-release explanations now use actual
+validator-group unsupported findings, including their source positions and
+suggestions, before aggregate truncation. Existing check reasons carry the
+coverage limitation; the text groups repeated reasons with affected checks.
+These remain group-level limitations, not independently proven per-check causes.
+Installed layout/privacy/budget controls and the same-source Dino Racer rerun
+are the required evidence. This does not measure effort savings or establish
+game correctness.
+
 ## Read more generated SQL safely
 
 **Observed.** Computed setup SQL in the unchanged generated baseline remains

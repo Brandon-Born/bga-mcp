@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported.",
+      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
@@ -37,7 +37,8 @@
         "E2E-PROJECT-SOURCE-SELECTION",
         "E2E-PROJECT-SOURCE-MODULES",
         "E2E-STATE-UNCONFIRMED-INITIAL",
-        "E2E-DATABASE-FORMATTED-INSERT"
+        "E2E-DATABASE-FORMATTED-INSERT",
+        "E2E-PRE-RELEASE-COVERAGE-REASONS"
       ],
       "capabilities": [
         {
@@ -73,7 +74,8 @@
             "E2E-PROJECT-SOURCE-SCOPE",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-STATE-UNCONFIRMED-INITIAL",
-            "E2E-DATABASE-FORMATTED-INSERT"
+            "E2E-DATABASE-FORMATTED-INSERT",
+            "E2E-PRE-RELEASE-COVERAGE-REASONS"
           ]
         },
         {
@@ -166,7 +168,7 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged.",
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -181,7 +183,8 @@
         "E2E-VALIDATE-ACTION-SCOPES",
         "E2E-AUDIT-DATABASE-ALIASES",
         "E2E-PROJECT-SOURCE-SELECTION",
-        "E2E-DATABASE-FORMATTED-INSERT"
+        "E2E-DATABASE-FORMATTED-INSERT",
+        "E2E-PRE-RELEASE-COVERAGE-REASONS"
       ],
       "capabilities": [
         {
@@ -202,7 +205,8 @@
           "scenarios": [
             "E2E-PRE-RELEASE-CLEAN",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-DATABASE-FORMATTED-INSERT"
+            "E2E-DATABASE-FORMATTED-INSERT",
+            "E2E-PRE-RELEASE-COVERAGE-REASONS"
           ]
         },
         {
@@ -252,7 +256,7 @@
       "dimension": "layout",
       "value": "part-migrated",
       "support": "supported",
-      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source.",
+      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged.",
       "fixtures": ["tests/fixtures/projects/hybrid"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -264,7 +268,8 @@
         "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
         "E2E-VALIDATE-PROJECT-HYBRID",
         "E2E-VALIDATE-STATES-HYBRID",
-        "E2E-PROJECT-SOURCE-SELECTION"
+        "E2E-PROJECT-SOURCE-SELECTION",
+        "E2E-PRE-RELEASE-COVERAGE-REASONS"
       ],
       "capabilities": [
         {
@@ -277,7 +282,11 @@
         },
         {
           "reference": "tool:run_pre_release_audit",
-          "scenarios": ["E2E-PRE-RELEASE-HYBRID", "E2E-PROJECT-SOURCE-SELECTION"]
+          "scenarios": [
+            "E2E-PRE-RELEASE-HYBRID",
+            "E2E-PROJECT-SOURCE-SELECTION",
+            "E2E-PRE-RELEASE-COVERAGE-REASONS"
+          ]
         },
         {
           "reference": "tool:validate_action_contracts",
