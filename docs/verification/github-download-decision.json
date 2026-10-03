@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-415",
+  "channel": "github-downloads",
+  "repository": "Brandon-Born/bga-mcp",
+  "authorization": "Signed GitHub downloads sounds good to me",
+  "authorizedBy": "Brandon-Born",
+  "recordedAt": "2026-10-03T01:28:07Z",
+  "visibility": "public",
+  "defaultBranch": "main",
+  "maintainerCanPush": true,
+  "observation": "Authenticated repository API: permissions.admin/maintain/push true; existing metadata workflow has successfully used a scoped contents-write job. No environment, account or npm publisher setup is claimed.",
+  "candidateTag": "v1.0.0-rc.6",
+  "sourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+  "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+  "publicationApproved": false,
+  "scope": "Channel selection authorizes preparation; BGA-405 approval, BGA-406 independent lifecycle, fresh audit and public consumer gates remain required. npm publication is deferred, not verified.",
+  "preparation": {
+    "recordedAt": "2026-10-03T01:51:57.675594+00:00",
+    "sourceBase": "42ce9c35db7c1b58a1f2c1e13bf0895c3f0111df",
+    "sourceClean": false,
+    "fullGate": "passed",
+    "testsPassed": 775,
+    "requiredScenariosPassed": 234,
+    "claims": 103,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "currentSourceMacPackageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+    "logDigest": "sha256:022691249e807f2b845275b784948eb6d023fd61821efce74647c39bb66ba76c",
+    "localEvidenceDigest": "sha256:563b3d4d4a71f43d45bb141283cac681475d7a54ef422b85ab1626950754cba7",
+    "earlierAttempts": [
+      {
+        "status": "failed",
+        "phase": "threat-model documentation synchronization",
+        "logDigest": "sha256:c9c2a37a33fb65a1912960f9455f1029a0360f24deef96b3b9fa406db41abe7f"
+      },
+      {
+        "status": "failed",
+        "testsPassed": 775,
+        "phase": "evidence metadata: six current-run test counts and missing companion scope marker",
+        "logDigest": "sha256:39213d40605963628ec9b932aed3addc2464605df537f186054aa744e70b4e5a"
+      }
+    ],
+    "officialPageObservations": [
+      {
+        "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+        "observedAt": "2026-10-03T01:50:36.894Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+        "observedAt": "2026-10-03T01:50:59.659Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+        "observedAt": "2026-10-03T01:50:46.416Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
+        "observedAt": "2026-10-03T01:50:41.642Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+        "observedAt": "2026-10-03T01:50:54.545Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio",
+        "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+        "observedAt": "2026-10-03T01:51:03.776Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+        "observedAt": "2026-10-03T01:50:16.920Z",
+        "unchanged": true
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+        "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+        "observedAt": "2026-10-03T01:50:50.310Z",
+        "unchanged": true
+      }
+    ],
+    "ci": "pending",
+    "frameworkAdmission": "pending",
+    "hostedDryRun": "pending",
+    "publicInstallablePackage": "not published",
+    "runtimeScope": "unchanged; seven local tools and three project resources"
+  }
+}

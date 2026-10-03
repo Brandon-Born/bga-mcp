@@ -1289,7 +1289,7 @@
     },
     {
       "id": "TM-REGISTRY-PUBLICATION",
-      "title": "Manual registry publication admits exact approved bytes with fresh audit and isolated identities; independent public signature, provenance and consumer evidence gates promotion",
+      "title": "Manual approved-artifact publication isolates registry identities or GitHub contents-write; fixed public bytes, original signatures, provenance and installed consumer evidence gate endorsement",
       "boundary": "TB-SUPPLY-CHAIN",
       "control": "automated",
       "status": "implemented",

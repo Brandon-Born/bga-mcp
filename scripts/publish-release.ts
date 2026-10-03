@@ -35,6 +35,7 @@ async function main(): Promise<void> {
     JSON.parse(await readFile(resolve(root, 'config/publication.json'), 'utf8')),
   );
   assert(config.decision);
+  assert('registry' in config.decision, 'npm publication is not the selected channel');
   const packet = resolve(directory),
     planBytes = await readFile(resolve(packet, 'plan.json'));
   assert.equal(sha256(planBytes), expectedDigest, 'Cross-job plan differs from admitted output');

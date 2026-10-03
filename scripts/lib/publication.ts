@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 // Builtins only: the OIDC job installs no repository dependencies and runs no package code.
 export const PUBLICATION_REPOSITORY = 'Brandon-Born/bga-mcp';
 export const PUBLICATION_WORKFLOW = '.github/workflows/release-publication.yml';
+export const GITHUB_PUBLICATION_WORKFLOW = '.github/workflows/release-github.yml';
 export const PUBLICATION_REGISTRY = 'https://registry.npmjs.org';
 export const NPM_CLI = '12.2.0';
 export const sha256 = (bytes: Buffer | string): string =>
@@ -25,10 +26,21 @@ export interface PublicationDecision {
   authorizedAt: string;
   publisherSetupEvidence: string;
 }
+export interface GitHubPublicationDecision {
+  channel: 'github-downloads';
+  packageName: 'bga-mcp';
+  repository: typeof PUBLICATION_REPOSITORY;
+  workflow: typeof GITHUB_PUBLICATION_WORKFLOW;
+  authorizedBy: 'Brandon-Born';
+  authorizedAt: string;
+  authorization: string;
+  publisherSetupEvidence: string;
+}
+export type ChannelDecision = PublicationDecision | GitHubPublicationDecision;
 export interface PublicationConfig {
   schemaVersion: 1;
   owner: 'BGA-415';
-  decision: PublicationDecision | null;
+  decision: ChannelDecision | null;
   reviewReceipt: string;
   prerequisites: { installation: string; client: string; evidence: string; usefulness: string };
   npmCli: typeof NPM_CLI;
@@ -38,7 +50,7 @@ export interface PublicationPlan {
   preparedAt: string;
   publisherCommit: string;
   workflowRun: string;
-  decision: PublicationDecision;
+  decision: ChannelDecision;
   candidate: {
     name: 'bga-mcp';
     version: string;
@@ -80,8 +92,34 @@ export function readPublicationConfig(input: unknown): PublicationConfig {
     assert(typeof path === 'string' && /^docs\/verification\/[a-zA-Z0-9._-]+\.json$/u.test(path));
   return config as unknown as PublicationConfig;
 }
-export function readDecision(input: unknown): PublicationDecision {
+export function readDecision(input: unknown): ChannelDecision {
   const decision = object(input);
+  if (decision.channel === 'github-downloads') {
+    assert.deepEqual(Object.keys(decision).sort(), [
+      'authorization',
+      'authorizedAt',
+      'authorizedBy',
+      'channel',
+      'packageName',
+      'publisherSetupEvidence',
+      'repository',
+      'workflow',
+    ]);
+    assert.equal(decision.packageName, 'bga-mcp');
+    assert.equal(decision.repository, PUBLICATION_REPOSITORY);
+    assert.equal(decision.workflow, GITHUB_PUBLICATION_WORKFLOW);
+    assert.equal(decision.authorizedBy, 'Brandon-Born');
+    assert(
+      typeof decision.authorizedAt === 'string' &&
+        Number.isFinite(Date.parse(decision.authorizedAt)),
+    );
+    for (const field of ['authorization', 'publisherSetupEvidence'])
+      assert(typeof decision[field] === 'string' && decision[field].trim().length > 0);
+    assert(
+      /^docs\/verification\/[a-zA-Z0-9._-]+\.json$/u.test(String(decision.publisherSetupEvidence)),
+    );
+    return decision as unknown as GitHubPublicationDecision;
+  }
   assert.deepEqual(Object.keys(decision).sort(), [
     'authorizedAt',
     'authorizedBy',
@@ -152,7 +190,8 @@ export function readPublicationPlan(input: unknown, now = new Date()): Publicati
   assert(typeof candidate.sourceCommit === 'string' && commit.test(candidate.sourceCommit));
   for (const value of [candidate.artifactDigest, plan.approvalDigest, plan.auditDigest])
     assert(typeof value === 'string' && digest.test(value));
-  assert(Array.isArray(plan.files) && plan.files.length === 11);
+  const github = object(plan.decision).channel === 'github-downloads';
+  assert(Array.isArray(plan.files) && plan.files.length === (github ? 12 : 11));
   const expected = [
     `bga-mcp-${candidate.version}.tgz`,
     'release-candidate.json',
@@ -165,6 +204,7 @@ export function readPublicationPlan(input: unknown, now = new Date()): Publicati
     'release-provenance.json',
     'approval.json',
     'fresh-audit.json',
+    ...(github ? ['GITHUB_DOWNLOADS.md'] : []),
   ].sort();
   assert.deepEqual(plan.files.map((file: unknown) => object(file).name).sort(), expected);
   for (const file of plan.files as unknown[]) {
@@ -198,6 +238,7 @@ export function verifyRegistryArtifact(
   bytes: Buffer,
   plan: PublicationPlan,
 ): string {
+  assert('registry' in plan.decision, 'GitHub selection cannot authorize registry publication');
   const metadata = object(metadataInput),
     dist = object(metadata.dist);
   assert.equal(metadata.name, plan.candidate.name);
@@ -227,6 +268,7 @@ export function verifyNpmProvenance(
   bytes: Buffer,
   plan: PublicationPlan,
 ): Record<string, unknown> {
+  assert('registry' in plan.decision);
   const result = object(input);
   assert.deepEqual(result.invalid, []);
   assert.deepEqual(result.missing, []);
@@ -331,6 +373,7 @@ export function verifyConsumerReceipt(
   planDigest: string,
   now = new Date(),
 ): void {
+  assert('registry' in plan.decision);
   const consumer = object(input);
   assert.equal(consumer.schemaVersion, 1);
   assert.equal(consumer.owner, 'BGA-415');
