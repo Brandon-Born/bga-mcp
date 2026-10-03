@@ -37,10 +37,19 @@ export function createValidatorRunners(
       run: () =>
         summarizeFindings(
           [
-            ...validateNotifications(context.phpSources, context.clientSources, signal).diagnostics
-              .findings,
-            ...context.model.diagnostics.findings.filter(
-              (finding) => finding.code === 'project.source.unsupported-syntax',
+            ...validateNotifications(
+              context.phpSources,
+              context.clientSources,
+              signal,
+            ).diagnostics.findings.filter(
+              (finding) =>
+                finding.kind !== 'heuristic' ||
+                !context.model.diagnostics.findings.some(
+                  (entry) => entry.code === 'project.source.read-limit',
+                ),
+            ),
+            ...context.model.diagnostics.findings.filter((finding) =>
+              finding.code.startsWith('project.source.'),
             ),
           ],
           signal,
@@ -67,9 +76,22 @@ export function createValidatorRunners(
               };
         return summarizeFindings(
           [
-            ...auditDatabaseUsage(schemaSource, context.phpSources, signal).diagnostics.findings,
-            ...context.model.diagnostics.findings.filter(
-              (finding) => finding.code === 'project.source.unsupported-syntax',
+            ...auditDatabaseUsage(
+              schemaSource,
+              context.phpSources,
+              signal,
+            ).diagnostics.findings.filter(
+              (finding) =>
+                finding.code !== 'database.column.unused' ||
+                !context.model.diagnostics.findings.some(
+                  (entry) =>
+                    entry.code === 'project.source.read-limit' &&
+                    entry.kind === 'unsupported-syntax' &&
+                    entry.syntax.language === 'php',
+                ),
+            ),
+            ...context.model.diagnostics.findings.filter((finding) =>
+              finding.code.startsWith('project.source.'),
             ),
           ],
           signal,

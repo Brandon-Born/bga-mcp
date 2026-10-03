@@ -276,8 +276,7 @@ export function validateStateMachine(
     cancellationCheckpoint(signal);
     if (
       finding.kind === 'unsupported-syntax' &&
-      (finding.code.startsWith('project.states.') ||
-        finding.code === 'project.source.unsupported-syntax')
+      (finding.code.startsWith('project.states.') || finding.code.startsWith('project.source.'))
     ) {
       findings.push(finding);
     }
@@ -452,7 +451,14 @@ export function validateStateMachine(
   }
 
   // Cross-file handler checks. These are heuristics by construction.
-  const searchable = sources.length > 0;
+  const searchable =
+    sources.length > 0 &&
+    !model.diagnostics.findings.some(
+      (finding) =>
+        finding.code === 'project.source.read-limit' &&
+        finding.kind === 'unsupported-syntax' &&
+        finding.syntax.language === 'php',
+    );
   for (const state of states) {
     cancellationCheckpoint(signal);
     const checks: { method: string | null; code: string; label: string }[] = [

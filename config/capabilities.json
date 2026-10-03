@@ -150,7 +150,9 @@
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-DATABASE-FORMATTED-INSERT"
+          "E2E-DATABASE-FORMATTED-INSERT",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -283,7 +285,9 @@
           "E2E-CONTRACT-UNKNOWN-PHP",
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-DATABASE-FORMATTED-INSERT",
-          "E2E-PRE-RELEASE-COVERAGE-REASONS"
+          "E2E-PRE-RELEASE-COVERAGE-REASONS",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -370,7 +374,9 @@
           "E2E-CONTRACT-INERT-EXAMPLES",
           "E2E-CONTRACT-EXECUTABLE-CONTROLS",
           "E2E-CONTRACT-COMMENT-METHOD-MISSING",
-          "E2E-CONTRACT-UNKNOWN-PHP"
+          "E2E-CONTRACT-UNKNOWN-PHP",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -407,7 +413,9 @@
           "E2E-CONTRACT-INERT-EXAMPLES",
           "E2E-CONTRACT-EXECUTABLE-CONTROLS",
           "E2E-CONTRACT-UNKNOWN-GRAMMAR",
-          "E2E-CONTRACT-UNKNOWN-PHP"
+          "E2E-CONTRACT-UNKNOWN-PHP",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -444,7 +452,9 @@
           "E2E-CONTRACT-UNKNOWN-GRAMMAR",
           "E2E-CONTRACT-COMMENT-METHOD-MISSING",
           "E2E-STATE-UNCONFIRMED-INITIAL",
-          "E2E-DATABASE-FORMATTED-INSERT"
+          "E2E-DATABASE-FORMATTED-INSERT",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -477,7 +487,9 @@
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-STATE-UNCONFIRMED-INITIAL"
+          "E2E-STATE-UNCONFIRMED-INITIAL",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -572,7 +584,9 @@
           "E2E-CONTRACT-UNKNOWN-GRAMMAR",
           "E2E-CONTRACT-UNKNOWN-PHP",
           "E2E-STATE-UNCONFIRMED-INITIAL",
-          "E2E-DATABASE-FORMATTED-INSERT"
+          "E2E-DATABASE-FORMATTED-INSERT",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -598,7 +612,9 @@
           "E2E-STATE-DELEGATED-RETURNS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-STATE-UNCONFIRMED-INITIAL"
+          "E2E-STATE-UNCONFIRMED-INITIAL",
+          "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+          "E2E-PROJECT-SOURCE-FILE-LIMIT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

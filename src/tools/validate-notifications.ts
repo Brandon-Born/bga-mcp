@@ -163,9 +163,15 @@ export function registerValidateNotifications(
             })),
             diagnostics: summarizeFindings(
               [
-                ...trace.diagnostics.findings,
-                ...project.model.diagnostics.findings.filter(
-                  (finding) => finding.code === 'project.source.unsupported-syntax',
+                ...trace.diagnostics.findings.filter(
+                  (finding) =>
+                    finding.kind !== 'heuristic' ||
+                    !project.model.diagnostics.findings.some(
+                      (entry) => entry.code === 'project.source.read-limit',
+                    ),
+                ),
+                ...project.model.diagnostics.findings.filter((finding) =>
+                  finding.code.startsWith('project.source.'),
                 ),
               ],
               signal,

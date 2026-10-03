@@ -12,8 +12,9 @@ import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { buildProjectModel, type ProjectModel } from '../project/model.js';
 import type { PhpSource } from '../rules/state-machine.js';
+import { summarizeFindings, unsupportedSyntaxFinding } from '../rules/uncertainty.js';
 
-/** Bytes of PHP source a single validation may read. Keeps a huge project bounded. */
+/** Bytes shared by PHP/client contract sources in a single validation. */
 const MAX_SOURCE_BYTES = 262_144;
 const MAX_SOURCE_FILES = 200;
 
@@ -233,6 +234,7 @@ export async function loadProjectContext(
       .flatMap((finding) => finding.locations.map((location) => location.uri)),
   );
   let budget = MAX_SOURCE_BYTES;
+  const omitted = new Map<string, { language: string; limit: string; paths: string[] }>();
 
   for (const file of listing.files) {
     // One check per file: a deadline that expires during a large read set
@@ -250,15 +252,24 @@ export async function loadProjectContext(
       (options.withClientSources === true &&
         /\.(?:js|ts)$/u.test(file.path) &&
         !file.path.endsWith('.d.ts'));
-    if (
-      !wanted ||
-      unclassifiedSources.has(file.path) ||
-      phpSources.length + clientSources.length >= MAX_SOURCE_FILES
-    ) {
+    if (!wanted || unclassifiedSources.has(file.path)) {
       continue;
     }
-    if (file.bytes > budget) {
-      break;
+    const limit =
+      phpSources.length + clientSources.length >= MAX_SOURCE_FILES
+        ? `${String(MAX_SOURCE_FILES)} source-file limit`
+        : file.bytes > budget
+          ? `${String(MAX_SOURCE_BYTES)}-byte source budget`
+          : null;
+    if (limit !== null) {
+      const language = file.path.endsWith('.php') ? 'php' : 'client';
+      const key = `${language}:${limit}`;
+      const entry = omitted.get(key) ?? { language, limit, paths: [] };
+      entry.paths.push(file.path);
+      omitted.set(key, entry);
+      // A large source does not prevent later, smaller sources from fitting.
+      // The bounded listing still bounds this pass; skipped bodies are not read.
+      continue;
     }
     budget -= file.bytes;
     const source = { path: file.path, text: await readOnce(file.path) };
@@ -269,5 +280,37 @@ export async function loadProjectContext(
     }
   }
 
-  return { model, phpSources, clientSources };
+  const limits = [...omitted.values()].map(({ language, limit, paths }) => {
+    cancellationCheckpoint(options.signal);
+    const construct = `${String(paths.length)} eligible ${language} source file(s) omitted by the ${limit}`;
+    return {
+      ...unsupportedSyntaxFinding({
+        code: 'project.source.read-limit',
+        construct,
+        language,
+        uri: null,
+        message: `${construct}. Contract coverage is incomplete; absence in the files read is not evidence of absence in the project.`,
+        suggestion:
+          'Inspect a separately identified, narrower canonical project root and retain the omitted-source coverage limit; Git ignore rules do not select game code.',
+      }),
+      locations: paths.map((uri) => {
+        cancellationCheckpoint(options.signal);
+        return { uri };
+      }),
+    };
+  });
+  return {
+    model:
+      limits.length === 0
+        ? model
+        : {
+            ...model,
+            diagnostics: summarizeFindings(
+              [...model.diagnostics.findings, ...limits],
+              options.signal,
+            ),
+          },
+    phpSources,
+    clientSources,
+  };
 }
