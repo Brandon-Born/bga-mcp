@@ -166,7 +166,52 @@
       "ledgerDigest": "sha256:90f8caaa645af86dc7448b92e9b542d2e94fcbf71e6cbaec118b2f672b529df8",
       "scope": "Eight unchanged official interpretations explicitly admitted after fresh observation and exact-source CI; no candidate/security/publication approval"
     },
-    "hostedDryRun": "pending explicit merge approval; workflow must be on main",
+    "hostedDryRun": {
+      "observedAt": "2026-10-03T03:10:24.086Z",
+      "sourceCommit": "5d8b3f5c2169811b5af0093ac0571d367d5ac7d3",
+      "workflow": ".github/workflows/release-github.yml",
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37092027655",
+      "mode": "dry-run",
+      "conclusion": "failure",
+      "status": "held-as-expected",
+      "testsPassed": 775,
+      "requiredScenariosPassed": 234,
+      "fullGate": "passed",
+      "exactCandidateSourceCheckout": "passed",
+      "frozenCandidateSourceInstall": "passed",
+      "admission": "refused",
+      "observedHolds": [
+        "Release gate is pending: privateReportLifecycleVerified",
+        "Open blocking risk BLOCK-privateReportLifecycleVerified owned by Brandon-Born",
+        "BGA-405 approval is held",
+        "Non-maintainer benign report lifecycle has not been observed",
+        "BGA-406 is not verified"
+      ],
+      "jobs": [
+        {
+          "name": "prepare",
+          "conclusion": "failure"
+        },
+        {
+          "name": "verify",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "publish",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "retain",
+          "conclusion": "skipped"
+        }
+      ],
+      "contentsWriteJobsStarted": false,
+      "publicPackageWriteAttempted": false,
+      "packetAcquisition": "not reached",
+      "freshAdmittedAudit": "not reached",
+      "logDigest": "sha256:6849b6507dc4421beafdd4432b7752f5f272a43b965136a780b73145a1cd4999",
+      "scope": "Actual hosted full gate and exact-source install pass before owned admission refusal. Neither an approved candidate nor public package consumer is established."
+    },
     "publicInstallablePackage": "not published",
     "runtimeScope": "unchanged; seven local tools and three project resources",
     "prChecks": {
@@ -263,6 +308,280 @@
       "outputDigest": "sha256:acd62739335b862b2576b8ccf4cd718843f81b3a63edbdce8a08cdbff228b3e9",
       "scope": "Actual local owned-hold refusal before source/signature acquisition; not a hosted dry run or public consumer"
     },
-    "merge": "PR #13 remains draft; automatic approval review rejected protected/default branch mutation without explicit new-PR approval"
+    "merge": {
+      "pullRequest": "https://github.com/Brandon-Born/bga-mcp/pull/13",
+      "status": "merged",
+      "mergedAt": "2026-10-03T03:05:02Z",
+      "sourceCommit": "5d8b3f5c2169811b5af0093ac0571d367d5ac7d3",
+      "checkedHead": "a132bdc45b2ae88baedf3494958d1c7118e95804",
+      "checkedHeadCi": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37089415775",
+      "authorization": "Wait, why do you need me to approve some random PR you made, just do it. You're the one making this, I am the product owner, I don't make go/no go decisions on PRs",
+      "priorHold": "Automatic approval review previously rejected the default-branch change before explicit user engineering/merge authorization; no bypass was attempted."
+    },
+    "securityRefresh": {
+      "assessmentDigest": "sha256:329605041af391c72f1a6c0474ea48c50767e37b409602ba9bb71ab2691a302f",
+      "sourceCommit": "5d8b3f5c2169811b5af0093ac0571d367d5ac7d3",
+      "selectedByPublication": false,
+      "scope": "Separate original-candidate security replay under the clean merged GitHub release harness. Embedded assessment preserves all historical standalone reviews; final approval remains held solely on the independent reporting lifecycle.",
+      "assessment": {
+        "schemaVersion": 1,
+        "owner": "BGA-405",
+        "reviewedAt": "2026-10-03T03:07:24.193Z",
+        "status": "held",
+        "candidate": {
+          "tag": "v1.0.0-rc.6",
+          "sourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+          "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea"
+        },
+        "reviewer": {
+          "sourceCommit": "5d8b3f5c2169811b5af0093ac0571d367d5ac7d3",
+          "sourceClean": true,
+          "harnessDigest": "sha256:b61ea0a0a9a9921665be9f911e2e7b1cb7c53c77c4cb628d49edc014302cabb1"
+        },
+        "signature": {
+          "verified": true,
+          "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+          "trustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c"
+        },
+        "dependencyAudit": {
+          "schemaVersion": 1,
+          "generatedAt": "2026-10-03T03:06:32.523Z",
+          "registry": "https://registry.npmjs.org",
+          "source": {
+            "commit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+            "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+            "packageDigest": "sha256:8dd4db516533978d0c3477ed379542f32fac4fcfab1baf6211cbc79a79aca5af",
+            "workspaceDigest": "sha256:fef5dd514042853948c785238bcd49325463812870a8160c27451785e2633e38",
+            "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+          },
+          "production": {
+            "counts": {
+              "info": 0,
+              "low": 0,
+              "moderate": 0,
+              "high": 0,
+              "critical": 0
+            },
+            "findings": []
+          },
+          "all": {
+            "counts": {
+              "info": 0,
+              "low": 0,
+              "moderate": 0,
+              "high": 0,
+              "critical": 0
+            },
+            "findings": []
+          }
+        },
+        "dependencyPolicy": {
+          "schemaVersion": 1,
+          "maxAgeHours": 24,
+          "exceptions": []
+        },
+        "tests": {
+          "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "resultDigest": "sha256:328e233d2dcbca21ba1c924ee51346961a5791ca1fed89ce7f0216d1ef7c77d2",
+          "testsPassed": 68,
+          "testsFailed": 0,
+          "requiredScenarios": [
+            "E2E-RELEASE-PUBLIC-EXECUTABLE",
+            "E2E-READ-ONLY-NETWORK-DENIED",
+            "E2E-READ-ONLY-NETWORK-HARNESS",
+            "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+            "E2E-TOOLS-REDACTION",
+            "E2E-POLICY-OBJECT-BOUND-READS",
+            "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+            "E2E-SUCCESS-OUTPUT-REDACTION",
+            "E2E-POLICY-RACE-BARRIER",
+            "E2E-FILESYSTEM-CANCELLATION",
+            "E2E-POLICY-PARSER-DEADLINE"
+          ],
+          "passedScenarios": [
+            "E2E-FILESYSTEM-CANCELLATION",
+            "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+            "E2E-POLICY-OBJECT-BOUND-READS",
+            "E2E-POLICY-PARSER-DEADLINE",
+            "E2E-POLICY-RACE-BARRIER",
+            "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+            "E2E-READ-ONLY-NETWORK-DENIED",
+            "E2E-READ-ONLY-NETWORK-HARNESS",
+            "E2E-RELEASE-PUBLIC-EXECUTABLE",
+            "E2E-SUCCESS-OUTPUT-REDACTION",
+            "E2E-TOOLS-REDACTION"
+          ]
+        },
+        "packageScan": {
+          "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "files": 274,
+          "findings": 0
+        },
+        "studio": "excluded; no live claim",
+        "adapters": [],
+        "risks": [
+          {
+            "id": "RR-POLICY-NO-TOOL-EVIDENCE",
+            "owner": "Brandon Born",
+            "disposition": "accepted",
+            "evidence": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, synchronous parser expiry, and quiescence for instrumented listing and descriptor-read syscalls. It does not prove every native filesystem primitive; BGA-326 owns that remaining gap. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-STUDIO-UNREVIEWED",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "The Studio boundaries were reviewed on 2026-08-07. Synchronization remains unimplemented behind planned controls; experimental own-account log reading is discoverable but remains unreleased and has additional open correctness, privacy, address, cancellation, and credential-file controls from the 2026-08-08 audit. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-DOC-CONTENT-UNREVIEWED",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "Documentation retrieval is reviewed and implemented behind explicit network enablement, host restrictions, provenance, and untrusted-content labelling. Those controls do not prove arbitrary query provenance or prevent an agent from acting on hostile retrieved prose; BGA-324 and RR-DOC-INJECTION-RESIDUAL carry those limits. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-CLIENT-BEHAVIOR",
+            "owner": "Brandon Born",
+            "disposition": "accepted",
+            "evidence": "The server cannot control what an agent does with a correct, redacted result. Operator judgement remains part of the safety model. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-SECRET-SCAN-COVERAGE",
+            "owner": "Brandon Born",
+            "disposition": "accepted",
+            "evidence": "Secret scanning recognizes known credential formats. A novel or encoded secret can pass the gate, so redaction and the artifact allowlist remain the primary controls. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-DOC-INJECTION-RESIDUAL",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "Labelling retrieved content as untrusted does not stop an agent from acting on it. No server-side control can; the mitigation reduces the chance an agent treats documentation as instruction, and the operator responsibilities carry the rest. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-DOC-ALLOWLIST-TRUST",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "An allowlisted documentation host that is itself compromised serves attacker content over a trusted channel. Provenance and untrusted-content labelling limit the damage; the allowlist cannot prevent it. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-STUDIO-NO-UNDO",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "SFTP has no version history. A previewed, confirmed synchronization that writes the intended file to the intended project can still overwrite something the developer wanted, and nothing on this side of the connection can undo it. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-STUDIO-SHARED-ACCOUNT",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "The documentation describes multiple developer accounts per person and says nothing about credential confidentiality. A credential the developer has already shared is outside this server's control. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-POLICY-TRAVERSAL-OPENAT",
+            "owner": "Brandon Born",
+            "disposition": "accepted",
+            "evidence": "Direct-policy and installed-artifact barriers prove refusal in selected single-swap windows. Portable Node pathname checks cannot prevent repeated adversarial swaps across successive identity and containment checks because Node exposes no descriptor-relative openat; the deterministic single-swap evidence is not openat equivalence. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "RR-DOC-QUERY-PROVENANCE",
+            "owner": "Brandon Born",
+            "disposition": "excluded",
+            "evidence": "The request filter reads the shape of a query, not its origin. Text that reads as an ordinary question is sent as one, so a model that paraphrases project content into a question can still put it in a request. Enforcing origin needs an explicit user-supplied channel or a deliberately narrow grammar, which BGA-324 owns; until then the limit is stated in the tool description rather than implied away. Existing canonical threat-model disposition; acceptance is not extended to a new capability."
+          },
+          {
+            "id": "BLOCK-privateReportLifecycleVerified",
+            "owner": "Brandon-Born",
+            "disposition": "held",
+            "evidence": "BGA-406 non-maintainer benign-report lifecycle is not observed."
+          }
+        ],
+        "releaseGates": {
+          "candidateDocumentationCurrent": true,
+          "privateReportLifecycleVerified": false,
+          "frameworkReviewCurrent": true
+        },
+        "integrity": "sha256:11a5afaff08dd684d9df77223aee8189fd6c1f495ef5817b95910495f06e461f"
+      }
+    },
+    "existingPublicReleaseRecheck": {
+      "observedAt": "2026-10-03T03:10:24.088Z",
+      "releaseId": 402216124,
+      "prerelease": true,
+      "originalMetadataAssetsMatched": 12,
+      "originalMetadataIdentitiesAndDigests": "all twelve matched retained BGA-407 receipt",
+      "installablePackagePresent": false,
+      "observedRecordDigest": "sha256:5293c7e11e51a7a976267caf9b0f9f8d29e53c7ec3e945b4941601cc4030d14d"
+    },
+    "mergedSourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37092012393",
+      "commit": "5d8b3f5c2169811b5af0093ac0571d367d5ac7d3",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:a562f498776a01db1f7d232075777bb11ad19fd9f0765b496b55214f33c0114b",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T03:11:36.902Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:32230f22ce163f69aeb736268b9161c703df609148e3a6aedec8e7cf816913ac",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T03:09:03.193Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:6586063c62cff956263427f0df308d25d248db1200d8c6e4fe638f189d326ed3",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T03:08:41.125Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:cfbc009c5b274e245594eeba5476dc709c2d0fa11a6e2efa77964b183e5641b4",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T03:09:15.054Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:971ed9ec328d61188010e6fe82a5493b19edb9783197ebbfe6a3bf0033e10d8a",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T03:11:51.777Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:c143fcf9038b3db6af7fed483b47f84056ec55662b757f7bf5fef663f39c0fc3",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T03:11:20.464Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    }
   }
 }

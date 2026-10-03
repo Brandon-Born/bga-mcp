@@ -14,6 +14,37 @@ The new workflow defaults to a read-only dry run on trusted main. Prepare runs t
 
 Both contents-write jobs use builtins and GitHub CLI, with no dependency installation, package execution, OIDC or npm token. Preparation and verification have read-only permissions. Errors require inspecting the exact release and preserving original assets; a conflict is an incident, never permission to clobber, delete, rebuild or change a version. A byte-identical partial upload may be reconciled after fresh admission. An expired audit/approval requires refresh; existing packages are not re-signed or rebuilt to achieve that. A failed consumer prevents success retention. Local policy controls and shared packaged lifecycle proof do not establish actual public delivery.
 
+### Merged GitHub preflight — 2026-10-03 UTC
+
+[PR #13](https://github.com/Brandon-Born/bga-mcp/pull/13) is merged at
+`5d8b3f5c2169811b5af0093ac0571d367d5ac7d3` after all six checks passed on its
+reviewed head. The owner delegated routine engineering reviews and merges to
+the implementing agent. [Hosted dry run 37092027655](https://github.com/Brandon-Born/bga-mcp/actions/runs/37092027655)
+passed the complete gate with 775 tests, 234 required scenarios, package,
+safety and applicable conformance, then checked out and installed the exact
+original candidate source. Admission refused the independent reporting and
+security-approval holds; the workflow conclusion is `failure`, with publish,
+verify and retain skipped. Packet acquisition and the fresh admitted audit
+were not reached. This is observed release-gate enforcement, not package
+publication or a successful public consumer.
+
+[The retained preparation record](github-download-decision.json) also embeds a
+separate clean merged-source security replay: original signature verification,
+fresh zero-finding production/full dependency audits, all 68 security tests /
+11 scenarios and 274 text-file scans pass. Documentation and framework gates
+pass; the sole blocking assessment risk is the independent reporting lifecycle.
+The selected publication assessment and all historical standalone reviews
+remain preserved. The public release recheck matches all twelve original
+metadata asset identities and digests, with no installable tarball present.
+
+The remaining external test is the non-maintainer benign report documented in
+[PRIVATE_REPORTING.md](PRIVATE_REPORTING.md). After its actual receipt,
+acknowledgement, triage and closure are recorded, the release operator refreshes
+and approves the exact-candidate assessment, selects that receipt, and runs
+the admitted GitHub publication and independent public consumer. Routine PR
+approval is not an additional product-owner gate. Reporting evidence,
+security/advisory freshness and public consumer success remain required.
+
 ## Deferred npm path
 
 The existing `release-publication.yml` implementation and historical npm records below remain available for a later owner-selected npm release. Its writer refuses while GitHub is selected. Package ownership/trusted-publisher configuration, first publication, certified npm provenance, public registry installation and dist-tag promotion remain unverified. There is no placeholder bootstrap or token fallback. npm's [trust prerequisites](https://docs.npmjs.com/cli/v12/commands/npm-trust/) require an existing package; [new-package staging](https://docs.npmjs.com/staged-publishing/) creates a public `0.0.0-stage` placeholder. The GitHub decision resolves the first distribution path without claiming to resolve npm setup.
