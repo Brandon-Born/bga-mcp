@@ -449,8 +449,10 @@ function resolveQueryText(
   php: string,
   masked: string,
   signal?: AbortSignal,
-): { text: string } | { unreadable: string } {
+): { text: string } | { unreadable: string } | { partial: QueryReference; limitation: string } {
   cancellationCheckpoint(signal);
+  const formatted = readFormattedInsert(argument, signal);
+  if (formatted !== null) return formatted;
   const literal = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(argument);
   if (literal !== null) {
     return { text: literal[2] ?? '' };
@@ -472,11 +474,71 @@ function resolveQueryText(
   }
   const assignedLiteral = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(assigned.value);
   if (assignedLiteral === null) {
+    const formattedAssignment = readFormattedInsert(assigned.value, signal);
+    if (formattedAssignment !== null) return formattedAssignment;
     return {
       unreadable: `a query assembled into $${name}: ${snippet(assigned.value, 60, signal)}`,
     };
   }
   return { text: assignedLiteral[2] ?? '' };
+}
+
+/**
+ * Read only the invariant INSERT target of a literal sprintf template. PHP's
+ * sprintf documentation says ordinary characters are copied to the result;
+ * MySQL's INSERT grammar places the table/column list before VALUES. A trailing
+ * %s may supply arbitrary SQL, so the values/suffix ALWAYS remain unsupported.
+ * No argument is evaluated, substituted, retained or declared safely escaped.
+ * Sources: https://www.php.net/manual/en/function.sprintf.php and
+ * https://dev.mysql.com/doc/refman/8.0/en/insert.html (2026-10-03).
+ */
+function readFormattedInsert(
+  argument: string,
+  signal?: AbortSignal,
+): { partial: QueryReference; limitation: string } | null {
+  const masked = maskLiterals(argument, signal);
+  const call = /^\s*\\?sprintf\s*\(/u.exec(masked);
+  if (call === null) return null;
+  const span = matchBracket(masked, call[0].length - 1, signal);
+  if (span === null || masked.slice(span.end + 1).trim() !== '') return null;
+  const args = splitArguments(masked, span.start + 1, span.end, ',', signal);
+  // Only one ordinary %s, with exactly one supplied non-unpacked argument.
+  if (args.length !== 2) return null;
+  const format = args[0];
+  const values = args[1];
+  if (format === undefined || values === undefined) return null;
+  if (/^\s*(?:\.\.\.|[A-Za-z_]\w*\s*:)/u.test(masked.slice(values.start, values.end))) {
+    return null;
+  }
+  const literal = argument.slice(format.start, format.end).trim();
+  // A single quoted token, not concatenation or embedded escaped/interpolated
+  // PHP. Restricting escapes also avoids decoding identifiers speculatively.
+  if (!/^(?:"[\s]*"|'[\s]*')$/u.test(masked.slice(format.start, format.end).trim())) {
+    return null;
+  }
+  const text = literal.slice(1, -1);
+  if (/[\\$]/u.test(text)) return null;
+  const identifier = '(?:`[A-Za-z_]\\w*`|[A-Za-z_]\\w*)';
+  const shape = new RegExp(
+    `^\\s*INSERT\\s+INTO\\s+(${identifier})\\s*\\(\\s*(${identifier}(?:\\s*,\\s*${identifier})*)\\s*\\)\\s+VALUES\\s+%s\\s*$`,
+    'iu',
+  ).exec(text);
+  if (shape === null) return null;
+  const table = (shape[1] ?? '').replaceAll('`', '');
+  const columns = (shape[2] ?? '')
+    .split(',')
+    .map((column) => `${table}.${column.trim().replaceAll('`', '')}`);
+  cancellationCheckpoint(signal);
+  return {
+    partial: {
+      tables: [table],
+      columns: [...new Set(columns)].sort(),
+      interpolated: false,
+      text: text.replace(/\s+/gu, ' ').trim(),
+    },
+    limitation:
+      'a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed',
+  };
 }
 
 /**
@@ -518,6 +580,11 @@ export function parseQueries(
     );
     if ('unreadable' in resolved) {
       unsupported.push(`${helper} runs ${resolved.unreadable}`);
+      continue;
+    }
+    if ('partial' in resolved) {
+      queries.push(resolved.partial);
+      unsupported.push(`${helper} runs ${resolved.limitation}`);
       continue;
     }
     const text = resolved.text;
