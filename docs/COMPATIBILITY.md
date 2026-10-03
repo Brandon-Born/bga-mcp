@@ -1,5 +1,17 @@
 # Compatibility matrix
 
+## Pre-release coverage explanations — BGA-435
+
+The existing pre-release `reason` fields now name the owning validator's actual
+unsupported findings, first source positions, explanations and suggestions.
+The text summary groups repeated reasons and names affected checks. Existing
+schema, counts and outcomes are preserved across modern, legacy and hybrid
+projects. Causes are group-wide coverage limits; no per-rule causal precision
+or additional SQL, source-scope or runtime support is implied. Up to three
+blockers appear in each reason, with omissions disclosed and the owning tool
+named for complete evidence. Existing output redaction and budget refusal still
+apply. `E2E-PRE-RELEASE-COVERAGE-REASONS` proves the installed public boundary.
+
 Updated: 2026-10-02. Backlog items: BGA-009, BGA-402, BGA-414, BGA-417 through BGA-420, BGA-426 through BGA-428, and BGA-432.
 
 [`config/compatibility.json`](../config/compatibility.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:compatibility` fails when the two disagree, when a supported claim has no required evidence, when a capability mapping lacks a packaged scenario required by both the claim and capability, or when runtime behavior claims support outside this matrix. `pnpm verify:scenarios` fails when a claimed scenario is not declared by an executable test.

@@ -1,10 +1,10 @@
 import type { McpServer } from '@modelcontextprotocol/server';
 import { z } from 'zod';
 
-import { DiagnosticFindingSchema } from '../diagnostics.js';
+import { DiagnosticFindingSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
 import { publishFailure, publishResult } from '../publish.js';
-import { aggregateValidations } from '../rules/aggregate.js';
+import { aggregateValidations, type RuleGroup } from '../rules/aggregate.js';
 import { auditPreRelease, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
 import {
@@ -77,6 +77,21 @@ export function summarizePreRelease(audit: RunPreReleaseAuditResult, layout: str
   if (failed.length > 10) {
     lines.push(`- …and ${String(failed.length - 10)} more failed checks in the full result.`);
   }
+  const unsupported = new Map<string, { checks: string[]; reason: string }>();
+  for (const check of audit.checks) {
+    if (check.outcome !== 'unsupported') continue;
+    const key = `${check.group ?? 'unassigned'}\u0000${check.reason ?? ''}`;
+    const entry = unsupported.get(key) ?? { checks: [], reason: check.reason ?? 'No verdict.' };
+    entry.checks.push(check.id);
+    unsupported.set(key, entry);
+  }
+  for (const { checks, reason } of unsupported.values()) {
+    // This text is built from the already schema-checked, redacted publication.
+    // The structured result retains the full reasons and complete check list.
+    lines.push(
+      `- unsupported: ${String(checks.length)} checks (${checks.slice(0, 6).join(', ')}${checks.length > 6 ? `, and ${String(checks.length - 6)} more` : ''}). ${reason}`,
+    );
+  }
   if (audit.counts['manual-required'] > 0) {
     lines.push(
       `${String(audit.counts['manual-required'])} checks still need a human; they are never counted as passed.`,
@@ -131,10 +146,30 @@ export function registerRunPreReleaseAudit(
             signal,
           });
 
-          const runners = createValidatorRunners(policy, resolution, project, signal);
+          // Preserve attribution before aggregate truncation, without exposing
+          // internal results in the aggregate's public type or wire contract.
+          const diagnosticsByGroup = new Map<RuleGroup, DiagnosticResult>();
+          const runners = createValidatorRunners(policy, resolution, project, signal).map(
+            (runner) => ({
+              id: runner.id,
+              run: async () => {
+                const result = await runner.run();
+                diagnosticsByGroup.set(runner.id, result);
+                return result;
+              },
+            }),
+          );
 
           const aggregate = await aggregateValidations(runners, { maxFindings: 5_000, signal });
-          const audit = auditPreRelease(catalog, aggregate.groups, aggregate.diagnostics, signal);
+          const audit = auditPreRelease(
+            catalog,
+            aggregate.groups.map((group) => ({
+              ...group,
+              coverageDiagnostics: diagnosticsByGroup.get(group.id),
+            })),
+            aggregate.diagnostics,
+            signal,
+          );
           return { audit, layout: project.model.layout };
         });
         if (isProjectRootInputRequired(outcome)) {

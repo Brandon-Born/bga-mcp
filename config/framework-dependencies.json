@@ -245,7 +245,9 @@
         "tests/fixtures/docs/relevance/game-logic.html",
         "tests/fixtures/docs/relevance/states.html",
         "tests/fixtures/docs/relevance/migration.html",
-        "tests/fixtures/docs/relevance/file-reference.html"
+        "tests/fixtures/docs/relevance/file-reference.html",
+        "tests/e2e/pre-release-explanations.test.ts",
+        "tests/unit/pre-release-explanations.test.ts"
       ]
     },
     {

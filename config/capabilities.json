@@ -282,7 +282,8 @@
           "E2E-CONTRACT-UNKNOWN-GRAMMAR",
           "E2E-CONTRACT-UNKNOWN-PHP",
           "E2E-STATE-UNCONFIRMED-INITIAL",
-          "E2E-DATABASE-FORMATTED-INSERT"
+          "E2E-DATABASE-FORMATTED-INSERT",
+          "E2E-PRE-RELEASE-COVERAGE-REASONS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

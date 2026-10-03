@@ -1,6 +1,7 @@
 import type { DiagnosticFinding, DiagnosticResult } from '../diagnostics.js';
 import { cancellationCheckpoint } from '../deadline.js';
 import type { GroupOutcome, RuleGroup } from './aggregate.js';
+import { orderFindings } from './uncertainty.js';
 
 /** A catalogued check, as read from `config/rule-catalog.json`. */
 export interface CatalogCheck {
@@ -91,7 +92,7 @@ export function auditPreRelease(
         reason:
           group === undefined
             ? 'The validator that owns this check did not run.'
-            : `The ${group.id} validator ${group.status === 'failed' ? 'failed' : 'was skipped'}, so this check has no verdict.`,
+            : `The ${group.id} validator ${group.status === 'failed' ? `failed${group.error === undefined ? '' : ` (${group.error.code})`}` : 'was skipped'}, so this check has no verdict.`,
       });
       continue;
     }
@@ -110,10 +111,15 @@ export function auditPreRelease(
       checks.push({
         ...shared,
         outcome: 'unsupported',
-        reason:
-          group.status === 'unsupported'
-            ? `The ${group.id} validator could not read what this check examines.`
-            : `The ${group.id} validator reported ${String(group.summary.unsupported)} construct(s) it could not read, so this check has no verdict.`,
+        reason: coverageReason(
+          group,
+          // The tool retains this private attribution on its own group records;
+          // it is absent from the exported type and all published group schemas.
+          (group as GroupOutcome & { readonly coverageDiagnostics?: DiagnosticResult })
+            .coverageDiagnostics,
+          check.tool,
+          signal,
+        ),
       });
       continue;
     }
@@ -133,4 +139,38 @@ export function auditPreRelease(
   }
 
   return { catalogVersion: catalog.catalogVersion, counts, checks };
+}
+
+/** Use the actual group's findings, never code prefixes or the truncated aggregate. */
+function coverageReason(
+  group: GroupOutcome,
+  diagnostics: DiagnosticResult | undefined,
+  tool: string | undefined,
+  signal?: AbortSignal,
+): string {
+  const generic =
+    group.status === 'unsupported'
+      ? `The ${group.id} validator could not read what this check examines.`
+      : `The ${group.id} validator reported ${String(group.summary.unsupported)} construct(s) it could not read, so this check has no verdict.`;
+  if (diagnostics === undefined) return generic;
+  const blockers = orderFindings(
+    diagnostics.findings.filter((finding) => finding.kind === 'unsupported-syntax'),
+    signal,
+  );
+  if (blockers.length === 0) return generic;
+  const causes = blockers.slice(0, 3).map((finding) => {
+    cancellationCheckpoint(signal);
+    const location = finding.locations[0];
+    const position = location?.range?.start;
+    const source =
+      location === undefined
+        ? ''
+        : ` at ${location.uri}${position === undefined ? '' : `:${String(position.line)}:${String(position.column)}`}`;
+    return `${finding.code}${source}: ${finding.message}${finding.suggestions[0] === undefined ? '' : ` Next: ${finding.suggestions[0].message}`}`;
+  });
+  // Do not cut source strings before the final redaction boundary: splitting a
+  // secret could hide it from that boundary. Count limits bound explanation
+  // multiplicity; the normal publication policy still bounds the complete output.
+  const omitted = blockers.length - causes.length;
+  return `${generic} Group-wide coverage blockers (not confirmed defects in each check): ${causes.join(' ')}${omitted === 0 ? '' : ` ${String(omitted)} additional blocker(s) omitted here.`}${tool === undefined ? '' : ` See ${tool} for all blocker locations, evidence and suggestions.`}`;
 }
