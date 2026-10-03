@@ -1534,6 +1534,81 @@
     "remainingCases": "Two existing historical/native acceptance gaps remain explicit; neither is waived or claimed by this first-release receipt.",
     "logDigest": "sha256:52d58c1f9c9d9af87db3cee27163808427cde45f5e14582bfea34a234457f37c",
     "evidenceDigest": "sha256:773f51739841efad1a94de2e98ca2b56e6f82e577a5d4dcc1a779e9810635fad",
-    "scope": "Integrated completed-release data/actual assertion/status handoff; exact committed-source CI follows separately."
+    "scope": "Integrated completed-release data/actual assertion/status handoff; exact committed-source CI follows separately.",
+    "exactSourceCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37099767743",
+      "commit": "4e592a12aabdf1fed4a525f1c75aaa362d426696",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "job": "verification-macos-latest-node-22",
+          "evidenceDigest": "sha256:b88f144330f6839f34cc539c6533eb1010d19f87a26defcc8f65b3491ef633b5",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T05:30:21.089Z",
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-macos-latest-node-24",
+          "evidenceDigest": "sha256:305146560d6f55905c902e23670ff2beff01934b534caac41db4a0240b82c0d9",
+          "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+          "generatedAt": "2026-10-03T05:29:15.758Z",
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-22",
+          "evidenceDigest": "sha256:6169235d564892c4d4a29edc61c7a8b1d6893cd6452b712db1dbd5c98c73d4bd",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T05:30:11.768Z",
+          "node": "v22.23.3",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-ubuntu-latest-node-24",
+          "evidenceDigest": "sha256:602907854e2e6faa9373b4a015ffc32a2d53947701a70674bc566c490f3d73f0",
+          "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+          "generatedAt": "2026-10-03T05:30:08.832Z",
+          "node": "v24.21.0",
+          "platform": "linux",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-22",
+          "evidenceDigest": "sha256:5048c50bcf2c82debbd9da87bf8681b5862d74ed5cd5bce292810ee408da9675",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T05:33:02.864Z",
+          "node": "v22.23.3",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        },
+        {
+          "job": "verification-windows-latest-node-24",
+          "evidenceDigest": "sha256:23c66aec0992135f15004b0b50467951d8e3972bead36af6448cf74644dc2813",
+          "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+          "generatedAt": "2026-10-03T05:32:04.491Z",
+          "node": "v24.21.0",
+          "platform": "win32",
+          "testsPassed": 775,
+          "scenariosPassed": 234
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "evidenceSource": "4e592a12aabdf1fed4a525f1c75aaa362d426696",
+      "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37099767743",
+      "pages": 8,
+      "reviewer": "Codex",
+      "releaseGuard": "passed",
+      "scope": "Unchanged bounded framework interpretations re-admitted against completed-release record/assertion/status source. Metadata additions do not rename the CI source or change the original package."
+    }
   }
 }
