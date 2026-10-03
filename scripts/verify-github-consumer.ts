@@ -24,6 +24,34 @@ import { SecurityReviewSchema } from './lib/security-review.js';
 import { scanText } from './lib/secret-scan.js';
 const execute = promisify(execFile),
   root = resolve(import.meta.dirname, '..');
+export async function prepareGitHubConsumerEnvironment(
+  directory: string,
+): Promise<NodeJS.ProcessEnv> {
+  const metadata = object(JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8')));
+  assert(
+    typeof metadata.packageManager === 'string' &&
+      /^pnpm@\d+\.\d+\.\d+$/u.test(metadata.packageManager),
+  );
+  // Corepack selects the current workspace's packageManager before pnpm reads --dir.
+  // https://github.com/nodejs/corepack#when-authoring-packages
+  // Supply the guide's pinned tooling prerequisite inside the fresh consumer workspace.
+  await writeFile(
+    resolve(directory, 'package.json'),
+    JSON.stringify({ private: true, packageManager: metadata.packageManager }),
+    { flag: 'wx' },
+  );
+  return {
+    PATH: process.env.PATH,
+    HOME: directory,
+    USERPROFILE: directory,
+    SYSTEMROOT: process.env.SYSTEMROOT,
+    NPM_CONFIG_USERCONFIG: resolve(directory, 'absent-user-config'),
+    NPM_CONFIG_GLOBALCONFIG: resolve(directory, 'absent-global-config'),
+    NPM_CONFIG_CACHE: resolve(directory, 'cache'),
+    NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
+    NPM_CONFIG_IGNORE_SCRIPTS: 'true',
+  };
+}
 async function credentialFree(directory: string): Promise<void> {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     assert(
@@ -58,17 +86,7 @@ async function main(): Promise<void> {
     admitted.set(file.name, await readFile(resolve(directory, file.name)));
   verifyPreparedFiles(plan, admitted);
   const scratch = await mkdtemp(resolve(tmpdir(), 'bga415-github-consumer-'));
-  const env: NodeJS.ProcessEnv = {
-    PATH: process.env.PATH,
-    HOME: scratch,
-    USERPROFILE: scratch,
-    SYSTEMROOT: process.env.SYSTEMROOT,
-    NPM_CONFIG_USERCONFIG: resolve(scratch, 'absent-user-config'),
-    NPM_CONFIG_GLOBALCONFIG: resolve(scratch, 'absent-global-config'),
-    NPM_CONFIG_CACHE: resolve(scratch, 'cache'),
-    NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
-    NPM_CONFIG_IGNORE_SCRIPTS: 'true',
-  };
+  const env = await prepareGitHubConsumerEnvironment(scratch);
   const command = async (name: string, args: string[]) =>
     (await execute(name, args, { cwd: scratch, env, timeout: 120_000, maxBuffer: 8 * 1024 * 1024 }))
       .stdout;
