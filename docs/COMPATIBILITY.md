@@ -163,3 +163,13 @@ BGA-415 adds `GATE-PUBLICATION`, `INT-PUBLICATION-BOUNDARIES` and `E2E-PUBLICATI
 BGA-421 extends CLAIM-TRANSPORT-STDIO with installed executable failure scenarios in both profiles. Usage/configuration failures exit 2; operational/internal failures exit 1. Dependency initialization, Studio preflight, protocol startup and shutdown collapse unexpected diagnostics, redact registered sessions and private paths, and avoid Node stack/cause output. Preflight refusal stays a terminal setup report. This is local process evidence; it adds no live Studio, network, client or game-correctness claim. See [CLI failure verification](verification/CLI_FAILURES.md).
 
 BGA-211 adds installed development-profile relevance replay for minimal reviewed documentation fragments, question-specific cache selections and excerpt budgets after redaction. The original historical replay and final source admission remain open; no public network capability, general framework freshness or game correctness claim is added.
+
+## Formatted INSERT target scope
+
+BGA-434 adds `E2E-DATABASE-FORMATTED-INSERT` to modern and legacy layout evidence.
+One literal `sprintf` INSERT target with a trailing `%s` exposes its table and
+explicit column names. VALUES and any computed SQL suffix remain unsupported;
+argument values, escaping, namespace resolution and SQL execution are not proved.
+Dynamic identifiers, other format directives, concatenated templates and custom
+qualified formatters are outside this subset. No public output schema changes.
+The aggregate and pre-release results preserve incomplete database coverage.

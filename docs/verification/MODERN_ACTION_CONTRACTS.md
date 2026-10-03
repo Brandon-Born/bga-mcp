@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-125, the correctness owner for the action findings of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":234,"claims":103,"tests":775}
+{"kind":"run","capabilities":17,"scenarios":235,"claims":103,"tests":794}
 ```
 
 ## What the installed package got wrong

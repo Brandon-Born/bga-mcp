@@ -360,3 +360,75 @@ describe('database rules', () => {
     expect(codes).toEqual([...codes].sort());
   });
 });
+
+describe('bounded formatted INSERT targets', () => {
+  it.each(['sprintf', '\\sprintf'])(
+    'reads the literal target of %s without evaluating the row expression',
+    (formatter) => {
+      const result = parseQueries(
+        `<?php self::DbQuery(${formatter}("INSERT INTO \`player\` (\`player_id\`, \`player_name\`) VALUES %s", implode(",", buildRows("private-canary"))));`,
+      );
+      expect(result.value).toEqual([
+        {
+          tables: ['player'],
+          columns: ['player.player_id', 'player.player_name'],
+          interpolated: false,
+          text: 'INSERT INTO `player` (`player_id`, `player_name`) VALUES %s',
+        },
+      ]);
+      expect(result.unsupported).toHaveLength(1);
+      expect(result.unsupported[0]).toContain('unresolved VALUES');
+      expect(JSON.stringify(result)).not.toContain('private-canary');
+      expect(JSON.stringify(result)).not.toContain('buildRows');
+    },
+  );
+
+  it('follows a formatted literal assignment and keeps the audit partial', () => {
+    const result = auditDatabaseUsage(schemaSource, [
+      {
+        path: 'game.php',
+        text: `<?php $sql = sprintf('INSERT INTO card (card_id, card_typo) VALUES %s', $rows); self::DbQuery($sql);`,
+      },
+    ]);
+    expect(result.queries[0]?.columns).toEqual(['card.card_id', 'card.card_typo']);
+    const codes = result.diagnostics.findings.map((finding) => finding.code);
+    expect(codes).toContain('database.unsupported-syntax');
+    expect(codes).toContain('database.column.undeclared');
+    expect(codes).not.toContain('database.audit.unavailable');
+    expect(codes).not.toContain('database.column.unused');
+    expect(result.diagnostics.status).not.toBe('passed');
+  });
+
+  it.each([
+    `sprintf("INSERT INTO %s (card_id) VALUES %s", $table, $rows)`,
+    `sprintf("INSERT INTO card (%s) VALUES %s", $columns, $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %1$s", $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %%s", $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %d", $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %s ON DUPLICATE KEY UPDATE other=1", $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %s" . $suffix, $rows)`,
+    `sprintf("INSERT INTO $table (card_id) VALUES %s", $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %s", ...$rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %s", values: $rows)`,
+    `sprintf("INSERT INTO card (card_id) VALUES %s", $rows) . $suffix`,
+    `$formatter("INSERT INTO card (card_id) VALUES %s", $rows)`,
+    `Other\\sprintf("INSERT INTO card (card_id) VALUES %s", $rows)`,
+    `vsprintf("INSERT INTO card (card_id) VALUES %s", [$rows])`,
+  ])('does not invent structure for an unsupported form: %s', (expression) => {
+    const result = parseQueries(`<?php self::DbQuery(${expression});`);
+    expect(result.value).toEqual([]);
+    expect(result.unsupported).toHaveLength(1);
+  });
+
+  it('does not treat an unexecuted format as a query or a previous assignment as the current one', () => {
+    expect(
+      parseQueries(`<?php $example = sprintf("INSERT INTO ghost (ghost_id) VALUES %s", $rows);`)
+        .value,
+    ).toEqual([]);
+    const result = parseQueries(
+      `<?php $sql = sprintf("INSERT INTO ghost (ghost_id) VALUES %s", $rows); $sql = buildQuery(); self::DbQuery($sql);`,
+    );
+    expect(result.value).toEqual([]);
+    expect(result.unsupported).toHaveLength(1);
+  });
+});

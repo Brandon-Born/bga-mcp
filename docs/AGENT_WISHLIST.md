@@ -117,7 +117,7 @@ Keep unresolved structure unsupported and never execute PHP or SQL to resolve it
 minimal fixture, and demonstrate both a readable pattern and an ambiguous case.
 The [regression record](verification/GENERATED_TEMPLATE_REGRESSIONS.md) and
 [source-scope rerun](verification/PROJECT_SOURCE_SCOPE.md) establish the remaining
-limitation; no new implementation owner has been assigned.
+limitation; BGA-434 now owns bounded reading of invariant formatted INSERT targets. Dynamic VALUES and possible suffixes remain explicit limits; no arbitrary SQL-construction support is promised.
 
 ## Follow one action or state
 
