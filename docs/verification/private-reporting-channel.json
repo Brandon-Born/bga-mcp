@@ -186,5 +186,138 @@
     "logDigest": "sha256:45b579c4e14a232f37bb7b3a71a0d7d5cc2aaf30f5e39c39a4773552d404a779",
     "evidenceDigest": "sha256:4210e16270f20d522f50650323534e36b1817718374cbf7d69fb105c4329da73",
     "scope": "Integrated dirty-tree local handoff; does not claim exact committed-source CI or original signed artifact replay."
+  },
+  "exactSourceCi": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37095198043",
+    "commit": "64e01a7b7c488d8074776eb26ae01e7051fca7c6",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "evidenceDigest": "sha256:e453b47257ca6f9f997f843107ab2eefe15b2ab308fe9c1235007a8a4d483c1f",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-03T04:06:11.358Z",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "evidenceDigest": "sha256:e78bc1aab0b0c4ab3c7bb1275e0c5618058de4750fa0c103962ef5f1922def9f",
+        "packageDigest": "sha256:e74e1b5ae05f7f9174b31e6831defcc7e02ea35a7f540fb39c4caf8cdf13a906",
+        "generatedAt": "2026-10-03T04:08:36.086Z",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "evidenceDigest": "sha256:e886663ed465d521044d8f7cbce852177b4fa91788f7f788b207af972fdbf704",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-03T04:06:24.150Z",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "evidenceDigest": "sha256:856e9a46351c5f7110a3efcad6bd18f196b57e6696ef67d29a5d9de9bf23e316",
+        "packageDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
+        "generatedAt": "2026-10-03T04:05:19.073Z",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "evidenceDigest": "sha256:5c86badbdf2af067b454bff2d8de30ee2704f4d70a01330bc139c37078cd39f2",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-03T04:08:53.267Z",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "evidenceDigest": "sha256:786de4f44f8fd5a60225c8053b4906ddb0583019f37f636a151144f4d268f374",
+        "packageDigest": "sha256:481f192847cdc028e86229eb1122665f75516714e15e6d6a7b24041b96267702",
+        "generatedAt": "2026-10-03T04:07:13.610Z",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "testsPassed": 775,
+        "scenariosPassed": 234
+      }
+    ]
+  },
+  "officialPageObservations": [
+    {
+      "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+      "observedAt": "2026-10-03T04:01:19.493Z",
+      "unchanged": true,
+      "wordingRead": "These files are deprecated"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+      "observedAt": "2026-10-03T04:01:20.889Z",
+      "unchanged": true,
+      "wordingRead": "Then you can safely delete the gameoptions.inc.php file"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+      "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+      "observedAt": "2026-10-03T04:01:21.531Z",
+      "unchanged": true,
+      "wordingRead": "You may add columns to the player table"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+      "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+      "observedAt": "2026-10-03T04:01:22.197Z",
+      "unchanged": true,
+      "wordingRead": "Auto-detect all notifications declared on the game object"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+      "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
+      "observedAt": "2026-10-03T04:01:22.945Z",
+      "unchanged": true,
+      "wordingRead": "it will be used instead of the autowiring"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+      "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+      "observedAt": "2026-10-03T04:01:23.500Z",
+      "unchanged": true,
+      "wordingRead": "They must be prefixed by"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Studio",
+      "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+      "observedAt": "2026-10-03T04:01:24.164Z",
+      "unchanged": true,
+      "wordingRead": "Versions currently used by BGA framework"
+    },
+    {
+      "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+      "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+      "observedAt": "2026-10-03T04:01:24.727Z",
+      "unchanged": true,
+      "wordingRead": "The machine states are described by a PHP associative array"
+    }
+  ],
+  "frameworkAdmission": {
+    "evidenceSource": "64e01a7b7c488d8074776eb26ae01e7051fca7c6",
+    "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37095198043",
+    "reviewer": "Codex",
+    "pages": 8,
+    "releaseGuard": "passed",
+    "scope": "Unchanged bounded official interpretations; no BGA behavior or artifact change."
   }
 }
