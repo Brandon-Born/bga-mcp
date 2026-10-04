@@ -11,12 +11,12 @@
     "authorization": "Signed GitHub downloads sounds good to me",
     "publisherSetupEvidence": "docs/verification/github-download-decision.json"
   },
-  "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.6-final-probes.json",
+  "reviewReceipt": "docs/verification/security-review-v1.0.0-rc.7-clean.json",
   "prerequisites": {
-    "installation": "docs/verification/install-guide-v1.0.0-rc.6-signed.json",
-    "client": "docs/verification/codex-client-v1.0.0-rc.6.json",
-    "evidence": "docs/verification/release-evidence-v1.0.0-rc.6.json",
-    "usefulness": "docs/verification/agent-evaluation-v1.0.0-rc.6.json"
+    "installation": "docs/verification/install-guide-v1.0.0-rc.7-signed.json",
+    "client": "docs/verification/codex-client-v1.0.0-rc.7.json",
+    "evidence": "docs/verification/release-evidence-v1.0.0-rc.7.json",
+    "usefulness": "docs/verification/agent-evaluation-v1.0.0-rc.7.json"
   },
   "npmCli": "12.2.0"
 }
