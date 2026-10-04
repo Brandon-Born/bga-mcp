@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-04T19:56:31.993663Z",
+  "owner": "BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.7",
+    "sourceCommit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.7",
+    "artifactName": "bga-mcp-1.0.0-rc.7.tgz",
+    "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:7792b403e8ff88c930015d081b8dff55b9fdd0583dce1570ed339746c1ebca51",
+      "verificationEvidence": "sha256:a781276fcaff18a1e03748d24dbe3e8f023af70dccd4d3838fc5590f46102a24",
+      "artifact": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+      "securityAudit": "sha256:85a26ca576d3b108d397e7aa3db8b948db125b88cfc4e5680a43842dea3336a1"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37229599668",
+    "conclusion": "success",
+    "artifactId": 11312593805,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.7",
+    "archiveDigest": "sha256:bddb7785ff7407323c0fa86f5af40fffacb8a25a376b72f4cb9fef8808f55b34",
+    "expiresAt": "2027-01-02T19:47:15Z",
+    "reconstruction": "byte-for-byte equality on Ubuntu / Node 24"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37229608458",
+    "commit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.2",
+        "platform": "darwin",
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:6be02cf61c4ce8438886817f6af322f3066f69eb2a85ad1d749aa6e6eae0552b",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.20.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:66eb7b95a3d41e3f30a59bce668a6d31315256e478ce60f69e795fa151b63558",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:666bfc46e634cfe7baf597a9d590981bfcb680bcd65ab6b3b5e91e9a24bcacef",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:57692b2d124b481bc7417f024540639d1610ad41ff6852e4daec2aa89d0bf1b0",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:4427f7cf970e06b9866e6d3d0904781def8cef9c1677b5ed5fc77de4472a0622",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:2691bd9a1c625e75d8537b4cc71d0e2854dcca93ca293bf757d0092845400c0c",
+        "testsPassed": 845,
+        "scenariosPassed": 243
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-04T19:52:14.044Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentConsumer": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-04T19:54:59.781Z",
+    "client": "codex-cli 0.159.2",
+    "node": "v22.17.1",
+    "platform": "darwin",
+    "architecture": "arm64",
+    "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+    "discovery": "matched installed inventory",
+    "calls": [
+      "audit_database_usage",
+      "inspect_project",
+      "run_pre_release_audit",
+      "validate_action_contracts",
+      "validate_notifications",
+      "validate_project",
+      "validate_state_machine"
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "schemaRefusal": true,
+    "outsideRootRefusal": true,
+    "excludedToolRefusal": true,
+    "projectUnchanged": true,
+    "userConfigurationUnchanged": true,
+    "appServerExited": true,
+    "serverProcessesExited": true,
+    "removal": true,
+    "bga432": [
+      {
+        "stateId": 2,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      },
+      {
+        "stateId": 12,
+        "unconfirmed": "inconclusive",
+        "locatedUnsupported": true,
+        "falseInitialAndReachabilityFindings": false,
+        "aggregate": "inconclusive",
+        "stateAuditChecks": "nonempty and unsupported",
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "explicitReturn": "resolved",
+        "projectUnchanged": true
+      }
+    ],
+    "runnerDigest": "sha256:97bb630260afaf9a80cc5d103da6ecbd59a08bcc7fd767bc180c382de6901ccd",
+    "stderrDiagnosticsObserved": true
+  },
+  "realProject": {
+    "name": "Dino Racer",
+    "revision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "treeDirty": false,
+    "contentDigest": "cdb3ca68cf8958994d4d34fa45730ebf7e064066ecbe15835cbbf8c46bad4e57",
+    "sourceInventory": {
+      "fileCount": 308,
+      "truncated": false,
+      "partitionComplete": true,
+      "uniquePaths": true,
+      "groups": [
+        {
+          "id": "source.selected.php",
+          "count": 8
+        },
+        {
+          "id": "source.selected.client",
+          "count": 1
+        },
+        {
+          "id": "source.selected.configuration",
+          "count": 5
+        },
+        {
+          "id": "source.excluded.editor",
+          "count": 5
+        },
+        {
+          "id": "source.unknown",
+          "count": 23
+        },
+        {
+          "id": "source.inventory.other",
+          "count": 266
+        }
+      ],
+      "unknownScopeBlocksCleanVerdict": true,
+      "diagnosticStatus": "unsupported",
+      "candidateEligibilityIsExecutionProof": false
+    },
+    "calls": [
+      {
+        "tool": "audit_database_usage",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["database.unsupported-syntax", "project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "inspect_project",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "run_pre_release_audit",
+        "layout": "modern",
+        "status": null,
+        "findingCodes": [],
+        "auditCounts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        }
+      },
+      {
+        "tool": "validate_action_contracts",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_notifications",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_project",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": [
+          "database.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax",
+          "project.source.unsupported-syntax"
+        ],
+        "auditCounts": null
+      },
+      {
+        "tool": "validate_state_machine",
+        "layout": "modern",
+        "status": "unsupported",
+        "findingCodes": ["project.source.unsupported-syntax"],
+        "auditCounts": null
+      }
+    ],
+    "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+    "projectUnchanged": true,
+    "scope": "read-only current-project MCP rerun; no gameplay, game implementation or full BGA-424 frozen-task carry-forward"
+  },
+  "packagedDocumentation": {
+    "guides": [
+      {
+        "path": "README.md",
+        "digest": "sha256:947e48648d044746a8c700513b421e39a47168db9f1286454d209a81b48c1138",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "AGENTS.md",
+        "digest": "sha256:1dda4e5b3dddd9bc4e6b940e5b4c52b19c1a191f4a55547a12d5fc044e9b2b4f",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "digest": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "SECURITY.md",
+        "digest": "sha256:30252562af68169ebeb55cc1f2f8d05dd84f7cbf9e467c6be46a1ea4757c31ab",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/INSTALL.md",
+        "digest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/VERSIONING.md",
+        "digest": "sha256:fcbcab8f6a678afa4021281526966d7c3747b88d6b899176e76cac0d6be6d1e0",
+        "matchesCandidateSource": true
+      }
+    ],
+    "scope": "original tarball guides match exact clean candidate-source checkout; no security approval"
+  },
+  "signature": "not yet signed",
+  "consumerHarnessCorrection": {
+    "initialExpectedDiagnosticStatus": "inconclusive",
+    "actualDiagnosticStatus": "unsupported",
+    "correction": "Use the existing public diagnostic status enum; retain unknown-scope non-clean assertion. Candidate unchanged.",
+    "failedObservationRetainedOutsideRepository": true
+  }
+}
