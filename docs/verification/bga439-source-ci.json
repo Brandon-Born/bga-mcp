@@ -137,6 +137,224 @@
     "queryLimits": "VALUES, possible suffix and escaping remain unknown; all four query-dependent checks unsupported in both scopes; no SQL grammar expansion",
     "publication": "Development archive only; no original signed-candidate or game-publication promotion"
   },
-  "implementationCi": null,
-  "frameworkAdmission": null
+  "implementationCi": {
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37174171270",
+    "runId": "37174171270",
+    "source": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+    "conclusion": "success",
+    "attempt": 1,
+    "allSixPassed": true,
+    "schemaSealAndSecretValid": true,
+    "selectedEvidenceDigest": "sha256:a25a4cd53869ea8f856bd9a9b74246d5b26bd18bd35f32b9c85e0b09ec91d601",
+    "records": [
+      {
+        "artifactName": "verification-macos-latest-node-22",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:34:28.597Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
+        "evidenceDigest": "sha256:44c5e4977ce7c86ae0e041361481cd4d5f202debe6da64215243a8ec2dd8d67c"
+      },
+      {
+        "artifactName": "verification-macos-latest-node-24",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:33:37.275Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
+        "evidenceDigest": "sha256:fbd3646b61eff1864f5f357d29aaa264ce288a9bc12919ca39fe750329c40bbf"
+      },
+      {
+        "artifactName": "verification-ubuntu-latest-node-22",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:33:26.143Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:5fc75723120fff2f0037b36f93d6e9d4712070fcd9483729a1555767f99ba01d",
+        "evidenceDigest": "sha256:d64de01ca392419d10967effc42ecdf91046dfaecc16261cc1784850d4a5f84f"
+      },
+      {
+        "artifactName": "verification-ubuntu-latest-node-24",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:33:17.602Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:5fc75723120fff2f0037b36f93d6e9d4712070fcd9483729a1555767f99ba01d",
+        "evidenceDigest": "sha256:e3c816269c463ede638afa15635bb99546ead2b9bd6e6b6fa2c290a9a0a0984c"
+      },
+      {
+        "artifactName": "verification-windows-latest-node-22",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:36:02.078Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:39b219047f84a059088eb3f38c43341dd2293177e18f9ff5a85962480b34ddd4",
+        "evidenceDigest": "sha256:a25a4cd53869ea8f856bd9a9b74246d5b26bd18bd35f32b9c85e0b09ec91d601"
+      },
+      {
+        "artifactName": "verification-windows-latest-node-24",
+        "postObservation": true,
+        "source": {
+          "commit": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T03:35:29.071Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:39b219047f84a059088eb3f38c43341dd2293177e18f9ff5a85962480b34ddd4",
+        "evidenceDigest": "sha256:85a52df7f4bf3a6f2cc91e0e7629916109641ed13214005606d33aae09916af5"
+      }
+    ],
+    "carryForward": "This exact clean implementation CI proves 885eb1e; subsequent evidence/admission-only metadata does not acquire an exact-HEAD proof."
+  },
+  "frameworkAdmission": {
+    "reviewedOfficialPages": 8,
+    "latestObservation": "2026-10-04T03:09:47.654Z",
+    "ciSource": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+    "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37174171270",
+    "selectedEvidenceDigest": "sha256:a25a4cd53869ea8f856bd9a9b74246d5b26bd18bd35f32b9c85e0b09ec91d601",
+    "beforeHolds": 8,
+    "afterHolds": 0,
+    "actualReleaseAdmissionExit": 0,
+    "ledgerDigest": "sha256:4510975492b269564e91f33066ef168c14ee8738a61cc611cbd37552f383a05a",
+    "statusDigest": "sha256:e099a8050857f414e24efa6f2b3cf77467c06fd6d23b64494be965013bfcf720",
+    "metadataOnly": true,
+    "publishPerformed": false,
+    "finalCarryForwardCheck": "Actual admission exited 0 after restoring exact CI-tested backlog bytes; attempted verification-wording update invalidated the semantic backlog dependency and was not committed. Evidence/admission receipt is separately classified unrelated."
+  },
+  "cleanSourceArchive": {
+    "source": "885eb1e85c9b6ebcd69fb14559be2f06f609a189",
+    "clean": true,
+    "archiveDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
+    "identity": "Clean implementation packs byte-identically to local full gate and installed Dino probe"
+  }
 }
