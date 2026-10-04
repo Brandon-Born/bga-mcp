@@ -22,7 +22,7 @@ assert(
 );
 const receipt = JSON.parse(
   await readFile(
-    resolve(repository, 'docs/verification/release-candidate-v1.0.0-rc.6.json'),
+    resolve(repository, 'docs/verification/release-candidate-v1.0.0-rc.7.json'),
     'utf8',
   ),
 ) as unknown;
