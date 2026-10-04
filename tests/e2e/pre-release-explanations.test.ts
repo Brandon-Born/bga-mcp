@@ -36,7 +36,12 @@ it('[E2E-PRE-RELEASE-COVERAGE-REASONS] attributes and groups actual coverage lim
         const response = await callTool<Audit>(client, 'run_pre_release_audit', {});
         expect(response.isError).toBe(false);
         const data = RunPreReleaseAuditOutputSchema.parse(response.structured);
-        const database = data.checks.filter((check) => check.group === 'database');
+        expect(
+          data.checks.find((check) => check.id === 'database.audit.unavailable')?.outcome,
+        ).toBe('passed');
+        const database = data.checks.filter(
+          (check) => check.group === 'database' && check.id !== 'database.audit.unavailable',
+        );
         expect(database.length).toBeGreaterThan(0);
         expect(database.every((check) => check.outcome === 'unsupported')).toBe(true);
         expect(new Set(database.map((check) => check.reason)).size).toBe(1);
@@ -67,7 +72,9 @@ it('[E2E-PRE-RELEASE-COVERAGE-REASONS] attributes and groups actual coverage lim
         expect(response.isError).toBe(false);
         const data = RunPreReleaseAuditOutputSchema.parse(response.structured);
         for (const group of ['state-machine', 'action-contracts', 'notifications', 'database']) {
-          const checks = data.checks.filter((check) => check.group === group);
+          const checks = data.checks.filter(
+            (check) => check.group === group && check.id !== 'database.audit.unavailable',
+          );
           expect(checks.every((check) => check.outcome === 'unsupported')).toBe(true);
           expect(checks[0]?.reason).toContain('project.source.unsupported-syntax');
           if (group !== 'database')

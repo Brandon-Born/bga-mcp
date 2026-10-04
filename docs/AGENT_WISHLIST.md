@@ -144,6 +144,15 @@ remain runtime-built, with suffix/escaping uncertainty. The bounded next step is
 coverage triage against the installed trace and original controls; source selection
 cannot establish statement completeness. Dynamic SQL support is not inferred.
 
+**Bounded result, BGA-439, 2026-10-04.** Actual availability and a wholly inert
+schema can justify three existing checks independently of unknown SQL. Their
+reasons now name that evidence; four query-dependent checks remain unsupported
+on the production selection. Non-inert schema completeness, runtime VALUES,
+suffixes and escaping remain open. The next bounded investigation must first
+reject mixed schema statements and executable comments before proposing broader
+schema witnesses or query-tail handling. An empty unsupported list from the
+current schema parser does not establish completeness.
+
 ## Follow one action or state
 
 **Proposed.** Existing tools expose action and state relationships. I would like

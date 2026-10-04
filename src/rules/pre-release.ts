@@ -85,7 +85,12 @@ export function auditPreRelease(
       ...(check.certainty === undefined ? {} : { certainty: check.certainty }),
     };
 
-    if (group?.ran !== true) {
+    if (
+      group?.ran !== true ||
+      !group.requested ||
+      group.status === 'failed' ||
+      group.status === 'skipped'
+    ) {
       checks.push({
         ...shared,
         outcome: 'unsupported',
@@ -108,6 +113,27 @@ export function auditPreRelease(
     // understood none of the project or merely part of it: a rule that stays
     // silent because its input was incomplete must not be reported as passing.
     if (group.status === 'unsupported' || group.summary.unsupported > 0) {
+      // Only the actual database runner can attest these independent checks.
+      // No exported type or public schema carries this private attribution.
+      // A readable INSERT prefix cannot attest any query-dependent absence.
+      const completed =
+        group.id === 'database' &&
+        check.tool === 'audit_database_usage' &&
+        [
+          'database.audit.unavailable',
+          'database.table.duplicate',
+          'database.column.duplicate',
+        ].includes(check.id)
+          ? (
+              group as GroupOutcome & {
+                readonly completedChecks?: readonly { id: string; reason: string }[];
+              }
+            ).completedChecks?.find((entry) => entry.id === check.id)
+          : undefined;
+      if (completed?.reason) {
+        checks.push({ ...shared, outcome: 'passed', reason: completed.reason });
+        continue;
+      }
       checks.push({
         ...shared,
         outcome: 'unsupported',

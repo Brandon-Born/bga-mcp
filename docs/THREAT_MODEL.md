@@ -1,5 +1,20 @@
 # Threat model
 
+## BGA-439 bounded review
+
+Private per-check evidence originates only in the actual database runner after
+policy-mediated schema reads. It covers availability and wholly inert-schema
+duplicate absence; no query-dependent absence or execution is certified. Failed,
+skipped/unrequested groups and missing/refused reads cannot provide a verdict.
+Any SQL or ambiguous comment spelling refuses the new inert-schema witness.
+The private field is absent from serialized diagnostics and public group/type
+schemas. Existing reason strings explain bounded passes through the normal
+TB-OUTPUT redaction and budget boundary. Underlying SQL/source/read findings,
+root confinement, cancellation and project immutability remain unchanged.
+No new trust boundary, network access, filesystem effect, credential or mutation
+is introduced. Installed modern/legacy/hybrid controls retain privacy, read
+failure, output refusal and unchanged project digests alongside unknown SQL.
+
 Reviewed: 2026-08-13. Backlog items: BGA-013, BGA-018.
 
 This document is the human-readable view of [`config/threat-model.json`](../config/threat-model.json), which is the machine-checked source of truth. `pnpm verify:threat-model` compares the two cell for cell: every field carried by both files — asset and actor descriptions, boundary gates, review dates, status and preconditions, abuse-case actors, assets, surfaces and mitigations, mitigation titles, control, status, surfaces, owner, cadence and evidence, and each residual risk's abuse cases and acceptance — must be identical, and the gate seeds a disagreement in each of them before it reports. `pnpm verify:scenarios` reserves scenarios for planned controls and requires implemented automated controls to have executable coverage.

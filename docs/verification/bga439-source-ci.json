@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-439",
+  "origin": "BGA-438 evaluation after BGA-437 source selection",
+  "baseMain": "6e78e11ad73ef87c9ea339d4186e82b2dbb9eace",
+  "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+  "scope": "Only actual audit availability and wholly inert-schema duplicate absence under partial group coverage; no runtime SQL expansion",
+  "negativeControl": {
+    "baselineRuntime": "6e78e11ad73ef87c9ea339d4186e82b2dbb9eace",
+    "testsFailed": 14,
+    "testsPassed": 7,
+    "positiveRuntimeRestored": true,
+    "harnessDigests": {
+      "tests/unit/database-check-coverage.test.ts": "sha256:334623384b15e1e5089396d020c3363091b15d54be2f95988d3c9ee2a9f0d973",
+      "tests/e2e/database-independent-checks.test.ts": "sha256:8a8f7b0f46116128566c3d0af838d7b3f58017873e3c1f06a0b9a58108f77c36"
+    },
+    "retainedReportDigest": "sha256:7a4d1e343c1f67aec1eec3bd2b812c3696bc94059b6910541e1151ad1e667de3"
+  },
+  "integratedLocalGate": {
+    "command": "pnpm check",
+    "source": {
+      "commit": "6761fd0289f7c61ac61b867fa4021ecbd7cb3e2d",
+      "clean": false
+    },
+    "identity": "dirty local implementation assembled before commit; not relabeled clean CI",
+    "tests": {
+      "files": 110,
+      "total": 845,
+      "passed": 845,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 243,
+      "passed": 243,
+      "failed": 0,
+      "missing": 0
+    },
+    "capabilities": 17,
+    "compatibilityClaims": 103,
+    "archiveDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
+    "evidenceDigest": "sha256:e216361cf223fa33ef05ed6ded3e1be1fdaa00bf6bde80b8be2a7e57e1f2dee1",
+    "coverageDigest": "sha256:f63c524bfac070057035c28011d43f1537ea652870bd346feadb9e88afa5966a",
+    "logDigest": "sha256:c6811888653d0dac7e73fdcac5c648c5be1374ae564dd889bfa3735732c2dda2",
+    "previousAttempt": "Complete tests/package/conformance passed; final evidence verifier rejected missing review marker in new semantic document. Marker corrected before the passing full gate."
+  },
+  "installedDinoBeforeAfter": {
+    "verified": true,
+    "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "gameUnchanged": true,
+    "trackedContentDigest": "sha256:7fae0fd3f2392d2ac1b406689a437dbf68ae4bbbf3a85dc75af24b0db865acbc",
+    "fullInventoryDigest": {
+      "digest": "sha256:cdb3ca68cf8958994d4d34fa45730ebf7e064066ecbe15835cbbf8c46bad4e57",
+      "files": 308
+    },
+    "baselineArchive": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "changedArchive": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
+    "results": [
+      {
+        "scope": "wholeCheckout",
+        "before": {
+          "passed": 0,
+          "failed": 0,
+          "unsupported": 33,
+          "manual-required": 8
+        },
+        "after": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "onlyChangedChecks": [
+          {
+            "id": "database.audit.unavailable",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+          },
+          {
+            "id": "database.column.duplicate",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL."
+          },
+          {
+            "id": "database.table.duplicate",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL."
+          }
+        ],
+        "sixOtherToolsAndThreeResourcesIdentical": true
+      },
+      {
+        "scope": "explicitProductionExport",
+        "before": {
+          "passed": 26,
+          "failed": 0,
+          "unsupported": 7,
+          "manual-required": 8
+        },
+        "after": {
+          "passed": 29,
+          "failed": 0,
+          "unsupported": 4,
+          "manual-required": 8
+        },
+        "onlyChangedChecks": [
+          {
+            "id": "database.audit.unavailable",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+          },
+          {
+            "id": "database.column.duplicate",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL."
+          },
+          {
+            "id": "database.table.duplicate",
+            "before": "unsupported",
+            "after": "passed",
+            "reason": "The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL."
+          }
+        ],
+        "sixOtherToolsAndThreeResourcesIdentical": true
+      }
+    ],
+    "sourceAtProbe": "6761fd0289f7c61ac61b867fa4021ecbd7cb3e2d",
+    "sourceClean": false,
+    "baselineReceiptDigest": "sha256:26468aae8525ac6e738bc2e3706d4f88bdcff397113dccb2dea9f470f8279fdf",
+    "changedReceiptDigest": "sha256:150ffad225ea24de8e008b2cbba3e1bc200497e11be5bb203b0575913566def9",
+    "probeDigest": "sha256:d4bd60151797a331f31315981b7dc966add8c16632bbdfd3b89b0957c418de47",
+    "queryLimits": "VALUES, possible suffix and escaping remain unknown; all four query-dependent checks unsupported in both scopes; no SQL grammar expansion",
+    "publication": "Development archive only; no original signed-candidate or game-publication promotion"
+  },
+  "implementationCi": null,
+  "frameworkAdmission": null
+}

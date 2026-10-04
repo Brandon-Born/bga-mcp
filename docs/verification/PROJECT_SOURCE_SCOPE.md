@@ -202,3 +202,13 @@ root and retain unknown-scope/coverage findings. This does not clear full-root
 uncertainty. A separately prepared snapshot remains a different source identity
 under the earlier workflow; its verdict must never replace the full-root verdict.
 The published original rc.6 archive is unchanged and does not acquire this behavior.
+
+## Independent database facts — BGA-439
+
+Full-root scope and contract-read omissions still hold every query-dependent
+database check. The [bounded database-check witness](DATABASE_CHECK_COVERAGE.md)
+can independently establish availability from an actual schema read and query
+reference, plus duplicate-declaration absence for a wholly inert schema. Those
+limited passes do not clear source/read uncertainty, validate runtime SQL or
+replace the full-root verdict with a selected snapshot's verdict. The existing
+database trace and diagnostic resources retain their unsupported findings.

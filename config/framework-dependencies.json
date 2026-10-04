@@ -115,7 +115,8 @@
         "src/tools/validate-project.ts",
         "src/tools/validate-state-machine.ts",
         "docs/verification/DOCUMENTATION_RELEVANCE.md",
-        "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md"
+        "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md",
+        "docs/verification/DATABASE_CHECK_COVERAGE.md"
       ]
     },
     {
@@ -250,7 +251,9 @@
         "tests/unit/pre-release-explanations.test.ts",
         "tests/e2e/source-read-coverage.test.ts",
         "tests/unit/source-read-coverage.test.ts",
-        "tests/unit/source-selection.test.ts"
+        "tests/unit/source-selection.test.ts",
+        "tests/unit/database-check-coverage.test.ts",
+        "tests/e2e/database-independent-checks.test.ts"
       ]
     },
     {
@@ -512,7 +515,8 @@
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
         "tests/unit/version-policy.test.ts",
-        "docs/verification/bga437-source-ci.json"
+        "docs/verification/bga437-source-ci.json",
+        "docs/verification/bga439-source-ci.json"
       ]
     }
   ],

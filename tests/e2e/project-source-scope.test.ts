@@ -16,7 +16,7 @@ interface Result {
   diagnostics?: { status: string; findings: { code: string; locations: { uri: string }[] }[] };
   trace?: { sent?: { source: string }[]; clientCalls?: { source: string }[] };
   queries?: { source: string }[];
-  checks?: { outcome: string }[];
+  checks?: { id: string; outcome: string }[];
 }
 const tools = [
   'inspect_project',
@@ -58,7 +58,13 @@ it('[E2E-PROJECT-SOURCE-SCOPE] inventories copied and disabled sources without t
         const result = response.structured;
         expect(result, tool).toBeDefined();
         if (tool === 'run_pre_release_audit') {
-          const automated = result?.checks?.filter((check) => check.outcome !== 'manual-required');
+          expect(
+            result?.checks?.find((check) => check.id === 'database.audit.unavailable')?.outcome,
+          ).toBe('passed');
+          const automated = result?.checks?.filter(
+            (check) =>
+              check.outcome !== 'manual-required' && check.id !== 'database.audit.unavailable',
+          );
           expect(automated?.length).toBeGreaterThan(0);
           expect(automated?.every((check) => check.outcome === 'unsupported')).toBe(true);
           expect(await digestDirectory(root)).toBe(before);
