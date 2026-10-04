@@ -11,10 +11,10 @@
   "runtimeStudioEvaluated": false,
   "privateSourceRetainedInMcpRepository": false,
   "recordedAt": "2026-10-04T21:17:21.181070Z",
-  "status": "implemented",
-  "conclusion": "actual bounded frozen-task repeat on original signed rc.7; integrated full gate and exact-source CI pending",
+  "status": "verified",
+  "conclusion": "actual bounded frozen-task repeat on original signed rc.7; integrated full gate and exact implementation CI passed",
   "priorCarryForward": "agent-evaluation-v1.0.0-rc.6.json",
-  "remainingReleaseBlockersFromThisEvaluation": ["integrated verification pending"],
+  "remainingReleaseBlockersFromThisEvaluation": [],
   "remainingCoverageLimits": [
     "Computed generated setup SQL remains unsupported; query-dependent audit checks retain holds",
     "Full-repository inspection inventories candidates and excluded/unknown scope; unknown source scope still prevents a whole-repository clean verdict",
@@ -982,5 +982,214 @@
     "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
     "projectUnchanged": true,
     "scope": "read-only current-project MCP rerun; no gameplay, game implementation or full BGA-424 frozen-task carry-forward"
+  },
+  "implementationVerification": {
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37236066084",
+    "runId": "37236066084",
+    "source": "736beb492bd89787b46173fa905854f9931d9056",
+    "schemaAndIntegrityValid": true,
+    "allSixPassed": true,
+    "selectedEvidence": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-windows-latest-node-22/.artifacts/verification-evidence.json",
+    "latestObservation": "2026-10-04T03:09:47.654Z",
+    "records": [
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-macos-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:30:41.148Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:febc1d2891414b899b8f8107b6254e64c13fdcf79e9605fcc92fad26dba98e7c",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-macos-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:31:13.183Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:2bfdc8056647cdc838d6d33962f680a0e2a84078fbf4724f90954c6d22798276",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-ubuntu-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:30:30.362Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:87a33caa6ba20e7b97ad8c7710f5cf4c05e157f20f28f5877276ae011b494b98",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-ubuntu-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:29:45.669Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:c22d8929a4c2548d614c58ab0ceb108e9db504060655cb622db31fd7c5ddd2c7",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-windows-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:34:02.722Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:8eba6ee9d52f74926046d6a306524d3899ec89d476be9b3a49ea781136aaefc4",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37236066084-implementation/verification-windows-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "736beb492bd89787b46173fa905854f9931d9056",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T21:32:56.082Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:0956155a916bdf6894e55c133fdcf5d4d19564ea87e8e6ae3f743b8c6826dec7",
+        "postObservation": true
+      }
+    ]
+  },
+  "localIntegratedGate": {
+    "evidenceDigest": "sha256:a44451c47fd900b8c34a0612d1b5667e3df9c9c909caae55d2e7f563247b9884",
+    "actualSource": {
+      "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+      "clean": false
+    },
+    "result": "passed",
+    "testsPassed": 845,
+    "scenariosPassed": 243,
+    "claimsPassed": 103,
+    "failedInitialStagedSelectionRetained": true
   }
 }
