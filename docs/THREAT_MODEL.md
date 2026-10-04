@@ -304,3 +304,18 @@ persistent retention is introduced. Located omissions pass the existing final
 redaction/output boundary. Installed boundary, privacy, cancellation and
 immutability controls distinguish partial contract reads from structural
 inventory; they do not establish whole-project or native-I/O completeness.
+
+## Complete-repository source receipt review — 2026-10-04
+
+BGA-437 explains the existing source-selection decision within reviewed
+TB-LOCAL-FILESYSTEM/TB-OUTPUT. It introduces no option, privilege, effect,
+configuration parsing or project mutation. All bounded listed paths are partitioned
+in existing inspection signal fields, and the loader consumes the eligible
+PHP/client groups. Unknown source stays unsupported; eligible source omitted by
+read budgets stays incomplete. Names/ignore rules do not establish execution.
+Final redaction covers paths in both signals and text; the complete receipt is
+refused when over budget, with no silent path omission. The installed receipt
+scenarios cover layout retention, repeat/immutability, unconsumed oversized bodies,
+filename canaries and small-output refusal; existing policy/cancellation gates
+remain required. Other inventoried paths may include private filenames, subject
+to the same output redaction and operator responsibilities as prior path findings.

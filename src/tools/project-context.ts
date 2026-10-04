@@ -228,10 +228,11 @@ export async function loadProjectContext(
 
   const phpSources: PhpSource[] = [];
   const clientSources: PhpSource[] = [];
-  const unclassifiedSources = new Set(
-    model.diagnostics.findings
-      .filter((finding) => finding.code === 'project.source.unsupported-syntax')
-      .flatMap((finding) => finding.locations.map((location) => location.uri)),
+  const selectedPhp = new Set(
+    model.detection.signals.find((entry) => entry.id === 'source.selected.php')?.files ?? [],
+  );
+  const selectedClient = new Set(
+    model.detection.signals.find((entry) => entry.id === 'source.selected.client')?.files ?? [],
   );
   let budget = MAX_SOURCE_BYTES;
   const omitted = new Map<string, { language: string; limit: string; paths: string[] }>();
@@ -240,21 +241,12 @@ export async function loadProjectContext(
     // One check per file: a deadline that expires during a large read set
     // stops here rather than at the end of it.
     cancellationCheckpoint(options.signal);
-    // The BGA migration guide identifies root _ide_helper.php and
-    // bga-framework.d.ts as IDE support, not game implementations:
-    // https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide#IDE_Support
-    // TypeScript declaration files contain only type information. This does
-    // not infer exclusions from Git ignore rules or arbitrary nested helpers.
+    // Use the same complete eligibility inventory inspection publishes. Read
+    // budgets remain a separate coverage limit, never a hidden source filter.
     const wanted =
-      (options.withPhpSources === true &&
-        file.path.endsWith('.php') &&
-        file.path !== '_ide_helper.php') ||
-      (options.withClientSources === true &&
-        /\.(?:js|ts)$/u.test(file.path) &&
-        !file.path.endsWith('.d.ts'));
-    if (!wanted || unclassifiedSources.has(file.path)) {
-      continue;
-    }
+      (options.withPhpSources === true && selectedPhp.has(file.path)) ||
+      (options.withClientSources === true && selectedClient.has(file.path));
+    if (!wanted) continue;
     const limit =
       phpSources.length + clientSources.length >= MAX_SOURCE_FILES
         ? `${String(MAX_SOURCE_FILES)} source-file limit`

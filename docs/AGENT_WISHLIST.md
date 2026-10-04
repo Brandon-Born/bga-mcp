@@ -86,6 +86,14 @@ selection controls need a separate backlog owner and contract review.
 
 **BGA-436 bounded follow-up, 2026-10-03.** Source-set investigation exposed a silent contract-read budget: an oversized eligible module stopped later reads without recording uncertainty. The shared loader now retains omitted paths and limits, reads later sources that fit, and prevents partial coverage from supporting absence-based conclusions. This improves existing validators and their located diagnostics; it does not yet provide a complete source receipt or caller-selected source set. The unchanged Dino Racer before/after comparison and installed boundary controls remain required evidence.
 
+**BGA-437 bounded implementation, 2026-10-04.** Inspection and summary now expose
+the complete bounded PHP/client/configuration eligibility, editor exclusions,
+unknown-scope sources and other inventory in existing signal fields. Contract
+reads consume the same PHP/client selection. This supplies source identification
+on the full root without preparing an export; it does not remove unknown-scope
+holds, determine which modules execute, or provide caller exclusions/content
+hashes. Installed same-root and negative-control verification remain required.
+
 ## Explain what remains unchecked
 
 **Observed.** One unreadable setup query leaves multiple pre-release checks
@@ -129,6 +137,12 @@ minimal fixture, and demonstrate both a readable pattern and an ambiguous case.
 The [regression record](verification/GENERATED_TEMPLATE_REGRESSIONS.md) and
 [source-scope rerun](verification/PROJECT_SOURCE_SCOPE.md) establish the remaining
 limitation; BGA-434 now owns bounded reading of invariant formatted INSERT targets. Dynamic VALUES and possible suffixes remain explicit limits; no arbitrary SQL-construction support is promised.
+
+**Setup-code follow-on, BGA-438, 2026-10-04.** The current setup call already has
+a readable invariant INSERT target. Nested tuple `vsprintf` and joined VALUES
+remain runtime-built, with suffix/escaping uncertainty. The bounded next step is
+coverage triage against the installed trace and original controls; source selection
+cannot establish statement completeness. Dynamic SQL support is not inferred.
 
 ## Follow one action or state
 

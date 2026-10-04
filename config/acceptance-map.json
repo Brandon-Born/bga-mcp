@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-02",
+  "updatedAt": "2026-10-04",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1386,6 +1386,18 @@
       "case": "The installed relevance oracle rejects a seeded navigation-selection regression",
       "boundary": "packaged",
       "scenarios": ["E2E-DOC-RELEVANCE-MUTATION"]
+    },
+    {
+      "item": "BGA-437",
+      "case": "Inspection and summary identify every bounded listed path once, preserve independent legacy/hybrid source forms and unknown scope without preparing a subset",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PROJECT-SOURCE-RECEIPT"]
+    },
+    {
+      "item": "BGA-437",
+      "case": "Eligible oversized sources remain visible beside incomplete reads; filename redaction, final output refusal and project immutability remain enforced",
+      "boundary": "packaged",
+      "scenarios": ["E2E-PROJECT-SOURCE-RECEIPT-LIMITS"]
     }
   ]
 }

@@ -213,7 +213,9 @@
           "E2E-CONTRACT-EDITOR-HELPERS",
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
-          "E2E-STATE-UNCONFIRMED-INITIAL"
+          "E2E-STATE-UNCONFIRMED-INITIAL",
+          "E2E-PROJECT-SOURCE-RECEIPT",
+          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -641,7 +643,9 @@
           "E2E-PROJECT-SOURCE-SCOPE",
           "E2E-PROJECT-SOURCE-SELECTION",
           "E2E-CONTRACT-INERT-EXAMPLES",
-          "E2E-STATE-UNCONFIRMED-INITIAL"
+          "E2E-STATE-UNCONFIRMED-INITIAL",
+          "E2E-PROJECT-SOURCE-RECEIPT",
+          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

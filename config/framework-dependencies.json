@@ -249,7 +249,8 @@
         "tests/e2e/pre-release-explanations.test.ts",
         "tests/unit/pre-release-explanations.test.ts",
         "tests/e2e/source-read-coverage.test.ts",
-        "tests/unit/source-read-coverage.test.ts"
+        "tests/unit/source-read-coverage.test.ts",
+        "tests/unit/source-selection.test.ts"
       ]
     },
     {
@@ -510,7 +511,8 @@
         "tests/unit/doc-evaluation.test.ts",
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
-        "tests/unit/version-policy.test.ts"
+        "tests/unit/version-policy.test.ts",
+        "docs/verification/bga437-source-ci.json"
       ]
     }
   ],

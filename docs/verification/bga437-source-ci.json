@@ -1,0 +1,600 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-437",
+  "scope": "Complete bounded source eligibility in retained inspection signals; no caller exclusions, execution graph, dynamic SQL, release or game publication",
+  "baseMain": "ad4975cb224a86daef59a17262f664ce08cb3785",
+  "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+  "negativeControl": {
+    "runtime": "original three runtime files at base main; final new controls",
+    "failed": 7,
+    "passed": 4,
+    "report": "Local original-behavior control in /tmp/bga437-evidence"
+  },
+  "focused": {
+    "tests": 38,
+    "passed": 38
+  },
+  "integratedLocalGate": {
+    "conclusion": "success",
+    "source": {
+      "commit": "ad4975cb224a86daef59a17262f664ce08cb3785",
+      "clean": false
+    },
+    "sourceMode": "Dirty integrated implementation based on exact refreshed main; not clean-source CI",
+    "generatedAt": "2026-10-04T01:57:49.670Z",
+    "environment": {
+      "node": "v22.17.1",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packageManager": "pnpm@11.15.1",
+      "ci": false
+    },
+    "tests": {
+      "files": 108,
+      "total": 824,
+      "passed": 824,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 240,
+      "passed": 240,
+      "failed": 0,
+      "missing": 0
+    },
+    "capabilities": 17,
+    "claims": 103,
+    "artifactDigest": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "evidenceDigest": "sha256:835fde65fd6afcca2cd8cfc0ec0fe63080c9bf2ae6380c5027419b3bbb30e36f",
+    "sourcePatchDigest": "sha256:46b38f291f53039e86f418cff0f0a46ebd6e3a18b42e19469ea3c7a6d1a88de4",
+    "untrackedUnitControlDigest": "sha256:beb76089ee60ce384e3dd6086485946b7193bedd527bba9070abbe31fcda9490",
+    "conformance": {
+      "status": "passed",
+      "coverage": [
+        {
+          "version": "2025-11-25",
+          "status": "passed",
+          "runs": 73,
+          "baselinedScenarios": 26
+        }
+      ],
+      "runs": [
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "completion-complete",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "localhost-host-rebinding-rejected",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "localhost-host-valid-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "elicitation-sep1034-general",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "elicitation-sep1330-general",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "json-schema-2020-12-tool-found",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "logging-set-level",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "ping",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-embedded-resource",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-simple",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-with-args",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-with-image",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-list",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-list",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-read-binary",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-read-text",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-subscribe",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-templates-read",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-unsubscribe",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-initialize",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-id-visible-ascii",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-initialized-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-delete-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-terminated-returns-404",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-accepts-multiple-post-streams",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-streams-functional",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "outgoing-request",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "incoming-response",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "stream-closed",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-priming-event",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-retry-field",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-disconnect-resume",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-audio",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-elicitation",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-embedded-resource",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-error",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-image",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-mixed-content",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-sampling",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-simple-text",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-with-logging",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-with-progress",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-list",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-name-format",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        }
+      ]
+    },
+    "coverage": {
+      "lines": {
+        "total": 4289,
+        "covered": 3939,
+        "skipped": 0,
+        "pct": 91.83
+      },
+      "statements": {
+        "total": 4467,
+        "covered": 4098,
+        "skipped": 0,
+        "pct": 91.73
+      },
+      "functions": {
+        "total": 740,
+        "covered": 684,
+        "skipped": 0,
+        "pct": 92.43
+      },
+      "branches": {
+        "total": 3104,
+        "covered": 2551,
+        "skipped": 0,
+        "pct": 82.18
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "attempts": [
+      {
+        "conclusion": "failed",
+        "reason": "Unlabelled synthetic filename canary stopped safety after all 824 runtime tests and conformance passed; repaired using existing test-only canary convention"
+      },
+      {
+        "conclusion": "failed",
+        "reason": "Six current-run documentation counters retained 816/238; all runtime/package/conformance/safety checks passed; counters corrected to observed 824/240"
+      },
+      {
+        "conclusion": "success"
+      }
+    ]
+  },
+  "implementationCi": null,
+  "frameworkAdmission": null,
+  "limits": [
+    "Eligibility does not prove execution or body-read completeness",
+    "Unknown scope and read-limit findings retain conservative verdicts",
+    "Runtime-built VALUES, suffixes and escaping remain unsupported",
+    "No whole-game, live Studio, measured effort saving or publisher approval"
+  ],
+  "dinoValidation": {
+    "recordedAt": "2026-10-04T01:58:32.327Z",
+    "beforeArtifact": "sha256:38d8cc2894c313f53e12c9838404d81394bdb0fdf7f49ce7bc5741c4bff56b09",
+    "afterArtifact": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "gameUnchanged": true,
+    "fullInventoryDigest": {
+      "digest": "sha256:cdb3ca68cf8958994d4d34fa45730ebf7e064066ecbe15835cbbf8c46bad4e57",
+      "files": 308
+    },
+    "trackedContentDigest": "sha256:7fae0fd3f2392d2ac1b406689a437dbf68ae4bbbf3a85dc75af24b0db865acbc",
+    "rows": [
+      {
+        "scope": "wholeCheckout",
+        "sourceGroups": [
+          {
+            "id": "source.selected.php",
+            "count": 8
+          },
+          {
+            "id": "source.selected.client",
+            "count": 1
+          },
+          {
+            "id": "source.selected.configuration",
+            "count": 5
+          },
+          {
+            "id": "source.excluded.editor",
+            "count": 5
+          },
+          {
+            "id": "source.unknown",
+            "count": 23
+          },
+          {
+            "id": "source.inventory.other",
+            "count": 266
+          }
+        ],
+        "audit": {
+          "passed": 0,
+          "failed": 0,
+          "unsupported": 33,
+          "manual-required": 8
+        },
+        "unchangedValidatorResponses": true,
+        "unchangedStateAndDiagnosticsResources": true,
+        "unknownScopePreserved": true,
+        "eligibilityMatchesIndependent18FileExport": true
+      },
+      {
+        "scope": "explicitProductionExport",
+        "sourceGroups": [
+          {
+            "id": "source.selected.php",
+            "count": 8
+          },
+          {
+            "id": "source.selected.client",
+            "count": 1
+          },
+          {
+            "id": "source.selected.configuration",
+            "count": 5
+          },
+          {
+            "id": "source.excluded.editor",
+            "count": 0
+          },
+          {
+            "id": "source.unknown",
+            "count": 0
+          },
+          {
+            "id": "source.inventory.other",
+            "count": 4
+          }
+        ],
+        "audit": {
+          "passed": 26,
+          "failed": 0,
+          "unsupported": 7,
+          "manual-required": 8
+        },
+        "unchangedValidatorResponses": true,
+        "unchangedStateAndDiagnosticsResources": true,
+        "unknownScopePreserved": true,
+        "eligibilityMatchesIndependent18FileExport": true
+      }
+    ],
+    "lifecycle": {
+      "allSevenToolsAndThreeResources": true,
+      "repeatStable": true,
+      "outsideRootRefused": true,
+      "stderrEmpty": true,
+      "serverProcessesExited": true,
+      "completeInventoryDigestUnchanged": true,
+      "separateExportFilesMatchOriginalDigests": true
+    }
+  },
+  "databaseFollowOn": {
+    "item": "BGA-438",
+    "source": "modules/php/Game.php",
+    "setupCallLine": 170,
+    "knownTargetTables": ["player"],
+    "knownTargetColumns": ["player.player_color", "player.player_id", "player.player_name"],
+    "readableQueryCount": 1,
+    "remainingFinding": "database.unsupported-syntax",
+    "remainingUnknowns": [
+      "Runtime-built VALUES from vsprintf and implode",
+      "Possible SQL suffix",
+      "Argument values and escaping"
+    ],
+    "productionScopeDatabaseChecksUnsupported": 7,
+    "newSqlSupport": false
+  }
+}
