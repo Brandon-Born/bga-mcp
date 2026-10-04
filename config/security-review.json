@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "owner": "BGA-405",
-  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.6.json",
-  "signingReceipt": "docs/verification/release-signing-v1.0.0-rc.6.json",
+  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.7.json",
+  "signingReceipt": "docs/verification/release-signing-v1.0.0-rc.7.json",
   "suites": [
     "tests/e2e/release-inventory.test.ts",
     "tests/e2e/read-only-network-off.test.ts",
@@ -27,14 +27,14 @@
     "E2E-POLICY-PARSER-DEADLINE"
   ],
   "reviewedCandidate": {
-    "tag": "v1.0.0-rc.6",
-    "sourceCommit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
-    "artifactDigest": "sha256:9ac83f5f3d643296581d10f2dd426221c792426315b6a2b468c5d3c45fd928ea",
-    "signerCommit": "882859f6c13643efdb7aca90d7405d2339ab9534",
+    "tag": "v1.0.0-rc.7",
+    "sourceCommit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+    "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+    "signerCommit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
     "auditIdentity": {
-      "commit": "36a7d86f8b112c5025826e4b8aee5f7c7b7e5bd1",
+      "commit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
       "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
-      "packageDigest": "sha256:8dd4db516533978d0c3477ed379542f32fac4fcfab1baf6211cbc79a79aca5af",
+      "packageDigest": "sha256:86f072464d4d0d23aed5f17edee631ff41d87a9ae147a63b41733e04471dffad",
       "workspaceDigest": "sha256:fef5dd514042853948c785238bcd49325463812870a8160c27451785e2633e38",
       "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
     }

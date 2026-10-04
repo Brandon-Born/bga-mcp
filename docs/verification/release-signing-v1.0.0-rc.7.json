@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-04T21:14:46.796526Z",
+  "owner": "BGA-404",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.7.json",
+  "candidateTag": "v1.0.0-rc.7",
+  "candidateSourceCommit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+  "originalArtifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+  "signer": {
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-signing.yml",
+    "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+    "ref": "refs/heads/main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "hostedRunnersOnly": true
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37234780729",
+    "conclusion": "success",
+    "artifactId": 11315347197,
+    "artifactName": "signed-candidate-37234780729",
+    "archiveDigest": "sha256:10e716dfa8f3e4bb7dfaad6346a8744713995b12698e494938fa3490b5bd347d",
+    "expiresAt": "2027-01-02T21:07:09Z"
+  },
+  "attestation": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/attestations/52647582",
+    "transparencyLogUrl": "https://search.sigstore.dev?logIndex=3078579345",
+    "predicateType": "https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1",
+    "signedSubjects": 7,
+    "bundleDigest": "sha256:327815536e237e921ba4da4cdbaf71d023b7c7754cabfcca4594e4456f0fdf97",
+    "predicateCopyDigest": "sha256:508aba27dfa6ffe226ce15973f0823c3e618a78ffc439aeaafd277276c9729c8"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37232677714",
+    "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-macos-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:40:32.841Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:2bf6644373f0e202b39a68825bdcf69f28f3f96f7a5725aa36e1b4512047d38a",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-macos-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:41:06.058Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:1ec1ab9cf08c143734c7d3447c492eb3c600f16394845e8c52330f04d71fa1b2",
+        "evidenceDigest": "sha256:5c02bf884f4f7281371d226449b38f52d52ffbad5377c0327f7fb1db29c96873",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-ubuntu-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:40:27.378Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:6ba3cddfa0d88320e4fdd8baf2b99a535f4a8276e1702553056d3e7b913adc77",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-ubuntu-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:40:12.399Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "evidenceDigest": "sha256:194c3f2db1916e7ddb37e2f8eafeadaa8275772c2d05b49bcf9fa5224d75a202",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-windows-latest-node-22/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:43:29.714Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:f87be651b7b5da723ffe0f532306cc0eaabec989fe3eaa87465ed26f1fb6d10b",
+        "postObservation": true
+      },
+      {
+        "path": "/private/tmp/bga-rc7-evidence/ci-37232677714-postmerge/verification-windows-latest-node-24/.artifacts/verification-evidence.json",
+        "source": {
+          "commit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T20:42:44.239Z",
+        "tests": {
+          "files": 110,
+          "total": 845,
+          "passed": 845,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 243,
+          "passed": 243,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:ac2bc8acfec006fbc0aebc4b69fc474653b51d192779d209c1674f7207ff1e5b",
+        "evidenceDigest": "sha256:917ef4c89d300f381b62d50384bfc7eec95a37e9bb4b815a58b16135f2d62d98",
+        "postObservation": true
+      }
+    ]
+  },
+  "verification": {
+    "hosted": {
+      "resultDigest": "sha256:7bd97f6dfd5e3cc5cc6b04c3f75ceb0cb9e8b15d02d7cbf2b2b77c6e946164e2",
+      "result": {
+        "schemaVersion": 1,
+        "candidateTag": "v1.0.0-rc.7",
+        "candidateCommit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+        "originalArtifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "signerCommit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+        "signature": "verified",
+        "provenance": "matched reviewed candidate and original producer",
+        "modifiedArtifact": "refused by cryptographic verifier",
+        "wrongSignerCommit": "refused",
+        "wrongSignerWorkflow": "refused",
+        "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+        "freshInstall": "passed",
+        "firstUse": "passed",
+        "projectUnchanged": true,
+        "serverExited": true,
+        "removal": "passed",
+        "rebuilt": false,
+        "published": false
+      }
+    },
+    "independentMacos": {
+      "resultDigest": "sha256:7bd97f6dfd5e3cc5cc6b04c3f75ceb0cb9e8b15d02d7cbf2b2b77c6e946164e2",
+      "result": {
+        "schemaVersion": 1,
+        "candidateTag": "v1.0.0-rc.7",
+        "candidateCommit": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+        "originalArtifactDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "signerCommit": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+        "signature": "verified",
+        "provenance": "matched reviewed candidate and original producer",
+        "modifiedArtifact": "refused by cryptographic verifier",
+        "wrongSignerCommit": "refused",
+        "wrongSignerWorkflow": "refused",
+        "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+        "freshInstall": "passed",
+        "firstUse": "passed",
+        "projectUnchanged": true,
+        "serverExited": true,
+        "removal": "passed",
+        "rebuilt": false,
+        "published": false
+      }
+    }
+  },
+  "originalFilesByteIdentical": true,
+  "rebuilt": false,
+  "published": false
+}

@@ -74,11 +74,26 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
     await readFile(resolve(root, 'config/publication.json'), 'utf8'),
   ) as { reviewReceipt: string };
   const actual = SecurityReviewSchema.parse(
-    JSON.parse(await readFile(resolve(root, selection.reviewReceipt), 'utf8')),
+    JSON.parse(
+      await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.7.json'), 'utf8'),
+    ),
   );
   expect(verifyReviewRecord(actual, plan).failures).toEqual([]);
   if (actual.status === 'approved')
     expect(verifyReviewApproval(actual, plan, new Date(actual.reviewedAt)).failures).toEqual([]);
+  // A new assessment can precede its public evidence. The historical publication
+  // selection must still fail approval against a differently pinned candidate.
+  const selectedApproval = SecurityReviewSchema.parse(
+    JSON.parse(await readFile(resolve(root, selection.reviewReceipt), 'utf8')),
+  );
+  const selectedResult = verifyReviewApproval(
+    selectedApproval,
+    plan,
+    new Date(selectedApproval.reviewedAt),
+  );
+  if (selectedApproval.candidate.artifactDigest === plan.reviewedCandidate.artifactDigest)
+    expect(selectedResult.failures).toEqual([]);
+  else expect(selectedResult.failed).toBe(true);
   const review = control();
   expect(verifyReviewRecord(review, plan).failures).toEqual([]);
   const historical = JSON.parse(
