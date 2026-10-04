@@ -6,6 +6,7 @@ import {
   generationFor,
   type ComponentGeneration,
   type LayoutDetection,
+  type LayoutSignal,
   type ProjectLayout,
 } from './layout.js';
 import { parseModernStates, readInitialState } from './modern.js';
@@ -625,6 +626,82 @@ async function readSupportingSources(
   return sources;
 }
 
+function sourceSelection(
+  listing: ProjectListing,
+  gameKey: string | null,
+  signal?: AbortSignal,
+): LayoutSignal[] {
+  const groups = [
+    {
+      id: 'source.selected.php',
+      description:
+        'Eligible PHP contract sources in documented production locations; eligibility does not prove execution or complete reads.',
+      files: [] as string[],
+    },
+    {
+      id: 'source.selected.client',
+      description:
+        'Eligible JS/TS contract sources in documented production locations; eligibility does not prove execution or complete reads.',
+      files: [] as string[],
+    },
+    {
+      id: 'source.selected.configuration',
+      description:
+        'Documented root database and JSON/JSONC configuration candidates; inventory does not prove their contents are validated.',
+      files: [] as string[],
+    },
+    {
+      id: 'source.excluded.editor',
+      description:
+        'Root IDE helper and TypeScript declarations excluded from executable contracts.',
+      files: [] as string[],
+    },
+    {
+      id: 'source.unknown',
+      description:
+        'Local PHP/JS/TS outside documented production locations; execution scope is unknown and these bodies do not supply contracts.',
+      files: [] as string[],
+    },
+    {
+      id: 'source.inventory.other',
+      description:
+        'Other inventoried files; not PHP/client contract inputs or root database/JSON configuration candidates. This includes assets and local tooling, not a claim that they are unused.',
+      files: [] as string[],
+    },
+  ];
+  const byId = new Map(groups.map((group) => [group.id, group]));
+  for (const file of listing.files) {
+    cancellationCheckpoint(signal);
+    const path = file.path;
+    let id = 'source.inventory.other';
+    // Official file reference: "If you need them use modules/ directory."
+    // https://en.doc.boardgamearena.com/Studio_file_reference
+    // Migration is independent per file; retain legacy roots and all modules.
+    const documentedRoot =
+      !path.includes('/') &&
+      (/^(?:gameinfos|gameoptions|gamepreferences|stats|material|states)\.inc\.php$/u.test(path) ||
+        /^[^/]+\.(?:game|action|view)\.php$/u.test(path) ||
+        (gameKey !== null && path === `${gameKey}.js`));
+    if (path === '_ide_helper.php' || path.endsWith('.d.ts')) {
+      id = 'source.excluded.editor';
+    } else if (/\.(?:php|js|ts)$/u.test(path)) {
+      id =
+        path.startsWith('modules/') || documentedRoot
+          ? path.endsWith('.php')
+            ? 'source.selected.php'
+            : 'source.selected.client'
+          : 'source.unknown';
+    } else if (
+      path === 'dbmodel.sql' ||
+      /^(?:gameinfos|gameoptions|gamepreferences|stats)\.jsonc?$/u.test(path)
+    ) {
+      id = 'source.selected.configuration';
+    }
+    byId.get(id)?.files.push(path);
+  }
+  return groups.map((group) => ({ ...group, matched: group.files.length > 0 }));
+}
+
 /**
  * Builds the normalized project model.
  *
@@ -638,32 +715,16 @@ export async function buildProjectModel(
   options: { readonly signal?: AbortSignal } = {},
 ): Promise<ProjectModel> {
   cancellationCheckpoint(options.signal);
-  const detection = detectLayout(listing, options.signal);
+  const layout = detectLayout(listing, options.signal);
+  const selection = sourceSelection(listing, layout.gameKey, options.signal);
+  const detection = { ...layout, signals: [...layout.signals, ...selection] };
   const paths = listing.files.map((file) => {
     cancellationCheckpoint(options.signal);
     return file.path;
   });
   const findings: DiagnosticFinding[] = [];
 
-  // The official file reference publishes additional code from modules/:
-  // "If you need them use modules/ directory." Other local source files may
-  // serve Studio, tests or generators; their execution scope is unknown.
-  // https://en.doc.boardgamearena.com/Studio_file_reference#%3Cother_files%3E
-  // Keep every module (including ignored files and arbitrary subdirectories),
-  // and retain both generations of the documented root PHP/client files.
-  const unclassifiedSources: string[] = [];
-  for (const path of paths) {
-    cancellationCheckpoint(options.signal);
-    if (!/\.(?:php|js|ts)$/u.test(path) || path.endsWith('.d.ts') || path === '_ide_helper.php') {
-      continue;
-    }
-    const documentedRoot =
-      !path.includes('/') &&
-      (/^(?:gameinfos|gameoptions|gamepreferences|stats|material|states)\.inc\.php$/u.test(path) ||
-        /^[^/]+\.(?:game|action|view)\.php$/u.test(path) ||
-        (detection.gameKey !== null && path === `${detection.gameKey}.js`));
-    if (!path.startsWith('modules/') && !documentedRoot) unclassifiedSources.push(path);
-  }
+  const unclassifiedSources = selection.find((entry) => entry.id === 'source.unknown')?.files ?? [];
   if (unclassifiedSources.length > 0) {
     // One bounded-inventory location list, not repeated prose per file. The
     // same complete list also drives contract selection in project-context.

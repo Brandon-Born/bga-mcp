@@ -1,3 +1,4 @@
+// secret-scan:allow-file Synthetic filename canaries test publication redaction.
 import { cp, readFile, rm, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -202,5 +203,97 @@ it('[E2E-PROJECT-SOURCE-MODULES] reads ignored and unusually located modules whi
       ),
     ).toBe(true);
   });
+  expect(await digestDirectory(root)).toBe(before);
+}, 180_000);
+
+it('[E2E-PROJECT-SOURCE-RECEIPT] identifies complete source eligibility on the full root through inspection and summary without preparing a subset', async () => {
+  for (const root of Object.values(server.projects)) {
+    const before = await digestDirectory(root);
+    await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      const response = await callTool<{
+        fileCount: number;
+        detection: {
+          signals: { id: string; files: string[]; description: string; matched: boolean }[];
+        };
+        diagnostics: { status: string };
+      }>(client, 'inspect_project', {});
+      expect(response.isError).toBe(false);
+      const inspection = response.structured;
+      expect(inspection).toBeDefined();
+      const selection =
+        inspection?.detection.signals.filter((entry) => entry.id.startsWith('source.')) ?? [];
+      expect(selection).toHaveLength(6);
+      const paths = selection.flatMap((entry) => entry.files);
+      expect(paths).toHaveLength(inspection?.fileCount ?? -1);
+      expect(new Set(paths).size).toBe(paths.length);
+      expect(response.text).toContain('Eligible files are candidates');
+      expect(response.text).toContain('source.selected.php');
+      const resource = await client.readResource({ uri: 'bga://project/summary' });
+      const content = resource.contents[0];
+      if (content === undefined || !('text' in content)) throw new Error('Missing summary');
+      expect(JSON.parse(content.text)).toEqual(inspection);
+      expect(await callTool(client, 'inspect_project', {})).toEqual(response);
+      if (root === server.projects.mixed) {
+        const files = (id: string) => selection.find((entry) => entry.id === id)?.files;
+        expect(files('source.selected.php')).toContain('modules/Shared/Runtime.php');
+        expect(files('source.excluded.editor')).toEqual(['_ide_helper.php', 'bga-framework.d.ts']);
+        expect(files('source.unknown')).toEqual([
+          'misc/generator.php',
+          'private/studio-baseline/modules/js/Game.js',
+          'private/studio-baseline/modules/php/Game.php',
+          'tests/sample.js',
+        ]);
+        expect(inspection?.diagnostics.status).toBe('unsupported');
+        const notifications = await callTool<Result>(client, 'validate_notifications', {});
+        expect(notifications.structured?.trace?.sent).toHaveLength(1);
+        expect(notifications.structured?.diagnostics?.status).toBe('unsupported');
+      }
+    });
+    expect(await digestDirectory(root)).toBe(before);
+  }
+}, 180_000);
+
+it('[E2E-PROJECT-SOURCE-RECEIPT-LIMITS] separates eligibility from read coverage and preserves redaction and output refusal', async () => {
+  const root = resolve(server.temporaryRoot, 'receipt-limits');
+  await cp(server.projects.mixed, root, { recursive: true });
+  const omitted = 'modules/zz-oversized.php';
+  await writeFile(resolve(root, omitted), '<?php ' + ' '.repeat(262_145) + 'unread-body-canary');
+  const secret = 'filename-selection-canary';
+  await writeFile(resolve(root, `password=${secret}.php`), '<?php');
+  const before = await digestDirectory(root);
+  await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+    const response = await callTool<{ detection: { signals: { id: string; files: string[] }[] } }>(
+      client,
+      'inspect_project',
+      {},
+    );
+    expect(response.isError).toBe(false);
+    expect(
+      response.structured?.detection.signals.find((entry) => entry.id === 'source.selected.php')
+        ?.files,
+    ).toContain(omitted);
+    expect(JSON.stringify(response)).not.toContain(secret);
+    expect(JSON.stringify(response)).not.toContain('unread-body-canary');
+    const validation = await callTool<Result>(client, 'validate_notifications', {});
+    expect(validation.structured?.diagnostics?.status).toBe('unsupported');
+    expect(
+      validation.structured?.diagnostics?.findings.find(
+        (finding) => finding.code === 'project.source.read-limit',
+      )?.locations,
+    ).toContainEqual({ uri: omitted });
+    const summary = await client.readResource({ uri: 'bga://project/summary' });
+    expect(JSON.stringify(summary)).not.toContain(secret);
+    expect(JSON.stringify(summary)).not.toContain('unread-body-canary');
+  });
+  await withPublicPackagedServer(
+    server,
+    ['--project-root', root, '--max-output-bytes', '1000'],
+    async (client) => {
+      const refusal = await callTool(client, 'inspect_project', {});
+      expect(refusal.isError).toBe(true);
+      expect(refusal.text).toContain('policy.output.too-large');
+      expect(JSON.stringify(refusal)).not.toContain(secret);
+    },
+  );
   expect(await digestDirectory(root)).toBe(before);
 }, 180_000);

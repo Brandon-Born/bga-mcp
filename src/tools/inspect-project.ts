@@ -140,6 +140,17 @@ export function summarize(model: InspectProjectResult): string {
     lines.push('States: not readable from this project. See the diagnostics for the reason.');
   }
 
+  lines.push(
+    `Source inventory: ${String(model.fileCount)} files; ${model.truncated || model.skippedLinks.length > 0 || model.unreadablePaths.length > 0 ? 'partial (see listing findings)' : 'listing completed'}. Eligible files are candidates, not proof of execution or complete contract reads.`,
+  );
+  for (const group of model.detection.signals.filter((entry) => entry.id.startsWith('source.'))) {
+    const shown = group.files.slice(0, 6);
+    const remaining = group.files.length - shown.length;
+    lines.push(
+      `${group.id}: ${String(group.files.length)} file(s)${shown.length === 0 ? '' : ` — ${shown.join(', ')}`}${remaining === 0 ? '' : `; ${String(remaining)} more in detection.signals`}. ${group.description}`,
+    );
+  }
+
   const { summary } = model.diagnostics;
   lines.push(
     `Findings: ${String(summary.errors)} errors, ${String(summary.warnings)} warnings, ${String(summary.information)} information, ${String(summary.unsupported)} unsupported.`,

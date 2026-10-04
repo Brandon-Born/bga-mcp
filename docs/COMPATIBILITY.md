@@ -193,3 +193,12 @@ withheld. Structural inventory and per-validator read coverage remain distinct.
 `E2E-PROJECT-SOURCE-BYTE-LIMIT` covers all three layouts;
 `E2E-PROJECT-SOURCE-FILE-LIMIT` covers the modern layout and privacy/budget controls.
 No schema, supported BGA form, source-exclusion permission or release changes.
+
+BGA-437 makes the existing production-contract source selection explicit through
+`inspect_project` and `bga://project/summary`, using complete bounded
+`detection.signals` groups. Selected PHP/client paths are eligibility candidates,
+not an execution graph or proof that every body was read. The contract loader uses
+those same paths; read-limit diagnostics remain separate. Editor exclusions,
+unknown execution scope and other inventoried files stay visible. Modern, legacy
+and hybrid selection use the existing forms independently. No new supported BGA
+syntax, caller exclusion option or whole-repository clean verdict is introduced.

@@ -171,3 +171,34 @@ The installed byte-limit scenario covers modern/legacy/hybrid projects; the
 file-limit scenario covers the modern layout, redaction and output refusal.
 Controlled original modules prove this limit; unchanged Dino Racer currently
 fits within it and remains a separate before/after verification subject.
+
+## Complete-repository source receipt — BGA-437
+
+Point the installed public MCP at the complete game root and call `inspect_project`
+first. `detection.signals` now contains a complete partition of the bounded listed
+files (the older layout/component lists remain display-capped):
+
+| Signal                          | Meaning                                                                                |
+| ------------------------------- | -------------------------------------------------------------------------------------- |
+| `source.selected.php`           | Eligible PHP contract inputs, including all modules and retained root forms            |
+| `source.selected.client`        | Eligible JS/TS contract inputs, excluding declarations                                 |
+| `source.selected.configuration` | Root schema and JSON/JSONC configuration candidates; contents are not all validated    |
+| `source.excluded.editor`        | Root `_ide_helper.php` and all TypeScript declarations                                 |
+| `source.unknown`                | Outside PHP/JS/TS whose execution scope is unsupported; bodies do not supply contracts |
+| `source.inventory.other`        | All remaining listed paths, including assets and tooling; no assertion they are unused |
+
+The contract loader consumes the two eligible contract groups. Inspection and the
+summary resource show eligibility, not a receipt of every body read by every
+validator. Contract-read limits retain their omitted paths; listing truncation,
+skipped links and unreadable directories retain independent findings. A location
+inside `modules/` establishes eligibility, not execution. Git ignore and naming a
+folder `tests` cannot exclude a module. No path list is silently shortened: final
+output refusal applies to the entire receipt. Text previews six paths per group
+and names the number retained in structured signals.
+
+An agent can now identify and inspect the production-contract candidates directly
+from the full root without exporting files first. Run the validators on that same
+root and retain unknown-scope/coverage findings. This does not clear full-root
+uncertainty. A separately prepared snapshot remains a different source identity
+under the earlier workflow; its verdict must never replace the full-root verdict.
+The published original rc.6 archive is unchanged and does not acquire this behavior.

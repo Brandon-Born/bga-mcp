@@ -1,0 +1,963 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-437",
+  "scope": "Complete bounded source eligibility in retained inspection signals; no caller exclusions, execution graph, dynamic SQL, release or game publication",
+  "baseMain": "ad4975cb224a86daef59a17262f664ce08cb3785",
+  "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+  "negativeControl": {
+    "runtime": "original three runtime files at base main; final new controls",
+    "failed": 7,
+    "passed": 4,
+    "report": "Local original-behavior control in /tmp/bga437-evidence"
+  },
+  "focused": {
+    "tests": 38,
+    "passed": 38
+  },
+  "integratedLocalGate": {
+    "conclusion": "success",
+    "source": {
+      "commit": "ad4975cb224a86daef59a17262f664ce08cb3785",
+      "clean": false
+    },
+    "sourceMode": "Dirty integrated implementation based on exact refreshed main; not clean-source CI",
+    "generatedAt": "2026-10-04T01:57:49.670Z",
+    "environment": {
+      "node": "v22.17.1",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packageManager": "pnpm@11.15.1",
+      "ci": false
+    },
+    "tests": {
+      "files": 108,
+      "total": 824,
+      "passed": 824,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 240,
+      "passed": 240,
+      "failed": 0,
+      "missing": 0
+    },
+    "capabilities": 17,
+    "claims": 103,
+    "artifactDigest": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "evidenceDigest": "sha256:835fde65fd6afcca2cd8cfc0ec0fe63080c9bf2ae6380c5027419b3bbb30e36f",
+    "sourcePatchDigest": "sha256:46b38f291f53039e86f418cff0f0a46ebd6e3a18b42e19469ea3c7a6d1a88de4",
+    "untrackedUnitControlDigest": "sha256:beb76089ee60ce384e3dd6086485946b7193bedd527bba9070abbe31fcda9490",
+    "conformance": {
+      "status": "passed",
+      "coverage": [
+        {
+          "version": "2025-11-25",
+          "status": "passed",
+          "runs": 73,
+          "baselinedScenarios": 26
+        }
+      ],
+      "runs": [
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "completion-complete",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "localhost-host-rebinding-rejected",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "localhost-host-valid-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "elicitation-sep1034-general",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "elicitation-sep1330-general",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "json-schema-2020-12-tool-found",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "logging-set-level",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "ping",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-embedded-resource",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-simple",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-with-args",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-get-with-image",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "prompts-list",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-list",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-read-binary",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-read-text",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-subscribe",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-templates-read",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "resources-unsubscribe",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-initialize",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-id-visible-ascii",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-initialized-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-delete-accepted",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-session-terminated-returns-404",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-accepts-multiple-post-streams",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-streams-functional",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "outgoing-request",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "incoming-response",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "stream-closed",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-priming-event",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-retry-field",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "server-sse-disconnect-resume",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-audio",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-elicitation",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-embedded-resource",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-error",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-image",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-mixed-content",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-sampling",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-simple-text",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-with-logging",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-call-with-progress",
+          "status": "failed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-list",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "tools-name-format",
+          "status": "passed"
+        },
+        {
+          "candidate": "candidate-2025-11-25",
+          "scenario": "wire-schema-valid",
+          "status": "passed"
+        }
+      ]
+    },
+    "coverage": {
+      "lines": {
+        "total": 4289,
+        "covered": 3939,
+        "skipped": 0,
+        "pct": 91.83
+      },
+      "statements": {
+        "total": 4467,
+        "covered": 4098,
+        "skipped": 0,
+        "pct": 91.73
+      },
+      "functions": {
+        "total": 740,
+        "covered": 684,
+        "skipped": 0,
+        "pct": 92.43
+      },
+      "branches": {
+        "total": 3104,
+        "covered": 2551,
+        "skipped": 0,
+        "pct": 82.18
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "attempts": [
+      {
+        "conclusion": "failed",
+        "reason": "Unlabelled synthetic filename canary stopped safety after all 824 runtime tests and conformance passed; repaired using existing test-only canary convention"
+      },
+      {
+        "conclusion": "failed",
+        "reason": "Six current-run documentation counters retained 816/238; all runtime/package/conformance/safety checks passed; counters corrected to observed 824/240"
+      },
+      {
+        "conclusion": "success"
+      }
+    ]
+  },
+  "implementationCi": {
+    "runId": "37169718533",
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+    "source": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+    "clean": true,
+    "conclusion": "success",
+    "finalAttempt": 2,
+    "attempts": [
+      {
+        "attempt": 1,
+        "conclusion": "failure",
+        "passedJobs": 5,
+        "failedJobs": 1,
+        "failedEnvironment": "Windows / Node 24",
+        "passedTestsInFailedJob": 823,
+        "failedTestsInFailedJob": 1,
+        "failure": "Existing E2E-FILESYSTEM-CANCELLATION readProjectFile:open / 600 ms assertion at tests/e2e/cancellation.test.ts:217: expected completion sequence 75 > publication sequence 79. Earlier timeout, cleanup, ceiling and quiescence assertions passed. New source-selection scenarios passed.",
+        "productionFailureEstablished": false
+      },
+      {
+        "attempt": 2,
+        "conclusion": "success",
+        "mode": "Only the failed Windows / Node 24 job rerun on the unchanged source; the other five successful jobs retained from attempt 1.",
+        "sourceOrHarnessChanged": false
+      }
+    ],
+    "schemaAndIntegrityValid": true,
+    "allSixPassed": true,
+    "latestObservation": "2026-10-04T01:49:53.801Z",
+    "selectedEvidenceDigest": "sha256:04537621fa6c066b3e13de3b9b51a4bba1558131f0ca2bb3432b026d67124140",
+    "artifactIndex": [
+      {
+        "created_at": "2026-10-04T02:19:11Z",
+        "expired": false,
+        "id": 11291895000,
+        "name": "verification-windows-latest-node-24"
+      },
+      {
+        "created_at": "2026-10-04T02:04:11Z",
+        "expired": false,
+        "id": 11291315193,
+        "name": "verification-macos-latest-node-24"
+      },
+      {
+        "created_at": "2026-10-04T02:08:45Z",
+        "expired": false,
+        "id": 11291220870,
+        "name": "verification-windows-latest-node-22"
+      },
+      {
+        "created_at": "2026-10-04T02:05:27Z",
+        "expired": false,
+        "id": 11291130645,
+        "name": "verification-ubuntu-latest-node-24"
+      },
+      {
+        "created_at": "2026-10-04T02:05:34Z",
+        "expired": false,
+        "id": 11290423625,
+        "name": "verification-ubuntu-latest-node-22"
+      },
+      {
+        "created_at": "2026-10-04T02:05:11Z",
+        "expired": false,
+        "id": 11290188915,
+        "name": "verification-macos-latest-node-22"
+      }
+    ],
+    "records": [
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:05:06.697Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+        "evidenceDigest": "sha256:e94de2755f143c5b37713b0f63dc23433061b2570055c603d428e271f5ce6732",
+        "postObservation": true,
+        "retainedArtifact": "verification-macos-latest-node-22"
+      },
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:04:08.457Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+        "evidenceDigest": "sha256:96d064024d6eb85939544addaf0056a64500dfc3fcc1be516c32f8503eac8887",
+        "postObservation": true,
+        "retainedArtifact": "verification-macos-latest-node-24"
+      },
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:05:30.387Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:3f9b9329e377bd31c5646449aca4fc4a48d94025f5a7b3b9dde418225c5f3e74",
+        "evidenceDigest": "sha256:bc11706923bf4f825cf9a48c5cc7d9386cbd6205880aa601293de2a44b82bd6e",
+        "postObservation": true,
+        "retainedArtifact": "verification-ubuntu-latest-node-22"
+      },
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:05:23.209Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:3f9b9329e377bd31c5646449aca4fc4a48d94025f5a7b3b9dde418225c5f3e74",
+        "evidenceDigest": "sha256:30948e9ddbe36591a3fe79531b009635c1a4294ced57670e386dc4bcd96030bf",
+        "postObservation": true,
+        "retainedArtifact": "verification-ubuntu-latest-node-24"
+      },
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:08:38.505Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:d6b6e445fd61fcb3b527e8fddf13c2c12bbf5ad6696be8c1d8243c58ef0857ea",
+        "evidenceDigest": "sha256:6b258901c30922d30d5c370f6815aa60a45e42a876252f6505c19b18d1c13f73",
+        "postObservation": true,
+        "retainedArtifact": "verification-windows-latest-node-22"
+      },
+      {
+        "source": {
+          "commit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-04T02:19:04.610Z",
+        "tests": {
+          "files": 108,
+          "total": 824,
+          "passed": 824,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 240,
+          "passed": 240,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:d6b6e445fd61fcb3b527e8fddf13c2c12bbf5ad6696be8c1d8243c58ef0857ea",
+        "evidenceDigest": "sha256:04537621fa6c066b3e13de3b9b51a4bba1558131f0ca2bb3432b026d67124140",
+        "postObservation": true,
+        "retainedArtifact": "verification-windows-latest-node-24"
+      }
+    ],
+    "retryLimitation": "The successful retry does not repair or establish reliability of the unchanged nominal-delay timing oracle. The original failure and logs are retained privately."
+  },
+  "frameworkAdmission": {
+    "recordedAt": "2026-10-04T02:21:31.117Z",
+    "statusCommand": "node --import tsx scripts/framework-change.ts status",
+    "admissionCommand": "node --import tsx scripts/framework-change.ts release",
+    "actualAdmissionExitCode": 0,
+    "holds": [],
+    "pages": [
+      {
+        "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "observedAt": "2026-10-04T01:49:43.114Z",
+        "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:05.337Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:8735a0152b2f1290b0a112bad0d966f1d15fddd5f253b80a6d8d10d3be85c82c",
+        "proofDigest": "sha256:944f2cfe8d9aca42cd7bee5287b10971c9dd780e8114d349b0bde00c0d797a3a"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "observedAt": "2026-10-04T01:49:44.568Z",
+        "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:06.662Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:63469e6cf3bafe305a1f6c828afead184151a997c7ee388a318fdc48d8f3515c",
+        "proofDigest": "sha256:ada97ded5dee6d5612ba7fdfa47a0e2c164a45da843646c43917bfb007b240f3"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "observedAt": "2026-10-04T01:49:46.083Z",
+        "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:07.980Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:c45e599b37e3250a50641f34fa3c2e745cfc725752e8956a0bdcd85044b6651b",
+        "proofDigest": "sha256:9435cdd3813dd7058138eeb7a7fd1dffb12c7c69b9ab7efc97d09bb45d4267bd"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "observedAt": "2026-10-04T01:49:47.659Z",
+        "digest": "sha256:671b01a3211dc093904a19f5638d364f78db05deff8477553aa3d2214451e4b1",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:09.315Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:ead8790497083598c82a8284cd32f9eaca4473da58a554a22839085113ab6aa3",
+        "proofDigest": "sha256:40501af450dd124693e75c0d05b5e138d7f40d1f32af0edba92c76c56dad1887"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "observedAt": "2026-10-04T01:49:49.395Z",
+        "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:10.585Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:6991d439c4bbd3da8460c62bb05e6b065d52c0d73d3b2dc6aebec6531de23b64",
+        "proofDigest": "sha256:b7f3206938332ca1e3886d851d1c27bc0707485cb65cac87e9516cdd41f20db4"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio",
+        "observedAt": "2026-10-04T01:49:50.925Z",
+        "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:11.856Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:431bff55063b8cd23a90e42375010be919acb294bf3f4164f15db6131a35460f",
+        "proofDigest": "sha256:01ea9f695c5ab289edbd663b68a363825369a16f71139f62461180147926882e"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "observedAt": "2026-10-04T01:49:52.418Z",
+        "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:13.192Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:cb0b218b537bb0e29ba0edcbf831a89e9cfdf19547c462b1ce3674204f99ea02",
+        "proofDigest": "sha256:49a37117dabb776bd90eef0cde5bc3ec09bf258c698f15d44684d15a9fc828b0"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+        "observedAt": "2026-10-04T01:49:53.801Z",
+        "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+        "reviewer": "Codex",
+        "reviewedAt": "2026-10-04T02:21:14.537Z",
+        "evidenceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533",
+        "semanticDigest": "sha256:4b3754427438fc4eb0836a9d3187f0715b04547ed4ec66f8d99095224d423748",
+        "proofDigest": "sha256:8026a0448f2d814f1989af389a3565bbe5d93f304d604c90ce952c7d0e516ad8"
+      }
+    ],
+    "metadataCarryForward": "This receipt and framework ledger are process metadata. They retain exact implementation CI source 60cfcc7 and do not claim it is exact evidence for a later metadata tip. Current dependency/admission guards must still pass.",
+    "releaseApproved": false
+  },
+  "limits": [
+    "Eligibility does not prove execution or body-read completeness",
+    "Unknown scope and read-limit findings retain conservative verdicts",
+    "Runtime-built VALUES, suffixes and escaping remain unsupported",
+    "No whole-game, live Studio, measured effort saving or publisher approval"
+  ],
+  "dinoValidation": {
+    "recordedAt": "2026-10-04T01:58:32.327Z",
+    "beforeArtifact": "sha256:38d8cc2894c313f53e12c9838404d81394bdb0fdf7f49ce7bc5741c4bff56b09",
+    "afterArtifact": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "gameRevision": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+    "gameUnchanged": true,
+    "fullInventoryDigest": {
+      "digest": "sha256:cdb3ca68cf8958994d4d34fa45730ebf7e064066ecbe15835cbbf8c46bad4e57",
+      "files": 308
+    },
+    "trackedContentDigest": "sha256:7fae0fd3f2392d2ac1b406689a437dbf68ae4bbbf3a85dc75af24b0db865acbc",
+    "rows": [
+      {
+        "scope": "wholeCheckout",
+        "sourceGroups": [
+          {
+            "id": "source.selected.php",
+            "count": 8
+          },
+          {
+            "id": "source.selected.client",
+            "count": 1
+          },
+          {
+            "id": "source.selected.configuration",
+            "count": 5
+          },
+          {
+            "id": "source.excluded.editor",
+            "count": 5
+          },
+          {
+            "id": "source.unknown",
+            "count": 23
+          },
+          {
+            "id": "source.inventory.other",
+            "count": 266
+          }
+        ],
+        "audit": {
+          "passed": 0,
+          "failed": 0,
+          "unsupported": 33,
+          "manual-required": 8
+        },
+        "unchangedValidatorResponses": true,
+        "unchangedStateAndDiagnosticsResources": true,
+        "unknownScopePreserved": true,
+        "eligibilityMatchesIndependent18FileExport": true
+      },
+      {
+        "scope": "explicitProductionExport",
+        "sourceGroups": [
+          {
+            "id": "source.selected.php",
+            "count": 8
+          },
+          {
+            "id": "source.selected.client",
+            "count": 1
+          },
+          {
+            "id": "source.selected.configuration",
+            "count": 5
+          },
+          {
+            "id": "source.excluded.editor",
+            "count": 0
+          },
+          {
+            "id": "source.unknown",
+            "count": 0
+          },
+          {
+            "id": "source.inventory.other",
+            "count": 4
+          }
+        ],
+        "audit": {
+          "passed": 26,
+          "failed": 0,
+          "unsupported": 7,
+          "manual-required": 8
+        },
+        "unchangedValidatorResponses": true,
+        "unchangedStateAndDiagnosticsResources": true,
+        "unknownScopePreserved": true,
+        "eligibilityMatchesIndependent18FileExport": true
+      }
+    ],
+    "lifecycle": {
+      "allSevenToolsAndThreeResources": true,
+      "repeatStable": true,
+      "outsideRootRefused": true,
+      "stderrEmpty": true,
+      "serverProcessesExited": true,
+      "completeInventoryDigestUnchanged": true,
+      "separateExportFilesMatchOriginalDigests": true
+    }
+  },
+  "databaseFollowOn": {
+    "item": "BGA-438",
+    "source": "modules/php/Game.php",
+    "setupCallLine": 170,
+    "knownTargetTables": ["player"],
+    "knownTargetColumns": ["player.player_color", "player.player_id", "player.player_name"],
+    "readableQueryCount": 1,
+    "remainingFinding": "database.unsupported-syntax",
+    "remainingUnknowns": [
+      "Runtime-built VALUES from vsprintf and implode",
+      "Possible SQL suffix",
+      "Argument values and escaping"
+    ],
+    "productionScopeDatabaseChecksUnsupported": 7,
+    "newSqlSupport": false
+  },
+  "cleanSourceArchive": {
+    "sourceCommit": "60cfcc7b10274786b6a84448da0d615286cf76d4",
+    "sourceTree": "d1bfda80a79122a2a359a88459d5d66d3286ddcc",
+    "clean": true,
+    "archiveDigest": "sha256:49cabecb0bfdb623926011bc2392ed1b3ec8ff17a6da08fdcca90d9809e05827",
+    "matchesLocalGateArchive": true,
+    "matchesDinoInstalledArchive": true
+  }
+}
