@@ -2023,6 +2023,17 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** [Bounded database-check record](verification/bga439-source-ci.json) retains actual source/artifact/CI/admission identities; later metadata never relabels implementation CI as its own exact HEAD.
 - **Sources (fetched 2026-10-04):** Start at [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), then [Database model](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql): “all CREATE/ALTER tables and views should be in dbmodel.sql”. [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) calls DbQuery “the generic method to access the database.” [MySQL comments](https://dev.mysql.com/doc/refman/8.0/en/comments.html) requires the second dash to be “followed by at least one whitespace or control character”; executable block comments contain parsed SQL, so the absence witness refuses every block-comment spelling. Arbitrary runtime VALUES remain undocumented and unsupported.
 
+### BGA-440 — Release the verified full-repository inspection improvements as rc.7
+
+- **Status:** in-progress
+- **Priority:** P1
+- **Depends on:** BGA-434, BGA-435, BGA-436, BGA-437, BGA-439; existing BGA-403/404/405/407/415 release owners
+- **Authorization:** The user directed the next meaningful release on 2026-10-04. Integrate PR #23, prepare rc.7, validate and sign one original candidate, refresh candidate-specific installed-client/usefulness/security evidence, then publish signed GitHub downloads and independently verify the public original. npm, Studio and game publication remain outside this scope.
+- **Deliverable:** Version `1.0.0-rc.7` packages the unchanged seven-tool/three-resource local inventory with automatic source-candidate reporting, clearer coverage causes, omitted-read transparency, invariant formatted INSERT targets and independent database facts. Packaged guidance explains those bounded results and the selected signed GitHub acquisition route. Unknown SQL/source/read coverage remains visible.
+- **Acceptance:** Exact merged-main and clean preparation CI pass; actual framework admission is current. The candidate producer retains one original tagged archive, frozen-lock reconstruction, sealed full-gate evidence and fresh advisory assessment. All signing, install/client, frozen-task usefulness, security approval and public consumers bind that exact original. Preserve prior candidates and release assets. Do not inherit rc.6's artifact/signature/security approvals or call the whole MCP/game complete. Preserve original project/configuration bytes, refusals, process cleanup and publication permission isolation.
+- **Verification:** Existing packaged scenarios and release workflows remain authoritative; retain actual source/archive identities and terminal hosted results. Assemble version/guidance before the integrated full gate. Later receipt-only commits carry unchanged semantic/proof identities without relabeling implementation CI as their own HEAD.
+- **Sources:** Existing BGA-434 through BGA-439 official-source decisions and passing original controls govern the unchanged readers. BGA-403/404/405/407/415 govern original-candidate production, signing, security and GitHub download verification; no new BGA grammar or boundary is introduced.
+
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
