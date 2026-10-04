@@ -1,5 +1,19 @@
 # Compatibility matrix
 
+## Independent database checks — BGA-439
+
+Under partial database-group coverage, pre-release can now pass audit availability
+after an actual schema read and at least one query reference. Duplicate-table and
+duplicate-column absence can independently pass only when that fully read schema
+contains exclusively blank lines and ordinary `--` line comments. Existing passed
+`reason` fields explain these limited facts. All query-dependent checks retain
+unknown VALUES, suffix, escaping, outside-source and omitted-read coverage.
+Any SQL or ambiguous/executable schema text refuses the inert-schema witness;
+the existing parser's silence is never treated as completeness evidence. Public
+schemas and underlying database/aggregate diagnostics remain unchanged.
+`E2E-DATABASE-INDEPENDENT-CHECKS` / `E2E-DATABASE-INDEPENDENT-REFUSAL` cover the
+installed public command across modern, legacy and hybrid fixtures.
+
 ## Pre-release coverage explanations — BGA-435
 
 The existing pre-release `reason` fields now name the owning validator's actual

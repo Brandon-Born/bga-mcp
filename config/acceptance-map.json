@@ -1398,6 +1398,24 @@
       "case": "Eligible oversized sources remain visible beside incomplete reads; filename redaction, final output refusal and project immutability remain enforced",
       "boundary": "packaged",
       "scenarios": ["E2E-PROJECT-SOURCE-RECEIPT-LIMITS"]
+    },
+    {
+      "item": "BGA-439",
+      "case": "The installed pre-release audit retains independently proven availability and inert-schema duplicate absence beside unresolved VALUES, source scope and omitted reads across all layouts",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DATABASE-INDEPENDENT-CHECKS"]
+    },
+    {
+      "item": "BGA-439",
+      "case": "Executable comments, mixed schema statements, missing or refused schema reads and actual duplicate defects cannot acquire clean duplicate-check verdicts",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DATABASE-INDEPENDENT-REFUSAL"]
+    },
+    {
+      "item": "BGA-439",
+      "case": "Private completion evidence cannot promote query-dependent, missing, conflicting, unrequested or another-group checks, and truncation cannot hide a defect into an attested pass",
+      "boundary": "repository",
+      "scenarios": ["UNIT-DATABASE-INDEPENDENT-COVERAGE"]
     }
   ]
 }

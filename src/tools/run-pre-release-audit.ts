@@ -166,6 +166,13 @@ export function registerRunPreReleaseAudit(
             aggregate.groups.map((group) => ({
               ...group,
               coverageDiagnostics: diagnosticsByGroup.get(group.id),
+              completedChecks: (
+                diagnosticsByGroup.get(group.id) as
+                  | (DiagnosticResult & {
+                      readonly completedChecks?: readonly { id: string; reason: string }[];
+                    })
+                  | undefined
+              )?.completedChecks,
             })),
             aggregate.diagnostics,
             signal,

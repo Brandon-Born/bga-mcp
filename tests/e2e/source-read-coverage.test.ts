@@ -20,7 +20,7 @@ interface Result {
   diagnostics?: { status: string; findings: Finding[] };
   status?: string;
   groups?: { id: string; status: string }[];
-  checks?: { outcome: string; reason?: string; group?: string }[];
+  checks?: { id: string; outcome: string; reason?: string; group?: string }[];
   counts?: { passed: number; failed: number; unsupported: number; 'manual-required': number };
   queries?: { source: string }[];
   trace?: { sent?: { source: string }[] };
@@ -55,14 +55,22 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
           expect(response.isError, tool).toBe(false);
           expect(JSON.stringify(response), tool).not.toContain('private-source-body-canary');
           if (tool === 'run_pre_release_audit') {
-            expect(response.structured?.counts?.passed).toBe(0);
+            expect(response.structured?.counts?.passed).toBe(1);
+            expect(
+              response.structured?.checks?.find((c) => c.id === 'database.audit.unavailable')
+                ?.outcome,
+            ).toBe('passed');
             expect(
               response.structured?.checks
-                ?.filter((c) => c.outcome !== 'manual-required')
+                ?.filter(
+                  (c) => c.outcome !== 'manual-required' && c.id !== 'database.audit.unavailable',
+                )
                 .every((c) => c.outcome === 'unsupported'),
             ).toBe(true);
             expect(
-              response.structured?.checks?.find((c) => c.group === 'database')?.reason,
+              response.structured?.checks?.find(
+                (c) => c.group === 'database' && c.outcome === 'unsupported',
+              )?.reason,
             ).toContain(LIMIT);
             expect(response.text).toContain('262144-byte source budget');
           } else {
@@ -123,7 +131,10 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
         }
         const audit = (await callTool<Result>(client, 'run_pre_release_audit', {})).structured;
         expect(audit?.counts?.failed).toBeGreaterThan(0);
-        expect(audit?.counts?.passed).toBe(0);
+        expect(audit?.counts?.passed).toBe(1);
+        expect(audit?.checks?.filter((c) => c.outcome === 'passed').map((c) => c.id)).toEqual([
+          'database.audit.unavailable',
+        ]);
         expect(audit?.counts?.['manual-required']).toBeGreaterThan(0);
       });
       expect(await digestDirectory(root)).toBe(changedBefore);
@@ -145,14 +156,26 @@ it('[E2E-PROJECT-SOURCE-FILE-LIMIT] reports capped module sets, redacts omitted 
     await writeFile(resolve(directory, `zz-password=${secret}.php`), '<?php');
     const before = await digestDirectory(root);
     await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      let readableDbReference = false;
       for (const tool of tools) {
         const response = await callTool<Result>(client, tool, {});
         expect(response.isError, tool).toBe(false);
         expect(JSON.stringify(response)).not.toContain(secret);
         if (tool === 'run_pre_release_audit') {
-          expect(response.structured?.counts?.passed).toBe(0);
+          expect(response.structured?.counts?.passed).toBe(readableDbReference ? 1 : 0);
+          expect(
+            response.structured?.checks?.find((c) => c.id === 'database.audit.unavailable')
+              ?.outcome,
+          ).toBe(readableDbReference ? 'passed' : 'failed');
+          expect(
+            response.structured?.checks
+              ?.filter((c) => c.outcome === 'passed')
+              .every((c) => c.id === 'database.audit.unavailable'),
+          ).toBe(true);
           expect(response.text).toContain('200 source-file limit');
         } else {
+          if (tool === 'audit_database_usage')
+            readableDbReference = (response.structured?.queries?.length ?? 0) > 0;
           expect(JSON.stringify(response)).toContain('[redacted');
           expect(response.structured?.diagnostics?.findings.some((f) => f.code === LIMIT)).toBe(
             true,
