@@ -72,3 +72,30 @@ The scenario-coverage gate also proved itself here: the suite was scaffolded fro
 - **A concatenated query is not reconstructed.** `"SELECT … " . $filter` is reported as unreadable.
 - **No SQL dialect parsing.** The reader recognizes shapes, not grammar, which is why every column-level claim is a heuristic.
 - **Legacy layout only**, in line with the other validators. A modern project reports `database.audit.unavailable`.
+
+## Partial schema coverage — BGA-441
+
+The structural schema reader now rejects completeness guesses for statements
+outside its bounded CREATE TABLE naming subset. It masks quoted values before
+splitting declarations and columns, retains unaffected readable names, and
+reports uncertain syntax without publishing values. Partial schema coverage
+suppresses missing-table, missing-column and unused-column findings; positive
+duplicate evidence and query interpolation findings remain independent.
+
+`UNIT-DATABASE-SCHEMA-COVERAGE` covers mixed statements, quoting, comments,
+malformed declarations, cancellation and bounded scanning. Installed
+`E2E-DATABASE-SCHEMA-COVERAGE` covers modern/legacy/hybrid tools, aggregate/resource
+propagation, repeats, root refusal and immutability. Installed
+`E2E-DATABASE-SCHEMA-LEXICAL` covers phantom declarations, uncertain regions,
+complete-schema missing-reference controls, known duplicate failures and output
+refusal. Installed `E2E-DATABASE-SCHEMA-MODE` retains independent declarations
+while refusing unknown ANSI_QUOTES semantics. These are original fixtures, not copied game sources. The source/CI
+receipt retains authentication of the original rc.7 negative control and actual
+unchanged Dino comparisons separately from implementation evidence.
+
+BGA's database-model page documents ALTER and views as schema sources and warns
+that inline comments can remove a whole column during Studio preprocessing.
+Leading ordinary line comments are readable inert text; inline preprocessing,
+block execution and mode-dependent quotes and escapes remain unsupported. Sources and the
+bounded source decision are recorded under BGA-441 in the backlog. No execution
+or SQL validity claim follows from a readable naming subset.

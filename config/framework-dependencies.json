@@ -253,7 +253,8 @@
         "tests/unit/source-read-coverage.test.ts",
         "tests/unit/source-selection.test.ts",
         "tests/unit/database-check-coverage.test.ts",
-        "tests/e2e/database-independent-checks.test.ts"
+        "tests/e2e/database-independent-checks.test.ts",
+        "tests/unit/database-schema-coverage.test.ts"
       ]
     },
     {
@@ -277,7 +278,8 @@
         "tests/e2e/validate-notifications.test.ts",
         "tests/e2e/validate-project.test.ts",
         "tests/e2e/validate-state-machine.test.ts",
-        "tests/e2e/formatted-insert.test.ts"
+        "tests/e2e/formatted-insert.test.ts",
+        "tests/e2e/database-schema-coverage.test.ts"
       ]
     },
     {
@@ -528,7 +530,8 @@
         "tests/unit/doc-evaluation.test.ts",
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
-        "tests/unit/version-policy.test.ts"
+        "tests/unit/version-policy.test.ts",
+        "docs/verification/bga441-source-ci.json"
       ]
     }
   ],

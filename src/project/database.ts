@@ -74,7 +74,9 @@ export function maskSqlValues(text: string, signal?: AbortSignal): string {
   );
 }
 
-const CREATE_TABLE = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?[`"]?([A-Za-z_][\w]*)[`"]?\s*\(/giu;
+const SCHEMA_IDENTIFIER = /^(?:`([A-Za-z_]\w*)`|"([A-Za-z_]\w*)"|([A-Za-z_]\w*))(?=\s|$)/u;
+const CREATE_TABLE =
+  /^CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:`([A-Za-z_]\w*)`|"([A-Za-z_]\w*)"|([A-Za-z_]\w*))\s*\(/iu;
 
 /** Words that begin a table constraint rather than a column definition. */
 const CONSTRAINT_STARTS = new Set([
@@ -178,64 +180,204 @@ function splitColumns(body: string, signal?: AbortSignal): string[] {
   return parts;
 }
 
-function tableBody(source: string, openIndex: number, signal?: AbortSignal): string {
-  let depth = 0;
-  for (let index = openIndex; index < source.length; index += 1) {
-    periodicCancellationCheckpoint(index - openIndex, signal);
-    const character = source[index];
-    if (character === '(') {
-      depth += 1;
-    } else if (character === ')') {
-      depth -= 1;
-      if (depth === 0) {
-        return source.slice(openIndex + 1, index);
-      }
-    }
-  }
-  return source.slice(openIndex + 1);
+interface SchemaRegion {
+  readonly start: number;
+  readonly end: number;
 }
 
+/**
+ * Preserve SQL structure without allowing quoted examples or comments to supply
+ * declarations. BGA says "all CREATE/ALTER tables and views should be in
+ * dbmodel.sql", but this reader only understands bounded CREATE TABLE names.
+ * Sources: https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql
+ * https://dev.mysql.com/doc/refman/8.0/en/comments.html
+ * https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+ * https://dev.mysql.com/doc/refman/8.0/en/identifiers.html
+ *
+ * Studio documents inline comments removing the whole column, unlike ordinary
+ * MySQL parsing. Block comments and mode-dependent backslash escapes remain
+ * unsupported; neither their contents nor affected declarations are guessed.
+ */
+function schemaStructure(sql: string, signal?: AbortSignal) {
+  // Offsets are UTF-16 offsets, as used by String.slice and regular expressions.
+  // Array.from would merge surrogate pairs and move subsequent declarations.
+  const masked = sql.split('');
+  const unsupported: string[] = [];
+  const excluded: SchemaRegion[] = [];
+  const exclude = (start: number, end: number) => {
+    // Inline Studio comments can cover earlier comments on the same line.
+    // Merge overlapping ranges so the statement reader advances once, not an
+    // unbounded statements-by-comments search.
+    while (excluded.length > 0 && (excluded.at(-1)?.end ?? -1) >= start) {
+      cancellationCheckpoint(signal);
+      const previous = excluded.pop();
+      if (previous !== undefined) {
+        start = Math.min(start, previous.start);
+        end = Math.max(end, previous.end);
+      }
+    }
+    excluded.push({ start, end });
+  };
+  let unsafeFrom = sql.length;
+  let lineStart = 0;
+  const blank = (start: number, end: number) => {
+    for (let index = start; index < end; index += 1) {
+      periodicCancellationCheckpoint(index - start, signal);
+      if (sql[index] === '\n' || sql[index] === '\r') lineStart = index + 1;
+      else masked[index] = ' ';
+    }
+  };
+  for (let index = 0; index < sql.length;) {
+    periodicCancellationCheckpoint(index, signal);
+    const character = sql[index];
+    if (character === "'" || character === '"' || character === '`') {
+      const start = index;
+      let closed = false;
+      index += 1;
+      for (; index < sql.length; index += 1) {
+        periodicCancellationCheckpoint(index - start, signal);
+        if (sql[index] === '\\') {
+          unsupported.push('a schema quoted region with mode-dependent backslash escaping');
+          unsafeFrom = Math.min(unsafeFrom, start);
+          index += 1;
+        } else if (sql[index] === character) {
+          if (sql[index + 1] === character) index += 1;
+          else {
+            index += 1;
+            closed = true;
+            break;
+          }
+        }
+      }
+      if (!closed) {
+        unsupported.push('an unterminated schema quoted region');
+        unsafeFrom = Math.min(unsafeFrom, start);
+      }
+      if (character === '"') {
+        // ANSI_QUOTES changes strings into identifiers; the project's runtime
+        // SQL mode is unknown. Do not certify an affected declaration.
+        unsupported.push('a double-quoted schema region with unknown ANSI_QUOTES mode');
+        exclude(start, index);
+      }
+      const content = sql.slice(start + 1, index - 1);
+      if (character === "'" || !closed || !/^[A-Za-z_]\w*$/u.test(content)) {
+        blank(start + 1, index - (closed ? 1 : 0));
+      }
+      continue;
+    }
+    const dashComment =
+      character === '-' &&
+      sql[index + 1] === '-' &&
+      (sql[index + 2] === undefined ||
+        sql.charCodeAt(index + 2) <= 0x20 ||
+        /\s/u.test(sql[index + 2] ?? ''));
+    if (character === '#' || dashComment) {
+      const start = index;
+      while (index < sql.length && sql[index] !== '\n' && sql[index] !== '\r') {
+        periodicCancellationCheckpoint(index - start, signal);
+        index += 1;
+      }
+      if (sql.slice(lineStart, start).trim() !== '') {
+        unsupported.push('an inline schema comment with unexamined Studio preprocessing');
+        exclude(lineStart, index);
+      }
+      blank(start, index);
+      continue;
+    }
+    if (character === '/' && sql[index + 1] === '*') {
+      const start = index;
+      const close = sql.indexOf('*/', index + 2);
+      index = close === -1 ? sql.length : close + 2;
+      unsupported.push('a block schema comment with unexamined execution or Studio preprocessing');
+      exclude(start, index);
+      if (close === -1) unsafeFrom = Math.min(unsafeFrom, start);
+      blank(start, index);
+      continue;
+    }
+    if (character === '\n' || character === '\r') lineStart = index + 1;
+    index += 1;
+  }
+  cancellationCheckpoint(signal);
+  return { text: masked.join(''), unsupported, excluded, unsafeFrom };
+}
+
+// Unread schema regions are never a clean inventory.
 /** Reads the tables and columns `dbmodel.sql` declares. */
 export function parseSchema(
   sql: string,
   signal?: AbortSignal,
 ): ParseOutcome<readonly TableDefinition[]> {
   cancellationCheckpoint(signal);
+  const structure = schemaStructure(sql, signal);
   const tables: TableDefinition[] = [];
-  const unsupported: string[] = [];
-  const withoutComments = sql.replace(/--[^\n]*/gu, '').replace(/\/\*[\s\S]*?\*\//gu, '');
-
-  for (const match of withoutComments.matchAll(CREATE_TABLE)) {
-    cancellationCheckpoint(signal);
-    const name = match[1];
-    if (name === undefined) {
+  const unsupported = [...structure.unsupported];
+  let start = 0;
+  let excludedIndex = 0;
+  for (let end = 0; end <= structure.text.length; end += 1) {
+    periodicCancellationCheckpoint(end, signal);
+    if (end !== structure.text.length && structure.text[end] !== ';') continue;
+    const raw = structure.text.slice(start, end);
+    const statement = raw.trim();
+    const statementStart = start + raw.length - raw.trimStart().length;
+    while ((structure.excluded[excludedIndex]?.end ?? Infinity) <= statementStart) {
+      cancellationCheckpoint(signal);
+      excludedIndex += 1;
+    }
+    const excluded =
+      statementStart >= structure.unsafeFrom ||
+      end > structure.unsafeFrom ||
+      (structure.excluded[excludedIndex]?.start ?? Infinity) < end;
+    start = end + 1;
+    if (statement === '' || excluded) continue;
+    const header = CREATE_TABLE.exec(statement);
+    if (header === null) {
+      unsupported.push('a schema statement outside the supported CREATE TABLE declaration subset');
       continue;
     }
-    const body = tableBody(withoutComments, match.index + match[0].length - 1, signal);
+    let depth = 1;
+    let close = header[0].length;
+    for (; close < statement.length; close += 1) {
+      periodicCancellationCheckpoint(close, signal);
+      if (statement[close] === '(') depth += 1;
+      else if (statement[close] === ')' && --depth === 0) break;
+    }
+    if (depth !== 0) {
+      unsupported.push('an unbalanced CREATE TABLE declaration');
+      continue;
+    }
     const columns: string[] = [];
-    for (const entry of splitColumns(body, signal)) {
+    for (const entry of splitColumns(statement.slice(header[0].length, close), signal)) {
       cancellationCheckpoint(signal);
       const trimmed = entry.trim();
-      if (trimmed === '') {
+      const identifier = SCHEMA_IDENTIFIER.exec(trimmed);
+      const first = identifier?.[1] ?? identifier?.[2] ?? identifier?.[3];
+      if (identifier === null || first === undefined) {
+        unsupported.push('a CREATE TABLE entry with an unreadable column identifier');
         continue;
       }
-      const first = /^[`"]?([A-Za-z_][\w]*)[`"]?/u.exec(trimmed)?.[1];
-      if (first === undefined) {
-        continue;
-      }
-      if (CONSTRAINT_STARTS.has(first.toLowerCase())) {
+      if (identifier[3] !== undefined && CONSTRAINT_STARTS.has(first.toLowerCase())) continue;
+      if (!/^\s+[A-Za-z_]\w*(?:\s|\(|$)/u.test(trimmed.slice(identifier[0].length))) {
+        unsupported.push('a CREATE TABLE entry without a readable column type');
         continue;
       }
       columns.push(first);
     }
-    tables.push({ name, columns });
-  }
-
-  if (tables.length === 0 && /CREATE\s+TABLE/iu.test(withoutComments)) {
-    unsupported.push('a CREATE TABLE statement that could not be read');
+    const tail = statement.slice(close + 1).trim();
+    // Only the naming-neutral options in BGA's documented examples are read.
+    // AS SELECT, LIKE, partitioning and other tails remain incomplete.
+    if (
+      !/^(?:\s*(?:ENGINE\s*=\s*[A-Za-z_]\w*|(?:DEFAULT\s+)?CHARSET\s*=\s*[A-Za-z_]\w*|AUTO_INCREMENT\s*=\s*\d+))*\s*$/iu.test(
+        tail,
+      )
+    ) {
+      unsupported.push('an unexamined CREATE TABLE suffix');
+    }
+    if (columns.length === 0)
+      unsupported.push('a CREATE TABLE declaration without readable columns');
+    tables.push({ name: header[1] ?? header[2] ?? header[3] ?? '', columns });
   }
   cancellationCheckpoint(signal);
-  return { value: tables, unsupported };
+  return { value: tables, unsupported: [...new Set(unsupported)] };
 }
 
 /**

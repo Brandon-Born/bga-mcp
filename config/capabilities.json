@@ -152,7 +152,11 @@
           "E2E-PROJECT-SOURCE-SELECTION",
           "E2E-DATABASE-FORMATTED-INSERT",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-DATABASE-SCHEMA-COVERAGE",
+          "E2E-DATABASE-SCHEMA-LEXICAL",
+          "UNIT-DATABASE-SCHEMA-COVERAGE",
+          "E2E-DATABASE-SCHEMA-MODE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -292,7 +296,10 @@
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
-          "UNIT-DATABASE-INDEPENDENT-COVERAGE"
+          "UNIT-DATABASE-INDEPENDENT-COVERAGE",
+          "E2E-DATABASE-SCHEMA-COVERAGE",
+          "E2E-DATABASE-SCHEMA-LEXICAL",
+          "E2E-DATABASE-SCHEMA-MODE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -459,7 +466,8 @@
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-DATABASE-FORMATTED-INSERT",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-DATABASE-SCHEMA-COVERAGE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -591,7 +599,8 @@
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-DATABASE-FORMATTED-INSERT",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-DATABASE-SCHEMA-COVERAGE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

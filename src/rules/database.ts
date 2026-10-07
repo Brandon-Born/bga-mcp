@@ -124,7 +124,10 @@ function unsupported(construct: string, uri: string, language: string): Diagnost
     language,
     uri,
     message: `Part of the database usage could not be read: ${construct}.`,
-    suggestion: 'Use a single literal query string, or confirm the dynamic form is intended.',
+    suggestion:
+      language === 'sql'
+        ? 'Review the original schema manually; unread statements cannot establish absent tables or columns.'
+        : 'Use a single literal query string, or confirm the dynamic form is intended.',
   });
 }
 
@@ -234,7 +237,11 @@ export function auditDatabaseUsage(
     cancellationCheckpoint(signal);
     for (const table of query.tables) {
       cancellationCheckpoint(signal);
-      if (!tablesByName.has(table) && !FRAMEWORK_TABLES.has(table)) {
+      if (
+        schema.unsupported.length === 0 &&
+        !tablesByName.has(table) &&
+        !FRAMEWORK_TABLES.has(table)
+      ) {
         findings.push(
           certain(
             'database.table.undeclared',
@@ -255,7 +262,11 @@ export function auditDatabaseUsage(
       }
       usedColumns.add(reference);
       const table = tablesByName.get(tableName);
-      if (table === undefined || table.columns.includes(columnName)) {
+      if (
+        schema.unsupported.length > 0 ||
+        table === undefined ||
+        table.columns.includes(columnName)
+      ) {
         continue;
       }
       findings.push(
@@ -283,7 +294,7 @@ export function auditDatabaseUsage(
   }
 
   const selectsEverything = queries.some((query) => /\bSELECT\s+\*/iu.test(query.text));
-  if (!selectsEverything && queriesComplete) {
+  if (!selectsEverything && queriesComplete && schema.unsupported.length === 0) {
     for (const table of tables) {
       cancellationCheckpoint(signal);
       for (const column of table.columns) {
