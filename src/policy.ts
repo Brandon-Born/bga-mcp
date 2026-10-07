@@ -12,6 +12,7 @@ import {
   type ResolvedAddress,
 } from './docs/addresses.js';
 import { readBoundedUtf8 } from './docs/read.js';
+import { searchParams } from './docs/search.js';
 import {
   describeRequestContentViolation,
   requestContentViolation,
@@ -1228,6 +1229,28 @@ export class PolicyBoundary {
   ): Promise<DocumentationResponse> {
     this.assertNetworkAllowed('documentation');
 
+    // Validate before lazy catalog reads as well as before network/cache work.
+    if (request.query !== undefined) {
+      assertDocumentationRequestContent(request.query, this.#resolvedRoots, request.sourceId);
+    }
+    if (request.params !== undefined) {
+      const limit = Number(request.params.srlimit);
+      const expected =
+        request.query !== undefined && Number.isInteger(limit) && limit >= 1 && limit <= 10
+          ? searchParams(request.query, limit)
+          : null;
+      if (
+        expected === null ||
+        Object.keys(request.params).length !== Object.keys(expected).length ||
+        Object.entries(expected).some(([key, value]) => request.params?.[key] !== value)
+      ) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocRequestContent,
+          'The documentation search parameters must be generated from a reviewed lookup selection.',
+        );
+      }
+    }
+
     const catalog = await this.#documentationCatalog();
     const source = sourceById(catalog, request.sourceId);
     if (source === null) {
@@ -1236,15 +1259,6 @@ export class PolicyBoundary {
         'That documentation source is not in the reviewed catalog.',
         { details: { sourceId: request.sourceId } },
       );
-    }
-
-    // Everything that will appear in the URL is checked, not just the query
-    // field: a parameter is as good a place to hide a file path as any.
-    for (const value of [request.query, ...Object.values(request.params ?? {})]) {
-      if (value === undefined) {
-        continue;
-      }
-      assertDocumentationRequestContent(value, this.#resolvedRoots, source.id);
     }
 
     const target = this.#documentationUrl(source, request);

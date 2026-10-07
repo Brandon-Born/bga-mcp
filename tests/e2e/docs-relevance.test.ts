@@ -70,7 +70,8 @@ beforeAll(async () => {
         JSON.stringify({
           query: {
             search:
-              degradedNoAnswer && (url.searchParams.get('srsearch') ?? '').includes('Kubernetes')
+              degradedNoAnswer &&
+              url.searchParams.get('srsearch') === 'BGA documentation unsupported question'
                 ? [{ title: 'Missing_page', timestamp: '2026-10-02T00:00:00Z' }]
                 : [],
           },
@@ -84,9 +85,9 @@ beforeAll(async () => {
       );
     } else if (url.pathname === '/Quasar_Nebula') {
       response.end(
-        '<title>Quasar Nebula</title><p>quasar navigation ' +
+        '<title>Quasar Nebula</title><p>translations translation ' +
           'A'.repeat(1000) +
-          '</p><p>context</p><p>nebula orbital ' +
+          '</p><p>context</p><p>notifications notification ' +
           'B'.repeat(1000) +
           '</p>',
       );
@@ -198,10 +199,10 @@ describe('installed captured documentation relevance', () => {
             .results[0];
         };
         // Include the topic keyword to reach our scripted same page while the
-        // question-specific selection remains the arbitrary question itself.
-        expect((await ask('project quasar navigation'))?.excerpt).toContain('navigation');
-        expect((await ask('project nebula orbital'))?.excerpt).toContain('orbital');
-        expect((await ask('project nebula orbital'))?.cached).toBe(true);
+        // question-specific selection remains a distinct reviewed generic question.
+        expect((await ask('project translations'))?.excerpt).toContain('translations');
+        expect((await ask('project notifications'))?.excerpt).toContain('notifications');
+        expect((await ask('project notifications'))?.cached).toBe(true);
       });
     } finally {
       await replace(original);

@@ -100,7 +100,7 @@ describe('packaged address guard', () => {
     for (const answer of LOOPBACK_SPELLINGS) {
       const response = await withAnswers([[answer]], async (client) =>
         // A query with no curated topic, so the call makes exactly one lookup.
-        callTool(client, 'search_bga_docs', { query: 'meeple wobble' }),
+        callTool(client, 'search_bga_docs', { query: 'notification payload' }),
       );
 
       expect(response.isError, answer.address).toBe(true);
@@ -134,7 +134,8 @@ describe('packaged address guard', () => {
           { address: '::ffff:a00:1', family: 6 },
         ],
       ],
-      async (client) => await callTool(client, 'search_bga_docs', { query: 'meeple wobble' }),
+      async (client) =>
+        await callTool(client, 'search_bga_docs', { query: 'notification payload' }),
     );
 
     // Which of the two the socket would have used is not this server's choice,
@@ -150,7 +151,8 @@ describe('packaged address guard', () => {
     // again between the check and the connection, would take it and connect.
     const response = await withAnswers(
       [[{ address: '::ffff:7f00:1', family: 6 }], [{ address: '93.184.216.34', family: 4 }]],
-      async (client) => await callTool(client, 'search_bga_docs', { query: 'meeple wobble' }),
+      async (client) =>
+        await callTool(client, 'search_bga_docs', { query: 'notification payload' }),
     );
 
     expect(response.isError).toBe(true);
@@ -190,7 +192,8 @@ describe('packaged address guard', () => {
           { address: '93.184.216.35', family: 4 },
         ],
       ],
-      async (client) => await callTool(client, 'search_bga_docs', { query: 'meeple wobble' }),
+      async (client) =>
+        await callTool(client, 'search_bga_docs', { query: 'notification payload' }),
       [],
       { BGA_MCP_DNS_OBSERVE_ONLY: '1' },
     );

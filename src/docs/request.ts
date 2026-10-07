@@ -1,6 +1,7 @@
 import type { DocumentationSource } from './catalog.js';
 import { matchesDocumentationSource } from './catalog.js';
 import { ERROR_CODES, PolicyViolationError } from '../errors.js';
+import { searchParams } from './search.js';
 
 /**
  * Decides whether a documentation request may leave the machine.
@@ -20,13 +21,7 @@ export type RequestContentViolation =
 /** Long enough for a real question, short enough that a paste does not fit. */
 export const MAX_QUERY_LENGTH = 200;
 
-/**
- * Constructs that do not appear in a question and do appear in a BGA project.
- *
- * Deliberately short: a query mentioning `states.inc.php` or `bga->notify` is a
- * perfectly good question, so file names and API names are not markers. What is
- * marked is syntax, which means the text was copied out of a file.
- */
+// Lexical exclusions also protect Studio values. They do not establish origin.
 const SOURCE_MARKERS = ['<?php', '?>', '$this->', '=>', '){', '/*', '*/', '//'] as const;
 
 function containsProjectPath(query: string, projectRoots: readonly string[]): boolean {
@@ -69,16 +64,16 @@ export function describeRequestContentViolation(violation: RequestContentViolati
       return 'the query is empty';
     }
     case 'too-long': {
-      return `the query is longer than ${String(MAX_QUERY_LENGTH)} characters, which is a paste rather than a question`;
+      return `the query is longer than ${String(MAX_QUERY_LENGTH)} characters`;
     }
     case 'control-characters': {
-      return 'the query contains control characters, so it was not typed';
+      return 'the query contains control characters';
     }
     case 'project-path': {
       return 'the query contains a filesystem path, which would send the location of local work to a third party';
     }
     case 'source-code': {
-      return 'the query contains source syntax, so it was copied out of a file';
+      return 'the query contains source syntax; its origin is unknown';
     }
   }
 }
@@ -133,4 +128,7 @@ export function assertDocumentationRequestContent(
       { details: { sourceId, violation } },
     );
   }
+  // A lexical check does not establish provenance. Documentation lookups additionally
+  // select only a finite public vocabulary, with fixed outbound terms.
+  searchParams(value, 1);
 }

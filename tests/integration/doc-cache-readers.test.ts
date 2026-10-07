@@ -132,7 +132,7 @@ it('[INT-DOC-CACHE-LIFECYCLE] in-process readers reuse pages and date failed ref
       expect(fallback.value.failures[0]?.code).toBe(ERROR_CODES.policyDocFetchFailed);
       // With API discovery unavailable an uncurated question cannot invent hits.
       expect(
-        (await search(client, { query: 'unsupported nebula orbit', sourceId: WIKI, maxResults: 1 }))
+        (await search(client, { query: 'notification payload', sourceId: WIKI, maxResults: 1 }))
           .error,
       ).toBe(true);
       outage = false;
