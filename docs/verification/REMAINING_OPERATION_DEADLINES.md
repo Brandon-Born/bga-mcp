@@ -66,6 +66,17 @@ needed its signal-aware session-registration marker updated. No failure was
 suppressed. Network fixture modes are selected independently of query text so
 BGA-324's reviewed query grammar cannot disable cancellation cases.
 
+Integrated normalization made the post-expiry full `inspect_project` recovery
+request perform additional source parsing under the unchanged 100 ms budget.
+A concurrent diagnostic run observed its actual `policy.timeout.exceeded`
+response; isolated root cases passed. Recovery now uses the same client's
+`check_setup` to require the exact available-root finding and a second issued
+native root `realpath`, while retaining the original inspection expiry, quiet
+window and resource-cleanup assertions. The 2025 provider asks over the wire
+again; the 2026 provider can retry the existing MRTR answer. Removing the installed
+expired-root cache reset must fail this adoption witness. No request budget is
+raised and no recovery retry hides a failure.
+
 ## Actual file ownership and provider acceptance
 
 `E2E-STUDIO-SESSION-FILE-OWNER` first verifies a real owner-only file through the

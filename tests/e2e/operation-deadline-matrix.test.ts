@@ -201,11 +201,25 @@ async function probe(target: string, completionMs: number, era = '2025-11-25', s
       ).toHaveLength(2);
       expect(await readFile(network, 'utf8')).not.toBe('');
     }
-    expect(
-      (await callTool(connection.client, roots ? 'inspect_project' : 'check_setup', {}, 20_000))
-        .isError,
-    ).toBe(false);
-    if (roots) expect(rootRequests).toBeGreaterThanOrEqual(2);
+    // Recovery exercises root adoption without making a second full-project
+    // inspection compete with this deliberately tiny, unchanged request budget.
+    const recovery = await callTool(connection.client, 'check_setup', {}, 20_000);
+    expect(recovery.isError, recovery.text).toBe(false);
+    if (roots) {
+      expect(recovery.structured?.findings).toContainEqual({
+        code: 'project.roots.available',
+        status: 'ok',
+        summary:
+          '1 project root(s) available. Pass projectRoot explicitly when choosing among several already available roots.',
+      });
+      const recovered = events(await readFile(log, 'utf8'));
+      expect(
+        recovered.filter((event) => event.event === 'work:start' && event.operation === target),
+      ).toHaveLength(2);
+      // 2025 requests roots again over the wire. 2026 can retry the provider
+      // supplied in its first MRTR answer; both must issue native realpath again.
+      expect(rootRequests).toBeGreaterThanOrEqual(era === '2025-11-25' ? 2 : 1);
+    }
     expect(connection.stderr()).not.toContain('Unhandled');
     expect(connection.stderr()).not.toContain('Closing file descriptor');
     expect(connection.stderr()).not.toContain(CANARY);
@@ -293,6 +307,18 @@ it('[E2E-POLICY-CANCELLATION] rejects removal of the installed cleanup await', a
       source.replace(
         'await Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
         'void Promise.race([settled, delay(CLEANUP_WINDOW_MS)]);',
+      ),
+    async () => {
+      await expect(probe('ensureClientRoots:realpath', 150)).rejects.toThrow();
+    },
+  );
+});
+it('[E2E-POLICY-CANCELLATION] rejects retaining the expired client-root answer as reusable state', async () => {
+  await mutate(
+    (source) =>
+      source.replace(
+        /if \(options\.signal\?\.aborted === true\) \{([\s\S]*?)this\.#clientRootsFetched = false;/u,
+        'if (options.signal?.aborted === true) {$1void 0;',
       ),
     async () => {
       await expect(probe('ensureClientRoots:realpath', 150)).rejects.toThrow();
