@@ -1,0 +1,296 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-441",
+  "baseMain": "5ba7746b835928f74f6de9d0b1ae9a4693b53113",
+  "scope": "Partial schema naming coverage; no ALTER/VIEW grammar, dynamic SQL or execution expansion",
+  "status": "complete integrated local gate passed; exact-source CI and actual framework admission pending",
+  "focusedTests": {
+    "unit": 29,
+    "installed": 2,
+    "layouts": ["modern", "legacy", "hybrid"]
+  },
+  "negativeControl": {
+    "originalSource": "8bd773d2d597b7b2b2c3abd6316e41cd84c1a81c",
+    "certifiedSigner": "c642ed05df566964b10a27a2009a7427e41ed6bd",
+    "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+    "freshIndependentSignatureVerification": true,
+    "installedRegressionFailures": 2,
+    "reportDigest": "sha256:7afb758bd048e31200adc1cbbe73de63ffdb296d8bd82eccb0ab7a8128e52151",
+    "authenticationLogDigest": "sha256:0b140ff8f084eb4088b0b1a51581923082afafa2c3efbe0ee039b4f41b6a0573"
+  },
+  "harnessDigests": {
+    "tests/unit/database-schema-coverage.test.ts": "sha256:291beefc4a541a00ff5052f7b2fc7461bb40b00ad7de44a1e3f1a855b566b372",
+    "tests/e2e/database-schema-coverage.test.ts": "sha256:533dc1f87cb5e8b358808a5a6d43cdc1380ad0e724d7bdfd39df382c70e91569"
+  },
+  "limits": [
+    "No live Dino writes, Studio or gameplay validation",
+    "No merge, publication or release authorization",
+    "Backlog remains implemented until evidence admission; later receipt-only tips do not inherit exact-source CI"
+  ],
+  "installedDinoBeforeAfter": {
+    "verified": true,
+    "scopeDigests": [
+      {
+        "scope": "unchanged-checkout",
+        "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+        "files": 159,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "commit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "digest": "sha256:c2d55b0e1a09df8f024b0cc6862d4faf453ea912ea5b2d632a9b74b76e86703d",
+        "files": 84,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      }
+    ],
+    "results": [
+      {
+        "runtime": "original",
+        "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "queries": 1,
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "original",
+        "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "queries": 0,
+        "counts": {
+          "passed": 2,
+          "failed": 1,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "failed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "changed",
+        "archiveDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "queries": 1,
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "changed",
+        "archiveDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "queries": 0,
+        "counts": {
+          "passed": 2,
+          "failed": 1,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "failed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      }
+    ],
+    "limits": "Frozen tracked popup candidate is read-only git archive; shared checkout includes its complete non-Git files. No live Studio, execution or publication validation.",
+    "harnessDigest": "sha256:cc21de421ffd19785c213b86b14e283c67230c75d77568cbe6cbecde5cf1ee4f",
+    "reportDigest": "sha256:54781ad46faaa5051ede0c690d630b4fc064b0d2a7e987e0ca4f88197ee7a9aa",
+    "installedRuntimeBytes": "Compared database reader/rule and capability manifest bytes against each original archive before calls",
+    "newObservedGap": "Frozen27f INSERT literal prefix concatenated with generated VALUES yields no readable query; availability failure is a reader limitation, not a confirmed game defect."
+  },
+  "priorIntegratedAttempts": [
+    "Lint rejected a control-character regex and a type-only import; corrected without new public behavior.",
+    "Receipt formatting rejected before runtime tests; formatted.",
+    "869/876 tests passed; six framework assertions rejected unmapped shared UNIT proof, and public-contract comparison rejected a changed exported JSDoc comment. Corrected mapping and preserved original declaration bytes;21 framework and3 installed contract/schema checks passed.",
+    "All876 tests,246 scenarios, package, conformance and safety passed; the final evidence verifier rejected six stale run-count records. Updated only their verification-record counts before the final complete gate."
+  ],
+  "integratedLocalGate": {
+    "command": "pnpm check",
+    "source": {
+      "commit": "5ba7746b835928f74f6de9d0b1ae9a4693b53113",
+      "clean": false
+    },
+    "identity": "Dirty integrated implementation before commit; never relabelled clean exact-source CI",
+    "tests": {
+      "files": 112,
+      "total": 876,
+      "passed": 876,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 246,
+      "passed": 246,
+      "failed": 0,
+      "missing": 0
+    },
+    "capabilities": 17,
+    "compatibilityClaims": 103,
+    "archiveDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+    "evidenceDigest": "sha256:0dcb08f252dc6df74aed809198e0a2a60ee20e1865ffb3155fccb733b5d73145",
+    "coverageDigest": "sha256:8b3625e10e7f68508d8cb2b60e34b84340bdfd9583145e5586f9a44cb86b638a",
+    "logDigest": "sha256:ec85b741b820c15f0510719ae543f89561584a1b1325e6ea852bad99683e5138",
+    "conformance": "Passed scored2025-11-25 baseline;2026-07-28 covered by installed stdio scenarios, not official HTTP conformance"
+  }
+}

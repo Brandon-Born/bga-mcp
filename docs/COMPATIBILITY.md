@@ -216,3 +216,12 @@ those same paths; read-limit diagnostics remain separate. Editor exclusions,
 unknown execution scope and other inventoried files stay visible. Modern, legacy
 and hybrid selection use the existing forms independently. No new supported BGA
 syntax, caller exclusion option or whole-repository clean verdict is introduced.
+
+BGA-441 adds installed partial-schema controls in modern, legacy and hybrid
+projects. Readable CREATE TABLE declarations remain useful, while unexamined
+ALTER/VIEW statements, lexical regions and declaration suffixes retain unsupported
+coverage and withhold absence-dependent schema findings. Known duplicate defects
+remain visible. Quoted defaults cannot supply phantom declarations; ordinary
+leading line comments remain inert. Studio inline preprocessing, block comments
+and mode-dependent escaping are not interpreted. No dynamic SQL or execution
+support, public shape, descriptor, version or trust boundary is added.

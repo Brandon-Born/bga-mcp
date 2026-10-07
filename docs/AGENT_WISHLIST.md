@@ -428,3 +428,24 @@ explicit dates, per-source retention and no full-page storage. This is a new
 observed gap, not a claim that this behavior is already implemented.
 
 **Implementation, 2026-10-02.** The [bounded reader lifecycle](verification/DOCUMENTATION_CACHE_LIFECYCLE.md) now checks exact final-page excerpts before page requests and covers refresh, outage fallback, question separation, final authority and refusal/deadline behavior through installed MCP. Redirect aliases remain live requests because their destinations are unknown; search API discovery also stays live. The unconditional-fetch control reproduces the warm request-count defect. No full-page or persistent cache is added. The complete local gate passes 768 tests / 234 scenarios, and the changed installed tarball passes live relevance at 9/9 questions and 7/7 topics. All six exact-source CI jobs pass on `e75be74a24de80b412cecaa9198dfdbfbcc3c6e9`; the [receipt](verification/bga208-cache-lifecycle.json) retains independently validated records and the earlier cancellation-observer failure/correction. The historical BGA-211 replay requirement remains open. Next bounded lifecycle work would require an observed API-discovery outage need; broader search-result caching would need separate ranking/freshness design rather than retaining API responses implicitly.
+
+**Observed schema coverage gap, 2026-10-07.** BGA-438's follow-on found that
+unread ALTER/view and quoted/comment regions could silently leave a partial
+schema inventory. BGA-441 implements explicit coverage limits and withholds
+absence findings in that case. Dino's comment-only schema and generated VALUES
+still need their independent coverage holds. The next bounded step is to compare
+an actual unexamined schema form with official Studio preprocessing before
+choosing any additional grammar; do not infer runtime SQL or escaping from
+readable declarations.
+
+**Current Dino setup observation, 2026-10-07.** The frozen popup candidate
+`27f82733b7929e901c77fc17157545c2c4407e0e` uses a literal INSERT prefix
+concatenated with generated VALUES. Both authenticated rc.7 and the BGA-441
+implementation find zero readable queries there; `database.audit.unavailable`
+is failed in the retained audit. This is a reader availability result, not an
+observed database or game defect. The old unchanged `83e2e50` checkout uses the
+already readable formatted outer target and retains one query reference.
+BGA-438's next bounded step should compare these invariant-prefix forms and the
+availability verdict before designing original positive/negative controls.
+Runtime-built tuple values and escaping remain unknown; no concatenation or
+dynamic SQL support is claimed by BGA-441.

@@ -1,7 +1,7 @@
 # Dependency security preflight — BGA-422
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":243,"claims":103,"tests":845}
+{"kind":"run","capabilities":17,"scenarios":246,"claims":103,"tests":876}
 ```
 
 Implementation reviewed on 2026-09-29. This record describes the gate and the local development graph, not an approved or published release candidate. On 2026-09-30, [exact-source CI 36720062520](https://github.com/Brandon-Born/bga-mcp/actions/runs/36720062520) and [candidate workflow 36720091111](https://github.com/Brandon-Born/bga-mcp/actions/runs/36720091111) closed the outstanding evidence for `v1.0.0-rc.1` at `a2031af`; BGA-422 is now verified. The candidate retained its own fresh zero-finding audit and policy. [Candidate verification](RELEASE_CANDIDATE.md) records the source and digests. Future approval/publication requires a fresh assessment; the original report is dated evidence, not a perpetual clearance.
