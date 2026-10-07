@@ -104,6 +104,8 @@ BGA-208/BGA-211 add development-reader request-count, expiry/refresh, unavailabl
 
 Every public capability is served by the user's local stdio process. Documentation and experimental Studio reads may make an explicitly enabled request across their reviewed network boundary; that does not turn them into remotely hosted capabilities. The environment claim lists every manifest capability to which it applies, and the compatibility gate rejects either an omitted local claim or an unclaimed remote environment.
 
+BGA-316 adds installed empty, fully configured and part-way configuration reports, strict schema checks, synthetic provider privacy, denied network, repeat/immutability checks and an incorrect-classification mutation control. Configuration-only CLI preflight remains a separate tested surface. The development report is exercised with both client eras; modern official conformance and live Studio retrieval remain unknown, and the public command continues to exclude `check_setup`.
+
 ## MCP protocol versions and transports
 
 | Claim                     | Value             | Support     |

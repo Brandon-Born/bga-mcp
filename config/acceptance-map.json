@@ -1416,6 +1416,44 @@
       "case": "Private completion evidence cannot promote query-dependent, missing, conflicting, unrequested or another-group checks, and truncation cannot hide a defect into an attested pass",
       "boundary": "repository",
       "scenarios": ["UNIT-DATABASE-INDEPENDENT-COVERAGE"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Installed setup reports cover empty, fully configured and part-way states using the retained strict output schema",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-SETUP-NOTHING-CONFIGURED",
+        "E2E-SETUP-FULLY-CONFIGURED",
+        "E2E-SETUP-PART-WAY"
+      ]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Independently missing settings carry actionable codes and a configured refused provider never silently falls back",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-PART-WAY"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Synthetic credential values and provider paths stay private across structured text and configuration-only CLI reports without network access",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-SETUP-FULLY-CONFIGURED",
+        "E2E-SETUP-PART-WAY",
+        "E2E-SETUP-CLI-CONFIGURATION"
+      ]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Repeated reports preserve project and provider bytes and the installed oracle detects incorrect configuration classification",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-FULLY-CONFIGURED", "E2E-SETUP-MATRIX-MUTATION"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Development setup reporting does not expand the installed public release inventory",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-PUBLIC-EXCLUDED"]
     }
   ]
 }

@@ -1027,6 +1027,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Adversarial finding, 2026-08-08:** The CLI-side Studio preflight is also not a safe equivalent of `check_setup`: a page check can print foreign actor names (BGA-319), and even a configuration-only check prints the absolute session-file path (BGA-328). Setup evidence must cover every output surface before this item can be verified.
 - **Reconciled, 2026-10-03:** Current CI passes installed empty and project-root-ready configurations, plus integration schema/credential/era wording checks. The literal packaged fully configured and part-way matrix is not complete in `tests/e2e/check-setup.test.ts`; do not replace it with integration evidence or turn optional surfaces into public support.
 
+- **Acceptance implementation, 2026-10-07:** Five new installed scenarios cover fully configured and independently part-way setup through the retained strict schema, deterministic repeats, explicit refused-file precedence, synthetic environment/file provider privacy, configuration-only CLI preflight, denied network, unchanged project/provider bytes, public-profile exclusion and an incorrect-classification mutation. Environment reporting and missing-provider refusal run on both client eras and platforms; secure-file success is POSIX-only because Windows deliberately refuses that provider. No real session, account or live page is used. This completes the finite configuration-report matrix only; Studio retrieval, credential-owner proof and modern official conformance remain separate. Full integrated gates, exact-source CI and actual framework admission are still required before verification.
+
 ### BGA-317 — Remember the setup between runs
 
 - **Status:** planned

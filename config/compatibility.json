@@ -459,7 +459,7 @@
       "dimension": "environment",
       "value": "local",
       "support": "supported",
-      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate. BGA-211 adds installed offline replay of minimal reviewed topic fragments, question-specific excerpt caching and refusal-aware scoring. This is development-profile relevance evidence, not complete historical replay, live source freshness, DNS/TLS or public documentation admission.",
+      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate. BGA-211 adds installed offline replay of minimal reviewed topic fragments, question-specific excerpt caching and refusal-aware scoring. This is development-profile relevance evidence, not complete historical replay, live source freshness, DNS/TLS or public documentation admission. BGA-316 completes the installed configuration-only setup matrix, synthetic provider privacy and refused-provider precedence, denied network, repeats, CLI preflight and public-profile exclusion. The development configuration report is exercised on both client eras; this does not admit modern official conformance, live Studio retrieval or the setup tool to the public profile.",
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-DOCS-ADVERTISED",
@@ -495,7 +495,12 @@
         "E2E-DOC-CACHE-REFRESH",
         "E2E-DOC-CACHE-REDIRECT",
         "E2E-DOC-CACHE-MUTATION",
-        "INT-DOC-CACHE-LIFECYCLE"
+        "INT-DOC-CACHE-LIFECYCLE",
+        "E2E-SETUP-FULLY-CONFIGURED",
+        "E2E-SETUP-PART-WAY",
+        "E2E-SETUP-MATRIX-MUTATION",
+        "E2E-SETUP-CLI-CONFIGURATION",
+        "E2E-SETUP-PUBLIC-EXCLUDED"
       ],
       "capabilities": [
         {
@@ -504,7 +509,14 @@
         },
         {
           "reference": "tool:check_setup",
-          "scenarios": ["E2E-SETUP-READY"]
+          "scenarios": [
+            "E2E-SETUP-READY",
+            "E2E-SETUP-FULLY-CONFIGURED",
+            "E2E-SETUP-PART-WAY",
+            "E2E-SETUP-MATRIX-MUTATION",
+            "E2E-SETUP-CLI-CONFIGURATION",
+            "E2E-SETUP-PUBLIC-EXCLUDED"
+          ]
         },
         {
           "reference": "tool:inspect_project",

@@ -174,7 +174,12 @@
           "E2E-SETUP-READY",
           "INT-SETUP-STATUS",
           "INT-SETUP-NO-CREDENTIALS",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-SETUP-FULLY-CONFIGURED",
+          "E2E-SETUP-PART-WAY",
+          "E2E-SETUP-MATRIX-MUTATION",
+          "E2E-SETUP-CLI-CONFIGURATION",
+          "E2E-SETUP-PUBLIC-EXCLUDED"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
