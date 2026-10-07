@@ -1826,7 +1826,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-425 — Research how agents receive game-specific runtime test evidence
 
-- **Status:** planned
+- **Status:** implemented
 - **Priority:** P2
 - **Depends on:** BGA-001, BGA-013, BGA-016, BGA-424
 - **Deliverable:** A reviewed feasibility and boundary decision for reading developer-owned test results alongside framework diagnostics. Consider scenarios for turns, scoring, end conditions, and UI interactions without assuming that a test runner, Studio API, or portable report format already exists. The decision selects proceed, narrower scope, defer, or reject and creates separate permanent implementation owners only for an accepted approach.
@@ -1835,6 +1835,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Coordination:** BGA-308 through BGA-311 own Studio runtime-operation feasibility; BGA-312 owns log access. This item neither duplicates those owners nor assumes their blockers are resolved. Its decision records any dependencies on their outcomes and the manual steps that remain in an agent's development/testing loop.
 - **Release effect:** Later-release research, outside the local-only first-release queue. Adding a runtime-evidence capability requires a reviewed inventory change and its own implementation and verification work.
 - **Open questions:** Which producers/formats are available on an authorized game, whether results can identify the exact tested revision, and whether a bounded reader is useful enough to justify a new MCP capability. Consult official BGA documentation before proposing any framework-specific runtime mechanism; silence or ambiguity remains an explicit unsupported case.
+
+- **Research decision, 2026-10-07 UTC:** [The bounded real-game feasibility record](verification/RUNTIME_EVIDENCE_FEASIBILITY.md) selects **defer** a new MCP report reader. Existing agent tools observed a clean, unchanged real-game snapshot passing 39 PHP tests / 105 assertions and two controlled client tests; a private scoring mutation failed four unchanged assertions. Real filtered output and producer controls expose partial coverage, unbound/stale source identity, format-specific skipped/incomplete semantics, malformed/count-tampered reports and credential-bearing failure text. OTR preserves times and richer outcomes; neither tested format independently binds source/build or selection completeness. No observed MCP advantage justifies a new parser/output boundary. This is a completed research result awaiting integrated repository gates/CI, not an implemented runtime capability. No implementation owner, game-source fixture, new execution surface or live Studio claim is created.
 
 ### BGA-426 — Recognize JSONC options, preferences, and statistics independently
 
