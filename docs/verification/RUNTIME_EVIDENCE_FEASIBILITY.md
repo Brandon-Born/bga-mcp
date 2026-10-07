@@ -1,5 +1,9 @@
 # Developer-owned runtime evidence: BGA-425 decision
 
+```verification-record
+{ "kind": "review", "scope": "BGA-425 runtime evidence feasibility" }
+```
+
 Decision observed 2026-10-07 UTC: **defer a new MCP report-reading capability**.
 Existing agent shell, test-runner and XML tools produced and inspected the real
 outputs below without a new MCP surface. No observed benefit justifies admitting

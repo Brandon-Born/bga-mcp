@@ -18,7 +18,10 @@ describe('installed complete internal model', () => {
         resolve(root, 'gameoptions.json'),
         '{"100":{"name":"configuration-value-not-for-publication","values":{}}}',
       );
-      await writeFile(resolve(root, 'stats.jsonc'), '[false]');
+      await writeFile(
+        resolve(root, 'stats.jsonc'),
+        '{"configuration-key-not-for-publication":1,"table":false}',
+      );
       const before = await digestDirectory(root);
       const connection = await connectStdio(installed.publicCommand.command, [
         ...installed.publicCommand.arguments,
@@ -30,9 +33,11 @@ describe('installed complete internal model', () => {
         const inspected = await callTool(connection.client, 'inspect_project', {});
         expect(inspected.isError).toBe(false);
         expect(JSON.stringify(inspected)).not.toContain('configuration-value-not-for-publication');
+        expect(JSON.stringify(inspected)).not.toContain('configuration-key-not-for-publication');
         expect(JSON.stringify(inspected)).toContain('modules/js/Oversized.js');
         expect(JSON.stringify(inspected)).toContain('Schema file could not be read.');
-        expect(JSON.stringify(inspected)).toContain('Configuration is not an object.');
+        expect(JSON.stringify(inspected)).toContain('Unrecognized statistics section.');
+        expect(JSON.stringify(inspected)).toContain('table statistics is not an object.');
         expect((await callTool(connection.client, 'audit_database_usage', {})).isError).toBe(true);
         expect((await callTool(connection.client, 'validate_action_contracts', {})).isError).toBe(
           false,

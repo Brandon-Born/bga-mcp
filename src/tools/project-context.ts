@@ -176,7 +176,7 @@ async function normalizeContext(
         } else if (id === 'statistics' && key === 'value_labels') {
           entries.push(fact(key, path, definition));
         } else if (id === 'statistics') {
-          unknowns.push(unknown(path, `Unrecognized statistics section ${key}.`));
+          unknowns.push(unknown(path, 'Unrecognized statistics section.'));
         } else {
           entries.push(fact(key, path, definition));
         }

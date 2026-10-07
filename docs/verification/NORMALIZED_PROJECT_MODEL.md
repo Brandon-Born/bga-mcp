@@ -1,5 +1,9 @@
 # Internal normalized project model — BGA-101
 
+```verification-record
+{ "kind": "review", "scope": "BGA-101 internal normalization" }
+```
+
 The shared request context now retains a typed internal representation of metadata,
 options, preferences, states, transitions, actions, methods, notifications,
 database objects and queries, statistics, templates, styles, modules and test
@@ -25,6 +29,11 @@ execution and runtime test coverage remain unknown. Test-file identification is
 a labeled filename heuristic; BGA-425 owns runtime evidence. Normalization is a
 representation of known and unknown source facts, not proof of complete game
 behavior or correctness.
+
+The retained diagnostic status covers structural layout, metadata, states and
+source-coverage rules. A passing structural status does not certify the new
+configuration representation: malformed or unread JSON/JSONC remains explicitly
+unknown in its located normalization receipt. Inspection text names that scope.
 
 The existing 200-file/262,144-byte contract budget still applies. Inspection
 requests both bounded contract sets, and an oversized eligible file is omitted

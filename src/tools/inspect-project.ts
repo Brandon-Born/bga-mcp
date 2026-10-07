@@ -155,6 +155,9 @@ export function summarize(model: InspectProjectResult): string {
 
   const { summary } = model.diagnostics;
   lines.push(
+    'Structural findings cover layout, metadata, states and source coverage; normalization unknowns remain in normalized.* signals.',
+  );
+  lines.push(
     `Findings: ${String(summary.errors)} errors, ${String(summary.warnings)} warnings, ${String(summary.information)} information, ${String(summary.unsupported)} unsupported.`,
   );
   return lines.join('\n');

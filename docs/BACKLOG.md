@@ -2059,6 +2059,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Evidence:** [Source and CI receipt](verification/bga441-source-ci.json) records the actual implementation, archive, original-runtime control, unchanged Dino snapshots, terminal CI and framework admission as collected. Evidence-only tips never inherit exact-HEAD implementation CI.
 - **Sources (fetched 2026-10-07):** Start at [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), then [Database model](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql): “all CREATE/ALTER tables and views should be in dbmodel.sql”. The page documents inline-comment preprocessing that can remove an entire column; that execution behavior is not guessed. [MySQL comments](https://dev.mysql.com/doc/refman/8.0/en/comments.html), [string literals](https://dev.mysql.com/doc/refman/8.0/en/string-literals.html) and [CREATE TABLE](https://dev.mysql.com/doc/refman/8.0/en/create-table.html) and [identifiers](https://dev.mysql.com/doc/refman/8.0/en/identifiers.html) establish quote doubling, conditional block SQL and mode-dependent escaping. ANSI_QUOTES can make double quotes delimit identifiers instead of strings; the runtime mode is unknown, so affected declarations are excluded. Unexamined forms remain explicit coverage limits.
 
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37689541863) supersedes historical pending wording. Exact postmerge source0718bf7 passed all six jobs879tests247scenarios; the original source receipt's draft/merged:false delivery fields are historical. Partial schema/ANSI_QUOTES exclusions remain conservative.
+
 ## Coverage map
 
 This map makes omissions visible when source documents evolve.
@@ -2090,4 +2092,3 @@ The following are not implementation backlog items unless a future documented de
 - Hosting or redistributing publisher artwork.
 - Scraping private projects or bypassing BGA access controls.
 - Depending on undocumented Studio endpoints for core functionality.
-- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37689541863) supersedes historical pending wording. Exact postmerge source0718bf7 passed all six jobs879tests247scenarios; the original source receipt's draft/merged:false delivery fields are historical. Partial schema/ANSI_QUOTES exclusions remain conservative.
