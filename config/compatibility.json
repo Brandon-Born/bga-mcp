@@ -46,7 +46,8 @@
         "E2E-DATABASE-INDEPENDENT-CHECKS",
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
         "E2E-DATABASE-SCHEMA-COVERAGE",
-        "E2E-DATABASE-SCHEMA-LEXICAL"
+        "E2E-DATABASE-SCHEMA-LEXICAL",
+        "E2E-DATABASE-SCHEMA-MODE"
       ],
       "capabilities": [
         {
@@ -60,7 +61,8 @@
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
             "E2E-DATABASE-SCHEMA-COVERAGE",
-            "E2E-DATABASE-SCHEMA-LEXICAL"
+            "E2E-DATABASE-SCHEMA-LEXICAL",
+            "E2E-DATABASE-SCHEMA-MODE"
           ]
         },
         {
@@ -95,7 +97,8 @@
             "E2E-DATABASE-INDEPENDENT-CHECKS",
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
             "E2E-DATABASE-SCHEMA-COVERAGE",
-            "E2E-DATABASE-SCHEMA-LEXICAL"
+            "E2E-DATABASE-SCHEMA-LEXICAL",
+            "E2E-DATABASE-SCHEMA-MODE"
           ]
         },
         {

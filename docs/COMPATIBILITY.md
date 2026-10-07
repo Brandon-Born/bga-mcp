@@ -223,5 +223,5 @@ ALTER/VIEW statements, lexical regions and declaration suffixes retain unsupport
 coverage and withhold absence-dependent schema findings. Known duplicate defects
 remain visible. Quoted defaults cannot supply phantom declarations; ordinary
 leading line comments remain inert. Studio inline preprocessing, block comments
-and mode-dependent escaping are not interpreted. No dynamic SQL or execution
+and mode-dependent quoting and escaping are not interpreted. No dynamic SQL or execution
 support, public shape, descriptor, version or trust boundary is added.

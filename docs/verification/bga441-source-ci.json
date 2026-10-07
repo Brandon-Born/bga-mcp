@@ -3,10 +3,10 @@
   "item": "BGA-441",
   "baseMain": "5ba7746b835928f74f6de9d0b1ae9a4693b53113",
   "scope": "Partial schema naming coverage; no ALTER/VIEW grammar, dynamic SQL or execution expansion",
-  "status": "complete integrated local gate passed; exact-source CI and actual framework admission pending",
+  "status": "Final local879/247 full gate and exact-archive unchanged-Dino replay pass; final exact-source CI and actual framework admission pending",
   "focusedTests": {
-    "unit": 29,
-    "installed": 2,
+    "unit": 31,
+    "installed": 3,
     "layouts": ["modern", "legacy", "hybrid"]
   },
   "negativeControl": {
@@ -14,20 +14,56 @@
     "certifiedSigner": "c642ed05df566964b10a27a2009a7427e41ed6bd",
     "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
     "freshIndependentSignatureVerification": true,
-    "installedRegressionFailures": 2,
-    "reportDigest": "sha256:7afb758bd048e31200adc1cbbe73de63ffdb296d8bd82eccb0ab7a8128e52151",
+    "installedRegressionFailures": 3,
+    "reportDigest": "sha256:bc381c346680d3812a99cb71c095b3b9ec650a22c3b8e70ad6b69a8a91d44969",
     "authenticationLogDigest": "sha256:0b140ff8f084eb4088b0b1a51581923082afafa2c3efbe0ee039b4f41b6a0573"
   },
   "harnessDigests": {
-    "tests/unit/database-schema-coverage.test.ts": "sha256:291beefc4a541a00ff5052f7b2fc7461bb40b00ad7de44a1e3f1a855b566b372",
-    "tests/e2e/database-schema-coverage.test.ts": "sha256:533dc1f87cb5e8b358808a5a6d43cdc1380ad0e724d7bdfd39df382c70e91569"
+    "tests/unit/database-schema-coverage.test.ts": "sha256:a9cff43d5efaaff6742d352d094e4150720cb13457d7bf31f3911e464051bae2",
+    "tests/e2e/database-schema-coverage.test.ts": "sha256:4231eec25faf1a8b2ea96dfcd31d0dbee641bdab9a4d6cdeb91564b024d610d2"
   },
   "limits": [
     "No live Dino writes, Studio or gameplay validation",
     "No merge, publication or release authorization",
     "Backlog remains implemented until evidence admission; later receipt-only tips do not inherit exact-source CI"
   ],
-  "installedDinoBeforeAfter": {
+  "priorIntegratedAttempts": [
+    "Lint rejected a control-character regex and a type-only import; corrected without new public behavior.",
+    "Receipt formatting rejected before runtime tests; formatted.",
+    "869/876 tests passed; six framework assertions rejected unmapped shared UNIT proof, and public-contract comparison rejected a changed exported JSDoc comment. Corrected mapping and preserved original declaration bytes;21 framework and3 installed contract/schema checks passed.",
+    "All876 tests,246 scenarios, package, conformance and safety passed; the final evidence verifier rejected six stale run-count records. Updated only their verification-record counts before the final complete gate."
+  ],
+  "priorImplementationLocalGate": {
+    "command": "pnpm check",
+    "source": {
+      "commit": "5ba7746b835928f74f6de9d0b1ae9a4693b53113",
+      "clean": false
+    },
+    "identity": "Dirty integrated implementation before commit; never relabelled clean exact-source CI",
+    "tests": {
+      "files": 112,
+      "total": 876,
+      "passed": 876,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 246,
+      "passed": 246,
+      "failed": 0,
+      "missing": 0
+    },
+    "capabilities": 17,
+    "compatibilityClaims": 103,
+    "archiveDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+    "evidenceDigest": "sha256:0dcb08f252dc6df74aed809198e0a2a60ee20e1865ffb3155fccb733b5d73145",
+    "coverageDigest": "sha256:8b3625e10e7f68508d8cb2b60e34b84340bdfd9583145e5586f9a44cb86b638a",
+    "logDigest": "sha256:ec85b741b820c15f0510719ae543f89561584a1b1325e6ea852bad99683e5138",
+    "conformance": "Passed scored2025-11-25 baseline;2026-07-28 covered by installed stdio scenarios, not official HTTP conformance"
+  },
+  "priorImplementationCommit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+  "priorImplementationArchive": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+  "priorImplementationDinoBeforeAfter": {
     "verified": true,
     "scopeDigests": [
       {
@@ -259,38 +295,444 @@
     "installedRuntimeBytes": "Compared database reader/rule and capability manifest bytes against each original archive before calls",
     "newObservedGap": "Frozen27f INSERT literal prefix concatenated with generated VALUES yields no readable query; availability failure is a reader limitation, not a confirmed game defect."
   },
-  "priorIntegratedAttempts": [
-    "Lint rejected a control-character regex and a type-only import; corrected without new public behavior.",
-    "Receipt formatting rejected before runtime tests; formatted.",
-    "869/876 tests passed; six framework assertions rejected unmapped shared UNIT proof, and public-contract comparison rejected a changed exported JSDoc comment. Corrected mapping and preserved original declaration bytes;21 framework and3 installed contract/schema checks passed.",
-    "All876 tests,246 scenarios, package, conformance and safety passed; the final evidence verifier rejected six stale run-count records. Updated only their verification-record counts before the final complete gate."
-  ],
+  "finalReviewCorrection": "Unknown ANSI_QUOTES mode now excludes affected declarations while retaining independent preceding/following declarations.31unit and3installed controls pass; original authenticated archive fails all3installed regressions. Replacement full gate and exact-source proof required.",
   "integratedLocalGate": {
     "command": "pnpm check",
     "source": {
-      "commit": "5ba7746b835928f74f6de9d0b1ae9a4693b53113",
+      "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
       "clean": false
     },
-    "identity": "Dirty integrated implementation before commit; never relabelled clean exact-source CI",
+    "identity": "Dirty final integrated implementation before follow-up commit; not relabelled clean exact-source CI",
     "tests": {
       "files": 112,
-      "total": 876,
-      "passed": 876,
+      "total": 879,
+      "passed": 879,
       "failed": 0,
       "skipped": 0
     },
     "scenarios": {
-      "required": 246,
-      "passed": 246,
+      "required": 247,
+      "passed": 247,
       "failed": 0,
       "missing": 0
     },
     "capabilities": 17,
     "compatibilityClaims": 103,
-    "archiveDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
-    "evidenceDigest": "sha256:0dcb08f252dc6df74aed809198e0a2a60ee20e1865ffb3155fccb733b5d73145",
-    "coverageDigest": "sha256:8b3625e10e7f68508d8cb2b60e34b84340bdfd9583145e5586f9a44cb86b638a",
-    "logDigest": "sha256:ec85b741b820c15f0510719ae543f89561584a1b1325e6ea852bad99683e5138",
-    "conformance": "Passed scored2025-11-25 baseline;2026-07-28 covered by installed stdio scenarios, not official HTTP conformance"
+    "archiveDigest": "sha256:1d4e771ed3271f5e30cb31200ab8efc0af427ac052fb87d46eb4cbb13d3e78c5",
+    "evidenceDigest": "sha256:5d7e5c81305ccca53cd53911e30266cac23606be7f8599ddd7b53a59fc6efdb6",
+    "coverageDigest": "sha256:ee6a7f3c47b9242066558ebb5a650afd21272200defc06be326281dc35848b39",
+    "logDigest": "sha256:f080f3a56626f9ee94f755b180a2814a2f104d45a6a18ccb9c1ad16c73330b96",
+    "conformance": "Passed scored2025-11-25 baseline; newer protocol covered by installed stdio scenarios, not official HTTP conformance"
+  },
+  "installedDinoBeforeAfter": {
+    "verified": true,
+    "scopeDigests": [
+      {
+        "scope": "unchanged-checkout",
+        "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+        "files": 159,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "commit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "digest": "sha256:c2d55b0e1a09df8f024b0cc6862d4faf453ea912ea5b2d632a9b74b76e86703d",
+        "files": 84,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      }
+    ],
+    "results": [
+      {
+        "runtime": "original",
+        "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "queries": 1,
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "original",
+        "archiveDigest": "sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de",
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "queries": 0,
+        "counts": {
+          "passed": 2,
+          "failed": 1,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "failed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "changed",
+        "archiveDigest": "sha256:1d4e771ed3271f5e30cb31200ab8efc0af427ac052fb87d46eb4cbb13d3e78c5",
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "queries": 1,
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "runtime": "changed",
+        "archiveDigest": "sha256:1d4e771ed3271f5e30cb31200ab8efc0af427ac052fb87d46eb4cbb13d3e78c5",
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "queries": 0,
+        "counts": {
+          "passed": 2,
+          "failed": 1,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "checks": [
+          {
+            "id": "database.audit.unavailable",
+            "outcome": "failed"
+          },
+          {
+            "id": "database.column.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.column.undeclared",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.column.unused",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.query.interpolated",
+            "outcome": "unsupported"
+          },
+          {
+            "id": "database.table.duplicate",
+            "outcome": "passed"
+          },
+          {
+            "id": "database.table.undeclared",
+            "outcome": "unsupported"
+          }
+        ],
+        "tools": 7,
+        "resources": 3,
+        "templates": 0,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      }
+    ],
+    "limits": "Frozen tracked popup candidate is read-only git archive; shared checkout includes its complete non-Git files. No live Studio, execution or publication validation.",
+    "harnessDigest": "sha256:cc21de421ffd19785c213b86b14e283c67230c75d77568cbe6cbecde5cf1ee4f",
+    "reportDigest": "sha256:de8056184956799d2bbd99d2ac2a30a7cd1236a6f33905254965c351931b86e2",
+    "installedRuntimeBytes": "Compared database reader/rule and capability manifest bytes against each archive before calls",
+    "newObservedGap": "Frozen27f INSERT literal prefix concatenated with generated VALUES yields no readable query; availability failure is a reader limitation, not a confirmed game defect."
+  },
+  "priorImplementationCI": {
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37685104958",
+    "source": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+    "allSixPassed": true,
+    "schemaAndIntegrityValid": true,
+    "records": [
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+        "evidenceDigest": "sha256:8bd9a339405044494b05c2558fbf33a15cf441e6964a00afecfdd4a2c8efbdbb"
+      },
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:9b82859012d40930d9cdca32b7265e865ffa180eebde53601993f5ff9a951f30",
+        "evidenceDigest": "sha256:5d78976f22c281d45f8f8046eff6a2aa793d08a1e7588463d25b17cd084215cc"
+      },
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:91998d305f3f408daa8bfd5430cba87381e3509c5639816cbbf928e54e6957a0",
+        "evidenceDigest": "sha256:5184660edb204af1e74db9e4f88a72f421dfee1335c391168b32c08cf6f7f6b4"
+      },
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:91998d305f3f408daa8bfd5430cba87381e3509c5639816cbbf928e54e6957a0",
+        "evidenceDigest": "sha256:05bba37183d49fc9f332f2d16df913d72e408ca2d37de6ed1d561187c214ba7a"
+      },
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:77c918b6944d1203a49ed4acd31edb02a4c36dc901a28cb7d7ecf0ac6fb28361",
+        "evidenceDigest": "sha256:66fd34e0adee1b92983f2708b5d70c4588d6ce8ca203a53367705da5102951d1"
+      },
+      {
+        "source": {
+          "commit": "32b666d5ec53fea4dc2f02a57180fb39a29965f0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "tests": {
+          "files": 112,
+          "total": 876,
+          "passed": 876,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 246,
+          "passed": 246,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:77c918b6944d1203a49ed4acd31edb02a4c36dc901a28cb7d7ecf0ac6fb28361",
+        "evidenceDigest": "sha256:1df7d8c2ced305f6152b4459c19f5f10748b0028b095320461fefcc5342f531f"
+      }
+    ],
+    "scope": "Historical32b implementation; does not prove subsequent ANSI_QUOTES correction",
+    "prRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37685063241",
+    "prAllSixPassed": true
   }
 }

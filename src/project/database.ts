@@ -192,6 +192,7 @@ interface SchemaRegion {
  * Sources: https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql
  * https://dev.mysql.com/doc/refman/8.0/en/comments.html
  * https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+ * https://dev.mysql.com/doc/refman/8.0/en/identifiers.html
  *
  * Studio documents inline comments removing the whole column, unlike ordinary
  * MySQL parsing. Block comments and mode-dependent backslash escapes remain
@@ -251,6 +252,12 @@ function schemaStructure(sql: string, signal?: AbortSignal) {
       if (!closed) {
         unsupported.push('an unterminated schema quoted region');
         unsafeFrom = Math.min(unsafeFrom, start);
+      }
+      if (character === '"') {
+        // ANSI_QUOTES changes strings into identifiers; the project's runtime
+        // SQL mode is unknown. Do not certify an affected declaration.
+        unsupported.push('a double-quoted schema region with unknown ANSI_QUOTES mode');
+        exclude(start, index);
       }
       const content = sql.slice(start + 1, index - 1);
       if (character === "'" || !closed || !/^[A-Za-z_]\w*$/u.test(content)) {

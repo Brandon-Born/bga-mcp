@@ -91,7 +91,7 @@ it('[UNIT-DATABASE-SCHEMA-COVERAGE] does not manufacture declarations, columns o
     card_id INT,
     label VARCHAR(100) DEFAULT 'CREATE TABLE phantom (fake INT); -- text',
     choice ENUM('one, two)', 'three''s') DEFAULT 'one, two)',
-    "primary" INT, \`key\` INT, PRIMARY KEY (card_id)
+    \`primary\` INT, \`key\` INT, PRIMARY KEY (card_id)
   );`);
   expect(outcome).toEqual({
     value: [{ name: 'card', columns: ['card_id', 'label', 'choice', 'primary', 'key'] }],
@@ -107,7 +107,7 @@ it('[UNIT-DATABASE-SCHEMA-COVERAGE] keeps UTF-16 boundaries and all ordinary lin
           ending +
           '# CREATE TABLE another (id INT);' +
           ending +
-          'CREATE TABLE "real" (id INT);',
+          'CREATE TABLE `real` (id INT);',
       ),
     ).toEqual({ value: [{ name: 'real', columns: ['id'] }], unsupported: [] });
   }
@@ -130,6 +130,8 @@ it.each([
 );
 
 it.each([
+  'CREATE TABLE "card" (card_id INT);',
+  'CREATE TABLE card (label TEXT DEFAULT "example");',
   'CREATE TABLE card (card_id INT, -- affected Studio column\n label INT);',
   'CREATE TABLE card (card_id INT); -- entire line uncertain',
   'CREATE TABLE card (card_id INT, # uncertain preprocessing\n label INT);',

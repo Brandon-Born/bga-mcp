@@ -180,3 +180,56 @@ it('[E2E-DATABASE-SCHEMA-LEXICAL] refuses phantom declarations and uncertain reg
     await server.cleanup();
   }
 }, 240_000);
+
+it('[E2E-DATABASE-SCHEMA-MODE] keeps unknown ANSI_QUOTES semantics partial without discarding independent declarations', async () => {
+  const server = await installPackagedServer('schema-mode', { modern: 'modern' });
+  const root = server.projects.modern;
+  try {
+    await probe(root, 'modern');
+    const session = await withPublicPackagedServer(
+      server,
+      ['--project-root', root],
+      async (client) => {
+        for (const uncertain of [
+          'CREATE TABLE "card" (card_extra INT);',
+          'CREATE TABLE card (card_extra INT, label TEXT DEFAULT "example");',
+        ]) {
+          await writeFile(
+            resolve(root, 'dbmodel.sql'),
+            'CREATE TABLE before_mode (id INT); ' +
+              uncertain +
+              ' CREATE TABLE after_mode (id INT);',
+          );
+          const before = await digestDirectory(root);
+          const result = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(result.isError).toBe(false);
+          expect(result.structured?.schema.map((table) => table.name)).toEqual([
+            'before_mode',
+            'after_mode',
+          ]);
+          expect(
+            result.structured?.diagnostics.findings.some(
+              (finding) =>
+                finding.code === 'database.unsupported-syntax' &&
+                finding.message.includes('ANSI_QUOTES'),
+            ),
+          ).toBe(true);
+          expect(
+            result.structured?.diagnostics.findings.some((finding) =>
+              ABSENCE.includes(finding.code),
+            ),
+          ).toBe(false);
+          const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+          for (const id of ABSENCE)
+            expect(audit.structured?.checks.find((check) => check.id === id)?.outcome).toBe(
+              'unsupported',
+            );
+          expect(await digestDirectory(root)).toBe(before);
+        }
+      },
+    );
+    expect(session.stderr).toBe('');
+  } finally {
+    await server.cleanup();
+  }
+}, 240_000);

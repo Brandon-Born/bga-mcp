@@ -155,7 +155,8 @@
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-LEXICAL",
-          "UNIT-DATABASE-SCHEMA-COVERAGE"
+          "UNIT-DATABASE-SCHEMA-COVERAGE",
+          "E2E-DATABASE-SCHEMA-MODE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -297,7 +298,8 @@
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "UNIT-DATABASE-INDEPENDENT-COVERAGE",
           "E2E-DATABASE-SCHEMA-COVERAGE",
-          "E2E-DATABASE-SCHEMA-LEXICAL"
+          "E2E-DATABASE-SCHEMA-LEXICAL",
+          "E2E-DATABASE-SCHEMA-MODE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

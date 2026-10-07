@@ -88,13 +88,14 @@ malformed declarations, cancellation and bounded scanning. Installed
 propagation, repeats, root refusal and immutability. Installed
 `E2E-DATABASE-SCHEMA-LEXICAL` covers phantom declarations, uncertain regions,
 complete-schema missing-reference controls, known duplicate failures and output
-refusal. These are original fixtures, not copied game sources. The source/CI
+refusal. Installed `E2E-DATABASE-SCHEMA-MODE` retains independent declarations
+while refusing unknown ANSI_QUOTES semantics. These are original fixtures, not copied game sources. The source/CI
 receipt retains authentication of the original rc.7 negative control and actual
 unchanged Dino comparisons separately from implementation evidence.
 
 BGA's database-model page documents ALTER and views as schema sources and warns
 that inline comments can remove a whole column during Studio preprocessing.
 Leading ordinary line comments are readable inert text; inline preprocessing,
-block execution and mode-dependent escapes remain unsupported. Sources and the
+block execution and mode-dependent quotes and escapes remain unsupported. Sources and the
 bounded source decision are recorded under BGA-441 in the backlog. No execution
 or SQL validity claim follows from a readable naming subset.
