@@ -7,6 +7,7 @@ import { appendFileSync, readFileSync } from 'node:fs';
 
 const control = process.env.BGA_MCP_PARSER_DEADLINE_CONTROL;
 const transcript = process.env.BGA_MCP_PARSER_DEADLINE_TRANSCRIPT;
+const parser = process.env.BGA_MCP_PARSER_DEADLINE_FUNCTION === 'studio' ? 'studio' : 'jsonc';
 const deadlineMs = Number.parseInt(process.env.BGA_MCP_PARSER_DEADLINE_MS ?? '', 10);
 const expireOnCheckpoint = Number.parseInt(
   process.env.BGA_MCP_PARSER_DEADLINE_CHECKPOINT ?? '',
@@ -58,12 +59,19 @@ Object.defineProperty(performance, 'now', {
 
     const stack = new Error().stack ?? '';
     if (stack.includes('registerDeadline')) {
-      record('register', 0);
+      if (
+        !/\b(?:PolicyBoundary|Function)\.create\b/u.test(stack) &&
+        !stack.includes('readPackagedConfig')
+      ) {
+        record('register', 0);
+      }
       return 0;
     }
 
     const parserCheckpoint =
-      stack.includes('periodicCancellationCheckpoint') && stack.includes('parseJsonc');
+      parser === 'studio'
+        ? stack.includes('cancellationCheckpoint') && stack.includes('parseStudioLog')
+        : stack.includes('periodicCancellationCheckpoint') && stack.includes('parseJsonc');
     if (!parserCheckpoint) {
       return 0;
     }

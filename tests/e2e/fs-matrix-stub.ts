@@ -8,6 +8,7 @@ const occurrence = Number(process.env.BGA_MCP_FS_MATRIX_OCCURRENCE ?? '1');
 const completionMs = Number(process.env.BGA_MCP_FS_MATRIX_COMPLETION_MS);
 const cleanupMs = Number(process.env.BGA_MCP_FS_MATRIX_CLEANUP_MS ?? '0');
 const path = process.env.BGA_MCP_FS_MATRIX_TRANSCRIPT;
+const startup = process.env.BGA_MCP_FS_MATRIX_STARTUP === '1';
 if (
   !target ||
   !path ||
@@ -55,6 +56,8 @@ function stage(): string {
     'walk',
     'readSessionFile',
     'readPackagedConfig',
+    'resolveConfiguredRoots',
+    'create',
   ];
   return (
     stages
@@ -115,7 +118,19 @@ globalThis.setTimeout = ((
   ms?: number,
   ...args: unknown[]
 ) => {
-  if (!expiry && ms === 100 && (new Error().stack ?? '').includes('runWithTimeout')) {
+  const stack = new Error().stack ?? '';
+  const startupRegistration = target.startsWith('readPackagedConfig:')
+    ? stack.includes('readPackagedConfig')
+    : /\b(?:PolicyBoundary|Function)\.create\b/u.test(stack);
+  if (
+    !selected &&
+    ms === (startup ? 10000 : 100) &&
+    stack.includes('runWithTimeout') &&
+    (startup
+      ? startupRegistration
+      : !/\b(?:PolicyBoundary|Function)\.create\b/u.test(stack) &&
+        !stack.includes('readPackagedConfig'))
+  ) {
     active = true;
     record('deadline:register');
     expiry = () => {
@@ -139,7 +154,17 @@ globalThis.setTimeout = ((
   return timer(callback, ms, ...args);
 }) as typeof setTimeout;
 const write = process.stdout.write.bind(process.stdout);
+const errorWrite = process.stderr.write.bind(process.stderr);
 let published = false;
+process.stderr.write = ((...args: Parameters<typeof errorWrite>) => {
+  const chunk = args[0];
+  const text = typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf8');
+  if (startup && !published && text.includes('policy.timeout.exceeded')) {
+    published = true;
+    record('response:timeout');
+  }
+  return errorWrite(...args);
+}) as typeof process.stderr.write;
 process.stdout.write = ((...args: Parameters<typeof write>) => {
   const chunk = args[0];
   const text = typeof chunk === 'string' ? chunk : Buffer.from(chunk).toString('utf8');
@@ -150,11 +175,12 @@ process.stdout.write = ((...args: Parameters<typeof write>) => {
         if (
           typeof frame === 'object' &&
           frame !== null &&
-          'result' in frame &&
-          typeof frame.result === 'object' &&
-          frame.result !== null &&
-          'isError' in frame.result &&
-          frame.result.isError === true
+          (('error' in frame && typeof frame.error === 'object' && frame.error !== null) ||
+            ('result' in frame &&
+              typeof frame.result === 'object' &&
+              frame.result !== null &&
+              'isError' in frame.result &&
+              frame.result.isError === true))
         ) {
           published = true;
           record('response:timeout');
@@ -170,6 +196,23 @@ process.stdout.write = ((...args: Parameters<typeof write>) => {
 
 const fs = createRequire(import.meta.url)('node:fs/promises') as typeof FsPromises;
 const realpath = fs.realpath;
+const readFile = fs.readFile;
+fs.readFile = (async (...args: Parameters<typeof readFile>) => {
+  const options = args[1];
+  const signal =
+    typeof options === 'object' && options !== null && 'signal' in options
+      ? options.signal
+      : undefined;
+  try {
+    return await observe('readFile', () => readFile(...args));
+  } finally {
+    if (active && stage() === 'readPackagedConfig')
+      record(
+        'readFile:signal',
+        signal === undefined ? 'missing' : signal.aborted ? 'aborted' : 'live',
+      );
+  }
+}) as typeof readFile;
 fs.realpath = (async (...args: Parameters<typeof realpath>) =>
   await observe('realpath', () => realpath(...args))) as typeof realpath;
 const lstat = fs.lstat;

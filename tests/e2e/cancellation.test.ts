@@ -246,6 +246,12 @@ let server: PackagedServer<'legacy'>;
 let stub: Server;
 let stubPort: number;
 let stallEveryRequest: boolean;
+let responseMode: 'normal' | 'stall' | 'deadline-redirect' | 'redirect' | 'non-success-body' =
+  'normal';
+const LOOKUP_QUERY = 'notification payload';
+beforeEach(() => {
+  responseMode = 'normal';
+});
 /** What the far end saw: bytes written, and whether the client hung up. */
 let transcript: { written: number; aborted: boolean }[];
 
@@ -520,7 +526,7 @@ beforeAll(async () => {
       sendStalledBody(response, seen);
       return;
     }
-    if (requestUrl.includes('deadline-redirect')) {
+    if (responseMode === 'deadline-redirect') {
       response.writeHead(302, {
         location: 'https://en.doc.boardgamearena.com/deadline-redirect-target',
       });
@@ -531,15 +537,15 @@ beforeAll(async () => {
     // A page whose body never finishes, for the deadline case: headers and a
     // first chunk force the request into the bounded response reader, then the
     // socket stays open until somebody closes it and the far end records who.
-    if (stallEveryRequest || requestUrl.includes('stall')) {
+    if (stallEveryRequest || responseMode === 'stall') {
       sendStalledBody(response, seen);
       return;
     }
     // A redirect whose body is large: nobody will read it, and the question is
     // whether this server spends the bytes anyway.
-    if (requestUrl.includes('non-success-body')) {
+    if (responseMode === 'non-success-body') {
       response.writeHead(503, { 'content-type': 'text/html' });
-    } else if (requestUrl.includes('redirect')) {
+    } else if (responseMode === 'redirect' && requestUrl.startsWith('/api.php')) {
       response.writeHead(302, { location: 'https://en.doc.boardgamearena.com/Studio' });
     } else {
       response.writeHead(200, { 'content-type': 'text/html' });
@@ -696,6 +702,7 @@ describe('packaged operation deadlines', () => {
   });
 
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] closes a socket the deadline abandoned', async () => {
+    responseMode = 'stall';
     transcript = [];
     const root = await bigProject('stalled-body', 5);
 
@@ -703,7 +710,7 @@ describe('packaged operation deadlines', () => {
       root,
       ['--allow-network', '--operation-timeout-ms', '300'],
       async (client) => {
-        const timedOut = await callTool(client, 'search_bga_docs', { query: 'stall' }, 30_000);
+        const timedOut = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const network = await observeNetworkQuiescence(1);
         const setup = await callTool(client, 'check_setup', {}, 30_000);
         return { timedOut, network, setup };
@@ -722,6 +729,7 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] carries the deadline through a redirect without killing its caller', async () => {
+    responseMode = 'deadline-redirect';
     transcript = [];
     const root = await bigProject('stalled-redirect-target', 5);
 
@@ -729,12 +737,7 @@ describe('packaged operation deadlines', () => {
       root,
       ['--allow-network', '--operation-timeout-ms', '300'],
       async (client) => {
-        const timedOut = await callTool(
-          client,
-          'search_bga_docs',
-          { query: 'deadline-redirect' },
-          30_000,
-        );
+        const timedOut = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const network = await observeNetworkQuiescence(2);
         const setup = await callTool(client, 'check_setup', {}, 30_000);
         return { timedOut, network, setup };
@@ -760,12 +763,7 @@ describe('packaged operation deadlines', () => {
       server.cli,
       ['--project-root', root, '--allow-network', '--operation-timeout-ms', '300'],
       async (client) => {
-        const timedOut = await callTool(
-          client,
-          'search_bga_docs',
-          { query: 'meeple wobble' },
-          30_000,
-        );
+        const timedOut = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const settledAt = Date.now();
         const eventsBeforeShutdown = (await readFile(logPath, 'utf8'))
           .split('\n')
@@ -878,6 +876,7 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('reports a deadline and stays responsive afterwards', async () => {
+    responseMode = 'stall';
     transcript = [];
     const root = await bigProject('real-deadline', 2);
 
@@ -886,7 +885,7 @@ describe('packaged operation deadlines', () => {
       ['--allow-network', '--operation-timeout-ms', '30'],
       async (client) => {
         const started = Date.now();
-        const timedOut = await callTool(client, 'search_bga_docs', { query: 'stall' }, 30_000);
+        const timedOut = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const answered = Date.now() - started;
 
         // The stub never completes its response. The next call measures
@@ -1002,6 +1001,7 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] drops a body it will never read instead of draining it', async () => {
+    responseMode = 'redirect';
     transcript = [];
     const root = await bigProject('drop-body', 5);
 
@@ -1009,7 +1009,7 @@ describe('packaged operation deadlines', () => {
       root,
       ['--allow-network', '--operation-timeout-ms', '10000'],
       async (client) => {
-        const response = await callTool(client, 'search_bga_docs', { query: 'redirect' }, 30_000);
+        const response = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const network = await observeNetworkQuiescence(1);
         const setup = await callTool(client, 'check_setup', {}, 30_000);
         return { response, network, setup };
@@ -1032,6 +1032,7 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('[E2E-DOCS-RESPONSE-LIFECYCLE] destroys a non-success body before settling', async () => {
+    responseMode = 'non-success-body';
     transcript = [];
     const root = await bigProject('drop-non-success-body', 5);
 
@@ -1039,12 +1040,7 @@ describe('packaged operation deadlines', () => {
       root,
       ['--allow-network', '--operation-timeout-ms', '10000'],
       async (client) => {
-        const response = await callTool(
-          client,
-          'search_bga_docs',
-          { query: 'non-success-body' },
-          30_000,
-        );
+        const response = await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000);
         const network = await observeNetworkQuiescence(1);
         const setup = await callTool(client, 'check_setup', {}, 30_000);
         return { response, network, setup };
@@ -1063,13 +1059,14 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('exits cleanly after a deadline rather than staying alive on abandoned work', async () => {
+    responseMode = 'stall';
     transcript = [];
     const root = await bigProject('shutdown', 2);
 
     const { result, stderr } = await connect(
       root,
       ['--allow-network', '--operation-timeout-ms', '40'],
-      async (client) => await callTool(client, 'search_bga_docs', { query: 'stall' }, 30_000),
+      async (client) => await callTool(client, 'search_bga_docs', { query: LOOKUP_QUERY }, 30_000),
     );
 
     expect(result.isError).toBe(true);
