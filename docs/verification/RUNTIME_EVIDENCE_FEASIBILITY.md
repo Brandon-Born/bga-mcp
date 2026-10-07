@@ -63,8 +63,9 @@ inferred from the Git revision.
 The full PHP JUnit report contained scenario names, assertion counts, durations
 and filesystem paths, but no revision, producer version, start date or expected
 selection inventory. OTR contained native start/end times and PHP runtime version,
-and preserved skipped/incomplete distinctions; it still did not bind tested
-source/build or selection completeness. Free-form assertion meaning remains a
+and preserved skipped/incomplete distinctions; it also exposed host/user and
+operating-system metadata. It still did not bind tested source/build or selection
+completeness. Free-form assertion meaning remains a
 producer/test-author assertion. Hashes check byte identity, not authenticity or
 truth of a report's claims.
 
@@ -111,7 +112,8 @@ DTDs, external references and unsupported encodings/versions. Parsing must obey
 the shared tool deadline and cleanup budget. These are proposed constraints, not
 implemented security claims. Output should default to aggregate statuses and
 opaque case references, with paths, arbitrary names, assertion text, exception
-stacks, attachments, properties and raw stdout/stderr withheld. Existing redaction
+stacks, host/user and environment metadata, attachments, properties and raw
+stdout/stderr withheld. Existing redaction
 and final output limits still apply to every publication surface. Secret-pattern
 redaction alone cannot prove arbitrary report text safe.
 
