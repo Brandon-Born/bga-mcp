@@ -38,6 +38,19 @@ Before publication, verify the fix through the affected installed-package scenar
 
 Local inspection is confined to authorized roots, with budgets, refusal paths and redaction. No profile provides uploads, synchronization, remote mutations or telemetry. TB-STUDIO for mutation remains unreviewed; the separate reviewed TB-STUDIO-READ surface remains experimental and cannot retrieve browser-rendered logs. Documentation network permission is reviewed and guarded, not unrestricted access.
 
+Default server execution sends no telemetry and stores no analytics identifiers.
+The installed public command is tested across its complete local inventory with
+network and Node filesystem mutation observation, an isolated user profile,
+unchanged project/profile snapshots, and independent injected request and
+identifier-write controls. This observes the Node primitives used by the server;
+it is not an operating-system sandbox or a claim about package-manager traffic.
+
+Any future telemetry requires a separate backlog item, maintainer agreement,
+privacy and threat-model review, explicit opt-in, and installed-artifact tests
+proving absence before consent and after refusal. Documentation network opt-in
+cannot grant telemetry consent. A future review must name what is collected,
+its destination, retention and deletion, and how consent can be withdrawn.
+
 The repository [threat model](https://github.com/Brandon-Born/bga-mcp/blob/0c3c34d19434106a53d7b3210598e95db1094b74/docs/THREAT_MODEL.md) records controls, operator responsibilities and remaining risks at that reviewed revision. Current source work uses the checkout's threat model and executable backlog. This policy does not substitute for the exact-candidate release security review.
 
 ## Process sources
