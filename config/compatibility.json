@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
@@ -47,7 +47,9 @@
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
         "E2E-DATABASE-SCHEMA-COVERAGE",
         "E2E-DATABASE-SCHEMA-LEXICAL",
-        "E2E-DATABASE-SCHEMA-MODE"
+        "E2E-DATABASE-SCHEMA-MODE",
+        "E2E-NORMALIZED-PROJECT",
+        "INT-NORMALIZED-PROJECT"
       ],
       "capabilities": [
         {
@@ -62,7 +64,8 @@
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
             "E2E-DATABASE-SCHEMA-COVERAGE",
             "E2E-DATABASE-SCHEMA-LEXICAL",
-            "E2E-DATABASE-SCHEMA-MODE"
+            "E2E-DATABASE-SCHEMA-MODE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -76,7 +79,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-STATE-UNCONFIRMED-INITIAL",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -98,7 +102,8 @@
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
             "E2E-DATABASE-SCHEMA-COVERAGE",
             "E2E-DATABASE-SCHEMA-LEXICAL",
-            "E2E-DATABASE-SCHEMA-MODE"
+            "E2E-DATABASE-SCHEMA-MODE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -112,7 +117,8 @@
             "E2E-PROJECT-SOURCE-SCOPE",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-PROJECT-SOURCE-FILE-LIMIT"
+            "E2E-PROJECT-SOURCE-FILE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -125,7 +131,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-MODULES",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-PROJECT-SOURCE-FILE-LIMIT"
+            "E2E-PROJECT-SOURCE-FILE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -143,7 +150,8 @@
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -197,7 +205,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-STATE-UNCONFIRMED-INITIAL",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         }
       ]
@@ -207,7 +216,7 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown.",
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -229,7 +238,9 @@
         "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
         "E2E-DATABASE-INDEPENDENT-CHECKS",
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
-        "E2E-DATABASE-SCHEMA-COVERAGE"
+        "E2E-DATABASE-SCHEMA-COVERAGE",
+        "E2E-NORMALIZED-PROJECT",
+        "INT-NORMALIZED-PROJECT"
       ],
       "capabilities": [
         {
@@ -240,7 +251,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -249,7 +261,8 @@
             "E2E-INSPECT-PROJECT-LEGACY",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -262,7 +275,8 @@
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-DATABASE-INDEPENDENT-CHECKS",
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -271,7 +285,8 @@
             "E2E-VALIDATE-ACTIONS-CLEAN",
             "E2E-VALIDATE-ACTION-SCOPES",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -279,7 +294,8 @@
           "scenarios": [
             "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -289,7 +305,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -324,7 +341,8 @@
             "E2E-RESOURCE-LAYOUT-MATRIX",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         }
       ]
@@ -334,7 +352,7 @@
       "dimension": "layout",
       "value": "part-migrated",
       "support": "supported",
-      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown.",
       "fixtures": ["tests/fixtures/projects/hybrid"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -353,7 +371,9 @@
         "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
         "E2E-DATABASE-INDEPENDENT-CHECKS",
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
-        "E2E-DATABASE-SCHEMA-COVERAGE"
+        "E2E-DATABASE-SCHEMA-COVERAGE",
+        "E2E-NORMALIZED-PROJECT",
+        "INT-NORMALIZED-PROJECT"
       ],
       "capabilities": [
         {
@@ -362,7 +382,8 @@
             "E2E-AUDIT-DATABASE-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -371,7 +392,8 @@
             "E2E-INSPECT-PROJECT-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -383,7 +405,8 @@
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-DATABASE-INDEPENDENT-CHECKS",
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -391,7 +414,8 @@
           "scenarios": [
             "E2E-VALIDATE-ACTIONS-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -399,7 +423,8 @@
           "scenarios": [
             "E2E-VALIDATE-NOTIFICATIONS-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -408,7 +433,8 @@
             "E2E-VALIDATE-PROJECT-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-NORMALIZED-PROJECT"
           ]
         },
         {
@@ -442,7 +468,8 @@
             "E2E-RESOURCE-LAYOUT-MATRIX",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-RECEIPT",
-            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+            "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+            "E2E-NORMALIZED-PROJECT"
           ]
         }
       ]
@@ -459,7 +486,7 @@
       "dimension": "environment",
       "value": "local",
       "support": "supported",
-      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate. BGA-211 adds installed offline replay of minimal reviewed topic fragments, question-specific excerpt caching and refusal-aware scoring. This is development-profile relevance evidence, not complete historical replay, live source freshness, DNS/TLS or public documentation admission. BGA-316 completes the installed configuration-only setup matrix, synthetic provider privacy and refused-provider precedence, denied network, repeats, CLI preflight and public-profile exclusion. The development configuration report is exercised on both client eras; this does not admit modern official conformance, live Studio retrieval or the setup tool to the public profile.",
+      "notes": "Every public capability runs in the user's local stdio server. Explicitly enabled documentation and Studio reads may cross reviewed network boundaries, but no capability is remotely hosted. BGA-423 tests exact reviewed documentation page classification, final redirect provenance, request confinement and per-page retention through the explicitly enabled development server. Original synthetic documentation responses and installed mutation controls prove this subset; TLS, DNS, wiki routing aliases, live framework freshness and general documentation capability verification are separate. BGA-211 adds installed offline replay of minimal reviewed topic fragments, question-specific excerpt caching and refusal-aware scoring. This is development-profile relevance evidence, not complete historical replay, live source freshness, DNS/TLS or public documentation admission. BGA-316 completes the installed configuration-only setup matrix, synthetic provider privacy and refused-provider precedence, denied network, repeats, CLI preflight and public-profile exclusion. The development configuration report is exercised on both client eras; this does not admit modern official conformance, live Studio retrieval or the setup tool to the public profile. BGA-410 observes zero default telemetry/network and filesystem mutations through the installed public command; independent blocked network and identifier-write controls detect regressions. Test-only instrumentation does not establish behavior of native/non-Node effects.",
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-DOCS-ADVERTISED",
@@ -500,12 +527,20 @@
         "E2E-SETUP-PART-WAY",
         "E2E-SETUP-MATRIX-MUTATION",
         "E2E-SETUP-CLI-CONFIGURATION",
-        "E2E-SETUP-PUBLIC-EXCLUDED"
+        "E2E-SETUP-PUBLIC-EXCLUDED",
+        "E2E-TELEMETRY-ABSENT",
+        "E2E-TELEMETRY-NETWORK-CONTROL",
+        "E2E-TELEMETRY-WRITE-CONTROL"
       ],
       "capabilities": [
         {
           "reference": "tool:audit_database_usage",
-          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+          "scenarios": [
+            "E2E-AUDIT-DATABASE-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:check_setup",
@@ -520,7 +555,13 @@
         },
         {
           "reference": "tool:inspect_project",
-          "scenarios": ["E2E-INSPECT-PROJECT-LEGACY", "E2E-LEGACY-CLIENT-ROOTS"]
+          "scenarios": [
+            "E2E-INSPECT-PROJECT-LEGACY",
+            "E2E-LEGACY-CLIENT-ROOTS",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:read_studio_logs",
@@ -528,7 +569,12 @@
         },
         {
           "reference": "tool:run_pre_release_audit",
-          "scenarios": ["E2E-PRE-RELEASE-CLEAN"]
+          "scenarios": [
+            "E2E-PRE-RELEASE-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:search_bga_docs",
@@ -557,19 +603,39 @@
         },
         {
           "reference": "tool:validate_action_contracts",
-          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-ACTIONS-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:validate_notifications",
-          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:validate_project",
-          "scenarios": ["E2E-VALIDATE-PROJECT-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-PROJECT-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "tool:validate_state_machine",
-          "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-STATES-CLEAN",
+            "E2E-TELEMETRY-ABSENT",
+            "E2E-TELEMETRY-NETWORK-CONTROL",
+            "E2E-TELEMETRY-WRITE-CONTROL"
+          ]
         },
         {
           "reference": "resource:bga://docs/{topic}",
@@ -613,7 +679,7 @@
         },
         {
           "reference": "resource:bga://project/summary",
-          "scenarios": ["E2E-RESOURCE-SUMMARY"]
+          "scenarios": ["E2E-RESOURCE-SUMMARY", "E2E-TELEMETRY-ABSENT"]
         }
       ]
     },

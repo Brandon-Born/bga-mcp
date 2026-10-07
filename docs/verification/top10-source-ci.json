@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    "BGA-101",
+    "BGA-207",
+    "BGA-204",
+    "BGA-316",
+    "BGA-324",
+    "BGA-326",
+    "BGA-328",
+    "BGA-410",
+    "BGA-425"
+  ],
+  "baseMain": "0718bf7d2a8d6fe6e318b6f65a0d1b4a76bd4fa0",
+  "status": "Integrated implementation awaits full local gates, exact-source CI and framework admission. This placeholder is not verification evidence.",
+  "blockedTenth": {
+    "item": "BGA-202",
+    "input": "Original August 8 or August 13 wiki/API response bundle needed for exact historical replay; current-capture A/B is not equivalent."
+  },
+  "limits": [
+    "No merge or release",
+    "No new public development capability admission",
+    "No Studio access expansion or game publication",
+    "BGA-425 defers a report reader; no new runtime capability"
+  ]
+}

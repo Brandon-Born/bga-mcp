@@ -116,7 +116,9 @@
         "src/tools/validate-state-machine.ts",
         "docs/verification/DOCUMENTATION_RELEVANCE.md",
         "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md",
-        "docs/verification/DATABASE_CHECK_COVERAGE.md"
+        "docs/verification/DATABASE_CHECK_COVERAGE.md",
+        "docs/verification/NORMALIZED_PROJECT_MODEL.md",
+        "docs/verification/REMAINING_OPERATION_DEADLINES.md"
       ]
     },
     {
@@ -254,7 +256,17 @@
         "tests/unit/source-selection.test.ts",
         "tests/unit/database-check-coverage.test.ts",
         "tests/e2e/database-independent-checks.test.ts",
-        "tests/unit/database-schema-coverage.test.ts"
+        "tests/unit/database-schema-coverage.test.ts",
+        "tests/e2e/doc-request-trace.ts",
+        "tests/e2e/docs-boundary.test.ts",
+        "tests/e2e/operation-deadline-matrix.test.ts",
+        "tests/e2e/session-owner-stub.ts",
+        "tests/e2e/session-owner.test.ts",
+        "tests/e2e/studio-parser-deadline.test.ts",
+        "tests/unit/policy-operation-context.test.ts",
+        "tests/e2e/telemetry-absence.test.ts",
+        "tests/e2e/telemetry-write-denied.ts",
+        "tests/integration/normalized-project.test.ts"
       ]
     },
     {
@@ -279,7 +291,8 @@
         "tests/e2e/validate-project.test.ts",
         "tests/e2e/validate-state-machine.test.ts",
         "tests/e2e/formatted-insert.test.ts",
-        "tests/e2e/database-schema-coverage.test.ts"
+        "tests/e2e/database-schema-coverage.test.ts",
+        "tests/e2e/normalized-project.test.ts"
       ]
     },
     {
@@ -531,7 +544,9 @@
         "tests/unit/doc-fetch-guards.test.ts",
         "tests/unit/framework-versions.test.ts",
         "tests/unit/version-policy.test.ts",
-        "docs/verification/bga441-source-ci.json"
+        "docs/verification/bga441-source-ci.json",
+        "docs/verification/RUNTIME_EVIDENCE_FEASIBILITY.md",
+        "docs/verification/top10-source-ci.json"
       ]
     }
   ],

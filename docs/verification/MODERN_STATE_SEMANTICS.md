@@ -5,7 +5,7 @@ Recorded: 2026-08-08. Covers BGA-124, the correctness owner for the state-machin
 This record describes a run, so it states which one. `pnpm verify:evidence` compares every number below with the artifact that run produced, and fails when they disagree — a record that stops being true has to be updated or marked historical, not left to drift.
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":247,"claims":103,"tests":879}
+{"kind":"run","capabilities":17,"scenarios":262,"claims":106,"tests":936}
 ```
 
 The review installed the packed artifact, pointed it at a project written to the state-class documentation, and got confident nonsense back. This record states what was wrong, what the documentation actually says, what changed, and what is proven by which test.
