@@ -9,7 +9,7 @@ calling the earlier project-filesystem slice complete. A private operation
 context supplies each call's own signal to packaged-configuration reads without
 changing exported method signatures or generated declarations. A cancelled lazy
 catalog read cannot populate the cache. Concurrent and nested calls retain
-separate signals. Synchronous callback failures receive the same timer cleanup.
+separate signals. Synchronous callback failures receive the same timer cleanup. Caller-defined nested library timeout controllers remain independent; an outer abort does not implicitly abort an inner controller. No production MCP nested timeout path is claimed or exercised by these witnesses.
 
 Configured-root resolution and initial session registration share a bounded
 startup operation. Standalone package-configuration reads also have a bounded
