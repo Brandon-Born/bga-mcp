@@ -671,11 +671,11 @@
         },
         {
           "reference": "resource:bga://project/diagnostics",
-          "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+          "scenarios": ["E2E-RESOURCE-DIAGNOSTICS", "E2E-TELEMETRY-ABSENT"]
         },
         {
           "reference": "resource:bga://project/states",
-          "scenarios": ["E2E-RESOURCE-STATES"]
+          "scenarios": ["E2E-RESOURCE-STATES", "E2E-TELEMETRY-ABSENT"]
         },
         {
           "reference": "resource:bga://project/summary",
