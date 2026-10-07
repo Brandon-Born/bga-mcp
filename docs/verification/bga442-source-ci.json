@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-442",
+  "baseMain": "0718bf7d2a8d6fe6e318b6f65a0d1b4a76bd4fa0",
+  "status": "Implementation validation in progress; no exact-source CI or admission claimed yet",
+  "scope": "Invariant literal INSERT prefix names only; VALUES, suffixes and escaping remain unsupported"
+}

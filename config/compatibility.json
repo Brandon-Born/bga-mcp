@@ -8,7 +8,7 @@
       "dimension": "layout",
       "value": "modern-modules",
       "support": "supported",
-      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "Reopened by the 2026-08-08 audit and restored by BGA-124 through BGA-128. The 2026-08-23 release audit then found fabricated empty cross-file shapes, flattened state action scope, and contradictory official action examples; BGA-417 through BGA-419 now preserve those cases as known, scoped, or explicitly unsupported through the installed public command. The layout is inside the compatibility contract; capability stability remains a separate evidence question. BGA-426 through BGA-428 add JSONC component inventory, documented editor-helper exclusion, and bounded same-state action return delegation. Computed delegates, cycles and unresolved targets remain unsupported. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-432 preserves the unconfirmed class-only default entry point as located unsupported syntax; explicit setup returns and independent legacy/hybrid entries remain readable. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts.",
       "fixtures": [
         "tests/fixtures/projects/modern",
         "tests/fixtures/projects/modern-state-classes",
@@ -47,7 +47,8 @@
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
         "E2E-DATABASE-SCHEMA-COVERAGE",
         "E2E-DATABASE-SCHEMA-LEXICAL",
-        "E2E-DATABASE-SCHEMA-MODE"
+        "E2E-DATABASE-SCHEMA-MODE",
+        "E2E-DATABASE-INSERT-PREFIX"
       ],
       "capabilities": [
         {
@@ -62,7 +63,8 @@
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
             "E2E-DATABASE-SCHEMA-COVERAGE",
             "E2E-DATABASE-SCHEMA-LEXICAL",
-            "E2E-DATABASE-SCHEMA-MODE"
+            "E2E-DATABASE-SCHEMA-MODE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -98,7 +100,8 @@
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
             "E2E-DATABASE-SCHEMA-COVERAGE",
             "E2E-DATABASE-SCHEMA-LEXICAL",
-            "E2E-DATABASE-SCHEMA-MODE"
+            "E2E-DATABASE-SCHEMA-MODE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -143,7 +146,8 @@
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -172,7 +176,8 @@
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-PROJECT-SOURCE-FILE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -207,7 +212,7 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts.",
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -229,7 +234,8 @@
         "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
         "E2E-DATABASE-INDEPENDENT-CHECKS",
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
-        "E2E-DATABASE-SCHEMA-COVERAGE"
+        "E2E-DATABASE-SCHEMA-COVERAGE",
+        "E2E-DATABASE-INSERT-PREFIX"
       ],
       "capabilities": [
         {
@@ -240,7 +246,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -262,7 +269,8 @@
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-DATABASE-INDEPENDENT-CHECKS",
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -289,7 +297,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -307,7 +316,8 @@
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-DATABASE-FORMATTED-INSERT",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -334,7 +344,7 @@
       "dimension": "layout",
       "value": "part-migrated",
       "support": "supported",
-      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries.",
+      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts.",
       "fixtures": ["tests/fixtures/projects/hybrid"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -353,7 +363,8 @@
         "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
         "E2E-DATABASE-INDEPENDENT-CHECKS",
         "E2E-DATABASE-INDEPENDENT-REFUSAL",
-        "E2E-DATABASE-SCHEMA-COVERAGE"
+        "E2E-DATABASE-SCHEMA-COVERAGE",
+        "E2E-DATABASE-INSERT-PREFIX"
       ],
       "capabilities": [
         {
@@ -362,7 +373,8 @@
             "E2E-AUDIT-DATABASE-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -383,7 +395,8 @@
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
             "E2E-DATABASE-INDEPENDENT-CHECKS",
             "E2E-DATABASE-INDEPENDENT-REFUSAL",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -408,7 +421,8 @@
             "E2E-VALIDATE-PROJECT-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {
@@ -425,7 +439,8 @@
             "E2E-RESOURCE-LAYOUT-MATRIX",
             "E2E-PROJECT-SOURCE-SELECTION",
             "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-            "E2E-DATABASE-SCHEMA-COVERAGE"
+            "E2E-DATABASE-SCHEMA-COVERAGE",
+            "E2E-DATABASE-INSERT-PREFIX"
           ]
         },
         {

@@ -72,6 +72,8 @@ A layout being inside the compatibility contract is not the same as every capabi
 
 BGA-432 keeps the state-class-only default initial state unsupported because the official page still marks it unconfirmed. A missing explicit setup return does not become a state-2 edge, a missing-entry defect or a reachability conclusion. The inventory and independent state checks remain readable. `E2E-STATE-UNCONFIRMED-INITIAL` uses original generated-template variants to prove this through inspection, state validation, aggregate, state resource and pre-release, and retains explicit setup returns, legacy state 1 and the independently documented hybrid default. [Source review](verification/FRAMEWORK_CHANGE_PROCESS.md#live-source-baseline--2026-10-02-utc).
 
+BGA-442 reads a literal INSERT target concatenated with one simple variable or complete ordinary function call. It reports the table and explicit columns while generated VALUES, possible SQL suffixes and escaping remain unsupported. Top-level operators, chained concatenations, dynamic identifiers, escaped/interpolated heads and other SQL forms are refused. A concatenated expression cannot fall through as a complete quoted SQL literal. Original installed controls cover modern, legacy and hybrid roots; no PHP or SQL runs.
+
 ## File generations
 
 | Claim                | Generation       | Support   | Fixture                        |

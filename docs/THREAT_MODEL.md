@@ -334,3 +334,7 @@ scenarios cover layout retention, repeat/immutability, unconsumed oversized bodi
 filename canaries and small-output refusal; existing policy/cancellation gates
 remain required. Other inventoried paths may include private filenames, subject
 to the same output redaction and operator responsibilities as prior path findings.
+
+## Concatenated INSERT naming review — 2026-10-07
+
+BGA-442 stays within reviewed TB-LOCAL-FILESYSTEM and TB-OUTPUT. Pure textual reading derives only invariant names from one literal prefix and retains no opaque tail or argument values. It adds no filesystem/network/process effect, execution, dependency, public shape or mutation. Every partial target carries unknown VALUES/suffix/escaping coverage; outer operators cannot manufacture complete-query findings. Installed refusal, privacy, confinement, repeat, process cleanup and source-immutability controls accompany the existing budget and cancellation gates. Literal-token checking also prevents rejected quoted concatenations from being interpreted as whole SQL.
