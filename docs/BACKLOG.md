@@ -44,9 +44,9 @@ An implementation item is not done until:
 6. Capability-manifest coverage, secret scanning, and artifact-redaction gates pass.
 7. Documentation, compatibility data, and machine-readable verification evidence are updated.
 
-## Current state and next work — reconciled 2026-10-03
+## Current state and next work — reconciled 2026-10-07
 
-The first signed local-only prerelease, [v1.0.0-rc.6](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.6), is public with seven tools, three project resources, stdio and protocol `2025-11-25`. Reporting (BGA-406), final candidate security review (BGA-405) and original signed GitHub publication/independent install/removal/receipt retention (BGA-415) are verified. npm publication, documentation/setup surfaces, Studio and game publication are outside that completed scope.
+The current signed local-only GitHub prerelease, [v1.0.0-rc.7](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.7), is public with seven tools, three project resources, stdio and protocol `2025-11-25`. Its original source is `8bd773d2` and archive digest is `sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de`. Main `0718bf7` additionally includes BGA-441, outside the signed rc.7 bytes. BGA-442 is separately finished in [draft PR29](https://github.com/Brandon-Born/bga-mcp/pull/29), unmerged and unreleased. Reporting (BGA-406), final candidate security review (BGA-405) and original signed GitHub publication/independent install/removal/receipt retention (BGA-415) are verified. npm publication, documentation/setup surfaces, Studio and game publication are outside that completed scope.
 
 Item-level **Reconciled** notes below supersede older pending/reopened/current-sounding observations without deleting their evidence. A verified bounded correction or public subset does not automatically verify a broader cross-surface parent. [Retained release-closure CI](verification/github-download-decision.json) belongs to source `4e592a1`, not this documentation edit; BGA-433 retains its original source/admission record. Runtime claims, official-source decisions and the original signed package are unchanged.
 
@@ -1951,7 +1951,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-434 — Read invariant formatted INSERT targets without guessing dynamic SQL
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-127, BGA-113, BGA-420, BGA-429
 - **Observed need:** Dino Racer revision `83e2e50` passes a literal `INSERT INTO player (player_id, player_color, player_name) VALUES %s` to `sprintf` inside `DbQuery`. The existing reader drops every reference from that computed argument and reports database auditing unavailable despite its readable target. This is an MCP improvement; the game source remains unchanged.
@@ -1961,10 +1961,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Local integration, 2026-10-03:** The old-parser control fails four of the 45 focused checks, including the installed scenario; the changed reader passes all 45. On unchanged Dino Racer `83e2e50`, both whole-root and prior digest-matching 18-file production selection expose the player table and three setup columns. Database auditing unavailable disappears, but VALUES remain unsupported: production pre-release changes 26 passed / 1 failed / 6 unsupported / 8 manual to 26 / 0 / 7 / 8; whole-root changes 0 / 1 / 32 / 8 to 0 / 0 / 33 / 8. All seven tools and three resources, repeat stability, empty stderr, process exit and tracked-source immutability are observed through separately identified local artifacts. Game-owned PHP checks pass 39 tests / 105 assertions and two client tests on an isolated unchanged snapshot. This is local evidence, not exact-source CI, framework re-admission, a new signed candidate or Studio gameplay.
 - **Integrated local gate, 2026-10-03:** `corepack pnpm check` passes 794 tests / 235 required scenarios, formatting, lint, types, compatibility/framework gates, package, applicable conformance, safety, sealed evidence and acceptance-map checks. The exact installed artifact is `sha256:8eaf0dce7d46e8469b72192e5f269b18bc47fa913aeec63599c709ae4565c994`, also used by the real-project rerun. Evidence records dirty implementation based on `85ce86c`; it is not clean-source CI. Earlier compatibility mapping and framework-test failures were corrected, not treated as passing. Exact-source platform CI and semantic framework re-admission remain pending; the actual release guard still refuses stale reviews.
 - **Sources (fetched 2026-10-03):** Start at [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), then [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php): “This is the generic method to access the database.” [PHP sprintf](https://www.php.net/manual/en/function.sprintf.php): ordinary characters “are copied directly to the result”. [MySQL INSERT](https://dev.mysql.com/doc/refman/8.0/en/insert.html) places the table and explicit column list before VALUES. These facts justify reading the literal prefix, not inferring what `%s` supplies or that a namespace-local override is absent. This is bounded syntactic evidence at an apparent formatter/helper call, not execution proof.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37133723621) supersedes historical pending wording. Postmerge proof belongs to e9a964e, separately from the rebased original implementation; generated VALUES/suffix/escaping stay unsupported.
 
 ### BGA-435 — Explain pre-release checks blocked by validator coverage
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-111, BGA-112, BGA-113, BGA-434
 - **Deliverable:** Existing pre-release `reason` fields identify actual validator-group unsupported findings, source positions, explanations and suggestions. The text summary groups repeated reasons and names affected checks without asserting that each check has its own proven defect.
@@ -1973,10 +1974,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Unit controls cover attribution, truncation, partial/failing groups, bounds, stable repetition, unchanged outcomes, summary grouping and final-boundary redaction. The installed public scenario `E2E-PRE-RELEASE-COVERAGE-REASONS` covers modern, legacy and hybrid roots, actual SQL/source-scope causes, privacy, output refusal, repeats and immutability. Before/after inspection of the same Dino Racer roots must show richer explanations with unchanged verdicts. Full local gate, exact-source CI and actual framework admission remain required.
 - **Scope:** This is diagnostic explanation of existing readers, not new BGA grammar, per-rule dependency analysis, execution, source exclusion, dynamic SQL validation, game testing or publication approval. Historical source interpretations remain governed by their existing official decisions.
 - **Local implementation evidence, 2026-10-03:** The final original-behavior control fails eight of 23 focused assertions; the changed implementation passes those controls and the retained package-contract scenario. The full integrated gate passes 803 tests / 236 required scenarios, coverage, package, applicable conformance, safety, sealed evidence and acceptance-map checks. An initial optional helper parameter was rejected by declaration-contract comparison and removed; exported declarations and wire schemas remain unchanged. Installed artifact `sha256:cd04f3f54f1013400325e2c4d67960f34f9ca7938fb284a9c9c6c9052b8bdb35` matches the full gate and the real-project rerun. On unchanged Dino Racer `83e2e50`, every check outcome and all seven tool results retain their prior verdicts: whole root 0 passed / 0 failed / 33 unsupported / 8 manual, selected 18-file production root 26 / 0 / 7 / 8. All unsupported reasons now identify actual group blockers. The seven production database checks share the readable formatted INSERT/unknown VALUES explanation and source URI, shown once in text. Source selections match original file digests; resource reads, repeat stability, process exit, empty stderr and source immutability pass. This records a local development build based on `e9a964e`, not clean-source CI, new framework admission, measured effort savings or Studio/game correctness. Exact-source CI and actual admission remain separate handoff requirements.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37154970370) supersedes historical pending wording. Postmerge proof belongs to b220c118; reasons explain owning-group blockers without a new per-check causal model.
 
 ### BGA-436 — Retain eligible sources omitted by contract-read limits
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-113, BGA-429, BGA-435
 - **Observed need, 2026-10-03:** Dino Racer's mixed root and separately identified 18-file production root still require explicit source-set preparation. Inspecting that workflow exposed a silent limit in the shared loader: an oversized eligible module stops all later contract reads without a coverage finding. An installed original-fixture control on the unchanged merged-main implementation reports 30 passed / 3 failed-unavailable / 0 unsupported / 8 manual despite omitted game sources. This is a controlled MCP defect, not evidence that the unchanged Dino Racer project exceeds the limit.
@@ -1986,10 +1988,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Local implementation evidence, 2026-10-03:** Final focused controls pass 61 assertions; reverting only the six runtime edits makes ten of the thirteen new controls fail. The integrated local gate passes 816 tests / 238 required scenarios across 107 test files, with package, unchanged public declarations and wire contracts, applicable conformance baseline, safety, sealed evidence and acceptance-map gates passing. Coverage: lines 91.71%, statements 91.61%, functions 92.39%, branches 81.95%. Installed development archive `sha256:38d8cc2894c313f53e12c9838404d81394bdb0fdf7f49ce7bc5741c4bff56b09` matches that gate. Against unchanged Dino Racer `83e2e50`, all seven complete tool responses and three resource responses exactly match the clean merged-main archive on both scopes: whole checkout 0 passed / 0 failed / 33 unsupported / 8 manual; identical explicitly selected 18-file production root 26 / 0 / 7 / 8. Selected-file digests, repeated audits, process exits, empty stderr and source immutability pass. Dino does not exceed these limits; regression fixtures establish the corrected behavior. This is local dirty-source development evidence based on `b220c118`, not clean-source CI or framework admission. The 2025-11-25 official harness passes its reviewed expected-failure baseline; the HTTP suite for 2026-07-28 is not applicable to this stdio server. Structural/listing limits, live Studio, game testing and publication remain separate.
 - **Version / scope:** Behavior correction inside existing diagnostic fields; no tool, schema, CLI option, export, exclusion configuration, network permission or project write. The structural model's separate supporting-read limits and native filesystem/listing completeness remain separate work. No per-rule causal model, source-selection feature, new BGA grammar, game correctness or effort saving is claimed.
 - **Sources (fetched 2026-10-03):** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) describes modules as additional game code and says, “If you need them use modules/ directory.” [Migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) identifies IDE support and retains per-file migration. These preserve the existing eligibility decision; read budgets are MCP limits, not a BGA restriction.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37160963120) supersedes historical pending wording. Postmerge proof belongs to ad4975cb; read omissions remain explicit, with structural/native coverage limits separate.
 
 ### BGA-437 — Explain automatic game-source selection on complete repositories
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-429, BGA-433, BGA-436
 - **Observed need:** Unchanged Dino Racer `83e2e50` gives useful runtime traces from its full repository, but the agent must manually assemble an 18-file export to identify the intended inputs and distinguish 23 unknown-scope sources. The existing source eligibility decision is hidden in a diagnostic location list; component and layout lists are display-capped and cannot be used as a complete selection.
@@ -1999,6 +2002,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** Six unit controls and installed `E2E-PROJECT-SOURCE-RECEIPT` / `E2E-PROJECT-SOURCE-RECEIPT-LIMITS` cover complete partition, legacy/hybrid/module retention, unknown scope, ignored runtime modules, eligibility versus omitted bodies, inspection/summary equality, repeat stability, privacy, output refusal and immutability. Retain original-behavior negative control, unchanged-Dino installed public before/after proof, full integrated gate, exact-source platform CI and actual framework admission. This is source identification, not a caller exclusion switch, execution graph, nested game-root discovery, content hash service, SQL grammar or measured effort saving.
 - **Evidence:** [Bounded implementation record](verification/bga437-source-ci.json) retains actual local, artifact, exact-source CI and admission identities as collected; an evidence-only tip does not acquire older exact-HEAD proof.
 - **Sources (fetched 2026-10-04 UTC):** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) says, “If you need them use modules/ directory.” Its main/server/client links were fetched; additional sources outside the documented locations are not published in production, while Studio execution remains unknown. [Migration guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) says, “Then you can safely delete the gameoptions.inc.php file.” Keep older forms until independent replacement; its IDE section identifies the root helper and framework declarations.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37169718533) supersedes historical pending wording. The first Windows timing-oracle failure and unchanged-source retry remain recorded; candidate classification does not prove an execution graph.
 
 ### BGA-438 — Evaluate remaining setup database coverage after source identification
 
@@ -2012,7 +2016,7 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-439 — Preserve independently established database checks beside unknown SQL
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-434, BGA-435; originates in BGA-438's evaluation
 - **Observed need:** Dino Racer's unchanged setup INSERT provides an invariant target, but its runtime-built VALUES hold all seven database checks. `dbmodel.sql` was successfully read and contains only blank lines and ordinary `--` comments. Availability and absence of schema declarations are independent of the unresolved query tail.
@@ -2022,10 +2026,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Version / boundary review:** A behavior correction in the retained check/reason shape, not a new SQL grammar or public capability. The private evidence never reaches group schemas or diagnostics publication. TB-LOCAL-FILESYSTEM/TB-OUTPUT policies and reads are unchanged. Availability means a readable reference exists, not that every statement, formatter, value or execution is understood.
 - **Evidence:** [Bounded database-check record](verification/bga439-source-ci.json) retains actual source/artifact/CI/admission identities; later metadata never relabels implementation CI as its own exact HEAD.
 - **Sources (fetched 2026-10-04):** Start at [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), then [Database model](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql): “all CREATE/ALTER tables and views should be in dbmodel.sql”. [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) calls DbQuery “the generic method to access the database.” [MySQL comments](https://dev.mysql.com/doc/refman/8.0/en/comments.html) requires the second dash to be “followed by at least one whitespace or control character”; executable block comments contain parsed SQL, so the absence witness refuses every block-comment spelling. Arbitrary runtime VALUES remain undocumented and unsupported.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37174171270) supersedes historical pending wording. Availability and wholly inert-schema absence are bounded witnesses; query-dependent uncertainty remains.
 
 ### BGA-440 — Release the verified full-repository inspection improvements as rc.7
 
-- **Status:** in-progress
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-434, BGA-435, BGA-436, BGA-437, BGA-439; existing BGA-403/404/405/407/415 release owners
 - **Authorization:** The user directed the next meaningful release on 2026-10-04. Integrate PR #23, prepare rc.7, validate and sign one original candidate, refresh candidate-specific installed-client/usefulness/security evidence, then publish signed GitHub downloads and independently verify the public original. npm, Studio and game publication remain outside this scope.
@@ -2036,10 +2041,11 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Signed evaluation, 2026-10-04:** Signing run `37234780729` at `c642ed05df566964b10a27a2009a7427e41ed6bd` passed all three stages on the original candidate; independently verified signature and cryptographic refusal controls preserve all seven original files byte-for-byte. Original install/native-client lifecycle and all 23 frozen-task MCP calls passed with independent JavaScript-prototype/PHP-lexer oracles and the comment-method regression probe. Frozen game-owned negative/positive checks and unchanged-current-Dino inspection are retained separately. Generated SQL and unknown full-repository scope remain unsupported; no gameplay, GUI or productivity claim is added. Integrated evaluation/security and publication admission remain pending.
 - **Staged assessment control:** The rc.7 structural-assessment gate reads the actual new retained assessment while publication remains selected to historical rc.6 receipts until new public evidence exists. Its negative control requires the historical publication approval to fail against the new candidate; runtime approval/preflight gates are unchanged. The initial integrated failure is retained, and the corrected full gate remains required.
 - **Sources:** Existing BGA-434 through BGA-439 official-source decisions and passing original controls govern the unchanged readers. BGA-403/404/405/407/415 govern original-candidate production, signing, security and GitHub download verification; no new BGA grammar or boundary is introduced.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37238650432) supersedes historical pending wording. Original signed GitHub rc.7 was published and independently consumed without rebuilding source8bd773d2 or archive e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de. Later corrections are absent from those original bytes.
 
 ### BGA-441 — Preserve partial database schema coverage
 
-- **Status:** implemented
+- **Status:** verified
 - **Priority:** P1
 - **Depends on:** BGA-438, BGA-439
 - **Observed need:** The schema reader searched globally for CREATE declarations while silently skipping ALTER, views and lexical regions. A query using an ALTER-added column or a declared view could receive a false absence finding. Quoted defaults could manufacture declarations. A readable target is not a complete schema inventory.
@@ -2080,3 +2086,4 @@ The following are not implementation backlog items unless a future documented de
 - Hosting or redistributing publisher artwork.
 - Scraping private projects or bypassing BGA access controls.
 - Depending on undocumented Studio endpoints for core functionality.
+- **Reconciled, 2026-10-07:** The bounded outcome above has completed its required gates; [retained CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/37689541863) supersedes historical pending wording. Exact postmerge source0718bf7 passed all six jobs879tests247scenarios; the original source receipt's draft/merged:false delivery fields are historical. Partial schema/ANSI_QUOTES exclusions remain conservative.
