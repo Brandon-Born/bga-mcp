@@ -98,7 +98,13 @@ function assertOrder(text: string, target: string, atSettlement?: string): void 
   }
 }
 
-async function probe(target: string, completionMs: number, era = '2025-11-25', startup = false) {
+async function probe(
+  target: string,
+  completionMs: number,
+  era = '2025-11-25',
+  startup = false,
+  recoveryMs = 0,
+) {
   const log = resolve(server.temporaryRoot, 'remaining-matrix.log');
   const network = resolve(server.temporaryRoot, 'remaining-network.log');
   await writeFile(log, '');
@@ -114,6 +120,7 @@ async function probe(target: string, completionMs: number, era = '2025-11-25', s
     BGA_MCP_FS_MATRIX_COMPLETION_MS: String(completionMs),
     BGA_MCP_FS_MATRIX_TRANSCRIPT: log,
     BGA_MCP_FS_MATRIX_STARTUP: startup ? '1' : '0',
+    BGA_MCP_FS_MATRIX_RECOVERY_MS: String(recoveryMs),
     BGA_MCP_NETWORK_LOG: network,
     BGA_STUDIO_SESSION: '',
   };
@@ -201,11 +208,37 @@ async function probe(target: string, completionMs: number, era = '2025-11-25', s
       ).toHaveLength(2);
       expect(await readFile(network, 'utf8')).not.toBe('');
     }
-    // Recovery exercises root adoption without making a second full-project
-    // inspection compete with this deliberately tiny, unchanged request budget.
-    const recovery = await callTool(connection.client, 'check_setup', {}, 20_000);
-    expect(recovery.isError, recovery.text).toBe(false);
+    // Discovery proves that this same transport remains responsive without
+    // assuming an independent native file read always finishes within 100 ms.
+    const beforeDiscovery = await readFile(log, 'utf8');
+    const discovery = await connection.client.listTools();
+    expect(discovery.tools.map((tool) => tool.name)).toContain('check_setup');
+    expect(discovery.tools.map((tool) => tool.name)).toContain('inspect_project');
+    expect(await readFile(log, 'utf8')).toBe(beforeDiscovery);
+    if (recoveryMs > 0) {
+      const slow = await callTool(connection.client, 'check_setup', {}, 20_000);
+      expect(slow.isError).toBe(true);
+      expect(slow.text).toContain('policy.timeout.exceeded');
+      expect(slow.text).toContain('"operation":"check_setup"');
+      expect(slow.text).toContain('"timeoutMs":100');
+      expect(slow.text).not.toContain(CANARY);
+      expect(slow.text).not.toContain(session);
+      const released = await observe(log, target);
+      expect(complete(events(released), target), released).toBe(true);
+      expect(events(released)).toContainEqual(
+        expect.objectContaining({ event: 'recovery:issued', operation: 'readSessionFile:read' }),
+      );
+      expect((await connection.client.listTools()).tools.map((tool) => tool.name)).toContain(
+        'check_setup',
+      );
+      expect(await readFile(log, 'utf8')).toBe(released);
+      expect(await readFile(network, 'utf8')).toBe('');
+    }
     if (roots) {
+      // Root recovery is an additional state-specific witness: actual adoption
+      // must be retried, rather than reporting success from expired cached state.
+      const recovery = await callTool(connection.client, 'check_setup', {}, 20_000);
+      expect(recovery.isError, recovery.text).toBe(false);
       expect(recovery.structured?.findings).toContainEqual({
         code: 'project.roots.available',
         status: 'ok',
@@ -267,6 +300,13 @@ for (const era of ['2025-11-25', '2026-07-28']) {
       await probe('ensureClientRoots:realpath', completion, era);
     });
 }
+it('[E2E-STUDIO-READ-CANCELLATION] remains discoverable when an independent provider read exceeds the unchanged request deadline', async () => {
+  if (process.platform === 'win32') {
+    await probe('readPackagedConfig:readFile', 150);
+    return;
+  }
+  await probe('readSessionFile:close', 600, '2025-11-25', false, 150);
+});
 for (const completion of [150, 600])
   it(`[E2E-POLICY-CANCELLATION] quiesces lazy package configuration with ${String(completion)} ms issued completion`, async () => {
     await probe('readPackagedConfig:readFile', completion);

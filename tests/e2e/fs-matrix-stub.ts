@@ -7,6 +7,7 @@ const target = process.env.BGA_MCP_FS_MATRIX_TARGET;
 const occurrence = Number(process.env.BGA_MCP_FS_MATRIX_OCCURRENCE ?? '1');
 const completionMs = Number(process.env.BGA_MCP_FS_MATRIX_COMPLETION_MS);
 const cleanupMs = Number(process.env.BGA_MCP_FS_MATRIX_CLEANUP_MS ?? '0');
+const recoveryMs = Number(process.env.BGA_MCP_FS_MATRIX_RECOVERY_MS ?? '0');
 const path = process.env.BGA_MCP_FS_MATRIX_TRANSCRIPT;
 const startup = process.env.BGA_MCP_FS_MATRIX_STARTUP === '1';
 if (
@@ -17,7 +18,9 @@ if (
   !Number.isInteger(completionMs) ||
   completionMs < 1 ||
   !Number.isInteger(cleanupMs) ||
-  cleanupMs < 0
+  cleanupMs < 0 ||
+  !Number.isInteger(recoveryMs) ||
+  recoveryMs < 0
 )
   throw new Error('Invalid filesystem matrix probe configuration');
 const transcript = path;
@@ -31,6 +34,7 @@ let count = 0;
 let sequence = 0;
 let files = 0;
 let directories = 0;
+let recoveryHeld = false;
 
 function record(event: string, operation?: string): void {
   appendFileSync(
@@ -83,12 +87,17 @@ async function observe<T>(kind: string, issue: () => Promise<T>, cleanup = false
     record('setup:end', operation);
     hold = completionMs;
   } else if (expired && cleanup) hold = cleanupMs;
+  else if (published && !recoveryHeld && recoveryMs > 0 && operation === 'readSessionFile:read') {
+    recoveryHeld = true;
+    hold = recoveryMs;
+  }
   record(cleanup ? 'cleanup:start' : 'work:start', operation);
   // Issue the actual primitive before queued expiry and attach both handlers.
   const pending = issue().then(
     (value) => ({ value }),
     (error: unknown) => ({ error }),
   );
+  if (recoveryHeld && hold === recoveryMs) record('recovery:issued', operation);
   if (hold === completionMs && !expired) {
     record('selected:issued', operation);
     queueMicrotask(() => {

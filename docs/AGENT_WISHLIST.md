@@ -487,3 +487,5 @@ BGA-438's next bounded step should compare these invariant-prefix forms and the
 availability verdict before designing original positive/negative controls.
 Runtime-built tuple values and escaping remain unknown; no concatenation or
 dynamic SQL support is claimed by BGA-441.
+
+**INSERT-prefix follow-on, BGA-442, 2026-10-07.** The frozen27f8273 setup appends an opaque function result to a literal INSERT target. BGA-442 implements bounded naming coverage for this form while retaining all four query-dependent holds. It also refuses quoted concatenations that the prior literal reader could misread as complete SQL. Availability is evaluated independently; no dynamic VALUES or escaping support is claimed. The next observed need remains trustworthy partial query coverage, with evidence against original controls before expanding any grammar.

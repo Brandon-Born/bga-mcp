@@ -77,6 +77,24 @@ again; the 2026 provider can retry the existing MRTR answer. Removing the instal
 expired-root cache reset must fail this adoption witness. No request budget is
 raised and no recovery retry hides a failure.
 
+Later exact-source CI observed another legitimate independent-operation timeout:
+after selected request-provider `close` expiry and cleanup passed, `check_setup`
+re-read the configured session file and exceeded its real 100 ms deadline on a
+loaded macOS/Node 22 runner. Transport responsiveness now requires successful
+`tools/list` on the same live client, including the expected discovered tools
+and an unchanged filesystem transcript. It does not assume every fresh native
+filesystem read fits that deliberately small wall-clock budget. Only root cases
+also perform the state-specific `check_setup` adoption witness described above.
+
+A new POSIX control issues a subsequent native provider read, delays that
+observed promise for 150 ms and requires its exact `check_setup`/100 ms timeout,
+eventual balanced release and successful discovery before and after it. It
+demonstrates the distinction deterministically without changing the production
+budget, selected-expiry callback or 250 ms cleanup ceiling. Windows retains its
+unsupported file-provider limit and exercises discovery through the package-read
+probe. These witnesses establish transport availability and measured resource
+release; they do not claim a universal 100 ms filesystem-service guarantee.
+
 Exact-source Windows/Node 24 CI exposed an omitted Studio response mode in the
 query-fixture migration: that case received a finite HTML body and relied on it
 outlasting the deadline. The runner instead completed it and correctly reported

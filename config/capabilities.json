@@ -161,7 +161,10 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
+          "UNIT-DATABASE-INSERT-PREFIX"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -319,7 +322,9 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -502,7 +507,9 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -639,7 +646,9 @@
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-DATABASE-SCHEMA-COVERAGE",
-          "E2E-TELEMETRY-ABSENT"
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

@@ -595,8 +595,10 @@ function resolveQueryText(
   cancellationCheckpoint(signal);
   const formatted = readFormattedInsert(argument, signal);
   if (formatted !== null) return formatted;
+  const concatenated = readInsertPrefix(argument, signal);
+  if (concatenated !== null) return concatenated;
   const literal = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(argument);
-  if (literal !== null) {
+  if (literal !== null && isSingleQuotedToken(argument, signal)) {
     return { text: literal[2] ?? '' };
   }
 
@@ -615,14 +617,82 @@ function resolveQueryText(
     return { unreadable: `a query in $${name}, which is assigned outside this file` };
   }
   const assignedLiteral = /^\s*(["'])([\s\S]*)\1\s*$/u.exec(assigned.value);
-  if (assignedLiteral === null) {
+  if (assignedLiteral === null || !isSingleQuotedToken(assigned.value, signal)) {
     const formattedAssignment = readFormattedInsert(assigned.value, signal);
     if (formattedAssignment !== null) return formattedAssignment;
+    const concatenatedAssignment = readInsertPrefix(assigned.value, signal);
+    if (concatenatedAssignment !== null) return concatenatedAssignment;
     return {
       unreadable: `a query assembled into $${name}: ${snippet(assigned.value, 60, signal)}`,
     };
   }
   return { text: assignedLiteral[2] ?? '' };
+}
+
+function isSingleQuotedToken(expression: string, signal?: AbortSignal): boolean {
+  return /^(?:"\s*"|'\s*')$/u.test(maskLiterals(expression, signal).trim());
+}
+
+/**
+ * PHP's . operator "returns the concatenation of its right and left arguments".
+ * Read one literal INSERT head plus a variable or fully delimited function call;
+ * refusing outer operators avoids PHP-version-dependent grouping or a ternary
+ * replacing the entire query. MySQL places explicit target names before VALUES.
+ * The opaque tail may contain any SQL; none of it is evaluated or retained.
+ * Sources (2026-10-07): https://www.php.net/manual/en/language.operators.string.php
+ * https://www.php.net/manual/en/language.operators.precedence.php
+ * https://www.php.net/manual/en/language.types.string.php
+ * https://dev.mysql.com/doc/refman/8.0/en/insert.html
+ */
+function readInsertPrefix(
+  argument: string,
+  signal?: AbortSignal,
+): { partial: QueryReference; limitation: string } | null {
+  const masked = maskLiterals(argument, signal);
+  const head = /^\s*(?:"\s*"|'\s*')\s*\.\s*/u.exec(masked);
+  if (head === null) return null;
+  const dot = head[0].lastIndexOf('.');
+  const text = argument.slice(0, dot).trim().slice(1, -1);
+  if (/[\\$]/u.test(text)) return null;
+  const tail = masked.slice(head[0].length).trim();
+  if (!/^\$[A-Za-z_]\w*$/u.test(tail)) {
+    const call = /^\\?[A-Za-z_]\w*\s*\(/u.exec(tail);
+    if (call === null) return null;
+    // Match bracket kinds, not just depth. The whole remainder must be this call.
+    const stack: string[] = [];
+    const closing: Readonly<Record<string, string>> = { '(': ')', '[': ']', '{': '}' };
+    for (let index = call[0].length - 1; index < tail.length; index += 1) {
+      periodicCancellationCheckpoint(index, signal);
+      const character = tail[index] ?? '';
+      if (closing[character] !== undefined) stack.push(closing[character] ?? '');
+      else if (character === ')' || character === ']' || character === '}') {
+        if (stack.pop() !== character) return null;
+        if (stack.length === 0 && index !== tail.length - 1) return null;
+      }
+    }
+    if (stack.length !== 0 || !tail.endsWith(')')) return null;
+  }
+  const identifier = '(?:`[A-Za-z_]\\w*`|[A-Za-z_]\\w*)';
+  const shape = new RegExp(
+    `^\\s*INSERT\\s+INTO\\s+(${identifier})\\s*\\(\\s*(${identifier}(?:\\s*,\\s*${identifier})*)\\s*\\)\\s+VALUES\\s+$`,
+    'iu',
+  ).exec(text);
+  if (shape === null) return null;
+  const table = (shape[1] ?? '').replaceAll('`', '');
+  const columns = (shape[2] ?? '')
+    .split(',')
+    .map((column) => `${table}.${column.trim().replaceAll('`', '')}`);
+  cancellationCheckpoint(signal);
+  return {
+    partial: {
+      tables: [table],
+      columns: [...new Set(columns)].sort(),
+      interpolated: false,
+      text: text.replace(/\s+/gu, ' ').trim() + ' [unresolved]',
+    },
+    limitation:
+      'a concatenated INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed',
+  };
 }
 
 /**
