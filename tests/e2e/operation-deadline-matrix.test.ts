@@ -199,14 +199,44 @@ async function probe(
     expect(await readFile(log, 'utf8')).toBe(final);
     expect(await readFile(network, 'utf8')).toBe('');
     if (configuration) {
-      await expect(
-        connection.client.readResource({ uri: 'bga://docs/states' }, { timeout: 20_000 }),
-      ).rejects.toThrow();
-      const retry = events(await readFile(log, 'utf8'));
+      const retryResult = await connection.client
+        .readResource({ uri: 'bga://docs/states' }, { timeout: 20_000 })
+        .then(
+          () => 'unexpected success',
+          (error: unknown) => String(error),
+        );
+      const retryText = await observe(log, target);
+      const retry = events(retryText);
+      expect(complete(retry, target), retryText).toBe(true);
       expect(
         retry.filter((event) => event.event === 'work:start' && event.operation === target),
+        'A cancelled catalog must be read again before it can be reused.',
       ).toHaveLength(2);
-      expect(await readFile(network, 'utf8')).not.toBe('');
+      const retryNetwork = await readFile(network, 'utf8');
+      if (retryNetwork === '') {
+        expect(retryResult).toContain('policy.timeout.exceeded');
+        expect(retryResult).toContain('"operation":"bga-docs-topic"');
+        expect(retryResult).toContain('"timeoutMs":100');
+      } else {
+        expect(retryNetwork).toBe('https.request\n');
+        expect(retryResult).toContain(
+          'internal.unexpected: The server failed unexpectedly. No further detail is safe to report.',
+        );
+        expect(retryResult).toContain('"kind":"Error"');
+      }
+      expect(retryResult).not.toContain(CANARY);
+      expect(retryResult).not.toContain(session);
+      if (recoveryMs > 0) {
+        expect(retryNetwork).toBe('');
+        expect(retry).toContainEqual(
+          expect.objectContaining({ event: 'recovery:issued', operation: target }),
+        );
+      }
+      await new Promise<void>((ready) => {
+        setTimeout(ready, 100);
+      });
+      expect(await readFile(log, 'utf8')).toBe(retryText);
+      expect(await readFile(network, 'utf8')).toBe(retryNetwork);
     }
     // Discovery proves that this same transport remains responsive without
     // assuming an independent native file read always finishes within 100 ms.
@@ -215,7 +245,7 @@ async function probe(
     expect(discovery.tools.map((tool) => tool.name)).toContain('check_setup');
     expect(discovery.tools.map((tool) => tool.name)).toContain('inspect_project');
     expect(await readFile(log, 'utf8')).toBe(beforeDiscovery);
-    if (recoveryMs > 0) {
+    if (recoveryMs > 0 && !configuration) {
       const slow = await callTool(connection.client, 'check_setup', {}, 20_000);
       expect(slow.isError).toBe(true);
       expect(slow.text).toContain('policy.timeout.exceeded');
@@ -311,6 +341,9 @@ for (const completion of [150, 600])
   it(`[E2E-POLICY-CANCELLATION] quiesces lazy package configuration with ${String(completion)} ms issued completion`, async () => {
     await probe('readPackagedConfig:readFile', completion);
   });
+it('[E2E-POLICY-CANCELLATION] proves a cancelled catalog is re-read when that independent read also exceeds its deadline', async () => {
+  await probe('readPackagedConfig:readFile', 600, '2025-11-25', false, 150);
+});
 for (const target of ['resolveConfiguredRoots:realpath', 'readPackagedConfig:readFile']) {
   for (const completion of [150, 600])
     it(`[E2E-POLICY-CANCELLATION] bounds startup ${target} with ${String(completion)} ms issued completion`, async () => {
@@ -375,6 +408,23 @@ it('[E2E-POLICY-CANCELLATION] rejects removing package-read abort propagation an
       ),
     async () => {
       await expect(probe('readPackagedConfig:readFile', 150)).rejects.toThrow();
+    },
+  );
+});
+it('[E2E-POLICY-CANCELLATION] rejects warming the catalog cache from a cancelled read', async () => {
+  const catalog = await readFile(resolve(server.packageRoot, 'config/doc-sources.json'), 'utf8');
+  await mutate(
+    (source) =>
+      source
+        .replace('if (this.#catalog === undefined) {', 'if (this.#catalog === undefined) { try {')
+        .replace(
+          'this.#catalog = catalog;',
+          `this.#catalog = catalog; } catch (error) { this.#catalog = parseDocumentationCatalog(${JSON.stringify(catalog)}); throw error; }`,
+        ),
+    async () => {
+      await expect(probe('readPackagedConfig:readFile', 600)).rejects.toThrow(
+        'A cancelled catalog must be read again before it can be reused.',
+      );
     },
   );
 });

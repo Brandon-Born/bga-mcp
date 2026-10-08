@@ -80,6 +80,7 @@ async function observe<T>(kind: string, issue: () => Promise<T>, cleanup = false
   if (!active) return await issue();
   const operation = `${stage()}:${kind}`;
   let hold = 0;
+  let holdingRecovery = false;
   if (!selected && operation === target && ++count === occurrence) {
     selected = true;
     record('setup:start', operation);
@@ -87,8 +88,14 @@ async function observe<T>(kind: string, issue: () => Promise<T>, cleanup = false
     record('setup:end', operation);
     hold = completionMs;
   } else if (expired && cleanup) hold = cleanupMs;
-  else if (published && !recoveryHeld && recoveryMs > 0 && operation === 'readSessionFile:read') {
+  else if (
+    published &&
+    !recoveryHeld &&
+    recoveryMs > 0 &&
+    operation === (target?.startsWith('readPackagedConfig:') ? target : 'readSessionFile:read')
+  ) {
     recoveryHeld = true;
+    holdingRecovery = true;
     hold = recoveryMs;
   }
   record(cleanup ? 'cleanup:start' : 'work:start', operation);
@@ -97,7 +104,7 @@ async function observe<T>(kind: string, issue: () => Promise<T>, cleanup = false
     (value) => ({ value }),
     (error: unknown) => ({ error }),
   );
-  if (recoveryHeld && hold === recoveryMs) record('recovery:issued', operation);
+  if (holdingRecovery) record('recovery:issued', operation);
   if (hold === completionMs && !expired) {
     record('selected:issued', operation);
     queueMicrotask(() => {

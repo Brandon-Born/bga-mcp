@@ -95,6 +95,23 @@ unsupported file-provider limit and exercises discovery through the package-read
 probe. These witnesses establish transport availability and measured resource
 release; they do not claim a universal 100 ms filesystem-service guarantee.
 
+Combined exact-source Windows/Node 22 CI exposed the analogous lazy-catalog
+retry assumption: the second native read was issued, but networking had not
+started before that independent request's 100 ms deadline. The retry witness now
+requires a second native read, balanced terminal completion and a quiet window.
+It accepts only two observed outcomes: the exact `bga-docs-topic`/100 ms policy
+timeout with zero network, or the harness's single denied `https.request` with
+the exact stable unexpected-error publication. No arbitrary resource error is
+accepted. The network-attempt assertion remains required for the latter route.
+
+A deterministic 150 ms second-read hold exercises the timeout route on every
+platform. An installed corruption control warms the catalog after its cancelled
+read; the original first-read signal/expiry evidence must still pass, while the
+missing second native read must fail the specific cache-refusal oracle. This
+keeps cache safety separate from native filesystem speed, preserving actual
+issued work, eventual release, transport discovery and the original abort/read
+checkpoint removal control. No production budget or API is changed.
+
 Exact-source Windows/Node 24 CI exposed an omitted Studio response mode in the
 query-fixture migration: that case received a finite HTML body and relied on it
 outlasting the deadline. The runner instead completed it and correctly reported
