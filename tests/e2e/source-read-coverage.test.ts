@@ -90,15 +90,24 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
         }
         const diagnostics = await client.readResource({ uri: 'bga://project/diagnostics' });
         expect(JSON.stringify(diagnostics)).toContain(LIMIT);
-        // Structural inventory remains distinct from per-validator read limits.
-        for (const tool of ['inspect_project'])
-          expect((await callTool(client, tool, {})).isError).toBe(false);
+        // Shared inspection now reads the bounded contract sets and must
+        // disclose the same omitted source rather than a clean structural verdict.
+        const inspection = await callTool<Result>(client, 'inspect_project', {});
+        expect(inspection.isError).toBe(false);
+        expect(inspection.structured?.diagnostics?.status).not.toBe('passed');
+        expect(inspection.structured?.diagnostics?.findings).toContainEqual(
+          expect.objectContaining({
+            code: LIMIT,
+            kind: 'unsupported-syntax',
+            locations: [{ uri: omitted }],
+          }),
+        );
         expect(
           JSON.stringify(await client.readResource({ uri: 'bga://project/states' })),
         ).toContain(LIMIT);
         expect(
           JSON.stringify(await client.readResource({ uri: 'bga://project/summary' })),
-        ).not.toContain(LIMIT);
+        ).toContain(LIMIT);
       });
       expect(await digestDirectory(root)).toBe(before);
 

@@ -1,5 +1,11 @@
 # Compatibility matrix
 
+## Shared source normalization and default absence checks — October 7
+
+BGA-101 retains located facts and explicit unknowns in fourteen internal categories across the three supported layouts. Inspection and summary publish bounded `normalized.*` receipts; action, notification and database validators share their request-scoped traces. Configuration values and executable bodies are not published, and public schemas/declarations remain unchanged. Read omissions remain unsupported in inspection and summary as well as validators; template/style contents, module execution and runtime-test coverage remain unknown. [Model scope](verification/NORMALIZED_PROJECT_MODEL.md) and `E2E-NORMALIZED-PROJECT` retain those limits.
+
+BGA-410 observes the installed public command making no default network request or Node filesystem mutation through all seven tools and three resources. Independent blocked request and analytics-write controls detect regressions. This is evidence of the observed Node paths, not arbitrary native effects. BGA-324/326/328 additionally bound development documentation selections, operation contexts and credential-provider loading; these checks do not admit development documentation/setup/Studio capabilities to the public release or establish live Studio retrieval.
+
 ## Independent database checks — BGA-439
 
 Under partial database-group coverage, pre-release can now pass audit availability

@@ -1,16 +1,6 @@
 {
   "schemaVersion": 1,
-  "items": [
-    "BGA-101",
-    "BGA-207",
-    "BGA-204",
-    "BGA-316",
-    "BGA-324",
-    "BGA-326",
-    "BGA-328",
-    "BGA-410",
-    "BGA-425"
-  ],
+  "items": ["BGA-101", "BGA-207", "BGA-204", "BGA-316", "BGA-324", "BGA-326", "BGA-328", "BGA-410"],
   "baseMain": "0718bf7d2a8d6fe6e318b6f65a0d1b4a76bd4fa0",
   "status": "Integrated implementation awaits full local gates, exact-source CI and framework admission. This placeholder is not verification evidence.",
   "blockedTenth": {
@@ -22,5 +12,51 @@
     "No new public development capability admission",
     "No Studio access expansion or game publication",
     "BGA-425 defers a report reader; no new runtime capability"
+  ],
+  "researchOnly": {
+    "item": "BGA-425",
+    "decision": "defer",
+    "countedAsFixed": false,
+    "record": "RUNTIME_EVIDENCE_FEASIBILITY.md"
+  },
+  "selection": {
+    "originalTargets": [
+      "BGA-324",
+      "BGA-326",
+      "BGA-328",
+      "BGA-101",
+      "BGA-207",
+      "BGA-211",
+      "BGA-202",
+      "BGA-203",
+      "BGA-204",
+      "BGA-205"
+    ],
+    "substitutions": [
+      {
+        "added": "BGA-316",
+        "removed": "BGA-211",
+        "reason": "Exact historical responses missing; installed configuration acceptance independently feasible."
+      },
+      {
+        "added": "BGA-410",
+        "removed": "BGA-203",
+        "reason": "Original historical topic response bundle missing; actual telemetry absence acceptance independently feasible."
+      }
+    ],
+    "remaining": "Eight actual fix targets; historical docs targets and other next-priority candidates are assessed for specific missing inputs. Research defer is not a ninth fix."
+  },
+  "priorIntegratedAttempts": [
+    {
+      "source": "79bd70e703daa87a876cea692bbc20bc5efc6b8c",
+      "command": "pnpm check",
+      "tests": {
+        "passed": 935,
+        "failed": 2,
+        "total": 937
+      },
+      "result": "Retained failure; stale source-refusal ordering and summary read-limit expectations corrected. No complete-gate success or evidence seal claimed."
+    },
+    "Affected correction initially omitted the TypeScript preload and over-specified one status across layouts. Corrected harness and retained the non-passing, located unsupported read-limit invariant; reflected-argument output case and both source-limit cases passed."
   ]
 }
