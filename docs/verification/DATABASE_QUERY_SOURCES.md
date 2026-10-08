@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-127, the correctness owner for the database finding of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":247,"claims":103,"tests":879}
+{"kind":"run","capabilities":17,"scenarios":250,"claims":103,"tests":915}
 ```
 
 ## What the installed package got wrong
@@ -26,7 +26,7 @@ The page's own example assigns the query first and runs it on the next line, so 
 
 - **A string is a query only where something runs it.** The reader starts from the helper call, not from the string: it finds `DbQuery` and the seven documented helpers, takes the first argument, and reads it.
 - **One step of data flow.** A literal is read directly; a variable is resolved to the last literal assigned to it before the call. That covers the documented `$sql = …; $this->DbQuery($sql);` shape without pretending to know more.
-- **Other forms are reported, not reconstructed (except the bounded BGA-434 prefix described below).** A concatenation, a method call, an append, or a variable assigned in another file produces one located unsupported construct, and no table or column is derived from it — so an unreadable query can never make an undeclared table certain.
+- **Other forms are reported, not reconstructed (except the bounded BGA-434/BGA-442 prefixes described below).** A concatenation, a method call, an append, or a variable assigned in another file produces one located unsupported construct, and no table or column is derived from it — so an unreadable query can never make an undeclared table certain.
 - **A statement that is not SQL is reported too.** A helper called with something that does not begin `SELECT`, `INSERT`, `UPDATE`, `DELETE` or `REPLACE` is recorded as unrecognized rather than parsed for tables.
 
 ## Fixtures and scenarios
@@ -74,3 +74,13 @@ The installed and real-project artifact is
 Evidence records dirty source based on `85ce86c`; no clean-source CI is inferred.
 Earlier new-scenario mapping failures were corrected before this passing run.
 The actual framework release guard retains its stale-review hold.
+
+## Bounded concatenated INSERT prefix — BGA-442
+
+A single non-interpolated, unescaped quoted `INSERT INTO table (columns) VALUES ` prefix may be concatenated with one simple variable or fully delimited ordinary function call. Only plain/backtick table and column names are read; the displayed tail is `[unresolved]`. One local assignment uses the existing textual resolution bound, without a control-flow claim. PHP's documented concatenation and precedence rules establish the limited prefix relationship; MySQL's INSERT grammar places target names before VALUES.
+
+Generated VALUES, arbitrary SQL suffixes, argument values and escaping are always reported as unsupported. No function is called and no opaque tail is retained. Chained concatenations, outer ternary/coalescing/comparison/arithmetic/logical operators, member calls, missing columns, SQL modifiers, dynamic or escaped identifiers and other statement forms are outside this subset. The complete literal reader additionally requires one quoted token, preventing a rejected quoted concatenation from manufacturing tables. This is naming coverage, not a PHP/SQL syntax validator or execution witness.
+
+`UNIT-DATABASE-INSERT-PREFIX` supplies original positive/refusal controls. `E2E-DATABASE-INSERT-PREFIX` covers installed modern/legacy/hybrid public tools, aggregate/resource propagation, availability versus four unknown query checks, privacy, repeat calls, confinement, cleanup and immutability. `E2E-DATABASE-INSERT-PREFIX-NEGATIVE` retains unreadable-query availability and refuses phantom tables. The immutable pre-change0718bf7 archive fails both installed regressions. Actual source/artifact/CI identities are recorded in [the implementation receipt](bga442-source-ci.json); receipt-only commits never inherit older exact-HEAD CI.
+
+Sources fetched2026-10-07: [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), [Main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), [PHP string operators](https://www.php.net/manual/en/language.operators.string.php), [PHP precedence](https://www.php.net/manual/en/language.operators.precedence.php), [PHP string literals](https://www.php.net/manual/en/language.types.string.php) and [MySQL INSERT](https://dev.mysql.com/doc/refman/8.0/en/insert.html). No undocumented runtime SQL validity or sanitization behavior is inferred.
