@@ -77,6 +77,16 @@ again; the 2026 provider can retry the existing MRTR answer. Removing the instal
 expired-root cache reset must fail this adoption witness. No request budget is
 raised and no recovery retry hides a failure.
 
+Exact-source Windows/Node 24 CI exposed an omitted Studio response mode in the
+query-fixture migration: that case received a finite HTML body and relied on it
+outlasting the deadline. The runner instead completed it and correctly reported
+the unsupported rendered-log shell. The case now explicitly selects the
+never-ending response and asserts that the far end entered that mode and sent
+body bytes, in addition to the original deadline, socket-abort, quiet-window and
+same-client responsiveness checks. The request budget remains 300 milliseconds.
+Removing only that fixture mode fails the new observed-mode assertion, even when
+the finite body happens to produce a timeout; restoring it passes the witness.
+
 ## Actual file ownership and provider acceptance
 
 `E2E-STUDIO-SESSION-FILE-OWNER` first verifies a real owner-only file through the

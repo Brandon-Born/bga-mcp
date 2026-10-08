@@ -253,12 +253,13 @@ beforeEach(() => {
   responseMode = 'normal';
 });
 /** What the far end saw: bytes written, and whether the client hung up. */
-let transcript: { written: number; aborted: boolean }[];
+let transcript: { written: number; aborted: boolean; stalled: boolean }[];
 
 function sendStalledBody(
   response: ServerResponse,
-  seen: { written: number; aborted: boolean },
+  seen: { written: number; aborted: boolean; stalled: boolean },
 ): void {
+  seen.stalled = true;
   response.writeHead(200, { 'content-type': 'text/html' });
   const chunk = `<p>${'s'.repeat(512)}</p>`;
   const pump = (): void => {
@@ -515,7 +516,7 @@ beforeAll(async () => {
   stallEveryRequest = false;
 
   stub = createServer((request, response) => {
-    const seen = { written: 0, aborted: false };
+    const seen = { written: 0, aborted: false, stalled: false };
     transcript.push(seen);
     request.socket.once('close', () => {
       seen.aborted = !response.writableFinished;
@@ -843,6 +844,7 @@ describe('packaged operation deadlines', () => {
   }, 180_000);
 
   it('[E2E-STUDIO-READ-NETWORK-CANCELLATION] cancels a Studio read without killing its caller', async () => {
+    responseMode = 'stall';
     transcript = [];
     const root = await bigProject('stalled-studio', 5);
 
@@ -865,6 +867,11 @@ describe('packaged operation deadlines', () => {
       { BGA_STUDIO_SESSION: 'PHPSESSID=not-a-real-session' },
     );
 
+    // Assert the fixture selected a never-ending response, rather than relying
+    // on a finite HTML body happening to outlast this runner's deadline.
+    expect(transcript).toHaveLength(1);
+    expect(transcript[0]?.stalled).toBe(true);
+    expect(transcript[0]?.written).toBeGreaterThan(0);
     expect(result.timedOut.isError).toBe(true);
     expect(result.timedOut.text).toContain('policy.timeout.exceeded');
     expect(
