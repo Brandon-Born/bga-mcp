@@ -94,6 +94,21 @@ on the full root without preparing an export; it does not remove unknown-scope
 holds, determine which modules execute, or provide caller exclusions/content
 hashes. Installed same-root and negative-control verification remain required.
 
+**BGA-101 installed observation, 2026-10-08 UTC.** The locally packed validation
+archive `32159d1d53992c0ba77756f75413e7f7cb5579ca8df2eb5d62f053ab9437ca33`
+adds fourteen located known/unknown normalization signals to `inspect_project`
+and `bga://project/summary`. All seven public tools and three resources were
+compared through a real SDK on unchanged full Dino Racer `83e2e50` and frozen
+`27f8273`; their prior structured outcomes match after removing only those exact
+ordered additions. The original 159 non-Git files and frozen 84-file snapshot
+remain unchanged. I still bound source/archive digests and compared the outputs
+manually. The current-root audit retains 3 passed, 0 failed, 30 unsupported and
+8 manual checks; dynamic SQL and runtime scope remain unknown. Shared receipts
+make the represented facts and limits visible, without a measured time saving.
+Caller-selected exclusions, source hashes and a compact comparison remain
+proposals requiring their own bounded evidence. The
+[source/artifact receipt](verification/top10-source-ci.json) retains this scope.
+
 ## Explain what remains unchecked
 
 **Observed.** One unreadable setup query leaves multiple pre-release checks
@@ -190,6 +205,18 @@ already asks whether a read-only report reader adds value beyond the agent's
 existing tools. Use a real task to answer that question before adding a capability.
 A passed test must not imply the whole game is correct.
 
+**BGA-425 real-game research, 2026-10-08 UTC.** Existing agent tools ran 39 PHP
+tests / 105 assertions and two controlled client tests on a private unchanged
+game snapshot. A private scoring mutation failed four unchanged assertions;
+filtered, skipped/incomplete, stale and malformed report controls exposed why
+source identity and selection completeness still need an independent receipt.
+The [feasibility record](verification/RUNTIME_EVIDENCE_FEASIBILITY.md) selects
+**defer** a new MCP reader: no observed advantage over the existing agent tools
+justifies a new parser/output boundary. A future proposal needs a real decision
+that those tools cannot already support, together with bound producer/source and
+partial-coverage controls. This research is excluded from the eight-fix count;
+no runtime capability or live Studio evidence follows from it.
+
 ## Get the relevant documentation with the finding
 
 **Observed workaround and proposed improvement.** Framework adjudication required
@@ -247,6 +274,17 @@ package has a different failure set against current minimal captures. The next
 bounded step is a reviewed historical source/ranking replay, retaining actual
 source revisions and refusing invented evidence. Full source gates and separate
 release admission still apply. See [relevance scope](verification/DOCUMENTATION_RELEVANCE.md).
+
+**BGA-324/204 installed observation, 2026-10-08 UTC.** The same exact validation
+archive passes the maintained live 9-question/7-topic oracles through reviewed
+fixed public selections. A fresh fixed framework-version resource read retains
+actual official source lines and conflicting version facts. Unreviewed prose,
+encoded variants and extra parameters refuse before catalog/cache/network in
+the installed privacy controls. Finding-linked documentation still requires
+separate development-profile calls. Original historical API rankings remain
+unfound in the inspected evidence; BGA-211 needs a retained response-bundle path
+or an explicit owner decision on prospective acceptance. Current quality does
+not replay that history or admit development network tools into public discovery.
 
 ## Capture wishes during real work
 
