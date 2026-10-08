@@ -1,6 +1,7 @@
 // secret-scan:allow-file Seeded non-secret sample session values that prove redaction.
 import { execFileSync } from 'node:child_process';
 import { createServer, type Server } from 'node:http';
+import { createServer as createSocketServer } from 'node:net';
 import { chmod, mkdir, readFile, symlink, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -607,6 +608,32 @@ describe('packaged Studio session file provider', () => {
       expect(preflight.stderr, 'the preflight printed the session path').not.toContain(path);
       expectClean('--studio-check stdout', preflight.stdout);
       expectClean('--studio-check stderr', preflight.stderr);
+    }
+  });
+
+  it('[E2E-STUDIO-SESSION-FILE-SAFE] refuses devices and sockets without reading or disclosing their paths', async () => {
+    if (onWindows) {
+      await expectFileProviderRefused();
+      return;
+    }
+    const device = await setupWith('/dev/null');
+    expect(device.text).toContain('not a regular file');
+    expect(device.text).not.toContain('/dev/null');
+    const socketPath = resolve(server.temporaryRoot, 'credential-socket');
+    const socket = createSocketServer();
+    await new Promise<void>((ready) => {
+      socket.listen(socketPath, ready);
+    });
+    try {
+      const result = await setupWith(socketPath);
+      expect(result.text).toMatch(/could not be opened|not a regular file/u);
+      expect(result.text).not.toContain(socketPath);
+      expect(result.structured).not.toContain(socketPath);
+      expectClean('socket refusal', result.text);
+    } finally {
+      await new Promise<void>((closed, reject) => {
+        socket.close((error) => (error === undefined ? closed() : reject(error)));
+      });
     }
   });
 });

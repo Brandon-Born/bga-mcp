@@ -143,7 +143,9 @@ export function summarize(model: InspectProjectResult): string {
   lines.push(
     `Source inventory: ${String(model.fileCount)} files; ${model.truncated || model.skippedLinks.length > 0 || model.unreadablePaths.length > 0 ? 'partial (see listing findings)' : 'listing completed'}. Eligible files are candidates, not proof of execution or complete contract reads.`,
   );
-  for (const group of model.detection.signals.filter((entry) => entry.id.startsWith('source.'))) {
+  for (const group of model.detection.signals.filter(
+    (entry) => entry.id.startsWith('source.') || entry.id.startsWith('normalized.'),
+  )) {
     const shown = group.files.slice(0, 6);
     const remaining = group.files.length - shown.length;
     lines.push(
@@ -152,6 +154,9 @@ export function summarize(model: InspectProjectResult): string {
   }
 
   const { summary } = model.diagnostics;
+  lines.push(
+    'Structural findings cover layout, metadata, states and source coverage; normalization unknowns remain in normalized.* signals.',
+  );
   lines.push(
     `Findings: ${String(summary.errors)} errors, ${String(summary.warnings)} warnings, ${String(summary.information)} information, ${String(summary.unsupported)} unsupported.`,
   );
@@ -197,7 +202,13 @@ export function registerInspectProject(
           );
           return isProjectRootInputRequired(resolution)
             ? resolution
-            : (await loadProjectContext(policy, resolution, { signal })).model;
+            : (
+                await loadProjectContext(policy, resolution, {
+                  withPhpSources: true,
+                  withClientSources: true,
+                  signal,
+                })
+              ).model;
         });
         if (isProjectRootInputRequired(outcome)) {
           return outcome;

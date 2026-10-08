@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-04",
+  "updatedAt": "2026-10-07",
   "owner": "BGA-128",
   "cases": [
     {
@@ -817,7 +817,7 @@
       "item": "BGA-328",
       "case": "On POSIX it enforces the expected owner",
       "boundary": "packaged",
-      "missing": "Proving a refusal for the wrong owner needs a file owned by a second account, which the packaged harness cannot create; the check is implemented and unproven."
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-OWNER"]
     },
     {
       "item": "BGA-328",
@@ -1416,6 +1416,92 @@
       "case": "Private completion evidence cannot promote query-dependent, missing, conflicting, unrequested or another-group checks, and truncation cannot hide a defect into an attested pass",
       "boundary": "repository",
       "scenarios": ["UNIT-DATABASE-INDEPENDENT-COVERAGE"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Installed setup reports cover empty, fully configured and part-way states using the retained strict output schema",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-SETUP-NOTHING-CONFIGURED",
+        "E2E-SETUP-FULLY-CONFIGURED",
+        "E2E-SETUP-PART-WAY"
+      ]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Independently missing settings carry actionable codes and a configured refused provider never silently falls back",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-PART-WAY"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Synthetic credential values and provider paths stay private across structured text and configuration-only CLI reports without network access",
+      "boundary": "packaged",
+      "scenarios": [
+        "E2E-SETUP-FULLY-CONFIGURED",
+        "E2E-SETUP-PART-WAY",
+        "E2E-SETUP-CLI-CONFIGURATION"
+      ]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Repeated reports preserve project and provider bytes and the installed oracle detects incorrect configuration classification",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-FULLY-CONFIGURED", "E2E-SETUP-MATRIX-MUTATION"]
+    },
+    {
+      "item": "BGA-316",
+      "case": "Development setup reporting does not expand the installed public release inventory",
+      "boundary": "packaged",
+      "scenarios": ["E2E-SETUP-PUBLIC-EXCLUDED"]
+    },
+    {
+      "item": "BGA-101",
+      "case": "Located facts and explicit unknowns across the internal normalized representation drive installed inspection and public validators",
+      "boundary": "packaged",
+      "scenarios": ["E2E-NORMALIZED-PROJECT"]
+    },
+    {
+      "item": "BGA-324",
+      "case": "Finite reviewed MCP query selections send only server-generated public terms and refuse unreviewed input before catalog, cache or network",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOCS-EXPLICIT-QUERY-PRIVACY"]
+    },
+    {
+      "item": "BGA-207",
+      "case": "Installed requests refuse HTTP source URLs and off-catalog redirects without connecting to the refused destination",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-BOUNDARY-CONFINEMENT"]
+    },
+    {
+      "item": "BGA-207",
+      "case": "An oversized successful response is refused while the same installed client remains responsive",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DOC-BOUNDARY-BODY-BUDGET"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Both client-root eras, lazy config and startup reads stop application work after expiry with bounded native cleanup",
+      "boundary": "packaged",
+      "scenarios": ["E2E-POLICY-CANCELLATION"]
+    },
+    {
+      "item": "BGA-326",
+      "case": "Credential-provider startup/request operations and Studio parser checkpoints retain cancellation and detected removal controls",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STUDIO-READ-CANCELLATION"]
+    },
+    {
+      "item": "BGA-410",
+      "case": "Default installed public execution makes no telemetry request or filesystem mutation and leaves isolated profile and project unchanged",
+      "boundary": "packaged",
+      "scenarios": ["E2E-TELEMETRY-ABSENT"]
+    },
+    {
+      "item": "BGA-410",
+      "case": "Independent installed network and analytics-identifier write controls fail the absence invariant without a packet or persistent identifier",
+      "boundary": "packaged",
+      "scenarios": ["E2E-TELEMETRY-NETWORK-CONTROL", "E2E-TELEMETRY-WRITE-CONTROL"]
     }
   ]
 }

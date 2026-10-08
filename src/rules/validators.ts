@@ -1,5 +1,6 @@
 import type { PolicyBoundary } from '../policy.js';
 import type { ProjectContext } from '../tools/project-context.js';
+import { normalizedProject } from '../tools/project-context.js';
 import { cancellationCheckpoint } from '../deadline.js';
 import { validateActionContracts } from './action-contracts.js';
 import type { GroupRunner } from './aggregate.js';
@@ -45,18 +46,19 @@ export function createValidatorRunners(
     {
       id: 'action-contracts',
       run: () =>
-        validateActionContracts(context.model, context.clientSources, context.phpSources, signal)
-          .diagnostics,
+        (
+          normalizedProject(context)?.actions ??
+          validateActionContracts(context.model, context.clientSources, context.phpSources, signal)
+        ).diagnostics,
     },
     {
       id: 'notifications',
       run: () =>
         summarizeFindings(
           [
-            ...validateNotifications(
-              context.phpSources,
-              context.clientSources,
-              signal,
+            ...(
+              normalizedProject(context)?.notifications ??
+              validateNotifications(context.phpSources, context.clientSources, signal)
             ).diagnostics.findings.filter(
               (finding) =>
                 finding.kind !== 'heuristic' ||
@@ -79,8 +81,12 @@ export function createValidatorRunners(
         const schemaPath = context.model.components
           .find((component) => component.id === 'database')
           ?.files.find((file) => file.endsWith('.sql'));
+        const normalized = normalizedProject(context);
+        if (normalized?.database.error !== null && normalized?.database.error !== undefined)
+          throw normalized.database.error;
         const schemaSource =
-          schemaPath === undefined
+          normalized?.database.source ??
+          (schemaPath === undefined
             ? null
             : {
                 path: schemaPath,
@@ -89,8 +95,10 @@ export function createValidatorRunners(
                   schemaPath,
                   signal === undefined ? {} : { signal },
                 ),
-              };
-        const audit = auditDatabaseUsage(schemaSource, context.phpSources, signal);
+              });
+        const audit =
+          normalized?.database.audit ??
+          auditDatabaseUsage(schemaSource, context.phpSources, signal);
         const result = summarizeFindings(
           [
             ...audit.diagnostics.findings.filter(

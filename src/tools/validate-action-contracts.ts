@@ -8,6 +8,7 @@ import { ACTION_CONTRACT_RULES, validateActionContracts } from '../rules/action-
 import {
   isProjectRootInputRequired,
   loadProjectContext,
+  normalizedProject,
   resolveProjectRootForRequest,
 } from './project-context.js';
 
@@ -142,12 +143,14 @@ export function registerValidateActionContracts(
               withClientSources: true,
               signal,
             });
-            const trace = validateActionContracts(
-              project.model,
-              project.clientSources,
-              project.phpSources,
-              signal,
-            );
+            const trace =
+              normalizedProject(project)?.actions ??
+              validateActionContracts(
+                project.model,
+                project.clientSources,
+                project.phpSources,
+                signal,
+              );
             return {
               schemaVersion: 1,
               layout: project.model.layout,

@@ -167,7 +167,7 @@ describe('documentation address guard', () => {
 });
 
 describe('documentation request content', () => {
-  it('[UNIT-DOC-REQUEST-CONTENT] refuses a query that was not typed by a developer', () => {
+  it('[UNIT-DOC-REQUEST-CONTENT] applies lexical exclusions without claiming query origin', () => {
     expect(requestContentViolation('how do state classes declare transitions')).toBeNull();
     expect(requestContentViolation('states.inc.php possibleactions')).toBeNull();
     expect(requestContentViolation('bga->notify->all payload')).toBeNull();
@@ -183,7 +183,7 @@ describe('documentation request content', () => {
     expect(requestContentViolation('error in C:\\games\\secretgame')).toBe('project-path');
     expect(requestContentViolation('check /home/me/game', ['/home/me/game'])).toBe('project-path');
 
-    // Source syntax means the text was copied out of a file.
+    // Source syntax is excluded without inferring whether it was copied.
     expect(requestContentViolation('<?php class Game extends Table')).toBe('source-code');
     expect(requestContentViolation("$this->notifyAllPlayers('x')")).toBe('source-code');
     expect(requestContentViolation("['pass' => 99]")).toBe('source-code');
@@ -191,7 +191,7 @@ describe('documentation request content', () => {
 
   it('[UNIT-DOC-REQUEST-CONTENT] explains each refusal in terms a developer can act on', () => {
     expect(describeRequestContentViolation('project-path')).toContain('filesystem path');
-    expect(describeRequestContentViolation('source-code')).toContain('copied out of a file');
+    expect(describeRequestContentViolation('source-code')).toContain('source syntax');
     expect(describeRequestContentViolation('too-long')).toContain(String(MAX_QUERY_LENGTH));
   });
 });

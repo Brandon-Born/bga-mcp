@@ -9,6 +9,7 @@ import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
 import {
   isProjectRootInputRequired,
   loadProjectContext,
+  normalizedProject,
   resolveProjectRootForRequest,
 } from './project-context.js';
 
@@ -127,15 +128,20 @@ export function registerAuditDatabaseUsage(
           const schemaPath = project.model.components
             .find((component) => component.id === 'database')
             ?.files.find((file) => file.endsWith('.sql'));
+          const normalized = normalizedProject(project);
+          if (normalized?.database.error !== null && normalized?.database.error !== undefined)
+            throw normalized.database.error;
           const schemaSource =
-            schemaPath === undefined
+            normalized?.database.source ??
+            (schemaPath === undefined
               ? null
               : {
                   path: schemaPath,
                   text: await policy.readProjectFile(root, schemaPath, { signal }),
-                };
-
-          const audit = auditDatabaseUsage(schemaSource, project.phpSources, signal);
+                });
+          const audit =
+            normalized?.database.audit ??
+            auditDatabaseUsage(schemaSource, project.phpSources, signal);
           return {
             schemaVersion: 1,
             layout: project.model.layout,

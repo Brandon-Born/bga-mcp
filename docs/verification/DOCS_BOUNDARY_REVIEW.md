@@ -86,3 +86,9 @@ Neither is a reason to refuse the boundary. Both are reasons the network stays o
 ## What this review does not cover
 
 TB-STUDIO is untouched by this review. It was reviewed separately later the same day; see the [Studio boundary review](STUDIO_BOUNDARY_REVIEW.md). Every Studio capability remains blocked by the same gate.
+
+## October 7 agent-facing request and installed boundary review
+
+BGA-324 replaces arbitrary MCP query prose with exact reviewed public selections and server-generated outbound terms. Refusal occurs before catalog, cache or network activity. Cold/warm adversarial inputs and separate raw-forwarding/admission removal controls test that contract. Lower-level trusted library path callers still cannot prove input origin; fixed MCP resources and validated wiki hits supply their paths independently of project files. Retrieved prose remains untrusted.
+
+Installed BGA-207 witnesses refuse HTTP catalog URLs, off-catalog redirects and bodies exceeding the 512 KiB ceiling while the same client remains responsive. A redirect-guard removal control causes the otherwise forbidden second scripted request. Scripted sockets prove request ownership and size handling, not TLS or DNS; the existing address, real-DNS, cancellation and lifecycle scenarios remain required. BGA-326 completes omitted roots, config, startup, provider and parser paths under the [remaining-operation scope](REMAINING_OPERATION_DEADLINES.md). Full gates and exact-source CI are pending at this implementation checkpoint. No public documentation admission or arbitrary-provenance claim follows from these tests.

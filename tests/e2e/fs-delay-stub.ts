@@ -100,7 +100,9 @@ globalThis.setTimeout = ((
   if (
     expireDeadline === undefined &&
     milliseconds === deadlineMs &&
-    (new Error().stack ?? '').includes('runWithTimeout')
+    (new Error().stack ?? '').includes('runWithTimeout') &&
+    !/\b(?:PolicyBoundary|Function)\.create\b/u.test(new Error().stack ?? '') &&
+    !(new Error().stack ?? '').includes('readPackagedConfig')
   ) {
     record('deadline:register');
     expireDeadline = () => {

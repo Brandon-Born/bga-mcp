@@ -249,7 +249,7 @@ describe('installed documentation cache lifecycle', () => {
       expect(
         (
           await callTool(client, 'search_bga_docs', {
-            query: 'project files another question',
+            query: 'project file locations',
             maxResults: 1,
           })
         ).isError,

@@ -1,4 +1,5 @@
 import { constants as oConstants } from 'node:fs';
+import { AsyncLocalStorage } from 'node:async_hooks';
 import { lstat, open, opendir, readFile, realpath } from 'node:fs/promises';
 import { request as httpsRequest } from 'node:https';
 import type { LookupFunction } from 'node:net';
@@ -12,6 +13,7 @@ import {
   type ResolvedAddress,
 } from './docs/addresses.js';
 import { readBoundedUtf8 } from './docs/read.js';
+import { searchParams } from './docs/search.js';
 import {
   describeRequestContentViolation,
   requestContentViolation,
@@ -430,6 +432,7 @@ function changedProjectPath(
  * Nothing here is best-effort: an unconfigured or ambiguous request fails.
  */
 export class PolicyBoundary {
+  readonly #operationSignals = new AsyncLocalStorage<AbortSignal>();
   readonly #config: PolicyConfig;
   readonly #resolvedRoots: readonly string[];
   /** Roots the client offered, resolved and checked exactly like configured ones. */
@@ -498,7 +501,29 @@ export class PolicyBoundary {
     }
 
     const resolvedRoots: string[] = [];
-    for (const root of config.projectRoots) {
+    const boundary = new PolicyBoundary(config, resolvedRoots);
+    await boundary.runWithTimeout(
+      'startup',
+      async (signal) => {
+        await boundary.#resolveConfiguredRoots(resolvedRoots, signal);
+
+        // Let the executable read this live registry before resolving credentials.
+        // Registration stays inside the policy boundary; consumers never read files.
+        onReady?.(boundary);
+        // Resolved once here so the credential is registered for redaction before
+        // this server can publish anything at all, rather than at whichever call
+        // happens to need it first. A file that appears later is still read then;
+        // this is registration, not a cache.
+        await boundary.studioSession({ signal });
+      },
+      DEFAULT_OPERATION_TIMEOUT_MS,
+    );
+    return boundary;
+  }
+
+  async #resolveConfiguredRoots(resolvedRoots: string[], signal: AbortSignal): Promise<void> {
+    for (const root of this.#config.projectRoots) {
+      cancellationCheckpoint(signal);
       if (!isAbsolute(root)) {
         throw new PolicyViolationError(
           ERROR_CODES.configInvalid,
@@ -507,8 +532,11 @@ export class PolicyBoundary {
         );
       }
       try {
-        resolvedRoots.push(normalize(await realpath(root)));
+        const resolved = normalize(await realpath(root));
+        cancellationCheckpoint(signal);
+        resolvedRoots.push(resolved);
       } catch (cause) {
+        cancellationCheckpoint(signal);
         throw new PolicyViolationError(
           ERROR_CODES.policyRootUnavailable,
           'A configured project root does not exist or is not readable.',
@@ -516,17 +544,6 @@ export class PolicyBoundary {
         );
       }
     }
-
-    const boundary = new PolicyBoundary(config, resolvedRoots);
-    // Let the executable read this live registry before resolving credentials.
-    // Registration stays inside the policy boundary; consumers never read files.
-    onReady?.(boundary);
-    // Resolved once here so the credential is registered for redaction before
-    // this server can publish anything at all, rather than at whichever call
-    // happens to need it first. A file that appears later is still read then;
-    // this is registration, not a cache.
-    await boundary.studioSession();
-    return boundary;
   }
 
   get config(): PolicyConfig {
@@ -1153,6 +1170,18 @@ export class PolicyBoundary {
    * server still passes through this class.
    */
   async readPackagedConfig(name: PackagedConfigName): Promise<string> {
+    const signal = this.#operationSignals.getStore();
+    return signal === undefined
+      ? await this.runWithTimeout(
+          'package configuration',
+          async (startupSignal) => await this.#readPackagedConfig(name, startupSignal),
+          DEFAULT_OPERATION_TIMEOUT_MS,
+        )
+      : await this.#readPackagedConfig(name, signal);
+  }
+
+  async #readPackagedConfig(name: PackagedConfigName, signal?: AbortSignal): Promise<string> {
+    cancellationCheckpoint(signal);
     if (!PACKAGED_CONFIG_NAMES.includes(name)) {
       throw new PolicyViolationError(
         ERROR_CODES.configInvalid,
@@ -1160,7 +1189,14 @@ export class PolicyBoundary {
         { details: { requested: name } },
       );
     }
-    return await readFile(resolve(import.meta.dirname, '../config', name), 'utf8');
+    // Node aborts readFile buffering, not already-issued operating-system I/O.
+    // https://nodejs.org/docs/latest-v24.x/api/fs.html#fspromisesreadfilepath-options
+    const text = await readFile(resolve(import.meta.dirname, '../config', name), {
+      encoding: 'utf8',
+      signal,
+    });
+    cancellationCheckpoint(signal);
+    return text;
   }
 
   assertRemoteProjectAllowed(identifier: string): void {
@@ -1228,7 +1264,29 @@ export class PolicyBoundary {
   ): Promise<DocumentationResponse> {
     this.assertNetworkAllowed('documentation');
 
-    const catalog = await this.#documentationCatalog();
+    // Validate before lazy catalog reads as well as before network/cache work.
+    if (request.query !== undefined) {
+      assertDocumentationRequestContent(request.query, this.#resolvedRoots, request.sourceId);
+    }
+    if (request.params !== undefined) {
+      const limit = Number(request.params.srlimit);
+      const expected =
+        request.query !== undefined && Number.isInteger(limit) && limit >= 1 && limit <= 10
+          ? searchParams(request.query, limit)
+          : null;
+      if (
+        expected === null ||
+        Object.keys(request.params).length !== Object.keys(expected).length ||
+        Object.entries(expected).some(([key, value]) => request.params?.[key] !== value)
+      ) {
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocRequestContent,
+          'The documentation search parameters must be generated from a reviewed lookup selection.',
+        );
+      }
+    }
+
+    const catalog = await this.#documentationCatalog(options.signal);
     const source = sourceById(catalog, request.sourceId);
     if (source === null) {
       throw new PolicyViolationError(
@@ -1236,15 +1294,6 @@ export class PolicyBoundary {
         'That documentation source is not in the reviewed catalog.',
         { details: { sourceId: request.sourceId } },
       );
-    }
-
-    // Everything that will appear in the URL is checked, not just the query
-    // field: a parameter is as good a place to hide a file path as any.
-    for (const value of [request.query, ...Object.values(request.params ?? {})]) {
-      if (value === undefined) {
-        continue;
-      }
-      assertDocumentationRequestContent(value, this.#resolvedRoots, source.id);
     }
 
     const target = this.#documentationUrl(source, request);
@@ -1726,8 +1775,19 @@ export class PolicyBoundary {
   }
 
   /** Reads and caches the reviewed catalog for the life of the process. */
-  async #documentationCatalog(): Promise<DocumentationCatalog> {
-    this.#catalog ??= parseDocumentationCatalog(await this.readPackagedConfig('doc-sources.json'));
+  async #documentationCatalog(
+    signal = this.#operationSignals.getStore(),
+  ): Promise<DocumentationCatalog> {
+    cancellationCheckpoint(signal);
+    if (this.#catalog === undefined) {
+      const catalog = parseDocumentationCatalog(
+        signal === undefined
+          ? await this.readPackagedConfig('doc-sources.json')
+          : await this.#readPackagedConfig('doc-sources.json', signal),
+      );
+      cancellationCheckpoint(signal);
+      this.#catalog = catalog;
+    }
     return this.#catalog;
   }
 
@@ -1758,7 +1818,11 @@ export class PolicyBoundary {
       }, timeoutMs);
     });
 
-    const running = operation(controller.signal);
+    // A context belongs to this operation even when another call overlaps it.
+    // Private package reads inherit it without changing the exported API.
+    const running = Promise.resolve().then(() =>
+      this.#operationSignals.run(controller.signal, () => operation(controller.signal)),
+    );
     // Observed either way: when the deadline wins the race, an unobserved
     // rejection from the abandoned work would become an unhandled rejection.
     const settled = running.then(

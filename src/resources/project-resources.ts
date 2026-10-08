@@ -93,7 +93,11 @@ export function registerProjectResources(
     },
     async (uri, context) =>
       await readProjectJson(policy, uri, 'project-summary', era, context, async (root, signal) => {
-        const context = await loadProjectContext(policy, root, { signal });
+        const context = await loadProjectContext(policy, root, {
+          withPhpSources: true,
+          withClientSources: true,
+          signal,
+        });
         return context.model;
       }),
   );

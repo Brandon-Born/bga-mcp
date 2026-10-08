@@ -116,7 +116,8 @@
         "E2E-CLI-FAILURE-SETUP",
         "E2E-CLI-FAILURE-IMPORT",
         "E2E-CLI-FAILURE-STARTUP",
-        "E2E-CLI-FAILURE-SHUTDOWN"
+        "E2E-CLI-FAILURE-SHUTDOWN",
+        "E2E-POLICY-CANCELLATION"
       ],
       "ciEvidence": "ci-36665974043"
     }
@@ -157,6 +158,10 @@
           "E2E-DATABASE-SCHEMA-LEXICAL",
           "UNIT-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-MODE",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
           "UNIT-DATABASE-INSERT-PREFIX"
@@ -177,7 +182,12 @@
           "E2E-SETUP-READY",
           "INT-SETUP-STATUS",
           "INT-SETUP-NO-CREDENTIALS",
-          "E2E-SUCCESS-OUTPUT-REDACTION"
+          "E2E-SUCCESS-OUTPUT-REDACTION",
+          "E2E-SETUP-FULLY-CONFIGURED",
+          "E2E-SETUP-PART-WAY",
+          "E2E-SETUP-MATRIX-MUTATION",
+          "E2E-SETUP-CLI-CONFIGURATION",
+          "E2E-SETUP-PUBLIC-EXCLUDED"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -222,7 +232,11 @@
           "E2E-PROJECT-SOURCE-SELECTION",
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-PROJECT-SOURCE-RECEIPT",
-          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -257,7 +271,9 @@
           "E2E-STUDIO-SUCCESS-REDACTION",
           "E2E-STUDIO-FILE-SESSION-REDACTION",
           "E2E-STUDIO-SESSION-FILE-SAFE",
-          "E2E-STUDIO-WRONG-PROJECT"
+          "E2E-STUDIO-WRONG-PROJECT",
+          "E2E-STUDIO-READ-CANCELLATION",
+          "E2E-STUDIO-SESSION-FILE-OWNER"
         ],
         "liveStudioRequired": true,
         "boundary": "TB-STUDIO-READ",
@@ -303,6 +319,10 @@
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-LEXICAL",
           "E2E-DATABASE-SCHEMA-MODE",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
@@ -353,7 +373,10 @@
           "E2E-DOC-CACHE-REFRESH",
           "E2E-DOC-CACHE-REDIRECT",
           "E2E-DOC-CACHE-MUTATION",
-          "INT-DOC-CACHE-LIFECYCLE"
+          "INT-DOC-CACHE-LIFECYCLE",
+          "E2E-DOCS-EXPLICIT-QUERY-PRIVACY",
+          "E2E-DOC-BOUNDARY-CONFINEMENT",
+          "E2E-DOC-BOUNDARY-BODY-BUDGET"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-DOCS-NETWORK",
@@ -393,7 +416,11 @@
           "E2E-CONTRACT-COMMENT-METHOD-MISSING",
           "E2E-CONTRACT-UNKNOWN-PHP",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -432,7 +459,11 @@
           "E2E-CONTRACT-UNKNOWN-GRAMMAR",
           "E2E-CONTRACT-UNKNOWN-PHP",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -473,6 +504,10 @@
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-DATABASE-SCHEMA-COVERAGE",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
@@ -509,7 +544,10 @@
           "E2E-PROJECT-SOURCE-SELECTION",
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-TELEMETRY-NETWORK-CONTROL",
+          "E2E-TELEMETRY-WRITE-CONTROL"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -608,6 +646,7 @@
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-DATABASE-SCHEMA-COVERAGE",
+          "E2E-TELEMETRY-ABSENT",
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE"
         ],
@@ -637,7 +676,8 @@
           "E2E-PROJECT-SOURCE-SELECTION",
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
-          "E2E-PROJECT-SOURCE-FILE-LIMIT"
+          "E2E-PROJECT-SOURCE-FILE-LIMIT",
+          "E2E-TELEMETRY-ABSENT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -666,7 +706,9 @@
           "E2E-CONTRACT-INERT-EXAMPLES",
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-PROJECT-SOURCE-RECEIPT",
-          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS"
+          "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
+          "E2E-NORMALIZED-PROJECT",
+          "E2E-TELEMETRY-ABSENT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

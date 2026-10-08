@@ -186,8 +186,8 @@ describe('installed executable failure boundary', () => {
     }
     await withMutation(
       policyPath,
-      'await boundary.studioSession();',
-      `await boundary.studioSession();\nthrow new PolicyViolationError(ERROR_CODES.configInvalid, 'safe message', {details: {get raw() { ${fail} }}});`,
+      'await boundary.studioSession({ signal });',
+      `await boundary.studioSession({ signal });\nthrow new PolicyViolationError(ERROR_CODES.configInvalid, 'safe message', {details: {get raw() { ${fail} }}});`,
       async () => {
         for (const cli of cliFiles())
           safe(await execute(cli, rootArgs()), 1, 'internal.unexpected');
@@ -197,8 +197,8 @@ describe('installed executable failure boundary', () => {
     await writeFile(secretFile, `opaque=${fileSession}`, { mode: 0o600 });
     await withMutation(
       policyPath,
-      'await boundary.studioSession();',
-      `await boundary.studioSession();\nthrow new PolicyViolationError(ERROR_CODES.policyStudioNotAllowed, ${JSON.stringify(`${session} ${process.platform === 'win32' ? '' : fileSession} /private/${pathCanary}`)}, {cause: new Error(${JSON.stringify(cause)})});`,
+      'await boundary.studioSession({ signal });',
+      `await boundary.studioSession({ signal });\nthrow new PolicyViolationError(ERROR_CODES.policyStudioNotAllowed, ${JSON.stringify(`${session} ${process.platform === 'win32' ? '' : fileSession} /private/${pathCanary}`)}, {cause: new Error(${JSON.stringify(cause)})});`,
       async () => {
         for (const cli of [installed.cli]) {
           // POSIX proves the file provider; Windows retains its environment route.

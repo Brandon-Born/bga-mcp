@@ -8,9 +8,15 @@ import {
 } from '@modelcontextprotocol/server';
 
 import { cancellationCheckpoint } from '../deadline.js';
+import type { DiagnosticFinding } from '../diagnostics.js';
 import { BgaMcpError, ERROR_CODES } from '../errors.js';
 import type { PolicyBoundary } from '../policy.js';
 import { buildProjectModel, type ProjectModel } from '../project/model.js';
+import { parseJsonc } from '../project/parse.js';
+import { readPhpMethodNames } from '../project/actions.js';
+import { validateActionContracts, type ActionContractTrace } from '../rules/action-contracts.js';
+import { auditDatabaseUsage, type DatabaseAudit, type DatabaseSource } from '../rules/database.js';
+import { validateNotifications, type NotificationTrace } from '../rules/notifications.js';
 import type { PhpSource } from '../rules/state-machine.js';
 import { summarizeFindings, unsupportedSyntaxFinding } from '../rules/uncertainty.js';
 
@@ -24,6 +30,280 @@ export interface ProjectContext {
   readonly phpSources: readonly PhpSource[];
   /** Readable client sources, used by rules that span client and server. */
   readonly clientSources: readonly PhpSource[];
+}
+
+/** @internal A source fact, never a claim that the project executes it. */
+export interface NormalizedFact {
+  readonly key: string;
+  readonly source: string | null;
+  readonly sources: readonly string[];
+  readonly certainty: 'certain' | 'possible';
+  readonly value: unknown;
+}
+
+/** @internal Unknowns survive normalization alongside the facts that were read. */
+export interface NormalizedSection {
+  readonly facts: readonly NormalizedFact[];
+  readonly unknowns: readonly { source: string | null; reason: string }[];
+}
+
+/** @internal Request-scoped shared model; the retained public version-one schema stays fixed. */
+export interface NormalizedProject {
+  readonly sections: Readonly<Record<string, NormalizedSection>>;
+  readonly actions: ActionContractTrace;
+  readonly notifications: NotificationTrace;
+  readonly database: {
+    readonly audit: DatabaseAudit;
+    readonly source: DatabaseSource | null;
+    readonly error: Error | null;
+  };
+}
+
+const normalizedProjects = new WeakMap<ProjectContext, NormalizedProject>();
+
+/** @internal The same trace instance supplies inspection and the public validators. */
+export function normalizedProject(context: ProjectContext): NormalizedProject | undefined {
+  return normalizedProjects.get(context);
+}
+
+function objectRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+async function normalizeContext(
+  context: ProjectContext,
+  paths: readonly string[],
+  read: (path: string) => Promise<string>,
+  signal?: AbortSignal,
+): Promise<NormalizedProject> {
+  const sections: Record<string, NormalizedSection> = {};
+  const facts = (
+    values: readonly NormalizedFact[],
+    unknowns: NormalizedSection['unknowns'] = [],
+  ): NormalizedSection => ({ facts: values, unknowns });
+  const fact = (key: string, source: string | null, value: unknown): NormalizedFact => ({
+    key,
+    source,
+    sources: source === null ? [] : [source],
+    certainty: 'certain',
+    value,
+  });
+  const unknown = (source: string | null, reason: string) => ({ source, reason });
+  sections.metadata = facts(
+    [fact('metadata', context.model.metadata.source, context.model.metadata)],
+    [
+      ...(context.model.metadata.source === null
+        ? [unknown(null, 'No metadata source was read.')]
+        : []),
+      ...context.model.diagnostics.findings
+        .filter((entry) => entry.code === 'project.metadata.unsupported')
+        .map((entry) => unknown(entry.locations[0]?.uri ?? null, entry.message)),
+    ],
+  );
+  sections.states = facts(
+    context.model.states.definitions.map((entry) => ({
+      ...fact(String(entry.id), entry.origin === 'array' ? 'states.inc.php' : null, entry),
+      sources: context.model.states.sources,
+    })),
+    [
+      ...(context.model.states.parsed ? [] : [unknown(null, 'No state definitions were read.')]),
+      ...context.model.states.unsupported.map((reason) =>
+        unknown(context.model.states.source, reason),
+      ),
+    ],
+  );
+  sections.transitions = facts(
+    context.model.states.definitions.flatMap((state) =>
+      Object.entries(state.transitions).map(([name, target]) => ({
+        ...fact(
+          `${String(state.id)}.${name}`,
+          state.origin === 'array' ? 'states.inc.php' : null,
+          target,
+        ),
+        sources: context.model.states.sources,
+      })),
+    ),
+    context.model.states.complete.edges
+      ? []
+      : [unknown(context.model.states.source, 'State edges are incomplete.')],
+  );
+
+  // Official pages say "you can use jsonc instead of json". Options and
+  // preferences migrate independently; "The PHP format will continue to work".
+  // Legacy PHP is retained as unknown here, never executed or called empty.
+  // https://en.doc.boardgamearena.com/Options_and_preferences:_gameoptions.json,_gamepreferences.json
+  // https://en.doc.boardgamearena.com/Game_statistics:_stats.json
+  for (const [id, expression] of [
+    ['options', /^gameoptions\.(?:jsonc?|inc\.php)$/u],
+    ['preferences', /^gamepreferences\.jsonc?$|^gameoptions\.inc\.php$/u],
+    ['statistics', /^stats\.(?:jsonc?|inc\.php)$/u],
+  ] as const) {
+    const entries: NormalizedFact[] = [];
+    const unknowns: { source: string | null; reason: string }[] = [];
+    for (const path of paths.filter((path) => expression.test(path))) {
+      cancellationCheckpoint(signal);
+      if (path.endsWith('.php')) {
+        unknowns.push(
+          unknown(
+            path,
+            'Legacy PHP configuration is present; literal definitions are not normalized by this reader.',
+          ),
+        );
+        continue;
+      }
+      let value: unknown;
+      try {
+        value = parseJsonc(await read(path), signal);
+      } catch {
+        cancellationCheckpoint(signal);
+        unknowns.push(unknown(path, 'Configuration could not be read as a JSON/JSONC object.'));
+        continue;
+      }
+      if (!objectRecord(value)) {
+        unknowns.push(unknown(path, 'Configuration is not an object.'));
+        continue;
+      }
+      for (const [key, definition] of Object.entries(value)) {
+        cancellationCheckpoint(signal);
+        // Statistics has separate table/player namespaces and optional labels.
+        // "A table statistic can have the same ID as a player statistics".
+        if (id === 'statistics' && (key === 'table' || key === 'player')) {
+          if (!objectRecord(definition))
+            unknowns.push(unknown(path, `${key} statistics is not an object.`));
+          else
+            for (const [name, entry] of Object.entries(definition))
+              entries.push(fact(`${key}.${name}`, path, entry));
+        } else if (id === 'statistics' && key === 'value_labels') {
+          entries.push(fact(key, path, definition));
+        } else if (id === 'statistics') {
+          unknowns.push(unknown(path, 'Unrecognized statistics section.'));
+        } else {
+          entries.push(fact(key, path, definition));
+        }
+      }
+    }
+    sections[id] = facts(entries, unknowns);
+  }
+
+  const actions = validateActionContracts(
+    context.model,
+    context.clientSources,
+    context.phpSources,
+    signal,
+  );
+  const notifications = validateNotifications(context.phpSources, context.clientSources, signal);
+  const traceUnknowns = (result: { diagnostics: { findings: readonly DiagnosticFinding[] } }) =>
+    result.diagnostics.findings
+      .filter((entry) => entry.kind === 'unsupported-syntax' || entry.code.endsWith('.unavailable'))
+      .map((entry) => unknown(entry.locations[0]?.uri ?? null, entry.message));
+  sections.actions = facts(
+    [
+      ...actions.clientCalls.map((entry) => fact(`client:${entry.action}`, entry.source, entry)),
+      ...actions.entryPoints.map((entry) =>
+        fact(`${entry.scope}:${entry.action}`, entry.source, entry),
+      ),
+    ],
+    traceUnknowns(actions),
+  );
+  const methodFacts: NormalizedFact[] = [];
+  const methodUnknowns: { source: string | null; reason: string }[] = [];
+  for (const source of context.phpSources) {
+    cancellationCheckpoint(signal);
+    const outcome = readPhpMethodNames(source.text, signal);
+    methodFacts.push(...outcome.value.map((name) => fact(name, source.path, name)));
+    methodUnknowns.push(...outcome.unsupported.map((reason) => unknown(source.path, reason)));
+  }
+  if (context.phpSources.length === 0)
+    methodUnknowns.push(
+      unknown(null, 'No PHP contract source was read; absence of methods is unknown.'),
+    );
+  sections.methods = facts(methodFacts, methodUnknowns);
+  sections.notifications = facts(
+    [
+      ...notifications.sent.map((entry) => fact(`sent:${entry.name}`, entry.source, entry)),
+      ...notifications.handlers.map((entry) => fact(`handler:${entry.name}`, entry.source, entry)),
+    ],
+    traceUnknowns(notifications),
+  );
+  const schemaPath = paths.find((path) => path === 'dbmodel.sql');
+  let schema: DatabaseSource | null = null;
+  let schemaError: Error | null = null;
+  if (schemaPath !== undefined) {
+    try {
+      schema = { path: schemaPath, text: await read(schemaPath) };
+    } catch (error) {
+      cancellationCheckpoint(signal);
+      schemaError = error instanceof Error ? error : new Error('Schema read failed.');
+    }
+  }
+  const database = auditDatabaseUsage(schema, context.phpSources, signal);
+  sections.database = facts(
+    [
+      ...database.tables.map((entry) => fact(`table:${entry.name}`, schema?.path ?? null, entry)),
+      ...database.queries.map((entry, index) =>
+        fact(`query:${String(index)}`, entry.source, entry),
+      ),
+    ],
+    [
+      ...traceUnknowns(database),
+      ...(schemaError === null
+        ? []
+        : [unknown(schemaPath ?? null, 'Schema file could not be read.')]),
+    ],
+  );
+
+  // The file reference documents modules as additional code and retained
+  // .tpl/.css forms. Inventory is a fact; content interpretation and execution
+  // are explicit unknowns. Test names are only a heuristic, owned by BGA-425.
+  // https://en.doc.boardgamearena.com/Studio_file_reference
+  for (const [id, selected, reason] of [
+    [
+      'templates',
+      paths.filter((path) => path.endsWith('.tpl')),
+      'Template contents and dynamic rendering are not normalized.',
+    ],
+    [
+      'styles',
+      paths.filter((path) => path.endsWith('.css')),
+      'Stylesheet contents and rendered appearance are not normalized.',
+    ],
+    [
+      'modules',
+      paths.filter((path) => path.startsWith('modules/')),
+      'Module inventory does not establish imports or execution.',
+    ],
+    [
+      'tests',
+      paths.filter((path) =>
+        /(?:^|\/)(?:tests?|__tests__)(?:\/|$)|\.(?:test|spec)\.[^/]+$/u.test(path),
+      ),
+      'Heuristic test-file inventory; no tests were executed and runtime coverage is unknown.',
+    ],
+  ] as const) {
+    sections[id] = facts(
+      selected.map((path) => ({
+        ...fact(path, path, { present: true }),
+        certainty: id === 'tests' ? 'possible' : 'certain',
+      })),
+      [unknown(null, reason)],
+    );
+  }
+  const sourceUnknowns = context.model.diagnostics.findings
+    .filter(
+      (entry) => entry.code.startsWith('project.source.') && entry.kind === 'unsupported-syntax',
+    )
+    .flatMap((entry) => entry.locations.map((location) => unknown(location.uri, entry.message)));
+  for (const id of ['actions', 'methods', 'notifications', 'database']) {
+    const section = sections[id];
+    if (section !== undefined)
+      sections[id] = facts(section.facts, [...section.unknowns, ...sourceUnknowns]);
+  }
+  return {
+    sections,
+    actions,
+    notifications,
+    database: { audit: database, source: schema, error: schemaError },
+  };
 }
 
 const MODERN_ROOTS_REQUEST = 'project-roots';
@@ -291,7 +571,7 @@ export async function loadProjectContext(
       }),
     };
   });
-  return {
+  const context: ProjectContext = {
     model:
       limits.length === 0
         ? model
@@ -305,4 +585,35 @@ export async function loadProjectContext(
     phpSources,
     clientSources,
   };
+  const normalized = await normalizeContext(
+    context,
+    listing.files.map((file) => file.path),
+    readOnce,
+    options.signal,
+  );
+  const signals = Object.entries(normalized.sections).map(([id, section]) => ({
+    id: `normalized.${id}`,
+    description: `${String(section.facts.length)} normalized source fact(s); ${String(section.unknowns.length)} unknown(s). Facts reflect bounded listed/read source; absence is not a complete-project verdict. ${[...new Set(section.unknowns.map((entry) => entry.reason))].join(' ')}`,
+    matched: section.facts.length > 0,
+    files: [
+      ...new Set(
+        [
+          ...section.facts.flatMap((entry) => entry.sources),
+          ...section.unknowns.map((entry) => entry.source),
+        ].filter((path): path is string => path !== null),
+      ),
+    ],
+  }));
+  const result = {
+    ...context,
+    model: {
+      ...context.model,
+      detection: {
+        ...context.model.detection,
+        signals: [...context.model.detection.signals, ...signals],
+      },
+    },
+  };
+  normalizedProjects.set(result, normalized);
+  return result;
 }

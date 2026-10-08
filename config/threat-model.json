@@ -694,12 +694,12 @@
     },
     {
       "id": "TM-POLICY-CANCELLATION",
-      "title": "A deadline cancels and quiesces the underlying filesystem, parser, and network work before the operation settles",
+      "title": "Deadline signals stop cooperative application work and await issued native cleanup within the250ms ceiling; late native completion remains a platform residual",
       "boundary": "TB-PROCESS",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-326",
-      "scenarios": ["E2E-POLICY-CANCELLATION"]
+      "scenarios": ["E2E-POLICY-CANCELLATION", "UNIT-POLICY-OPERATION-CONTEXT"]
     },
     {
       "id": "TM-POLICY-FILESYSTEM-DEADLINE-QUIESCENCE",
@@ -761,7 +761,9 @@
       "scenarios": [
         "INT-POLICY-NETWORK-DISABLED",
         "E2E-READ-ONLY-NETWORK-DENIED",
-        "E2E-READ-ONLY-NETWORK-HARNESS"
+        "E2E-READ-ONLY-NETWORK-HARNESS",
+        "E2E-TELEMETRY-ABSENT",
+        "E2E-TELEMETRY-NETWORK-CONTROL"
       ]
     },
     {
@@ -945,7 +947,7 @@
     },
     {
       "id": "TM-DOC-REQUEST-CONTENT",
-      "title": "A request carries the client query only after recognizable pastes \u2014 paths, control characters, over-long text, source syntax \u2014 are refused where the request is built",
+      "title": "MCP documentation queries select fixed public outbound vocabulary after lexical exclusions; string shape never establishes origin",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
       "status": "implemented",
@@ -957,7 +959,7 @@
       "title": "The outbound-query contract makes consent or narrow semantics enforceable without claiming that string heuristics prove provenance",
       "boundary": "TB-DOCS-NETWORK",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-324",
       "scenarios": ["E2E-DOCS-EXPLICIT-QUERY-PRIVACY"]
     },
@@ -1194,10 +1196,10 @@
     },
     {
       "id": "TM-STUDIO-READ-CANCELLATION",
-      "title": "Studio credential reads, requests, response bodies, and parsing stop and quiesce when the deadline expires",
+      "title": "Studio credential reads, requests, bodies and parser checkpoints consume operation deadlines with bounded native cleanup",
       "boundary": "TB-STUDIO-READ",
       "control": "automated",
-      "status": "planned",
+      "status": "implemented",
       "backlog": "BGA-326",
       "scenarios": ["E2E-STUDIO-READ-CANCELLATION"]
     },
@@ -1229,7 +1231,7 @@
       "status": "implemented",
       "surfaces": ["SURFACE-CLI-STDOUT"],
       "backlog": "BGA-328",
-      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE"]
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-SAFE", "E2E-STUDIO-SESSION-FILE-OWNER"]
     },
     {
       "id": "TM-STUDIO-FILE-SESSION-REDACTION",
@@ -1319,7 +1321,7 @@
   "residualRisks": [
     {
       "id": "RR-POLICY-NO-TOOL-EVIDENCE",
-      "description": "Packaged same-live-server evidence proves documentation and Studio network cancellation, redirects, DNS, body cleanup, synchronous parser expiry, and quiescence for instrumented listing and descriptor-read syscalls. It does not prove every native filesystem primitive; BGA-326 owns that remaining gap.",
+      "description": "Installed same-client witnesses cover project reads, roots in both protocol eras, lazy configuration and bounded startup reads, credential-provider operations, documentation and Studio network/DNS/body cleanup, and JSONC/Studio parser checkpoints. Native OS calls can outlive the 250-millisecond cleanup ceiling; their later completion is observed, not claimed interruptible. Atomic JSON decoding, regular expressions and sorting retain input-size bounds rather than instruction-level cancellation.",
       "abuseCases": ["AC-PATH-TRAVERSAL", "AC-SYMLINK-ESCAPE", "AC-RESOURCE-EXHAUSTION"],
       "acceptedBy": "Brandon Born"
     },
@@ -1335,7 +1337,7 @@
     },
     {
       "id": "RR-DOC-CONTENT-UNREVIEWED",
-      "description": "Documentation retrieval is reviewed and implemented behind explicit network enablement, host restrictions, provenance, and untrusted-content labelling. Those controls do not prove arbitrary query provenance or prevent an agent from acting on hostile retrieved prose; BGA-324 and RR-DOC-INJECTION-RESIDUAL carry those limits.",
+      "description": "Documentation retrieval remains development-only behind explicit network enablement, reviewed hosts, finite MCP query selections, provenance and untrusted-content labels. Agent-facing requests cannot carry arbitrary query prose. Low-level library path callers cannot prove input origin, and these controls cannot prevent an agent acting on hostile retrieved prose; RR-DOC-QUERY-PROVENANCE and RR-DOC-INJECTION-RESIDUAL retain those limits.",
       "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-SOURCE-EXFILTRATION"],
       "acceptedBy": "Brandon Born"
     },
@@ -1377,7 +1379,7 @@
     },
     {
       "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
-      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason.",
+      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason.",
       "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
       "acceptedBy": "Brandon Born"
     },
@@ -1389,7 +1391,7 @@
     },
     {
       "id": "RR-DOC-QUERY-PROVENANCE",
-      "description": "The request filter reads the shape of a query, not its origin. Text that reads as an ordinary question is sent as one, so a model that paraphrases project content into a question can still put it in a request. Enforcing origin needs an explicit user-supplied channel or a deliberately narrow grammar, which BGA-324 owns; until then the limit is stated in the tool description rather than implied away.",
+      "description": "MCP documentation input selects finite reviewed public subjects and sends server-generated terms, closing arbitrary query content. Selection origin remains unknown and topic choice/timing remains observable. Trusted lower-level PolicyBoundary library callers can still choose shape-confined wiki paths; their origin is not attested. Retrieved prose remains untrusted.",
       "abuseCases": ["AC-SOURCE-EXFILTRATION", "AC-DOC-REQUEST-LEAK", "AC-DOC-TRACKING"],
       "acceptedBy": "Brandon Born"
     }

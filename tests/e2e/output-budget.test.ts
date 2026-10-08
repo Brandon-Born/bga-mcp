@@ -1,4 +1,4 @@
-import { readFile, readdir } from 'node:fs/promises';
+import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
@@ -88,11 +88,32 @@ describe('packaged output budget', () => {
   });
 
   it('[E2E-POLICY-FINAL-OUTPUT-LIMIT] bounds a refusal that reflects an argument', async () => {
-    const { result, stderr } = await connect(
-      floor,
+    const networkLog = resolve(server.temporaryRoot, 'output-budget-network.log');
+    await writeFile(networkLog, '');
+    // Enable the documented path so the reflected-source refusal is reached;
+    // network-off now refuses before catalog construction. No request is allowed.
+    const { result, stderr } = await withPackagedServer(
+      server.cli,
+      [
+        '--project-root',
+        server.projects.legacy,
+        '--max-output-bytes',
+        String(floor),
+        '--allow-network',
+      ],
       async (client) =>
         await callTool(client, 'search_bga_docs', { query: 'states', sourceId: LONG }),
+      {
+        nodeArguments: [
+          '--import',
+          'tsx',
+          '--import',
+          new URL('./network-denied.ts', import.meta.url).href,
+        ],
+        env: { ...process.env, BGA_MCP_NETWORK_LOG: networkLog },
+      },
     );
+    expect(await readFile(networkLog, 'utf8')).toBe('');
 
     expect(result.isError).toBe(true);
     expect(

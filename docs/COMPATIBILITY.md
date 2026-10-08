@@ -1,5 +1,11 @@
 # Compatibility matrix
 
+## Shared source normalization and default absence checks — October 7
+
+BGA-101 retains located facts and explicit unknowns in fourteen internal categories across the three supported layouts. Inspection and summary publish bounded `normalized.*` receipts; action, notification and database validators share their request-scoped traces. Configuration values and executable bodies are not published, and public schemas/declarations remain unchanged. Read omissions remain unsupported in inspection and summary as well as validators; template/style contents, module execution and runtime-test coverage remain unknown. [Model scope](verification/NORMALIZED_PROJECT_MODEL.md) and `E2E-NORMALIZED-PROJECT` retain those limits.
+
+BGA-410 observes the installed public command making no default network request or Node filesystem mutation through all seven tools and three resources. Independent blocked request and analytics-write controls detect regressions. This is evidence of the observed Node paths, not arbitrary native effects. BGA-324/326/328 additionally bound development documentation selections, operation contexts and credential-provider loading; these checks do not admit development documentation/setup/Studio capabilities to the public release or establish live Studio retrieval.
+
 ## Independent database checks — BGA-439
 
 Under partial database-group coverage, pre-release can now pass audit availability
@@ -105,6 +111,8 @@ BGA-423 keeps development documentation authority on exact catalog pages and fol
 BGA-208/BGA-211 add development-reader request-count, expiry/refresh, unavailable-upstream, deadline/refusal and redirect-cache scenarios. Exact final-page excerpts can be reused without another page fetch; aliases still establish their destination through policy, and API discovery remains live. A stale search fallback is dated and degraded. Synthetic upstream and external-clock controls prove this bounded lifecycle, not real network transport or general documentation release admission. [Cache scope](verification/DOCUMENTATION_CACHE_LIFECYCLE.md).
 
 Every public capability is served by the user's local stdio process. Documentation and experimental Studio reads may make an explicitly enabled request across their reviewed network boundary; that does not turn them into remotely hosted capabilities. The environment claim lists every manifest capability to which it applies, and the compatibility gate rejects either an omitted local claim or an unclaimed remote environment.
+
+BGA-316 adds installed empty, fully configured and part-way configuration reports, strict schema checks, synthetic provider privacy, denied network, repeat/immutability checks and an incorrect-classification mutation control. Configuration-only CLI preflight remains a separate tested surface. The development report is exercised with both client eras; modern official conformance and live Studio retrieval remain unknown, and the public command continues to exclude `check_setup`.
 
 ## MCP protocol versions and transports
 

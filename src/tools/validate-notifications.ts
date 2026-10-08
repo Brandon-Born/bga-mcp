@@ -9,6 +9,7 @@ import { summarizeFindings } from '../rules/uncertainty.js';
 import {
   isProjectRootInputRequired,
   loadProjectContext,
+  normalizedProject,
   resolveProjectRootForRequest,
 } from './project-context.js';
 
@@ -136,7 +137,9 @@ export function registerValidateNotifications(
             withClientSources: true,
             signal,
           });
-          const trace = validateNotifications(project.phpSources, project.clientSources, signal);
+          const trace =
+            normalizedProject(project)?.notifications ??
+            validateNotifications(project.phpSources, project.clientSources, signal);
           return {
             schemaVersion: 1,
             layout: project.model.layout,

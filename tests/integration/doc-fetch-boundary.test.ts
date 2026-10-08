@@ -69,7 +69,7 @@ describe('guarded documentation fetch', () => {
         query: '<?php class Game extends Table {',
       });
       expect(pasted.code).toBe(ERROR_CODES.policyDocRequestContent);
-      expect(pasted.message).toContain('copied out of a file');
+      expect(pasted.message).toContain('source syntax');
 
       const leaked = await refusal(policy, {
         sourceId: SOURCE_ID,
@@ -81,6 +81,51 @@ describe('guarded documentation fetch', () => {
     } finally {
       await rm(projectRoot, { recursive: true, force: true });
     }
+  });
+
+  it('[INT-DOC-REQUEST-CONTENT] refuses unreviewed query and parameter channels before catalog I/O', async () => {
+    const policy = await boundary();
+    const catalog = vi.spyOn(policy, 'readPackagedConfig');
+    for (const request of [
+      {
+        sourceId: SOURCE_ID,
+        path: 'api.php',
+        query: 'SELECT unreleased_secret FROM internal_table',
+      },
+      { sourceId: SOURCE_ID, path: 'api.php', params: { srsearch: 'states' } },
+      {
+        sourceId: SOURCE_ID,
+        path: 'api.php',
+        query: 'states',
+        params: {
+          action: 'query',
+          list: 'search',
+          srsearch: 'states SELECT secret FROM table',
+          srwhat: 'text',
+          srlimit: '3',
+          format: 'json',
+          formatversion: '1',
+        },
+      },
+      {
+        sourceId: SOURCE_ID,
+        path: 'api.php',
+        query: 'states',
+        params: {
+          action: 'query',
+          list: 'search',
+          srsearch: 'state classes',
+          srwhat: 'text',
+          srlimit: '3',
+          format: 'json',
+          formatversion: '1',
+          hidden: 'private_identifier',
+        },
+      },
+    ]) {
+      expect((await refusal(policy, request)).code).toBe(ERROR_CODES.policyDocRequestContent);
+    }
+    expect(catalog).not.toHaveBeenCalled();
   });
 
   it('[INT-DOC-REQUEST-CONTENT] refuses an oversized or unreadable query', async () => {
