@@ -817,7 +817,7 @@
       "item": "BGA-328",
       "case": "On POSIX it enforces the expected owner",
       "boundary": "packaged",
-      "missing": "Proving a refusal for the wrong owner needs a file owned by a second account, which the packaged harness cannot create; the check is implemented and unproven."
+      "scenarios": ["E2E-STUDIO-SESSION-FILE-OWNER"]
     },
     {
       "item": "BGA-328",
