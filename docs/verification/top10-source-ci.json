@@ -57,6 +57,11 @@
       },
       "result": "Retained failure; stale source-refusal ordering and summary read-limit expectations corrected. No complete-gate success or evidence seal claimed."
     },
-    "Affected correction initially omitted the TypeScript preload and over-specified one status across layouts. Corrected harness and retained the non-passing, located unsupported read-limit invariant; reflected-argument output case and both source-limit cases passed."
+    "Affected correction initially omitted the TypeScript preload and over-specified one status across layouts. Corrected harness and retained the non-passing, located unsupported read-limit invariant; reflected-argument output case and both source-limit cases passed.",
+    {
+      "source": "85c359fcbf1423ef17aa2f1e24a1f4f173125b09",
+      "ci": "https://github.com/Brandon-Born/bga-mcp/actions/runs/37706268835",
+      "result": "Terminal failure: Linux/macOS Node22/24 passed; Windows Node22/24 each passed936/937 and failed the Studio network deadline fixture. Fixture-mode migration omitted explicit stall selection, so Windows correctly finished and refused a normal HTML shell. Corrected mode and far-end stalled/bytes assertions; independent mode-removal control fails. No production budget change or unchanged retry."
+    }
   ]
 }
