@@ -59,5 +59,15 @@
   "preflightFailures": {
     "compatibility": "New scenario was missing from twelve explicit capability/layout mappings; all mappings corrected and gate passes",
     "emptySnapshot": "Comparison attempt inspected empty old temporary snapshot; rejected and excluded; corrected harness rejects empty roots"
-  }
+  },
+  "fullGateAttempts": [
+    {
+      "source": "d633dd9ed3b1123044b0dbda90ef503fa51579c1",
+      "phase": "lint",
+      "result": "failed",
+      "reason": "New installed test used a value import solely as a TypeScript type",
+      "repair": "Use import type; no runtime, assertion or timeout change",
+      "testsExecuted": false
+    }
+  ]
 }

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { AuditDatabaseUsageOutputSchema } from '../../src/tools/audit-database-usage.js';
-import { RunPreReleaseAuditOutputSchema } from '../../src/tools/run-pre-release-audit.js';
+import type { RunPreReleaseAuditOutputSchema } from '../../src/tools/run-pre-release-audit.js';
 import {
   callTool,
   digestDirectory,
