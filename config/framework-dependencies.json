@@ -267,7 +267,9 @@
         "tests/e2e/telemetry-absence.test.ts",
         "tests/e2e/telemetry-write-denied.ts",
         "tests/integration/normalized-project.test.ts",
-        "tests/unit/database-insert-prefix.test.ts"
+        "tests/unit/database-insert-prefix.test.ts",
+        "tests/unit/database-column-case.test.ts",
+        "tests/e2e/database-column-case.test.ts"
       ]
     },
     {
@@ -549,7 +551,8 @@
         "docs/verification/bga441-source-ci.json",
         "docs/verification/RUNTIME_EVIDENCE_FEASIBILITY.md",
         "docs/verification/top10-source-ci.json",
-        "docs/verification/bga442-source-ci.json"
+        "docs/verification/bga442-source-ci.json",
+        "docs/verification/bga443-source-ci.json"
       ]
     }
   ],

@@ -241,7 +241,14 @@ it('[E2E-DATABASE-INDEPENDENT-REFUSAL] refuses schema completeness guesses, miss
             expect(
               checks
                 ?.filter((check) => check.id !== INDEPENDENT[0])
-                .every((check) => check.outcome === 'unsupported'),
+                .every(
+                  (check) =>
+                    check.outcome ===
+                    (schema === 'CREATE TABLE card (card_id INT, CARD_ID INT);' &&
+                    check.id === 'database.column.duplicate'
+                      ? 'failed'
+                      : 'unsupported'),
+                ),
             ).toBe(true);
             expect(await digestDirectory(root)).toBe(before);
           }
