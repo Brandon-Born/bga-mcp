@@ -368,6 +368,23 @@
     },
     "affectedTests": 59,
     "sourceCi": null,
-    "frameworkAdmission": null
+    "frameworkAdmission": null,
+    "validationAttempts": [
+      {
+        "source": "e930153",
+        "phase": "First integrated full gate",
+        "testsPassed": 975,
+        "testsFailed": 5,
+        "totalTests": 980,
+        "failureScope": "Four old group-wide unsupported/count expectations and one real shipped declaration-contract failure",
+        "resolution": "Explicit schema-only exceptions retain all query/other-group holds; new helper declarations use the existing @internal/stripInternal boundary without changing the retained public snapshot"
+      },
+      {
+        "phase": "Focused installed contract, explanation, scope, read-limit and independent-check validation",
+        "files": 5,
+        "testsPassed": 12,
+        "testsFailed": 0
+      }
+    ]
   }
 }

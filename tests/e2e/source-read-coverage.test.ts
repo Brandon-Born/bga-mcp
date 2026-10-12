@@ -55,7 +55,11 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
           expect(response.isError, tool).toBe(false);
           expect(JSON.stringify(response), tool).not.toContain('private-source-body-canary');
           if (tool === 'run_pre_release_audit') {
-            expect(response.structured?.counts?.passed).toBe(1);
+            expect(response.structured?.counts?.passed).toBe(3);
+            for (const id of ['database.table.duplicate', 'database.column.duplicate'])
+              expect(response.structured?.checks?.find((check) => check.id === id)?.outcome).toBe(
+                'passed',
+              );
             expect(
               response.structured?.checks?.find((c) => c.id === 'database.audit.unavailable')
                 ?.outcome,
@@ -63,7 +67,13 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
             expect(
               response.structured?.checks
                 ?.filter(
-                  (c) => c.outcome !== 'manual-required' && c.id !== 'database.audit.unavailable',
+                  (c) =>
+                    c.outcome !== 'manual-required' &&
+                    ![
+                      'database.audit.unavailable',
+                      'database.table.duplicate',
+                      'database.column.duplicate',
+                    ].includes(c.id),
                 )
                 .every((c) => c.outcome === 'unsupported'),
             ).toBe(true);
@@ -140,9 +150,11 @@ it('[E2E-PROJECT-SOURCE-BYTE-LIMIT] discloses omitted source bodies and reads la
         }
         const audit = (await callTool<Result>(client, 'run_pre_release_audit', {})).structured;
         expect(audit?.counts?.failed).toBeGreaterThan(0);
-        expect(audit?.counts?.passed).toBe(1);
+        expect(audit?.counts?.passed).toBe(3);
         expect(audit?.checks?.filter((c) => c.outcome === 'passed').map((c) => c.id)).toEqual([
           'database.audit.unavailable',
+          'database.column.duplicate',
+          'database.table.duplicate',
         ]);
         expect(audit?.counts?.['manual-required']).toBeGreaterThan(0);
       });
@@ -171,7 +183,11 @@ it('[E2E-PROJECT-SOURCE-FILE-LIMIT] reports capped module sets, redacts omitted 
         expect(response.isError, tool).toBe(false);
         expect(JSON.stringify(response)).not.toContain(secret);
         if (tool === 'run_pre_release_audit') {
-          expect(response.structured?.counts?.passed).toBe(readableDbReference ? 1 : 0);
+          expect(response.structured?.counts?.passed).toBe(readableDbReference ? 3 : 2);
+          for (const id of ['database.table.duplicate', 'database.column.duplicate'])
+            expect(response.structured?.checks?.find((check) => check.id === id)?.outcome).toBe(
+              'passed',
+            );
           expect(
             response.structured?.checks?.find((c) => c.id === 'database.audit.unavailable')
               ?.outcome,
@@ -179,7 +195,13 @@ it('[E2E-PROJECT-SOURCE-FILE-LIMIT] reports capped module sets, redacts omitted 
           expect(
             response.structured?.checks
               ?.filter((c) => c.outcome === 'passed')
-              .every((c) => c.id === 'database.audit.unavailable'),
+              .every((c) =>
+                [
+                  'database.audit.unavailable',
+                  'database.table.duplicate',
+                  'database.column.duplicate',
+                ].includes(c.id),
+              ),
           ).toBe(true);
           expect(response.text).toContain('200 source-file limit');
         } else {

@@ -145,7 +145,7 @@ export interface DatabaseAudit {
 
 const completeSchemaNamingAudits = new WeakSet<DatabaseAudit>();
 
-/** Internal attribution from the actual schema reader; never public output. */
+/** @internal Attribution from the actual schema reader; never public output. */
 export function hasCompleteSchemaNaming(audit: DatabaseAudit): boolean {
   return completeSchemaNamingAudits.has(audit);
 }

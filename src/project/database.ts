@@ -18,7 +18,7 @@ export interface TableDefinition {
 type SchemaOutcome = ParseOutcome<readonly TableDefinition[]>;
 const completedSchemaNamingReads = new WeakSet<SchemaOutcome>();
 
-/** Internal producer evidence; an empty/forged unsupported list is insufficient. */
+/** @internal Producer evidence; an empty/forged unsupported list is insufficient. */
 export function schemaNamesFullyRead(outcome: SchemaOutcome): boolean {
   return completedSchemaNamingReads.has(outcome);
 }
