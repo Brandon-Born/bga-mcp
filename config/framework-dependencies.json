@@ -549,7 +549,8 @@
         "docs/verification/bga441-source-ci.json",
         "docs/verification/RUNTIME_EVIDENCE_FEASIBILITY.md",
         "docs/verification/top10-source-ci.json",
-        "docs/verification/bga442-source-ci.json"
+        "docs/verification/bga442-source-ci.json",
+        "docs/verification/bga443-source-ci.json"
       ]
     }
   ],

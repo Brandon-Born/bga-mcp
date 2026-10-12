@@ -173,6 +173,7 @@ export function auditDatabaseUsage(
 
   const tables = schema.value;
   const tablesByName = new Map<string, TableDefinition>();
+  const columnsByTable = new Map<string, ReadonlySet<string>>();
   for (const table of tables) {
     cancellationCheckpoint(signal);
     if (tablesByName.has(table.name)) {
@@ -191,19 +192,25 @@ export function auditDatabaseUsage(
     const seen = new Set<string>();
     for (const column of table.columns) {
       cancellationCheckpoint(signal);
-      if (seen.has(column)) {
+      // The reader's supported column names are ASCII. MySQL column names
+      // are case-insensitive on every platform; table names are separate and
+      // retain their existing exact comparison and original recorded spelling.
+      // https://dev.mysql.com/doc/refman/8.0/en/identifier-case-sensitivity.html
+      const identity = column.toLowerCase();
+      if (seen.has(identity)) {
         findings.push(
           certain(
             'database.column.duplicate',
             `Table '${table.name}' declares column '${column}' more than once.`,
-            'Two column definitions in one table use the same name.',
+            'Two column definitions in one table use the same name, ignoring letter case.',
             schemaSource?.path ?? null,
             'Remove or rename the duplicate column.',
           ),
         );
       }
-      seen.add(column);
+      seen.add(identity);
     }
+    columnsByTable.set(table.name, seen);
   }
 
   const queries: (QueryReference & { source: string })[] = [];
@@ -274,12 +281,12 @@ export function auditDatabaseUsage(
       if (tableName === undefined || columnName === undefined) {
         continue;
       }
-      usedColumns.add(reference);
+      usedColumns.add(`${tableName}.${columnName.toLowerCase()}`);
       const table = tablesByName.get(tableName);
       if (
         schema.unsupported.length > 0 ||
         table === undefined ||
-        table.columns.includes(columnName)
+        columnsByTable.get(tableName)?.has(columnName.toLowerCase()) === true
       ) {
         continue;
       }
@@ -313,7 +320,7 @@ export function auditDatabaseUsage(
       cancellationCheckpoint(signal);
       for (const column of table.columns) {
         cancellationCheckpoint(signal);
-        if (!usedColumns.has(`${table.name}.${column}`)) {
+        if (!usedColumns.has(`${table.name}.${column.toLowerCase()}`)) {
           findings.push(
             heuristic(
               'database.column.unused',

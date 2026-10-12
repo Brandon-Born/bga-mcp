@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-443",
+  "baseMain": "95e13623818a6e492af57121892cee39bde38212",
+  "status": "Implementation regression coverage in progress; full gate, source CI and framework admission are not yet claimed",
+  "scope": "ASCII column comparisons for duplicates, declaration lookup and usage within exact table identities; preserve original spelling and all unknown SQL/source/schema bounds",
+  "originalRegression": {
+    "source": "95e13623818a6e492af57121892cee39bde38212",
+    "testsFailed": 5,
+    "installedPublicRegressionFailed": true,
+    "baselineArchiveDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c"
+  },
+  "affectedAttempt": {
+    "passed": 75,
+    "failed": 1,
+    "failure": "Prior installed refusal expected a case-only duplicate column to remain unsupported; now assert confirmed failure while all other holds remain"
+  },
+  "sourceCi": null,
+  "frameworkAdmission": null,
+  "delivery": {
+    "draftPR": null,
+    "gameModified": false,
+    "merged": false,
+    "released": false
+  },
+  "affectedTests": {
+    "passed": 76,
+    "failed": 0,
+    "files": 6
+  },
+  "artifactDigest": "sha256:0e7869367fc30fc8d0d6c0903509aa19985b1109b17951a13095f5a0e48b9708",
+  "unchangedGameComparison": {
+    "capturedAt": "2026-10-12T20:28:17.479Z",
+    "scope": {
+      "scope": "unchanged-checkout",
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+      "files": 159,
+      "excludedMetadata": ".git",
+      "unchanged": true
+    },
+    "tools": 7,
+    "resources": 3,
+    "allResponsesDeeplyEqual": true,
+    "processExitAndRefusalsPassed": true,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "unsupported": 30,
+      "manual-required": 8
+    }
+  },
+  "supplementalFrozenSnapshot": {
+    "status": "excluded from new claims",
+    "reason": "Previous temporary snapshot is empty and its recorded commit is unavailable in current game Git history",
+    "historicalReceiptsPreserved": true,
+    "newComparisonClaimed": false
+  },
+  "preflightFailures": {
+    "compatibility": "New scenario was missing from twelve explicit capability/layout mappings; all mappings corrected and gate passes",
+    "emptySnapshot": "Comparison attempt inspected empty old temporary snapshot; rejected and excluded; corrected harness rejects empty roots"
+  }
+}
