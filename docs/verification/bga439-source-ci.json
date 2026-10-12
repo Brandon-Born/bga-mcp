@@ -356,5 +356,18 @@
     "clean": true,
     "archiveDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
     "identity": "Clean implementation packs byte-identically to local full gate and installed Dino probe"
+  },
+  "schemaNamingFollowup": {
+    "item": "BGA-438",
+    "baseMain": "50a945eda481609689c737568e887b620eba397d",
+    "status": "Implemented bounded ASCII schema naming attribution; integrated full gate, exact-source CI and admission pending",
+    "scope": "Only independent duplicate-table/column absence from actual completed non-empty naming reads; no query-dependent pass, new SQL grammar, public shape or permission",
+    "originalInstalledRegression": {
+      "failed": 2,
+      "passed": 21
+    },
+    "affectedTests": 59,
+    "sourceCi": null,
+    "frameworkAdmission": null
   }
 }

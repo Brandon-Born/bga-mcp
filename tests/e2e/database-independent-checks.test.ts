@@ -42,6 +42,64 @@ async function setup(root: string, layout: string) {
   );
 }
 
+it('[E2E-DATABASE-SCHEMA-INDEPENDENT] separates a complete schema naming read from unknown query execution through the installed command', async () => {
+  const server = await installPackagedServer('schema-independent', {
+    modern: 'modern',
+    legacy: 'legacy',
+    hybrid: 'hybrid',
+  });
+  try {
+    for (const [layout, root] of Object.entries(server.projects)) {
+      await setup(root, layout);
+      await writeFile(
+        resolve(root, 'dbmodel.sql'),
+        'CREATE TABLE IF NOT EXISTS card (card_id INT, label VARCHAR(20), PRIMARY KEY (card_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;' +
+          'CREATE TABLE token (token_id INT);',
+      );
+      await writeFile(resolve(root, 'local.js'), 'export const unknownScope = true;');
+      const before = await digestDirectory(root);
+      const session = await withPublicPackagedServer(
+        server,
+        ['--project-root', root],
+        async (client) => {
+          const response = await callTool<Audit>(client, 'run_pre_release_audit', {});
+          expect(response.isError).toBe(false);
+          const checks = response.structured?.checks.filter((check) => check.group === 'database');
+          expect(
+            checks?.filter((check) => check.outcome === 'passed').map((check) => check.id),
+          ).toEqual(INDEPENDENT);
+          for (const id of QUERY_CHECKS)
+            expect(checks?.find((check) => check.id === id)?.outcome).toBe('unsupported');
+          expect(
+            checks?.find((check) => check.id === 'database.table.duplicate')?.reason,
+          ).toContain('schema naming');
+          expect(JSON.stringify(response)).not.toContain('private-row-canary');
+          expect(JSON.stringify(response)).not.toContain('completedChecks');
+          expect(await callTool<Audit>(client, 'run_pre_release_audit', {})).toEqual(response);
+          const database = await callTool<{
+            schema: { name: string; columns: string[] }[];
+            diagnostics: { summary: { unsupported: number } };
+          }>(client, 'audit_database_usage', {});
+          expect(database.structured?.schema).toEqual([
+            { name: 'card', columns: ['card_id', 'label'] },
+            { name: 'token', columns: ['token_id'] },
+          ]);
+          expect(database.structured?.diagnostics.summary.unsupported).toBeGreaterThan(0);
+          const outside = await callTool(client, 'run_pre_release_audit', {
+            projectRoot: server.temporaryRoot,
+          });
+          expect(outside.isError).toBe(true);
+          expect(outside.text).toContain('policy.root.not-allowed');
+        },
+      );
+      expect(session.stderr).toBe('');
+      expect(await digestDirectory(root)).toBe(before);
+    }
+  } finally {
+    await server.cleanup();
+  }
+}, 240_000);
+
 it('[E2E-DATABASE-INDEPENDENT-CHECKS] retains independent evidence and all unknown query coverage through the installed public command', async () => {
   const server = await installPackagedServer('database-independent', {
     modern: 'modern',
@@ -160,12 +218,15 @@ it('[E2E-DATABASE-INDEPENDENT-REFUSAL] refuses schema completeness guesses, miss
         ['--project-root', root],
         async (client) => {
           for (const schema of [
-            'CREATE TABLE card (card_id INT);',
+            'CREATE TABLE card (card_id INT); ALTER TABLE card ADD extra INT;',
             'CREATE TABLE card (card_id INT); CREATE TABLE $unknown (id INT);',
             '/*!80000 CREATE TABLE hidden (id INT) */;',
             '--not-a-comment CREATE TABLE hidden (id INT);',
-            '-- comment\rCREATE TABLE hidden (id INT);',
+            '-- comment\rCREATE TABLE hidden (id INT); CREATE TABLE IF NOT EXISTS hidden (other INT);',
             '/* ordinary block comment */',
+            'CREATE TABLE card (card_id INT); CREATE TABLE Card (card_id INT);',
+            'CREATE TABLE card (card_id INT, CARD_ID INT);',
+            '\uFEFFCREATE TABLE card (card_id INT);',
           ]) {
             await writeFile(resolve(root, 'dbmodel.sql'), schema);
             const before = await digestDirectory(root);

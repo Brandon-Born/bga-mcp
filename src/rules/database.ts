@@ -3,6 +3,7 @@ import { cancellationCheckpoint } from '../deadline.js';
 import {
   parseQueries,
   parseSchema,
+  schemaNamesFullyRead,
   type QueryReference,
   type TableDefinition,
 } from '../project/database.js';
@@ -142,6 +143,13 @@ export interface DatabaseAudit {
   readonly diagnostics: DiagnosticResult;
 }
 
+const completeSchemaNamingAudits = new WeakSet<DatabaseAudit>();
+
+/** Internal attribution from the actual schema reader; never public output. */
+export function hasCompleteSchemaNaming(audit: DatabaseAudit): boolean {
+  return completeSchemaNamingAudits.has(audit);
+}
+
 /**
  * Compares the declared schema with the queries that use it.
  *
@@ -214,6 +222,12 @@ export function auditDatabaseUsage(
     }
   }
 
+  const completeAudit = (): DatabaseAudit => {
+    const result = { tables, queries, diagnostics: summarizeFindings(findings, signal) };
+    if (schemaNamesFullyRead(schema)) completeSchemaNamingAudits.add(result);
+    return result;
+  };
+
   if (schemaSource === null || queries.length === 0) {
     const missing = [
       schemaSource === null ? 'no readable dbmodel.sql' : null,
@@ -229,7 +243,7 @@ export function auditDatabaseUsage(
       ),
     );
     cancellationCheckpoint(signal);
-    return { tables, queries, diagnostics: summarizeFindings(findings, signal) };
+    return completeAudit();
   }
 
   const usedColumns = new Set<string>();
@@ -315,5 +329,5 @@ export function auditDatabaseUsage(
   }
 
   cancellationCheckpoint(signal);
-  return { tables, queries, diagnostics: summarizeFindings(findings, signal) };
+  return completeAudit();
 }

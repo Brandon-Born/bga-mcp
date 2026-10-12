@@ -239,3 +239,7 @@ support, public shape, descriptor, version or trust boundary is added.
 ## Conditional schema declarations — BGA-438
 
 A later `CREATE TABLE IF NOT EXISTS` for an already read name cannot justify a certain duplicate-table error. The earlier naming witness stays visible; the effective schema stays unsupported rather than combining column sets or guessing which definition exists. Later unconditional declarations still report duplicates, including after an initial conditional declaration. Installed `E2E-DATABASE-CONDITIONAL-CREATE` covers modern, legacy and hybrid roots, repeat and unchanged project bytes through the public command. This changes no schema, inventory, permission or dynamic SQL support.
+
+## Independent populated-schema checks — BGA-438
+
+The existing pre-release duplicate-table and duplicate-column checks can pass independently of unresolved query VALUES after the actual producer completely reads a non-empty supported ASCII schema naming subset. Copies or fabricated empty outcomes provide no attribution. Unsupported schema syntax, mixed declarations, conditional repeats, non-ASCII/control inputs, folded-name collisions and missing reads retain their holds; actual defects remain failed and cannot be hidden by truncation. All four query-dependent checks stay unsupported when their input is incomplete. `E2E-DATABASE-SCHEMA-INDEPENDENT` covers installed modern, legacy and hybrid layouts. Public schemas, index exports, dependencies and permissions are unchanged; this is declaration naming, not SQL validity or runtime validation.

@@ -15,6 +15,14 @@ export interface TableDefinition {
   readonly columns: readonly string[];
 }
 
+type SchemaOutcome = ParseOutcome<readonly TableDefinition[]>;
+const completedSchemaNamingReads = new WeakSet<SchemaOutcome>();
+
+/** Internal producer evidence; an empty/forged unsupported list is insufficient. */
+export function schemaNamesFullyRead(outcome: SchemaOutcome): boolean {
+  return completedSchemaNamingReads.has(outcome);
+}
+
 export interface QueryReference {
   /** Tables the query names in FROM, JOIN, INSERT INTO, UPDATE, or DELETE FROM. */
   readonly tables: readonly string[];
@@ -390,7 +398,42 @@ export function parseSchema(
     declaredNames.add(name);
   }
   cancellationCheckpoint(signal);
-  return { value: tables, unsupported: [...new Set(unsupported)] };
+  const outcome: SchemaOutcome = { value: tables, unsupported: [...new Set(unsupported)] };
+  // Column names are case-insensitive; table-name casing depends on the
+  // runtime. Do not attest absence for names that differ only by case.
+  // https://dev.mysql.com/doc/refman/8.0/en/identifier-case-sensitivity.html
+  let namesUnambiguous = true;
+  const tableNames = new Set<string>();
+  for (const table of tables) {
+    cancellationCheckpoint(signal);
+    const name = table.name.toLowerCase();
+    if (tableNames.has(name)) namesUnambiguous = false;
+    tableNames.add(name);
+    const columnNames = new Set<string>();
+    for (const column of table.columns) {
+      cancellationCheckpoint(signal);
+      const name = column.toLowerCase();
+      if (columnNames.has(name)) namesUnambiguous = false;
+      columnNames.add(name);
+    }
+  }
+  // The entire lexical/statement walk completed, every declaration supplied
+  // names, and no unexamined region remains. This witnesses only non-empty
+  // CREATE naming coverage, not type validity or the runtime database state.
+  // BGA puts CREATE/ALTER declarations in dbmodel.sql; MySQL defines column
+  // declarations separately from keys/constraints in CREATE TABLE.
+  // Sources: https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql
+  // https://dev.mysql.com/doc/refman/8.0/en/create-table.html
+  // Keep this new independent witness narrower than the general reader:
+  // non-ASCII or other control bytes require a separate lexical review.
+  if (
+    tables.length > 0 &&
+    namesUnambiguous &&
+    unsupported.length === 0 &&
+    /^[\t\r\n\x20-\x7e]*$/u.test(sql)
+  )
+    completedSchemaNamingReads.add(outcome);
+  return outcome;
 }
 
 /**
