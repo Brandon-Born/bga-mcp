@@ -356,5 +356,795 @@
     "clean": true,
     "archiveDigest": "sha256:776fbfd0f0e1bb90f8a35aa66e6e23ebcb5ec61bb64f1c42c9b19eb84d525fc7",
     "identity": "Clean implementation packs byte-identically to local full gate and installed Dino probe"
+  },
+  "schemaNamingFollowup": {
+    "item": "BGA-438",
+    "baseMain": "50a945eda481609689c737568e887b620eba397d",
+    "status": "Bounded schema-only coverage and framework command repair verified on exact source bc4ac81; final receipt metadata carries identities without claiming prior implementation CI covers its own new HEAD",
+    "scope": "Only independent duplicate-table/column absence from actual completed non-empty naming reads; no query-dependent pass, new SQL grammar, public shape or permission",
+    "originalInstalledRegression": {
+      "failed": 2,
+      "passed": 21
+    },
+    "affectedTests": 59,
+    "sourceCi": {
+      "source": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+      "allSixPassed": true,
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38210213486",
+      "trustedSchemaAndIntegrityValid": true,
+      "records": [
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.2",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:04:31.233Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+          "evidenceDigest": "sha256:0883cd64bf6a03bacd7936b1f2fa80be53a7d9972ae174e3998c5cc0df7e3e58",
+          "postObservation": true
+        },
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.20.0",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:02:09.346Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+          "evidenceDigest": "sha256:10e1e1d9f96ec9ca736d5e54eaf25efe92f3fad5185208880fa7c28e324b9721",
+          "postObservation": true
+        },
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:01:36.774Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:b233ba0023c4c6dc6210e2ee31916ac734336964d0da8b7730394346bb23b31c",
+          "evidenceDigest": "sha256:0454ad869299705bd1be4d3dd48699314ffe660d9500ae0fad795a3646791be9",
+          "postObservation": true
+        },
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.21.0",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:02:51.304Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:b233ba0023c4c6dc6210e2ee31916ac734336964d0da8b7730394346bb23b31c",
+          "evidenceDigest": "sha256:f5de2717e99b29fba0e9b2688187a0718eb04e916e08c271386d73e59ea933e7",
+          "postObservation": true
+        },
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:05:39.756Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:d3ed269f461337bdd8db3239e3dda36e63d4bc2ed4cd4c72a3f11cfd48e71003",
+          "evidenceDigest": "sha256:dbf452d4673b4a9ab85c5a450c9e6098cf5397a21d4a0fd399294209dbce2f0c",
+          "postObservation": true
+        },
+        {
+          "source": {
+            "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.21.0",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-12T06:05:12.044Z",
+          "tests": {
+            "files": 122,
+            "total": 980,
+            "passed": 980,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 267,
+            "passed": 267,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:d3ed269f461337bdd8db3239e3dda36e63d4bc2ed4cd4c72a3f11cfd48e71003",
+          "evidenceDigest": "sha256:713259a7e3836d8284f97f8d5d36462e4182ea1a7dcfb7ebd700575826b0fd8b",
+          "postObservation": true
+        }
+      ]
+    },
+    "frameworkAdmission": {
+      "source": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+      "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38210213486",
+      "heldBefore": 8,
+      "heldAfter": 0,
+      "sources": [
+        {
+          "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+          "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+          "observedAt": "2026-10-12T04:52:22.656Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+          "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+          "observedAt": "2026-10-12T04:52:23.795Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+          "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+          "observedAt": "2026-10-12T04:52:24.615Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+          "digest": "sha256:0b78c1a2caaf253f6ad93bada7b02b27aba57f4f3e568a727556ec742a77487a",
+          "observedAt": "2026-10-12T04:52:25.683Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+          "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+          "observedAt": "2026-10-12T04:52:26.743Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Studio",
+          "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+          "observedAt": "2026-10-12T04:52:27.626Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+          "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+          "observedAt": "2026-10-12T04:52:28.541Z"
+        },
+        {
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+          "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+          "observedAt": "2026-10-12T04:52:29.439Z"
+        }
+      ]
+    },
+    "validationAttempts": [
+      {
+        "source": "e930153",
+        "phase": "First integrated full gate",
+        "testsPassed": 975,
+        "testsFailed": 5,
+        "totalTests": 980,
+        "failureScope": "Four old group-wide unsupported/count expectations and one real shipped declaration-contract failure",
+        "resolution": "Explicit schema-only exceptions retain all query/other-group holds; new helper declarations use the existing @internal/stripInternal boundary without changing the retained public snapshot"
+      },
+      {
+        "phase": "Focused installed contract, explanation, scope, read-limit and independent-check validation",
+        "files": 5,
+        "testsPassed": 12,
+        "testsFailed": 0
+      }
+    ],
+    "recordedAt": "2026-10-12T04:56:39.385735+00:00",
+    "implementationCommits": ["e930153", "fc6c0527ae205ce575d71ae2afc284f3c5dad8fd"],
+    "fullGate": {
+      "source": {
+        "commit": "fc6c0527ae205ce575d71ae2afc284f3c5dad8fd",
+        "clean": true
+      },
+      "tests": {
+        "files": 122,
+        "total": 980,
+        "passed": 980,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scenarios": {
+        "required": 267,
+        "passed": 267,
+        "failed": 0,
+        "missing": 0
+      },
+      "capabilities": 17,
+      "claims": 106,
+      "applicableOfficialConformance": "2025-11-25 passed; 2026 stdio remains not-applicable",
+      "exitCode": 0
+    },
+    "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+    "freshArchiveReproducesGateBytes": true,
+    "installedBeforeAfter": {
+      "capturedAt": "2026-10-12T04:54:18.432Z",
+      "originalSyntheticFixture": true,
+      "sourceImmutability": true,
+      "rawAuditResponseDeeplyEqual": true,
+      "processesExited": true,
+      "rows": [
+        {
+          "runtime": "baseline",
+          "counts": {
+            "passed": 27,
+            "failed": 0,
+            "unsupported": 6,
+            "manual-required": 8
+          },
+          "databaseChecks": [
+            {
+              "id": "database.audit.unavailable",
+              "outcome": "passed",
+              "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+            },
+            {
+              "id": "database.column.duplicate",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.unused",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.query.interpolated",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.duplicate",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            }
+          ],
+          "privateValueAbsent": true,
+          "stderrEmpty": true
+        },
+        {
+          "runtime": "changed",
+          "counts": {
+            "passed": 29,
+            "failed": 0,
+            "unsupported": 4,
+            "manual-required": 8
+          },
+          "databaseChecks": [
+            {
+              "id": "database.audit.unavailable",
+              "outcome": "passed",
+              "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+            },
+            {
+              "id": "database.column.duplicate",
+              "outcome": "passed",
+              "reason": "The actual schema naming reader completed all supported CREATE TABLE declarations with no unexamined schema region and found no duplicate for this check. This does not validate runtime SQL, column types or the live database."
+            },
+            {
+              "id": "database.column.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.unused",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.query.interpolated",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.duplicate",
+              "outcome": "passed",
+              "reason": "The actual schema naming reader completed all supported CREATE TABLE declarations with no unexamined schema region and found no duplicate for this check. This does not validate runtime SQL, column types or the live database."
+            },
+            {
+              "id": "database.table.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            }
+          ],
+          "privateValueAbsent": true,
+          "stderrEmpty": true
+        }
+      ]
+    },
+    "unchangedGameScopes": [
+      {
+        "scope": "unchanged-checkout",
+        "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+        "files": 159,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "commit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "digest": "sha256:c2d55b0e1a09df8f024b0cc6862d4faf453ea912ea5b2d632a9b74b76e86703d",
+        "files": 84,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      }
+    ],
+    "allSevenToolsAndThreeResourcesDeeplyEqualOnBothGameScopes": true,
+    "comparisons": [
+      {
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      }
+    ],
+    "scopeLimits": "ASCII naming witness only. Query-dependent checks, SQL execution/validity, live database, case-comparison diagnostics, BGA-211 historical HTTP replay and BGA-318 official 2026 stdio conformance remain open. Original signed rc.7 and Dino source are unchanged.",
+    "sourceCiAttempts": [
+      {
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38205943176",
+        "source": "c99bb80d334fbfb148e602492085d9ec2137de41",
+        "successfulJobs": 5,
+        "failedJob": "windows-latest / Node 22",
+        "failure": "INT-FRAMEWORK-CHANGE import-reach/missing-declaration synchronous test exceeded 30000 ms; 979/980 tests passed",
+        "separatePrRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38205949132",
+        "separatePrAllSixPassed": true,
+        "sameWindowsPrTestElapsedMs": 28361,
+        "repair": "Reuse the identical changed-generated dependency snapshot for both existing assertions; no assertion or timeout change",
+        "focusedRepairTestsPassed": 20
+      }
+    ],
+    "finalizedAt": "2026-10-12T06:13:46.141266+00:00",
+    "latestFullGate": {
+      "source": {
+        "commit": "bc4ac815eeda544c151cd524fc943372bd1b951b",
+        "clean": true
+      },
+      "tests": {
+        "files": 122,
+        "total": 980,
+        "passed": 980,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scenarios": {
+        "required": 267,
+        "passed": 267,
+        "failed": 0,
+        "missing": 0
+      },
+      "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+      "exitCode": 0
+    },
+    "prCi": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38210217029",
+      "actualMergeTestSource": "e5cf90425c322a11372b2f776fe7508dbcb518f5",
+      "allSixPassed": true,
+      "trustedSchemaAndIntegrityValid": true
+    },
+    "delivery": {
+      "draftPR": "https://github.com/Brandon-Born/bga-mcp/pull/32",
+      "branch": "codex/bga438-schema-check-coverage",
+      "merged": false,
+      "newRelease": false,
+      "gameModified": false
+    },
+    "receiptTipCiAttempt": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38208650116",
+      "source": "fae26041b3908fd4c13e95f704ee44b51ff86cf9",
+      "successfulJobs": 5,
+      "failedJob": "windows-latest / Node 22",
+      "failure": "GATE-FRAMEWORK-CHANGE actual-admission missing-baseline/arbitrary-URL combined test exceeded 30000 ms; 979/980 tests passed",
+      "repair": "Validate the same configured policy and invalid URL/missing review inputs before expensive dependency analysis; valid admission still gets a fresh complete state and release guard is unchanged",
+      "focusedFrameworkTestsPassed": 25,
+      "assertionsAndTimeoutUnchanged": true,
+      "correctedBySourceCi": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38210213486"
+    },
+    "priorVerifiedSource": {
+      "status": "Bounded schema-only check coverage verified on corrected exact source 13a8b8c; receipt-only metadata preserves identities without claiming exact-HEAD implementation CI",
+      "sourceCi": {
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38207594209",
+        "source": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+        "allSixPassed": true,
+        "trustedSchemaAndIntegrityValid": true,
+        "records": [
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v22.23.2",
+              "platform": "darwin",
+              "arch": "arm64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:27:51.396Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+            "evidenceDigest": "sha256:6702f809ce9e951af011a9b7dd30274009305f5b3139c4132c6668d3fff6ac29",
+            "postObservation": true
+          },
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v24.20.0",
+              "platform": "darwin",
+              "arch": "arm64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:26:40.413Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+            "evidenceDigest": "sha256:4cf5c2edfe78f20286d769c8a5d3f4c3eac3878f486dbcbf19fce6a4e949526e",
+            "postObservation": true
+          },
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v22.23.3",
+              "platform": "linux",
+              "arch": "x64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:26:17.386Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:b233ba0023c4c6dc6210e2ee31916ac734336964d0da8b7730394346bb23b31c",
+            "evidenceDigest": "sha256:1d70f2bb1698ba756b24e946fd98ec700dd1d9082a4be165c35ba0b9603c317c",
+            "postObservation": true
+          },
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v24.21.0",
+              "platform": "linux",
+              "arch": "x64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:27:29.379Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:b233ba0023c4c6dc6210e2ee31916ac734336964d0da8b7730394346bb23b31c",
+            "evidenceDigest": "sha256:2b26f611d04d3852432a792ec5f774a26f6283519bb2884934ec8edc95f13ea7",
+            "postObservation": true
+          },
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v22.23.3",
+              "platform": "win32",
+              "arch": "x64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:31:18.099Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:d3ed269f461337bdd8db3239e3dda36e63d4bc2ed4cd4c72a3f11cfd48e71003",
+            "evidenceDigest": "sha256:14b4035b375c32eb05ac07a8779f31f3ad8b2976984b6ddab9b9e47310b7c951",
+            "postObservation": true
+          },
+          {
+            "source": {
+              "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+              "clean": true
+            },
+            "environment": {
+              "node": "v24.21.0",
+              "platform": "win32",
+              "arch": "x64",
+              "packageManager": "pnpm@11.15.1",
+              "ci": true
+            },
+            "generatedAt": "2026-10-12T05:29:35.826Z",
+            "tests": {
+              "files": 122,
+              "total": 980,
+              "passed": 980,
+              "failed": 0,
+              "skipped": 0
+            },
+            "scenarios": {
+              "required": 267,
+              "passed": 267,
+              "failed": 0,
+              "missing": 0
+            },
+            "artifactDigest": "sha256:d3ed269f461337bdd8db3239e3dda36e63d4bc2ed4cd4c72a3f11cfd48e71003",
+            "evidenceDigest": "sha256:e5c5af535d7062a153b29053ae7dc83a21537835e4e8fe9c709bc0ccdaaf4a2c",
+            "postObservation": true
+          }
+        ]
+      },
+      "frameworkAdmission": {
+        "source": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38207594209",
+        "heldBefore": 8,
+        "heldAfter": 0,
+        "sources": [
+          {
+            "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+            "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+            "observedAt": "2026-10-12T04:52:22.656Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+            "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+            "observedAt": "2026-10-12T04:52:23.795Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+            "digest": "sha256:b8c4e03dc51d86414a1498a3f97203c80320cf3d18539faf59e258377f78b021",
+            "observedAt": "2026-10-12T04:52:24.615Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+            "digest": "sha256:0b78c1a2caaf253f6ad93bada7b02b27aba57f4f3e568a727556ec742a77487a",
+            "observedAt": "2026-10-12T04:52:25.683Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+            "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+            "observedAt": "2026-10-12T04:52:26.743Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Studio",
+            "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+            "observedAt": "2026-10-12T04:52:27.626Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+            "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+            "observedAt": "2026-10-12T04:52:28.541Z"
+          },
+          {
+            "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+            "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+            "observedAt": "2026-10-12T04:52:29.439Z"
+          }
+        ]
+      },
+      "latestFullGate": {
+        "source": {
+          "commit": "13a8b8cc16eb33752e71c9ab8c7245b8f34ac416",
+          "clean": true
+        },
+        "tests": {
+          "files": 122,
+          "total": 980,
+          "passed": 980,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 267,
+          "passed": 267,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+        "exitCode": 0
+      },
+      "prCi": {
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38207596824",
+        "actualMergeTestSource": "7d39b52bc65264cb7b2fa424e09de1f08cc149a9",
+        "allSixPassed": true,
+        "trustedSchemaAndIntegrityValid": true
+      },
+      "finalizedAt": "2026-10-12T05:34:40.376650+00:00"
+    },
+    "prCiAttempts": [
+      {
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38210217029",
+        "attempt": 1,
+        "successfulJobs": 5,
+        "failedJob": "macos-latest / Node 22",
+        "failure": "Unchanged E2E-FILESYSTEM-CANCELLATION 400 ms walk:opendir cleanup transcript mutation control did not throw; 979/980 tests passed",
+        "interpretation": "Parent-side settled snapshot can arrive after cleanup; exact-source six-job gate passed the same unchanged scenario",
+        "resolution": "One unchanged failed-job rerun; no code, assertion or timeout change",
+        "completedAttempt": 2,
+        "allSixPassedAfterRerun": true
+      }
+    ]
   }
 }

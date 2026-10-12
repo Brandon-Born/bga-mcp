@@ -46,7 +46,7 @@ export async function frameworkReleaseGuard(): Promise<void> {
       `Framework release hold: ${JSON.stringify(holds)}. Observe and review each affected page, update original fixtures and retain passing exact-source tests before new guidance or packages.`,
     );
 }
-export async function frameworkState() {
+async function frameworkConfiguration() {
   const ledger = await load<FrameworkLedger>('config/framework-review.json');
   const matrix = await load<CompatibilityMatrix>('config/compatibility.json');
   const sources = frameworkSources(matrix, await load('config/rule-catalog.json'));
@@ -67,6 +67,10 @@ export async function frameworkState() {
     ...verifyDependencyMap(map, sources).failures,
   ];
   if (failures.length > 0) throw new Error(`Framework policy invalid: ${failures.join('; ')}`);
+  return { ledger, matrix, sources, map };
+}
+export async function frameworkState() {
+  const { ledger, matrix, sources, map } = await frameworkConfiguration();
   const identities = await currentFrameworkDependencies(root, sources, matrix, map);
   return {
     ledger,
@@ -81,6 +85,28 @@ export async function runFrameworkChange(args: readonly string[]): Promise<void>
   if (mode === 'release') {
     await frameworkReleaseGuard();
     return;
+  }
+  if (mode === 'observe' || mode === 'review' || mode === 'retest') {
+    // Invalid commands cannot observe or admit anything. Validate the same
+    // policy and mandatory inputs before walking every repository dependency;
+    // valid operations still obtain a fresh full state below.
+    const configuration = await frameworkConfiguration();
+    if (!configuration.sources.some((source) => source.url === url))
+      throw new Error(
+        'Choose one exact mapped official URL from framework:status; arbitrary URLs and bulk requests are refused.',
+      );
+    const observation = configuration.ledger.observations.find((entry) => entry.url === url);
+    if (
+      mode !== 'observe' &&
+      (observation?.digest === undefined ||
+        observation.digest === null ||
+        evidencePath === undefined ||
+        reviewer === undefined ||
+        reviewer.trim() === '')
+    )
+      throw new Error(
+        'Review requires an observed page, evidence path and named reviewer who read the official wording.',
+      );
   }
   const state = await frameworkState();
   let ledger = state.ledger;

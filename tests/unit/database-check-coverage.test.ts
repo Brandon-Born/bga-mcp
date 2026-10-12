@@ -4,6 +4,8 @@ import type { ProjectContext } from '../../src/tools/project-context.js';
 import { aggregateValidations, type GroupOutcome } from '../../src/rules/aggregate.js';
 import { auditPreRelease, type RuleCatalog } from '../../src/rules/pre-release.js';
 import { createValidatorRunners } from '../../src/rules/validators.js';
+import { auditDatabaseUsage, hasCompleteSchemaNaming } from '../../src/rules/database.js';
+import { parseSchema, schemaNamesFullyRead } from '../../src/project/database.js';
 
 const IDS = [
   'database.audit.unavailable',
@@ -72,6 +74,70 @@ async function run(schema: string | null, php = PHP, maxFindings = 5_000) {
 }
 
 describe('independent database check evidence', () => {
+  it('[UNIT-DATABASE-INDEPENDENT-COVERAGE] completes schema-only checks beside unresolved query values after a full naming read', async () => {
+    const { result, audit } = await run(
+      'CREATE TABLE IF NOT EXISTS card (card_id INT, label VARCHAR(20), PRIMARY KEY (card_id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;' +
+        'CREATE TABLE token (token_id INT);',
+    );
+    expect(audit.checks.slice(0, 3).map((check) => check.outcome)).toEqual([
+      'passed',
+      'passed',
+      'passed',
+    ]);
+    expect(audit.checks.slice(3).map((check) => check.outcome)).toEqual(
+      Array(4).fill('unsupported'),
+    );
+    expect(audit.checks[1]?.reason).toContain('schema naming');
+    expect(result.summary.unsupported).toBeGreaterThan(0);
+    expect(JSON.stringify(result)).not.toContain('completedChecks');
+    for (const schema of [
+      'CREATE TABLE card (card_id INT);',
+      '-- ordinary line\rCREATE TABLE hidden (hidden_id INT);',
+      '-- ordinary line\nCREATE TABLE hidden (hidden_id INT);',
+    ]) {
+      const named = await run(schema);
+      expect(named.audit.checks.slice(0, 3).map((check) => check.outcome)).toEqual(
+        Array(3).fill('passed'),
+      );
+      expect(named.audit.checks.slice(3).every((check) => check.outcome === 'unsupported')).toBe(
+        true,
+      );
+    }
+  });
+
+  it('[UNIT-DATABASE-INDEPENDENT-COVERAGE] requires the actual completed reader and audit instances for schema naming evidence', () => {
+    const sql = 'CREATE TABLE card (card_id INT);';
+    const parsed = parseSchema(sql);
+    expect(schemaNamesFullyRead(parsed)).toBe(true);
+    expect(schemaNamesFullyRead({ ...parsed })).toBe(false);
+    expect(schemaNamesFullyRead({ value: [], unsupported: [] })).toBe(false);
+    for (const extra of [
+      'ALTER TABLE card ADD x INT;',
+      'CREATE TABLE IF NOT EXISTS card (other INT);',
+      '/* unexamined */',
+      'CREATE TABLE Card (card_id INT);',
+    ])
+      expect(schemaNamesFullyRead(parseSchema(sql + extra))).toBe(false);
+    expect(schemaNamesFullyRead(parseSchema('CREATE TABLE card (card_id INT, CARD_ID INT);'))).toBe(
+      false,
+    );
+    for (const ambiguous of [
+      '\uFEFF' + sql,
+      sql + '--\u00A0CREATE TABLE hidden (id INT);',
+      sql + '\u000b',
+    ])
+      expect(schemaNamesFullyRead(parseSchema(ambiguous))).toBe(false);
+    const audit = auditDatabaseUsage({ path: 'dbmodel.sql', text: sql }, [
+      { path: 'Game.php', text: PHP },
+    ]);
+    expect(hasCompleteSchemaNaming(audit)).toBe(true);
+    expect(hasCompleteSchemaNaming({ ...audit })).toBe(false);
+    expect(JSON.stringify(audit)).not.toContain('Naming');
+    expect(
+      hasCompleteSchemaNaming(auditDatabaseUsage(null, [{ path: 'Game.php', text: PHP }])),
+    ).toBe(false);
+  });
+
   it('[UNIT-DATABASE-INDEPENDENT-COVERAGE] completes only three independent checks on an inert schema', async () => {
     const { result, audit } = await run(
       ' -- original example\r\n\t-- CREATE TABLE ghost (ghost_id INT);\r\n \t\n',
@@ -91,7 +157,7 @@ describe('independent database check evidence', () => {
   });
 
   it.each([
-    'CREATE TABLE card (card_id INT);',
+    'CREATE TABLE card (card_id INT); ALTER TABLE card ADD extra INT;',
     'CREATE TABLE card (card_id INT); CREATE TABLE $unknown (id INT);',
     'ALTER TABLE player ADD player_extra INT;',
     '/*!80000 CREATE TABLE hidden (hidden_id INT) */;',
@@ -100,8 +166,8 @@ describe('independent database check evidence', () => {
     '# hash comment',
     '--not-a-comment CREATE TABLE hidden (hidden_id INT);',
     '\uFEFF-- ambiguous leading character',
-    '-- ordinary line\rCREATE TABLE hidden (hidden_id INT);',
-    '-- ordinary line\nCREATE TABLE hidden (hidden_id INT);',
+    '-- ordinary line\rCREATE TABLE hidden (hidden_id INT); CREATE VIEW v AS SELECT hidden_id FROM hidden;',
+    '-- ordinary line\nCREATE TABLE hidden (hidden_id INT); CREATE TABLE IF NOT EXISTS hidden (other INT);',
   ])(
     '[UNIT-DATABASE-INDEPENDENT-COVERAGE] does not attest duplicate absence for %s',
     async (schema) => {

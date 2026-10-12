@@ -4,7 +4,7 @@ import { normalizedProject } from '../tools/project-context.js';
 import { cancellationCheckpoint } from '../deadline.js';
 import { validateActionContracts } from './action-contracts.js';
 import type { GroupRunner } from './aggregate.js';
-import { auditDatabaseUsage } from './database.js';
+import { auditDatabaseUsage, hasCompleteSchemaNaming } from './database.js';
 import { validateNotifications } from './notifications.js';
 import { validateStateMachine } from './state-machine.js';
 import { summarizeFindings } from './uncertainty.js';
@@ -126,12 +126,14 @@ export function createValidatorRunners(
                 'The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported.',
             });
           }
-          if (inertSchema(schemaSource.text, signal)) {
+          const inert = inertSchema(schemaSource.text, signal);
+          if (inert || hasCompleteSchemaNaming(audit)) {
             for (const id of ['database.table.duplicate', 'database.column.duplicate']) {
               completedChecks.push({
                 id,
-                reason:
-                  'The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL.',
+                reason: inert
+                  ? 'The fully read dbmodel.sql contains only blank lines and ordinary -- line comments, so it declares no game tables or columns to duplicate. This does not validate runtime SQL.'
+                  : 'The actual schema naming reader completed all supported CREATE TABLE declarations with no unexamined schema region and found no duplicate for this check. This does not validate runtime SQL, column types or the live database.',
               });
             }
           }

@@ -63,8 +63,15 @@ it('[E2E-PROJECT-SOURCE-SCOPE] inventories copied and disabled sources without t
           ).toBe('passed');
           const automated = result?.checks?.filter(
             (check) =>
-              check.outcome !== 'manual-required' && check.id !== 'database.audit.unavailable',
+              check.outcome !== 'manual-required' &&
+              ![
+                'database.audit.unavailable',
+                'database.table.duplicate',
+                'database.column.duplicate',
+              ].includes(check.id),
           );
+          for (const id of ['database.table.duplicate', 'database.column.duplicate'])
+            expect(result?.checks?.find((check) => check.id === id)?.outcome).toBe('passed');
           expect(automated?.length).toBeGreaterThan(0);
           expect(automated?.every((check) => check.outcome === 'unsupported')).toBe(true);
           expect(await digestDirectory(root)).toBe(before);

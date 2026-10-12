@@ -326,7 +326,8 @@
           "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
-          "E2E-DATABASE-CONDITIONAL-CREATE"
+          "E2E-DATABASE-CONDITIONAL-CREATE",
+          "E2E-DATABASE-SCHEMA-INDEPENDENT"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

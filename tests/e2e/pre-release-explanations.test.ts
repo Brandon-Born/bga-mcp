@@ -40,8 +40,18 @@ it('[E2E-PRE-RELEASE-COVERAGE-REASONS] attributes and groups actual coverage lim
           data.checks.find((check) => check.id === 'database.audit.unavailable')?.outcome,
         ).toBe('passed');
         const database = data.checks.filter(
-          (check) => check.group === 'database' && check.id !== 'database.audit.unavailable',
+          (check) =>
+            check.group === 'database' &&
+            ![
+              'database.audit.unavailable',
+              'database.table.duplicate',
+              'database.column.duplicate',
+            ].includes(check.id),
         );
+        for (const id of ['database.table.duplicate', 'database.column.duplicate']) {
+          expect(data.checks.find((check) => check.id === id)?.outcome).toBe('passed');
+          expect(data.checks.find((check) => check.id === id)?.reason).toContain('schema naming');
+        }
         expect(database.length).toBeGreaterThan(0);
         expect(database.every((check) => check.outcome === 'unsupported')).toBe(true);
         expect(new Set(database.map((check) => check.reason)).size).toBe(1);
@@ -73,8 +83,17 @@ it('[E2E-PRE-RELEASE-COVERAGE-REASONS] attributes and groups actual coverage lim
         const data = RunPreReleaseAuditOutputSchema.parse(response.structured);
         for (const group of ['state-machine', 'action-contracts', 'notifications', 'database']) {
           const checks = data.checks.filter(
-            (check) => check.group === group && check.id !== 'database.audit.unavailable',
+            (check) =>
+              check.group === group &&
+              ![
+                'database.audit.unavailable',
+                'database.table.duplicate',
+                'database.column.duplicate',
+              ].includes(check.id),
           );
+          if (group === 'database')
+            for (const id of ['database.table.duplicate', 'database.column.duplicate'])
+              expect(data.checks.find((check) => check.id === id)?.outcome).toBe('passed');
           expect(checks.every((check) => check.outcome === 'unsupported')).toBe(true);
           expect(checks[0]?.reason).toContain('project.source.unsupported-syntax');
           if (group !== 'database')
