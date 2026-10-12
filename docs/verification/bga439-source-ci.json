@@ -360,7 +360,7 @@
   "schemaNamingFollowup": {
     "item": "BGA-438",
     "baseMain": "50a945eda481609689c737568e887b620eba397d",
-    "status": "Implemented bounded ASCII schema naming attribution; integrated full gate, exact-source CI and admission pending",
+    "status": "Clean integrated local gate and installed comparisons passed; exact-source CI and framework admission pending",
     "scope": "Only independent duplicate-table/column absence from actual completed non-empty naming reads; no query-dependent pass, new SQL grammar, public shape or permission",
     "originalInstalledRegression": {
       "failed": 2,
@@ -385,6 +385,192 @@
         "testsPassed": 12,
         "testsFailed": 0
       }
-    ]
+    ],
+    "recordedAt": "2026-10-12T04:56:39.385735+00:00",
+    "implementationCommits": ["e930153", "fc6c0527ae205ce575d71ae2afc284f3c5dad8fd"],
+    "fullGate": {
+      "source": {
+        "commit": "fc6c0527ae205ce575d71ae2afc284f3c5dad8fd",
+        "clean": true
+      },
+      "tests": {
+        "files": 122,
+        "total": 980,
+        "passed": 980,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scenarios": {
+        "required": 267,
+        "passed": 267,
+        "failed": 0,
+        "missing": 0
+      },
+      "capabilities": 17,
+      "claims": 106,
+      "applicableOfficialConformance": "2025-11-25 passed; 2026 stdio remains not-applicable",
+      "exitCode": 0
+    },
+    "artifactDigest": "sha256:e3b1dc934c29bf6393b286ec72b639f510dc9d42a7c1791e7b14be3220d6234c",
+    "freshArchiveReproducesGateBytes": true,
+    "installedBeforeAfter": {
+      "capturedAt": "2026-10-12T04:54:18.432Z",
+      "originalSyntheticFixture": true,
+      "sourceImmutability": true,
+      "rawAuditResponseDeeplyEqual": true,
+      "processesExited": true,
+      "rows": [
+        {
+          "runtime": "baseline",
+          "counts": {
+            "passed": 27,
+            "failed": 0,
+            "unsupported": 6,
+            "manual-required": 8
+          },
+          "databaseChecks": [
+            {
+              "id": "database.audit.unavailable",
+              "outcome": "passed",
+              "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+            },
+            {
+              "id": "database.column.duplicate",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.unused",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.query.interpolated",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.duplicate",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            }
+          ],
+          "privateValueAbsent": true,
+          "stderrEmpty": true
+        },
+        {
+          "runtime": "changed",
+          "counts": {
+            "passed": 29,
+            "failed": 0,
+            "unsupported": 4,
+            "manual-required": 8
+          },
+          "databaseChecks": [
+            {
+              "id": "database.audit.unavailable",
+              "outcome": "passed",
+              "reason": "The validator read dbmodel.sql and at least one query reference. This proves audit availability only; unknown query text remains unsupported."
+            },
+            {
+              "id": "database.column.duplicate",
+              "outcome": "passed",
+              "reason": "The actual schema naming reader completed all supported CREATE TABLE declarations with no unexamined schema region and found no duplicate for this check. This does not validate runtime SQL, column types or the live database."
+            },
+            {
+              "id": "database.column.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.column.unused",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.query.interpolated",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            },
+            {
+              "id": "database.table.duplicate",
+              "outcome": "passed",
+              "reason": "The actual schema naming reader completed all supported CREATE TABLE declarations with no unexamined schema region and found no duplicate for this check. This does not validate runtime SQL, column types or the live database."
+            },
+            {
+              "id": "database.table.undeclared",
+              "outcome": "unsupported",
+              "reason": "The database validator could not read what this check examines. Group-wide coverage blockers (not confirmed defects in each check): database.unsupported-syntax at modules/php/Game.php: Part of the database usage could not be read: DbQuery runs a formatted INSERT with a readable target but unresolved VALUES and possible SQL suffix; argument values and escaping were not analyzed. Next: Use a single literal query string, or confirm the dynamic form is intended. See audit_database_usage for all blocker locations, evidence and suggestions."
+            }
+          ],
+          "privateValueAbsent": true,
+          "stderrEmpty": true
+        }
+      ]
+    },
+    "unchangedGameScopes": [
+      {
+        "scope": "unchanged-checkout",
+        "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+        "files": 159,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "commit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "digest": "sha256:c2d55b0e1a09df8f024b0cc6862d4faf453ea912ea5b2d632a9b74b76e86703d",
+        "files": 84,
+        "excludedMetadata": ".git",
+        "unchanged": true
+      }
+    ],
+    "allSevenToolsAndThreeResourcesDeeplyEqualOnBothGameScopes": true,
+    "comparisons": [
+      {
+        "scope": "unchanged-checkout",
+        "gameCommit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      },
+      {
+        "scope": "frozen-popup-candidate",
+        "gameCommit": "27f82733b7929e901c77fc17157545c2c4407e0e",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "repeatedAudit": true,
+        "rootRefusal": true,
+        "excludedToolRefusal": true,
+        "stderrEmpty": true,
+        "serverExited": true
+      }
+    ],
+    "scopeLimits": "ASCII naming witness only. Query-dependent checks, SQL execution/validity, live database, case-comparison diagnostics, BGA-211 historical HTTP replay and BGA-318 official 2026 stdio conformance remain open. Original signed rc.7 and Dino source are unchanged."
   }
 }
