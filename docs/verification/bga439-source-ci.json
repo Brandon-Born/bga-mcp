@@ -854,6 +854,16 @@
       "merged": false,
       "newRelease": false,
       "gameModified": false
+    },
+    "receiptTipCiAttempt": {
+      "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38208650116",
+      "source": "fae26041b3908fd4c13e95f704ee44b51ff86cf9",
+      "successfulJobs": 5,
+      "failedJob": "windows-latest / Node 22",
+      "failure": "GATE-FRAMEWORK-CHANGE actual-admission missing-baseline/arbitrary-URL combined test exceeded 30000 ms; 979/980 tests passed",
+      "repair": "Validate the same configured policy and invalid URL/missing review inputs before expensive dependency analysis; valid admission still gets a fresh complete state and release guard is unchanged",
+      "focusedFrameworkTestsPassed": 25,
+      "assertionsAndTimeoutUnchanged": true
     }
   }
 }
