@@ -35,7 +35,7 @@ async function probe(root: string, layout: string) {
   );
 }
 
-it('[E2E-DATABASE-SCHEMA-COVERAGE] keeps mixed schema coverage unknown across installed tools, resources and layouts', async () => {
+it('[E2E-DATABASE-SCHEMA-COVERAGE][E2E-DATABASE-CONDITIONAL-CREATE] keeps mixed schema coverage unknown across installed tools, resources and layouts', async () => {
   const server = await installPackagedServer('schema-coverage', {
     modern: 'modern',
     legacy: 'legacy',
@@ -69,6 +69,65 @@ it('[E2E-DATABASE-SCHEMA-COVERAGE] keeps mixed schema coverage unknown across in
             )?.suggestions[0]?.message,
           ).toContain('schema');
           expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(result);
+          // A conditional repeat cannot certify either a duplicate error or
+          // which definition exists. The actual installed parser must retain
+          // the original naming witness and keep absence checks unsupported.
+          const originalSchema = await readFile(path, 'utf8');
+          for (const first of ['CREATE TABLE', 'CREATE TABLE IF NOT EXISTS']) {
+            await writeFile(
+              path,
+              `${first} card (card_id INT); CREATE TABLE IF NOT EXISTS card (card_extra INT);`,
+            );
+            const conditionalBefore = await digestDirectory(root);
+            const conditional = await callTool<Database>(client, 'audit_database_usage', {});
+            expect(
+              conditional.structured?.diagnostics.findings.some(
+                (finding) =>
+                  finding.code === 'database.table.duplicate' || ABSENCE.includes(finding.code),
+              ),
+            ).toBe(false);
+            expect(conditional.structured?.schema).toEqual([
+              { name: 'card', columns: ['card_id'] },
+            ]);
+            expect(conditional.structured?.diagnostics.summary.unsupported).toBeGreaterThan(0);
+            const conditionalAudit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            expect(
+              conditionalAudit.structured?.checks.find(
+                (check) => check.id === 'database.table.duplicate',
+              )?.outcome,
+            ).toBe('unsupported');
+            expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(
+              conditional,
+            );
+            const conditionalAggregate = await callTool<{ diagnostics: Database['diagnostics'] }>(
+              client,
+              'validate_project',
+              {},
+            );
+            expect(
+              conditionalAggregate.structured?.diagnostics.findings.some(
+                (finding) =>
+                  finding.code === 'database.table.duplicate' || ABSENCE.includes(finding.code),
+              ),
+            ).toBe(false);
+            const conditionalResource = JSON.stringify(
+              await client.readResource({ uri: 'bga://project/diagnostics' }),
+            );
+            expect(conditionalResource).toContain('unverified effective schema');
+            expect(conditionalResource).not.toContain('database.table.duplicate');
+            expect(await digestDirectory(root)).toBe(conditionalBefore);
+          }
+          await writeFile(
+            path,
+            'CREATE TABLE IF NOT EXISTS card (card_id INT); CREATE TABLE card (card_id INT);',
+          );
+          const unconditional = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(
+            unconditional.structured?.diagnostics.findings.some(
+              (finding) => finding.code === 'database.table.duplicate',
+            ),
+          ).toBe(true);
+          await writeFile(path, originalSchema);
           const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
           for (const id of ABSENCE)
             expect(audit.structured?.checks.find((check) => check.id === id)?.outcome).toBe(

@@ -310,6 +310,7 @@ export function parseSchema(
   cancellationCheckpoint(signal);
   const structure = schemaStructure(sql, signal);
   const tables: TableDefinition[] = [];
+  const declaredNames = new Set<string>();
   const unsupported = [...structure.unsupported];
   let start = 0;
   let excludedIndex = 0;
@@ -332,6 +333,17 @@ export function parseSchema(
     const header = CREATE_TABLE.exec(statement);
     if (header === null) {
       unsupported.push('a schema statement outside the supported CREATE TABLE declaration subset');
+      continue;
+    }
+    const name = header[1] ?? header[2] ?? header[3] ?? '';
+    if (/^CREATE\s+TABLE\s+IF\s+NOT\s+EXISTS\s/iu.test(header[0]) && declaredNames.has(name)) {
+      // BGA says "Always add IF NOT EXISTS". MySQL says it "Prevents an
+      // error from occurring if the table exists", without verifying that
+      // the existing structure matches. Keep the earlier naming witness,
+      // not a second effective definition or a certain duplicate defect.
+      // Sources: https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql
+      // https://dev.mysql.com/doc/refman/8.0/en/create-table.html
+      unsupported.push('a repeated conditional CREATE TABLE with an unverified effective schema');
       continue;
     }
     let depth = 1;
@@ -374,7 +386,8 @@ export function parseSchema(
     }
     if (columns.length === 0)
       unsupported.push('a CREATE TABLE declaration without readable columns');
-    tables.push({ name: header[1] ?? header[2] ?? header[3] ?? '', columns });
+    tables.push({ name, columns });
+    declaredNames.add(name);
   }
   cancellationCheckpoint(signal);
   return { value: tables, unsupported: [...new Set(unsupported)] };
