@@ -271,9 +271,10 @@ it('[INT-FRAMEWORK-CHANGE] import reach overrides an unrelated label and missing
         }
       : file,
   );
-  expect(holds(scope(changedGenerated))).toHaveLength(sources.length);
+  const generatedDependencies = scope(changedGenerated);
+  expect(holds(generatedDependencies)).toHaveLength(sources.length);
   expect(
-    [...scope(changedGenerated).values()].every((identity) =>
+    [...generatedDependencies.values()].every((identity) =>
       identity.issues.some((issue) =>
         issue.includes('Ambiguous module dependency: tests/e2e/packaged-server.test.ts'),
       ),

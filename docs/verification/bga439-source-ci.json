@@ -571,6 +571,20 @@
         "serverExited": true
       }
     ],
-    "scopeLimits": "ASCII naming witness only. Query-dependent checks, SQL execution/validity, live database, case-comparison diagnostics, BGA-211 historical HTTP replay and BGA-318 official 2026 stdio conformance remain open. Original signed rc.7 and Dino source are unchanged."
+    "scopeLimits": "ASCII naming witness only. Query-dependent checks, SQL execution/validity, live database, case-comparison diagnostics, BGA-211 historical HTTP replay and BGA-318 official 2026 stdio conformance remain open. Original signed rc.7 and Dino source are unchanged.",
+    "sourceCiAttempts": [
+      {
+        "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38205943176",
+        "source": "c99bb80d334fbfb148e602492085d9ec2137de41",
+        "successfulJobs": 5,
+        "failedJob": "windows-latest / Node 22",
+        "failure": "INT-FRAMEWORK-CHANGE import-reach/missing-declaration synchronous test exceeded 30000 ms; 979/980 tests passed",
+        "separatePrRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38205949132",
+        "separatePrAllSixPassed": true,
+        "sameWindowsPrTestElapsedMs": 28361,
+        "repair": "Reuse the identical changed-generated dependency snapshot for both existing assertions; no assertion or timeout change",
+        "focusedRepairTestsPassed": 20
+      }
+    ]
   }
 }
