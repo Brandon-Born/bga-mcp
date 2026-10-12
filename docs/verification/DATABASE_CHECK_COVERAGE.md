@@ -59,3 +59,11 @@ installed public executable across modern, legacy and hybrid fixtures. The
 [bounded receipt](bga439-source-ci.json) records the original-runtime control,
 complete gate, exact-source CI, actual admission and unchanged-Dino rerun as
 collected; it does not promote an original signed candidate or game publication.
+
+## BGA-438 conditional-declaration correction — 2026-10-12
+
+The unmodified main implementation at `64f64f8` fails the installed conditional-repeat assertion: database diagnostics contain a duplicate or absence finding where conditional execution cannot justify one. The original affected run fails 2 tests and passes 33; the isolated installed run fails 1 and passes 2. After the correction, all 79 affected unit and installed tests pass. The regression uses original synthetic schema text and the actual packed public executable; no game source is changed.
+
+A later conditional repeat retains the first naming witness and reports an unverified effective schema. It does not certify which columns exist or permit absence-based conclusions. A later unconditional CREATE still reports duplicate declarations, and unrelated definite duplicates remain visible. The installed scenario also retains all three layouts, repeats, root refusal, output refusal, aggregate/resource propagation and unchanged fixture bytes. Public schemas and dependencies are unchanged. Full integrated local gate and current CI remain pending until observed; original signed rc.7 release evidence is unchanged.
+
+Sources read before implementation: [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), [database model](https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql) and [MySQL CREATE TABLE](https://dev.mysql.com/doc/refman/8.0/en/create-table.html). BGA recommends IF NOT EXISTS; MySQL distinguishes prevention of an existing-table error from verification of matching structure. The implementation does not execute SQL, merge conditional column sets or assume runtime database contents.

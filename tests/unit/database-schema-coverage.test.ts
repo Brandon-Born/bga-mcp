@@ -13,6 +13,30 @@ const absence = [
   'database.column.unused',
 ];
 
+it('[UNIT-DATABASE-SCHEMA-COVERAGE] keeps repeated conditional creates uncertain instead of inventing duplicate errors', () => {
+  for (const first of ['CREATE TABLE', 'CREATE TABLE IF NOT EXISTS']) {
+    const text = `${first} card (card_id INT); CREATE TABLE IF NOT EXISTS card (card_extra INT);`;
+    const outcome = parseSchema(text);
+    expect(outcome.value).toEqual([{ name: 'card', columns: ['card_id'] }]);
+    expect(outcome.unsupported.join(' ')).toContain('conditional');
+    const audit = auditDatabaseUsage(source(text), queries);
+    expect(audit.diagnostics.findings.some((f) => f.code === 'database.table.duplicate')).toBe(
+      false,
+    );
+    expect(audit.diagnostics.findings.some((f) => absence.includes(f.code))).toBe(false);
+  }
+  const audit = auditDatabaseUsage(
+    source(
+      'CREATE TABLE IF NOT EXISTS card (card_id INT); CREATE TABLE card (card_id INT);' +
+        'CREATE TABLE IF NOT EXISTS token (id INT); CREATE TABLE IF NOT EXISTS token (extra INT);',
+    ),
+    queries,
+  );
+  expect(
+    audit.diagnostics.findings.filter((f) => f.code === 'database.table.duplicate'),
+  ).toHaveLength(1);
+});
+
 it('[UNIT-DATABASE-SCHEMA-COVERAGE] preserves complete documented declarations and meaningful missing-reference controls', () => {
   expect(parseSchema(SCHEMA)).toEqual({
     value: [{ name: 'card', columns: ['card_id', 'card_spare'] }],

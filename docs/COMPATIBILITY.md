@@ -235,3 +235,7 @@ remain visible. Quoted defaults cannot supply phantom declarations; ordinary
 leading line comments remain inert. Studio inline preprocessing, block comments
 and mode-dependent quoting and escaping are not interpreted. No dynamic SQL or execution
 support, public shape, descriptor, version or trust boundary is added.
+
+## Conditional schema declarations — BGA-438
+
+A later `CREATE TABLE IF NOT EXISTS` for an already read name cannot justify a certain duplicate-table error. The earlier naming witness stays visible; the effective schema stays unsupported rather than combining column sets or guessing which definition exists. Later unconditional declarations still report duplicates, including after an initial conditional declaration. Installed `E2E-DATABASE-CONDITIONAL-CREATE` covers modern, legacy and hybrid roots, repeat and unchanged project bytes through the public command. This changes no schema, inventory, permission or dynamic SQL support.
