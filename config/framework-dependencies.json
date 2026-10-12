@@ -267,7 +267,9 @@
         "tests/e2e/telemetry-absence.test.ts",
         "tests/e2e/telemetry-write-denied.ts",
         "tests/integration/normalized-project.test.ts",
-        "tests/unit/database-insert-prefix.test.ts"
+        "tests/unit/database-insert-prefix.test.ts",
+        "tests/unit/database-column-case.test.ts",
+        "tests/e2e/database-column-case.test.ts"
       ]
     },
     {

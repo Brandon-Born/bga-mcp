@@ -68,6 +68,16 @@
       "reason": "New installed test used a value import solely as a TypeScript type",
       "repair": "Use import type; no runtime, assertion or timeout change",
       "testsExecuted": false
+    },
+    {
+      "source": "e09892cf0dac2c8cf882d843fd650c06056efe26",
+      "phase": "framework dependency proof",
+      "result": "failed",
+      "testsPassed": 979,
+      "testsFailed": 6,
+      "totalTests": 985,
+      "reason": "Two committed regression files were unmapped, conservatively holding all sources and failing five dependency controls plus lifecycle E2E",
+      "repair": "Add both files to the existing all-source shared proof group; no assertion, timeout or hold weakening"
     }
   ]
 }
