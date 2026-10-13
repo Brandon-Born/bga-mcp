@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-444",
+  "baseMain": "840e0381b944e98c719b2f0dc9b05ff76a39dfb9",
+  "status": "Bounded implementation and affected tests pass; full gate, CI and admission are not yet claimed",
+  "scope": "Case-only table references and ambiguous schema/framework declarations remain unknown; no folded binding or runtime settings",
+  "originalRegression": {
+    "source": "840e0381b944e98c719b2f0dc9b05ff76a39dfb9",
+    "testsFailed": 5,
+    "testsPassed": 5,
+    "installedPublicRegressionFailed": true,
+    "baselineArchiveDigest": "sha256:0e7869367fc30fc8d0d6c0903509aa19985b1109b17951a13095f5a0e48b9708"
+  },
+  "affectedAttempt": {
+    "passed": 80,
+    "failed": 1,
+    "reason": "Prior BGA-443 test asserted a certain missing table for a case-only spelling difference",
+    "repair": "Require unknown comparison while preserving raw exact names; no case-insensitive match is granted"
+  },
+  "affectedTests": {
+    "passed": 81,
+    "failed": 0,
+    "files": 6
+  },
+  "sourceCi": null,
+  "frameworkAdmission": null,
+  "delivery": {
+    "draftPR": null,
+    "gameModified": false,
+    "merged": false,
+    "released": false
+  },
+  "artifactDigest": "sha256:02e3107b1b690dac771a594853f01091c1db5c209305eb4cccf040a60ac112d9",
+  "unchangedGameComparison": {
+    "capturedAt": "2026-10-13T22:06:48.294Z",
+    "scope": {
+      "scope": "unchanged-checkout",
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+      "files": 159,
+      "excludedMetadata": ".git",
+      "unchanged": true
+    },
+    "tools": 7,
+    "resources": 3,
+    "allResponsesDeeplyEqual": true,
+    "processExitAndRefusalsPassed": true,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "unsupported": 30,
+      "manual-required": 8
+    }
+  },
+  "preflightFailure": {
+    "phase": "lint",
+    "reason": "Two static test arrays inferred possibly undefined query strings under strict indexed access",
+    "repair": "Use const tuple rows; no assertion, timeout or runtime code change",
+    "fullGateStarted": false
+  }
+}

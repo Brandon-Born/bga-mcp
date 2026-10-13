@@ -132,6 +132,18 @@ function unsupported(construct: string, uri: string, language: string): Diagnost
   });
 }
 
+function tableCaseUnknown(construct: string, uri: string, language: string): DiagnosticFinding {
+  return unsupportedSyntaxFinding({
+    code: 'database.unsupported-syntax',
+    construct,
+    language,
+    uri,
+    message: `Table-name casing could not be compared: ${construct}. The target database's lower_case_table_names setting is unknown.`,
+    suggestion:
+      'Use consistent table spelling across dbmodel.sql and PHP, or verify the target database casing settings manually.',
+  });
+}
+
 export interface DatabaseSource {
   readonly path: string;
   readonly text: string;
@@ -173,9 +185,29 @@ export function auditDatabaseUsage(
 
   const tables = schema.value;
   const tablesByName = new Map<string, TableDefinition>();
+  const tableSpellings = new Map<string, string>();
+  let schemaComparable = schema.unsupported.length === 0;
   const columnsByTable = new Map<string, ReadonlySet<string>>();
   for (const table of tables) {
     cancellationCheckpoint(signal);
+    // MySQL table comparison depends on lower_case_table_names and the target
+    // platform. Folding here detects uncertainty; it never binds two names or
+    // chooses the developer machine's settings for the BGA database.
+    // https://dev.mysql.com/doc/refman/8.0/en/identifier-case-sensitivity.html
+    const folded = table.name.toLowerCase();
+    const previous =
+      tableSpellings.get(folded) ?? (FRAMEWORK_TABLES.has(folded) ? folded : undefined);
+    if (previous !== undefined && previous !== table.name) {
+      schemaComparable = false;
+      findings.push(
+        tableCaseUnknown(
+          `schema table '${table.name}' differs only by case from '${previous}'`,
+          schemaSource?.path ?? 'dbmodel.sql',
+          'sql',
+        ),
+      );
+    }
+    tableSpellings.set(folded, table.name);
     if (tablesByName.has(table.name)) {
       findings.push(
         certain(
@@ -259,10 +291,21 @@ export function auditDatabaseUsage(
     for (const table of query.tables) {
       cancellationCheckpoint(signal);
       if (
-        schema.unsupported.length === 0 &&
         !tablesByName.has(table) &&
-        !FRAMEWORK_TABLES.has(table)
+        !FRAMEWORK_TABLES.has(table) &&
+        (tableSpellings.has(table.toLowerCase()) || FRAMEWORK_TABLES.has(table.toLowerCase()))
       ) {
+        queriesComplete = false;
+        findings.push(
+          tableCaseUnknown(
+            `query table '${table}' matches a declared or framework table only after case folding`,
+            query.source,
+            'php',
+          ),
+        );
+        continue;
+      }
+      if (schemaComparable && !tablesByName.has(table) && !FRAMEWORK_TABLES.has(table)) {
         findings.push(
           certain(
             'database.table.undeclared',
@@ -284,7 +327,7 @@ export function auditDatabaseUsage(
       usedColumns.add(`${tableName}.${columnName.toLowerCase()}`);
       const table = tablesByName.get(tableName);
       if (
-        schema.unsupported.length > 0 ||
+        !schemaComparable ||
         table === undefined ||
         columnsByTable.get(tableName)?.has(columnName.toLowerCase()) === true
       ) {
@@ -315,7 +358,7 @@ export function auditDatabaseUsage(
   }
 
   const selectsEverything = queries.some((query) => /\bSELECT\s+\*/iu.test(query.text));
-  if (!selectsEverything && queriesComplete && schema.unsupported.length === 0) {
+  if (!selectsEverything && queriesComplete && schemaComparable) {
     for (const table of tables) {
       cancellationCheckpoint(signal);
       for (const column of table.columns) {
