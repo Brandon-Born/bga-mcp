@@ -167,7 +167,9 @@
           "UNIT-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-CONDITIONAL-CREATE",
           "E2E-DATABASE-COLUMN-CASE",
-          "UNIT-DATABASE-COLUMN-CASE"
+          "UNIT-DATABASE-COLUMN-CASE",
+          "E2E-DATABASE-TABLE-CASE",
+          "UNIT-DATABASE-TABLE-CASE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -330,7 +332,8 @@
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
           "E2E-DATABASE-CONDITIONAL-CREATE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
-          "E2E-DATABASE-COLUMN-CASE"
+          "E2E-DATABASE-COLUMN-CASE",
+          "E2E-DATABASE-TABLE-CASE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -517,7 +520,8 @@
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
           "E2E-DATABASE-CONDITIONAL-CREATE",
-          "E2E-DATABASE-COLUMN-CASE"
+          "E2E-DATABASE-COLUMN-CASE",
+          "E2E-DATABASE-TABLE-CASE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -658,7 +662,8 @@
           "E2E-DATABASE-INSERT-PREFIX",
           "E2E-DATABASE-INSERT-PREFIX-NEGATIVE",
           "E2E-DATABASE-CONDITIONAL-CREATE",
-          "E2E-DATABASE-COLUMN-CASE"
+          "E2E-DATABASE-COLUMN-CASE",
+          "E2E-DATABASE-TABLE-CASE"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

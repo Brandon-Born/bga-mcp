@@ -1,0 +1,323 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-444",
+  "baseMain": "840e0381b944e98c719b2f0dc9b05ff76a39dfb9",
+  "status": "Bounded table-case behavior verified on exact implementation source 566736a; receipt-only metadata preserves its actual source without claiming older CI covers its own new HEAD",
+  "scope": "Case-only table references and ambiguous schema/framework declarations remain unknown; no folded binding or runtime settings",
+  "originalRegression": {
+    "source": "840e0381b944e98c719b2f0dc9b05ff76a39dfb9",
+    "testsFailed": 5,
+    "testsPassed": 5,
+    "installedPublicRegressionFailed": true,
+    "baselineArchiveDigest": "sha256:0e7869367fc30fc8d0d6c0903509aa19985b1109b17951a13095f5a0e48b9708"
+  },
+  "affectedAttempt": {
+    "passed": 80,
+    "failed": 1,
+    "reason": "Prior BGA-443 test asserted a certain missing table for a case-only spelling difference",
+    "repair": "Require unknown comparison while preserving raw exact names; no case-insensitive match is granted"
+  },
+  "affectedTests": {
+    "passed": 81,
+    "failed": 0,
+    "files": 6
+  },
+  "sourceCi": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38475998541",
+    "source": "566736a76c1632dc88853766d0cf33e895f28f12",
+    "allSixPassed": true,
+    "trustedSchemaAndIntegrityValid": true,
+    "records": [
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.2",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:17:58.364Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:02e3107b1b690dac771a594853f01091c1db5c209305eb4cccf040a60ac112d9",
+        "evidenceDigest": "sha256:86aedb7b2e489dc230aa667f6a1c5675ceab75f94b0b5e2476a2dff84915ef8d",
+        "postObservation": true
+      },
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.20.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:18:24.370Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:02e3107b1b690dac771a594853f01091c1db5c209305eb4cccf040a60ac112d9",
+        "evidenceDigest": "sha256:acdd289154c328525439a0b70a59916456f0883bd480fbe292d7334da61998fb",
+        "postObservation": true
+      },
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:15:42.949Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:0c17502d3eade88425e390eed2173e0fe6fbf2c0664e22ef75485e59166ff061",
+        "evidenceDigest": "sha256:2dc0bda7158ac2a3d67acf8227da3785ccf61dd9ed3b8d039b0f2fcb69154741",
+        "postObservation": true
+      },
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:15:27.857Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:0c17502d3eade88425e390eed2173e0fe6fbf2c0664e22ef75485e59166ff061",
+        "evidenceDigest": "sha256:4fa79cf0d43a83f3cb74078d903eb1ad146cc5b52c80ccc1ea255349fdb4d9ed",
+        "postObservation": true
+      },
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:20:28.851Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:3205b6175fe1a1d17b95c6860c92a6a295215b21e69ec588e07413ba9a99835a",
+        "evidenceDigest": "sha256:f9e23ebae97a8dac2df2d459a2e883733e8095d9f5f567b80adf70ca95179be1",
+        "postObservation": true
+      },
+      {
+        "source": {
+          "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-13T22:20:18.523Z",
+        "tests": {
+          "files": 124,
+          "total": 990,
+          "passed": 990,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 271,
+          "passed": 271,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:3205b6175fe1a1d17b95c6860c92a6a295215b21e69ec588e07413ba9a99835a",
+        "evidenceDigest": "sha256:ba47c9defe4b8df686c3979127385f742fcbd11634207daa1458a720532565db",
+        "postObservation": true
+      }
+    ]
+  },
+  "frameworkAdmission": {
+    "source": "566736a76c1632dc88853766d0cf33e895f28f12",
+    "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38475998541",
+    "heldBefore": 8,
+    "heldAfter": 0,
+    "sources": [
+      {
+        "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
+        "observedAt": "2026-10-13T22:06:18.123Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
+        "observedAt": "2026-10-13T22:06:19.281Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "digest": "sha256:7b22ba9c97e8e5852f3c72b97588ff5ddd80eb85081a41130f1ae6bd3fa57728",
+        "observedAt": "2026-10-13T22:06:20.173Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "digest": "sha256:0b78c1a2caaf253f6ad93bada7b02b27aba57f4f3e568a727556ec742a77487a",
+        "observedAt": "2026-10-13T22:06:21.293Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
+        "observedAt": "2026-10-13T22:06:22.414Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio",
+        "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
+        "observedAt": "2026-10-13T22:06:23.419Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
+        "observedAt": "2026-10-13T22:06:24.339Z"
+      },
+      {
+        "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
+        "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
+        "observedAt": "2026-10-13T22:06:25.164Z"
+      }
+    ]
+  },
+  "delivery": {
+    "draftPR": "https://github.com/Brandon-Born/bga-mcp/pull/34",
+    "gameModified": false,
+    "merged": false,
+    "released": false
+  },
+  "artifactDigest": "sha256:02e3107b1b690dac771a594853f01091c1db5c209305eb4cccf040a60ac112d9",
+  "unchangedGameComparison": {
+    "capturedAt": "2026-10-13T22:06:48.294Z",
+    "scope": {
+      "scope": "unchanged-checkout",
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+      "files": 159,
+      "excludedMetadata": ".git",
+      "unchanged": true
+    },
+    "tools": 7,
+    "resources": 3,
+    "allResponsesDeeplyEqual": true,
+    "processExitAndRefusalsPassed": true,
+    "counts": {
+      "passed": 3,
+      "failed": 0,
+      "unsupported": 30,
+      "manual-required": 8
+    }
+  },
+  "preflightFailure": {
+    "phase": "lint",
+    "reason": "Two static test arrays inferred possibly undefined query strings under strict indexed access",
+    "repair": "Use const tuple rows; no assertion, timeout or runtime code change",
+    "fullGateStarted": false
+  },
+  "fullGate": {
+    "source": {
+      "commit": "566736a76c1632dc88853766d0cf33e895f28f12",
+      "clean": true
+    },
+    "tests": {
+      "files": 124,
+      "total": 990,
+      "passed": 990,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 271,
+      "passed": 271,
+      "failed": 0,
+      "missing": 0
+    },
+    "artifactDigest": "sha256:02e3107b1b690dac771a594853f01091c1db5c209305eb4cccf040a60ac112d9",
+    "exitCode": 0
+  },
+  "prCi": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/38476008617",
+    "actualMergeTestSource": "3ea8814bf7ad9c5ca06f3786d138c8c0a131b7e4",
+    "allSixPassed": true,
+    "trustedSchemaAndIntegrityValid": true
+  },
+  "finalizedAt": "2026-10-13T22:23:31.713095+00:00"
+}

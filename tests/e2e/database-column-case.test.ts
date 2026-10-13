@@ -12,6 +12,118 @@ import {
 type Database = ReturnType<typeof AuditDatabaseUsageOutputSchema.parse>;
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 
+it('[E2E-DATABASE-TABLE-CASE] preserves runtime table-case uncertainty through installed consumers and layouts', async () => {
+  const server = await installPackagedServer('table-case', {
+    modern: 'modern',
+    legacy: 'legacy',
+    hybrid: 'hybrid',
+  });
+  try {
+    for (const [layout, root] of Object.entries(server.projects)) {
+      const phpPath = resolve(
+        root,
+        layout === 'legacy' ? 'bgamcplegacy.game.php' : 'modules/php/Game.php',
+      );
+      const original = (await readFile(phpPath, 'utf8')).replace(
+        /\b(?:DbQuery|getObjectListFromDB)\b/gu,
+        'fixtureExample',
+      );
+      const schemaPath = resolve(root, 'dbmodel.sql');
+      const session = await withPublicPackagedServer(
+        server,
+        ['--project-root', root],
+        async (client) => {
+          for (const [schema, query, table, duplicateOutcome] of [
+            [
+              'CREATE TABLE Card (Card_ID INT);',
+              "SELECT card_id FROM card WHERE card_id = 'private-table-canary'",
+              'card',
+              'passed',
+            ],
+            ['-- framework only', 'SELECT player_id FROM Player', 'Player', 'passed'],
+            [
+              'CREATE TABLE Card (card_id INT); CREATE TABLE card (extra INT);',
+              'SELECT missing FROM card',
+              'card',
+              'unsupported',
+            ],
+            [
+              'CREATE TABLE Card (card_id INT); CREATE TABLE IF NOT EXISTS card (extra INT);',
+              'SELECT missing FROM card',
+              'card',
+              'unsupported',
+            ],
+          ] as const) {
+            await writeFile(schemaPath, schema);
+            await writeFile(phpPath, original + `\nself::DbQuery("${query}");`);
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            expect(result.isError).toBe(false);
+            expect(result.structured?.queries[0]?.tables).toEqual([table]);
+            expect(result.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual([
+              'database.unsupported-syntax',
+            ]);
+            expect(result.structured?.diagnostics.findings[0]?.suggestions[0]?.message).toContain(
+              'spelling',
+            );
+            expect(JSON.stringify(result)).not.toContain('private-table-canary');
+            expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(result);
+            const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            expect(
+              audit.structured?.checks.find((check) => check.id === 'database.audit.unavailable')
+                ?.outcome,
+            ).toBe('passed');
+            for (const id of ['database.table.duplicate', 'database.column.duplicate'])
+              expect(audit.structured?.checks.find((check) => check.id === id)?.outcome).toBe(
+                duplicateOutcome,
+              );
+            for (const id of [
+              'database.table.undeclared',
+              'database.column.undeclared',
+              'database.column.unused',
+              'database.query.interpolated',
+            ])
+              expect(audit.structured?.checks.find((check) => check.id === id)?.outcome).toBe(
+                'unsupported',
+              );
+            const aggregate = await callTool<{ diagnostics: Database['diagnostics'] }>(
+              client,
+              'validate_project',
+              { groups: ['database'] },
+            );
+            expect(
+              aggregate.structured?.diagnostics.findings.map((finding) => finding.code),
+            ).toEqual(['database.unsupported-syntax']);
+            const resource = JSON.stringify(
+              await client.readResource({ uri: 'bga://project/diagnostics' }),
+            );
+            expect(resource).toContain('database.unsupported-syntax');
+            expect(resource).not.toContain('database.table.undeclared');
+            expect(resource).not.toContain('private-table-canary');
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          await writeFile(schemaPath, 'CREATE TABLE Card (card_id INT);');
+          await writeFile(phpPath, original + '\nself::DbQuery("SELECT id FROM absent");');
+          const missing = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(
+            missing.structured?.diagnostics.findings.some(
+              (finding) => finding.code === 'database.table.undeclared',
+            ),
+          ).toBe(true);
+          const outside = await callTool(client, 'audit_database_usage', {
+            projectRoot: server.temporaryRoot,
+          });
+          expect(outside.isError).toBe(true);
+          expect(outside.text).toContain('policy.root.not-allowed');
+        },
+      );
+      expect(session.stderr).toBe('');
+    }
+  } finally {
+    await server.cleanup();
+  }
+});
+
 it('[E2E-DATABASE-COLUMN-CASE] compares supported column names across installed tools, resources and layouts', async () => {
   const server = await installPackagedServer('column-case', {
     modern: 'modern',
