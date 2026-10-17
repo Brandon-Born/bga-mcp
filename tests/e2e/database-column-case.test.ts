@@ -12,6 +12,113 @@ import {
 type Database = ReturnType<typeof AuditDatabaseUsageOutputSchema.parse>;
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 
+it('[E2E-DATABASE-ALIAS-BINDINGS] preserves alias ownership through installed tools, resources and layouts', async () => {
+  const server = await installPackagedServer('alias-bindings', {
+    modern: 'modern',
+    legacy: 'legacy',
+    hybrid: 'hybrid',
+  });
+  try {
+    for (const [layout, root] of Object.entries(server.projects)) {
+      const phpPath = resolve(
+        root,
+        layout === 'legacy' ? 'bgamcplegacy.game.php' : 'modules/php/Game.php',
+      );
+      const original = (await readFile(phpPath, 'utf8')).replace(
+        /\b(?:DbQuery|getObjectListFromDB)\b/gu,
+        'fixtureExample',
+      );
+      await writeFile(
+        resolve(root, 'dbmodel.sql'),
+        'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+      );
+      const session = await withPublicPackagedServer(
+        server,
+        ['--project-root', root],
+        async (client) => {
+          for (const from of ['card AS token JOIN token AS t', 'token t JOIN card token']) {
+            await writeFile(
+              phpPath,
+              original +
+                `\nself::DbQuery("SELECT token.card_id, t.token_id FROM ${from} ON token.card_id = t.token_id WHERE token.card_id = 'private-alias-canary JOIN card private_alias_canary JOIN card private_alias_canary private_alias_canary.card_secret'");`,
+            );
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            expect(result.isError).toBe(false);
+            expect(result.structured?.queries[0]?.columns).toEqual([
+              'card.card_id',
+              'token.token_id',
+            ]);
+            expect(result.structured?.diagnostics.findings).toEqual([]);
+            expect(JSON.stringify(result)).not.toContain('private-alias-canary');
+            expect(JSON.stringify(result)).not.toContain('private_alias_canary');
+            expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(result);
+            const aggregate = await callTool<{ diagnostics: Database['diagnostics'] }>(
+              client,
+              'validate_project',
+              { groups: ['database'] },
+            );
+            expect(aggregate.structured?.diagnostics.findings).toEqual([]);
+            const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            for (const id of ['database.column.undeclared', 'database.column.unused'])
+              expect(audit.structured?.checks.find((check) => check.id === id)?.outcome).toBe(
+                'passed',
+              );
+            const resource = JSON.stringify(
+              await client.readResource({ uri: 'bga://project/diagnostics' }),
+            );
+            expect(resource).not.toContain('database.column.undeclared');
+            expect(resource).not.toContain('database.column.unused');
+            expect(resource).not.toContain('private-alias-canary');
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          for (const query of [
+            'SELECT a.card_id FROM card a JOIN token a ON a.card_id = a.card_id',
+            'SELECT a.card_id, A.token_id FROM card a JOIN token A ON a.card_id = A.token_id',
+            'SELECT card.card_id FROM card c',
+            'SELECT card_id FROM card c JOIN card d ON c.card_id = d.card_id',
+          ]) {
+            await writeFile(phpPath, original + `\nself::DbQuery("${query}");`);
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            expect(result.structured?.diagnostics.summary.unsupported).toBeGreaterThan(0);
+            expect(
+              result.structured?.diagnostics.findings.filter(
+                (finding) => finding.code !== 'database.unsupported-syntax',
+              ),
+            ).toEqual([]);
+            const held = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            for (const id of ['database.column.undeclared', 'database.column.unused'])
+              expect(held.structured?.checks.find((check) => check.id === id)?.outcome).toBe(
+                'unsupported',
+              );
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          await writeFile(
+            phpPath,
+            original +
+              '\nself::DbQuery("SELECT token.missing, t.token_id FROM card token JOIN token t ON token.card_id = t.token_id");',
+          );
+          const missing = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(
+            missing.structured?.diagnostics.findings.find(
+              (finding) => finding.code === 'database.column.undeclared',
+            )?.message,
+          ).toContain("table 'card'");
+          const outside = await callTool(client, 'audit_database_usage', {
+            projectRoot: server.temporaryRoot,
+          });
+          expect(outside.isError).toBe(true);
+          expect(outside.text).toContain('policy.root.not-allowed');
+        },
+      );
+      expect(session.stderr).toBe('');
+    }
+  } finally {
+    await server.cleanup();
+  }
+});
+
 it('[E2E-DATABASE-TABLE-CASE] preserves runtime table-case uncertainty through installed consumers and layouts', async () => {
   const server = await installPackagedServer('table-case', {
     modern: 'modern',

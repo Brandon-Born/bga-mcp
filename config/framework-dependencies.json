@@ -553,7 +553,8 @@
         "docs/verification/top10-source-ci.json",
         "docs/verification/bga442-source-ci.json",
         "docs/verification/bga443-source-ci.json",
-        "docs/verification/bga444-source-ci.json"
+        "docs/verification/bga444-source-ci.json",
+        "docs/verification/bga445-source-ci.json"
       ]
     }
   ],
