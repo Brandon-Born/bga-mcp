@@ -1,10 +1,116 @@
 import { auditDatabaseUsage } from '../../src/rules/database.js';
+import { parseQueries } from '../../src/project/database.js';
 
 function audit(schema: string, php: string) {
   return auditDatabaseUsage({ path: 'dbmodel.sql', text: schema }, [
     { path: 'Game.php', text: php },
   ]);
 }
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] resolves an alias matching another physical table without source-order dependence', () => {
+  for (const from of [
+    'card AS token JOIN token AS t',
+    'token t JOIN card token',
+    '`card` AS `token` JOIN `token` AS `t`',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+      `<?php self::DbQuery("SELECT token.card_id, t.token_id FROM ${from} ON token.card_id = t.token_id");`,
+    );
+    expect(result.queries[0]?.columns).toEqual(['card.card_id', 'token.token_id']);
+    expect(result.diagnostics.findings).toEqual([]);
+  }
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] excludes quoted values from table and qualifier ownership', () => {
+  for (const [schema, query] of [
+    [
+      'CREATE TABLE card (card_id INT);',
+      "SELECT card_id FROM card WHERE card_id = 'JOIN card private_alias_canary JOIN card private_alias_canary'",
+    ],
+    [
+      'CREATE TABLE card (card_id INT, label VARCHAR(100));',
+      "SELECT c.card_id FROM card c WHERE label = 'private_alias_canary.card_secret'",
+    ],
+  ] as const) {
+    const result = audit(schema, `<?php self::DbQuery("${query}");`);
+    expect(result.queries[0]?.tables).toEqual(['card']);
+    expect(result.diagnostics.findings).toEqual([]);
+    expect(JSON.stringify(result)).not.toContain('private_alias_canary');
+  }
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] refuses repeated qualifier bindings without resurrecting a later owner', () => {
+  for (const from of [
+    'card a JOIN token a',
+    'card a JOIN token a JOIN card a',
+    'card a JOIN card a',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+      `<?php self::DbQuery("SELECT a.card_id FROM ${from} ON a.card_id = a.card_id");`,
+    );
+    expect(result.queries[0]?.columns).toEqual([]);
+    expect(result.diagnostics.summary.unsupported).toBeGreaterThan(0);
+    expect(
+      result.diagnostics.findings.filter(
+        (finding) => finding.code !== 'database.unsupported-syntax',
+      ),
+    ).toEqual([]);
+  }
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] distinguishes row references from distinct underlying tables in self joins', () => {
+  const bare = parseQueries(
+    '<?php self::DbQuery("SELECT card_id FROM card c JOIN card d ON c.card_id = d.card_id");',
+  );
+  expect(bare.value[0]?.columns).toEqual(['card.card_id']);
+  expect(bare.unsupported.length).toBeGreaterThan(0);
+  const qualified = audit(
+    'CREATE TABLE card (card_id INT);',
+    '<?php self::DbQuery("SELECT c.card_id, d.card_id FROM card c JOIN card d ON c.card_id = d.card_id");',
+  );
+  expect(qualified.diagnostics.findings).toEqual([]);
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] keeps unbound physical qualifiers unknown after an alias is declared', () => {
+  for (const query of ['SELECT card.card_id FROM card c', 'SELECT card.* FROM card c']) {
+    const result = audit('CREATE TABLE card (card_id INT);', `<?php self::DbQuery("${query}");`);
+    expect(result.queries[0]?.columns).toEqual([]);
+    expect(result.diagnostics.summary.unsupported).toBeGreaterThan(0);
+    expect(
+      result.diagnostics.findings.filter(
+        (finding) => finding.code !== 'database.unsupported-syntax',
+      ),
+    ).toEqual([]);
+  }
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] withholds provenance for qualifiers differing only by case', () => {
+  const result = audit(
+    'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+    '<?php self::DbQuery("SELECT a.card_id, A.token_id FROM card a JOIN token A ON a.card_id = A.token_id");',
+  );
+  expect(result.queries[0]?.columns).toEqual([]);
+  expect(result.diagnostics.summary.unsupported).toBeGreaterThan(0);
+  expect(
+    result.diagnostics.findings.filter((finding) => finding.code !== 'database.unsupported-syntax'),
+  ).toEqual([]);
+});
+
+it('[UNIT-DATABASE-ALIAS-BINDINGS] retains genuinely missing columns through an unambiguous shadowing alias', () => {
+  const result = audit(
+    'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+    '<?php self::DbQuery("SELECT token.missing, t.token_id FROM card token JOIN token t ON token.card_id = t.token_id");',
+  );
+  expect(
+    result.diagnostics.findings.find((finding) => finding.code === 'database.column.undeclared')
+      ?.message,
+  ).toContain("table 'card'");
+  expect(
+    result.diagnostics.findings.some((finding) => finding.code === 'database.column.unused'),
+  ).toBe(false);
+});
 
 it('[UNIT-DATABASE-COLUMN-CASE] compares column references without changing their recorded spelling', () => {
   const result = audit(

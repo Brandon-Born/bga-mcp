@@ -525,24 +525,49 @@ function snippet(source: string, length = 60, signal?: AbortSignal): string {
 interface QueryStructure {
   readonly tables: readonly string[];
   readonly aliases: ReadonlyMap<string, string>;
+  readonly qualifiers: ReadonlySet<string>;
+  readonly referenceCount: number;
+  readonly unsupported: readonly string[];
 }
 
 /** Reads underlying tables and their explicit or implicit aliases. */
 function queryStructure(text: string, signal?: AbortSignal): QueryStructure {
   const tables: string[] = [];
   const aliases = new Map<string, string>();
+  const qualifiers = new Set<string>();
+  const firstQualifier = new Map<string, string>();
+  const unsupported: string[] = [];
+  let referenceCount = 0;
   for (const clause of text.matchAll(TABLE_CLAUSE)) {
     cancellationCheckpoint(signal);
     const table = clause[2];
     if (table === undefined) continue;
+    referenceCount += 1;
     if (!tables.includes(table)) tables.push(table);
-    aliases.set(table, table);
     const alias = /^\s+(?:AS\s+)?([`"]?)([A-Za-z_]\w*)\1/iu.exec(
       text.slice(clause.index + clause[0].length),
     )?.[2];
-    if (alias !== undefined && !SQL_KEYWORDS.has(alias.toLowerCase())) aliases.set(alias, table);
+    // A table reference supplies either its explicit/implicit alias or its
+    // unaliased name. Do not let a later physical table overwrite an alias.
+    // MySQL: tbl_name [[AS] alias]; alias casing depends on target settings.
+    // https://dev.mysql.com/doc/refman/8.0/en/join.html
+    // https://dev.mysql.com/doc/refman/8.0/en/identifier-case-sensitivity.html
+    const name = alias !== undefined && !SQL_KEYWORDS.has(alias.toLowerCase()) ? alias : table;
+    qualifiers.add(name);
+    const folded = name.toLowerCase();
+    const previous = firstQualifier.get(folded);
+    if (previous !== undefined) {
+      aliases.delete(previous);
+      aliases.delete(name);
+      unsupported.push(
+        'ambiguous table qualifier bindings repeat a reference name or differ only by case; no owner or runtime alias setting was inferred',
+      );
+    } else {
+      firstQualifier.set(folded, name);
+      aliases.set(name, table);
+    }
   }
-  return { tables, aliases };
+  return { tables, aliases, qualifiers, referenceCount, unsupported };
 }
 
 function simpleColumn(
@@ -558,7 +583,7 @@ function simpleColumn(
   if (column === undefined) return null;
   if (qualifier === undefined) {
     return {
-      table: structure.tables.length === 1 ? (structure.tables[0] ?? null) : null,
+      table: structure.referenceCount === 1 ? (structure.tables[0] ?? null) : null,
       column,
     };
   }
@@ -599,7 +624,15 @@ function readSelectList(
     if (item === '' || item === '*') continue;
     const alias = /^(.*?)(?:\s+AS\s+|\s+)([`"]?)([A-Za-z_]\w*)\2\s*$/iu.exec(item);
     const expression = (alias?.[1] ?? item).trim();
-    if (/^(?:([`"]?)[A-Za-z_]\w*\1\s*\.\s*)?\*$/u.test(expression)) continue;
+    const wildcard = /^(?:([`"]?)([A-Za-z_]\w*)\1\s*\.\s*)?\*$/u.exec(expression);
+    if (wildcard !== null) {
+      const qualifier = wildcard[2];
+      if (qualifier !== undefined && !structure.aliases.has(qualifier))
+        unsupported.push(
+          `SELECT wildcard uses an unknown or ambiguous table qualifier '${qualifier}'`,
+        );
+      continue;
+    }
 
     const direct = simpleColumn(expression, structure);
     if (direct?.table !== null && direct !== null) {
@@ -876,7 +909,9 @@ export function parseQueries(
       continue;
     }
 
-    const structure = queryStructure(text, signal);
+    // Literal values cannot introduce table references or qualifier bindings.
+    const structure = queryStructure(scrub(text), signal);
+    unsupported.push(...structure.unsupported);
     const tables = structure.tables;
     const columns = new Set<string>();
     let referenceText = text;
@@ -887,7 +922,7 @@ export function parseQueries(
       unsupported.push(...selected.unsupported);
     }
 
-    for (const qualified of referenceText.matchAll(QUALIFIED_COLUMN)) {
+    for (const qualified of scrub(referenceText).matchAll(QUALIFIED_COLUMN)) {
       cancellationCheckpoint(signal);
       const qualifier = qualified[2];
       const column = qualified[4];
@@ -902,7 +937,7 @@ export function parseQueries(
 
     // Bare identifiers can only be attributed to a table when the query names
     // exactly one. Anything else stays unattributed rather than guessed.
-    const singleTable = tables.length === 1 ? tables[0] : undefined;
+    const singleTable = structure.referenceCount === 1 ? tables[0] : undefined;
     const withoutQualified = scrub(referenceText).replace(QUALIFIED_COLUMN, ' ');
     const bare: string[] = [];
     for (const identifier of withoutQualified.matchAll(/[`"]?\b([A-Za-z_]\w*)\b[`"]?\s*(\()?/gu)) {
@@ -912,7 +947,7 @@ export function parseQueries(
         name === undefined ||
         identifier[2] !== undefined ||
         SQL_KEYWORDS.has(name.toLowerCase()) ||
-        structure.aliases.has(name) ||
+        structure.qualifiers.has(name) ||
         tables.includes(name)
       ) {
         continue;
@@ -921,7 +956,7 @@ export function parseQueries(
     }
     if (singleTable !== undefined) {
       for (const name of bare) columns.add(`${singleTable}.${name}`);
-    } else if (tables.length > 1 && bare.length > 0) {
+    } else if (structure.referenceCount > 1 && bare.length > 0) {
       unsupported.push(
         `bare columns of a multi-table query could not be attributed: ${snippet(text, 40, signal)}`,
       );
