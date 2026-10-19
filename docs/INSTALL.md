@@ -1,6 +1,6 @@
 # Installing, configuring, and removing bga-mcp
 
-This versioned walkthrough uses signed `v1.0.0-rc.3` as a verified evaluation example; it does not identify the latest candidate or authorize a release. There is no registry package yet. The rc.3 packet is retained in GitHub Actions with finite retention. Public evidence pages distribute metadata separately from the original candidate packet. Package publication belongs to BGA-415.
+This versioned walkthrough uses signed `v1.0.0-rc.3` as a verified evaluation example; it does not identify the latest candidate or authorize a release. Its acquisition commands target the original GitHub Actions packet, which was retained with a finite lifetime. Check the stated expiry and actual availability below; stop if the authenticated original is unavailable. A retained Actions packet is not a published download. Public evidence pages distribute metadata separately from the original candidate packet. Candidate creation, signing and owner-authorized publication are separate stages under BGA-415.
 
 All acquisition identities below belong to the rc.3 example. For another candidate, use its independently verified receipt, matching trusted verifier, exact signer/source and original tarball path; do not substitute a tag into these commands. Rebuilding any checkout creates a new artifact and does not reproduce or inherit an existing signature. CI executes the marked installation recipes against the newly packed checkout, separately from authenticating the original example.
 

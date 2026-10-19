@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-19T19:57:47.953463+00:00",
+  "kind": "independent exact unsigned candidate review",
+  "reviewer": "Daybreak",
+  "reviewTurn": "01a155b8-2836-758c-ab50-63dc54d21cd9",
+  "reportSha256": "sha256:c3eb280ac711821cd5918a9f9cd7f3831be69fc6309e1aaa039d01c499b5e930",
+  "candidate": {
+    "tag": "v1.0.0-rc.9",
+    "sourceCommit": "a7233ec0f3dc6260f497641f54ff7126299fc21d",
+    "producerRun": 39312854205,
+    "producerAttempt": 1,
+    "artifactId": 12216713422,
+    "archiveDigest": "sha256:86388feb8e963ea105060c1b2871f374887913f48c0cd9093a60b72a8a7b5a1c",
+    "tarballDigest": "sha256:d57c675a37baae382f4e581752620eee52cb68bea8fee6feef1863cb8cef7d67",
+    "manifestDigest": "sha256:2be9dc92fa5bcc7f4a9f976892ef51fdbbef6fa7cba9ccb125a3465949c49a2c"
+  },
+  "decision": {
+    "exactUnsignedCandidateSecurity": "approved",
+    "publication": "not approved",
+    "signature": "none; not assessed",
+    "scope": "Original hosted unsigned bytes only; no approval transfer to signed, rebuilt or replacement candidates"
+  },
+  "finding": {
+    "severity": "low",
+    "location": "packed docs/VERSIONING.md:83",
+    "text": "The current development package is `1.0.0-rc.9`; no remote candidate/tag exists.",
+    "impact": "False lifecycle wording; does not undermine authentication or the two corrected security boundaries",
+    "reviewerDisposition": "Correct source and produce a new candidate before public release if literal packed-guide currency remains required. An explicit owner historical-snapshot exception was offered as a conditional alternative, never silently relabeling the claim."
+  },
+  "repositoryDisposition": {
+    "packedGuides": "Source correction changes shipped guide bytes. docs/TESTING.md requires a replacement before publication; scripts/prepare-publication.ts compares all six guides byte-for-byte. No historical-snapshot waiver or gate change is made.",
+    "rc9": "Retain exact original, tag and unsigned security approval. It is not the guide-corrected publication candidate.",
+    "nextCandidate": "Source-only rc.10 preparation; no tag/build/signature/publication approval is conferred.",
+    "signingSelectors": "Remain unchanged because no corrected replacement original exists; selecting rc9 now would not satisfy the corrected-guide publication path."
+  }
+}

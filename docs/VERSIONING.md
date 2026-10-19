@@ -1,6 +1,6 @@
 # Versioning and compatibility policy
 
-This policy starts with the first stable `bga-mcp` release. Until a release candidate is approved, source and packed development builds stay at `0.0.0-development` and must not be published under a stable registry tag. The first stable contract is `1.0.0`; a release candidate may use `1.0.0-rc.N` under the `next` tag, but a prerelease does not begin a stable support window. Only the approved stable artifact may use `latest`.
+This policy governs the first stable `bga-mcp` contract, `1.0.0`, and its successors. Before a candidate version is selected, development builds may use `0.0.0-development`; a selected first-release candidate uses `1.0.0-rc.N`. A version labels a package; its original tarball digest identifies exact bytes. The version does not establish a completed release stage. A source tag, retained build, signature, security decision and publication each require their own candidate-bound evidence. A prerelease does not begin a stable support window. Registry channels, when authorized, use `next` for candidates and reserve `latest` for the approved stable artifact.
 
 [`config/version-policy.json`](../config/version-policy.json) is the machine-readable policy. [`config/contracts/1.0.0.json`](../config/contracts/1.0.0.json) is the retained first-release contract. `pnpm verify:version-policy` validates both documents, their lifecycle, package metadata, source attribution, and seeded failure cases. `E2E-CONTRACT-COMPATIBILITY` installs the shared tarball, connects through the real MCP client, and compares installed discovery and shipped schemas with that retained contract.
 
@@ -70,17 +70,21 @@ If BGA changes invalidate a claim, publication of the affected release is frozen
 
 ## rc.8 first-stable candidate metadata preservation
 
-No stable 1.0.0 contract is published yet. The required security update advances the maintained reference test client from 2.0.0 to patched 2.2.0. Preserve the exact previous candidate snapshot at `config/contracts/history/1.0.0-rc.7.json`, then explicitly revise only that reference-client identity in the unpublished current 1.0.0 candidate snapshot. Every package/tool/resource/schema/export/transport fingerprint and every other compatibility row remains identical. Signed rc.7 bytes and historical support observations remain immutable.
+During rc.8 preparation, before stable 1.0.0 publication, a dependency-security correction advanced the maintained reference test client from 2.0.0 to patched 2.2.0. The exact prior snapshot was preserved at `config/contracts/history/1.0.0-rc.7.json`; only that reference-client identity changed in the candidate contract snapshot. At that step, every package/tool/resource/schema/export/transport fingerprint and every other compatibility row stayed identical. Signed rc.7 bytes and historical support observations remain immutable.
 
 This follows the existing pre-stable rc.2 snapshot-archival process. The carry-forward test verifies both snapshots are candidates, their target version is unchanged, and the only identity difference is the declared test client. It also checks that the ordinary classifier still treats changing a supported identity as a major boundary for a stable contract. No stable support/deprecation rule, schema version, contract comparison or test assertion is waived. Actual publication and candidate-specific security approval remain separate decisions.
 
-## Unpublished rc.9 security contract correction
+## rc.9 security contract correction
 
-BGA-449 archives the exact rejected rc.8 contract snapshot at
-`config/contracts/history/1.0.0-rc.8.json` before revising the unpublished 1.0.0
-candidate snapshot. Every project tool now declares mandatory `trust` and
-`notice` fields, while retaining its original data fields and diagnostic schema.
-The current development package is `1.0.0-rc.9`; no remote candidate/tag exists.
+BGA-449 archived the exact rejected rc.8 contract snapshot at
+`config/contracts/history/1.0.0-rc.8.json` before correcting the first-stable
+candidate contract. Every project tool declares mandatory `trust` and `notice`
+fields, while retaining its original data fields and diagnostic schema.
+The first candidate version for that correction was `1.0.0-rc.9`. This records
+contract history; it does not assert whether a tag, retained build, signature or
+public download exists. For any candidate, establish completed stages from its
+exact source tag/commit, original producer receipt and separate signing, security
+and publication records, bound to the original tarball digest.
 This pre-stable correction does not rewrite the rc.8 artifact or pretend its
 schema fingerprints are unchanged. Ordinary published-contract major-version
 and deprecation rules remain enforced. A new candidate/signature and independent

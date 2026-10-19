@@ -24,7 +24,7 @@ Confirm the report with a synthetic reproduction. Keep discussion and any patch 
 
 ## Supported versions
 
-Before a stable release, this is evaluation software, not a production security-support commitment. Reports are welcome for all versions; remediation focuses on the latest designated evaluation candidate (**1.0.0-rc.3**) and current source. Earlier candidates remain immutable and may be superseded; signing proves identity and integrity, not a completed security review or permanent dependency clearance.
+Before a stable release, this is evaluation software, not a production security-support commitment. The retained reporting policy names **1.0.0-rc.3** as its evaluation baseline; this pinned policy reference does not designate the newest tag or confer a fresh security approval or installation recommendation. Reports are welcome for all versions; triage identifies the affected source and exact candidate using its version, commit and original tarball digest. Remediation targets are recorded in the candidate-specific review and issue disposition, rather than inferred from a fixed candidate number in this policy. Earlier candidates remain immutable and may be superseded; signing proves identity and integrity, not a completed security review or permanent dependency clearance.
 
 After stable publication, the **current stable major** receives fixes. The **previous major** receives feasible critical security fixes for **180 days** after its successor is published. Older majors remain installable but unsupported. This follows the packaged version policy; an unsupported-version report is still assessed for impact on a supported version. Use the latest reviewed release rather than relying on an old advisory assessment.
 
