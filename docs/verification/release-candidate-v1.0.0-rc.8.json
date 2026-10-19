@@ -1,0 +1,291 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-19T03:51:32.930387+00:00",
+  "owner": "BGA-448 / BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.8",
+    "sourceCommit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.8",
+    "artifactName": "bga-mcp-1.0.0-rc.8.tgz",
+    "lockDigest": "sha256:e5ce23eedba6b3ad68dc1ae95340f6eeb04f12584be4b3d604da8408f2e5775a",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:6c903310280e844a57483cc7d8fdceaec1d91a61c132a05f21f2be5ca48b2f6d",
+      "verificationEvidence": "sha256:46855961c1e24c2c96c3b4182aa5f235aedeaadec7e30478b987755163710d22",
+      "artifact": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+      "securityAudit": "sha256:a80c007e8e7b1095395ae642856e85c398d602be20b26f8ca8c1c3cd6be3eaf5"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39196145029",
+    "conclusion": "success",
+    "artifactId": 12161554948,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.8",
+    "archiveDigest": "sha256:4317471b43a473aafd8122707699140849962a1b48056a5d684be2f9242f51d4",
+    "expiresAt": "2027-01-17T03:44:52Z",
+    "reconstruction": "Producer-enforced byte-for-byte equality on Ubuntu / Node 24; independent exact-source Linux CI archives have the same tarball digest"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39195194574",
+    "commit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "job": "verification-macos-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "darwin",
+        "artifactDigest": "sha256:0259893cef25daab6fbab5402d47c6921450503e01fecad5340360554b07b601",
+        "evidenceDigest": "sha256:54fdb60a90a904da9908f1a4196ecc15b42f5043692527b8e61003eea24713f6",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      },
+      {
+        "job": "verification-macos-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "darwin",
+        "artifactDigest": "sha256:0259893cef25daab6fbab5402d47c6921450503e01fecad5340360554b07b601",
+        "evidenceDigest": "sha256:731e52fb6f4d6331b2d2947dbd8a17d28aebe772bddca269cedb8fda4e387664",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      },
+      {
+        "job": "verification-ubuntu-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "linux",
+        "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+        "evidenceDigest": "sha256:076a9a04107673624b9a99835999f6acfe4148327b033dd23907b723a3727091",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      },
+      {
+        "job": "verification-ubuntu-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "linux",
+        "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+        "evidenceDigest": "sha256:cf01fdadd169dc7eaf5303e64a573a822804cdcf14329d12b878a47737139b3b",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      },
+      {
+        "job": "verification-windows-latest-node-22",
+        "node": "v22.23.3",
+        "platform": "win32",
+        "artifactDigest": "sha256:b4b128b58205e0def4461cf3ad5ffd56735f4a3a9d4d6171e982b39ba9f2c4cd",
+        "evidenceDigest": "sha256:8770c2061372d1807148bce43082c74724db9ab46658985982cb7571f86ac1d8",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      },
+      {
+        "job": "verification-windows-latest-node-24",
+        "node": "v24.21.0",
+        "platform": "win32",
+        "artifactDigest": "sha256:b4b128b58205e0def4461cf3ad5ffd56735f4a3a9d4d6171e982b39ba9f2c4cd",
+        "evidenceDigest": "sha256:2d41ae6da87b205a7028799d4f15662b65483ce0bf6bee145f0da6391383a37e",
+        "testsPassed": 1014,
+        "scenariosPassed": 277
+      }
+    ]
+  },
+  "audit": {
+    "generatedAt": "2026-10-19T03:50:10.735Z",
+    "productionFindings": 0,
+    "fullGraphFindings": 0
+  },
+  "independentValidation": {
+    "recordedAt": "2026-10-19T03:50:44.092Z",
+    "source": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "manifestDigest": "sha256:553d2af146e0c279b440a30de4453ffcb008593f35113bc8869ba127684f48fa",
+    "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "trustedSchemas": true,
+    "checksums": true,
+    "evidenceIntegrity": true,
+    "sourceAndSelectionRebuilt": true,
+    "tests": 1014,
+    "scenarios": 277,
+    "claims": 106,
+    "capabilities": 17,
+    "productionFindings": 0,
+    "fullGraphFindings": 0,
+    "independentRuntimeEvidence": "Hosted archive envelope validation only; separate fresh consumer/security records remain required. No signature or publication claim",
+    "signed": false,
+    "published": false
+  },
+  "independentConsumer": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-19T03:50:46.870Z",
+    "runnerSource": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "version": "1.0.0-rc.8",
+    "platform": "darwin",
+    "node": "v22.17.1",
+    "client": "reference SDK 2.2.0",
+    "layouts": [
+      {
+        "layout": "legacy",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      },
+      {
+        "layout": "modern",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      },
+      {
+        "layout": "hybrid",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      }
+    ],
+    "repeatInstallation": true,
+    "removal": true,
+    "signatureVerified": false,
+    "scope": "Fresh isolated installation and public consumer against identified unsigned preparation bytes; no native-client, GUI, gameplay, signature or publication claim"
+  },
+  "packagedDocumentation": {
+    "guides": [
+      {
+        "path": "README.md",
+        "digest": "sha256:947e48648d044746a8c700513b421e39a47168db9f1286454d209a81b48c1138",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "AGENTS.md",
+        "digest": "sha256:1dda4e5b3dddd9bc4e6b940e5b4c52b19c1a191f4a55547a12d5fc044e9b2b4f",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "CONTRIBUTING.md",
+        "digest": "sha256:3af8a766e6ce53fb6fae9fb57e7e0458e7eb45859d08d092546c3f6312dc1b0b",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "SECURITY.md",
+        "digest": "sha256:77d424d34c6e90102af5edc6b11475908f374934181aa15a0ef4b3773cdce161",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/INSTALL.md",
+        "digest": "sha256:e228a947437d6053e2f3b30f9764930985746c3c731abdcb65b39d31418fd34a",
+        "matchesCandidateSource": true
+      },
+      {
+        "path": "docs/VERSIONING.md",
+        "digest": "sha256:721e60f44c002796e2763ae62882cc8b6ccfe5981f5fc394c091e4de5b7849bd",
+        "matchesCandidateSource": true
+      }
+    ],
+    "scope": "Original hosted tarball guides match exact clean candidate-source checkout; no signature or security approval"
+  },
+  "signature": "not yet signed",
+  "releaseScope": "Original hosted rc.8 candidate and unsigned checks only. Main-only signing requires reviewed receipt/selector merge. Signed-candidate assessment/approval, native-client/usefulness/public-evidence refresh and publication remain held; rc.7 approvals do not transfer.",
+  "unsignedSecurityChecks": {
+    "recordedAt": "2026-10-19T03:52:21.529742+00:00",
+    "source": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "testsPassed": 68,
+    "testsFailed": 0,
+    "unselectedTests": 11,
+    "requiredScenarios": [
+      "E2E-RELEASE-PUBLIC-EXECUTABLE",
+      "E2E-READ-ONLY-NETWORK-DENIED",
+      "E2E-READ-ONLY-NETWORK-HARNESS",
+      "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+      "E2E-TOOLS-REDACTION",
+      "E2E-POLICY-OBJECT-BOUND-READS",
+      "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+      "E2E-SUCCESS-OUTPUT-REDACTION",
+      "E2E-POLICY-RACE-BARRIER",
+      "E2E-FILESYSTEM-CANCELLATION",
+      "E2E-POLICY-PARSER-DEADLINE"
+    ],
+    "passedScenarios": [
+      "E2E-FILESYSTEM-CANCELLATION",
+      "E2E-POLICY-FINAL-OUTPUT-LIMIT",
+      "E2E-POLICY-OBJECT-BOUND-READS",
+      "E2E-POLICY-PARSER-DEADLINE",
+      "E2E-POLICY-RACE-BARRIER",
+      "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+      "E2E-READ-ONLY-NETWORK-DENIED",
+      "E2E-READ-ONLY-NETWORK-HARNESS",
+      "E2E-RELEASE-PUBLIC-EXECUTABLE",
+      "E2E-SUCCESS-OUTPUT-REDACTION",
+      "E2E-TOOLS-REDACTION"
+    ],
+    "signatureVerified": false,
+    "scope": "Fresh required security scenario selection against exact hosted-original unsigned candidate bytes. No authenticated original, signed-candidate security assessment, approval or publication claim."
+  },
+  "signingPreflight": {
+    "recordedAt": "2026-10-19T03:53:02.235Z",
+    "candidateSource": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "originalArchiveDigest": "sha256:4317471b43a473aafd8122707699140849962a1b48056a5d684be2f9242f51d4",
+    "supportedPrepare": "passed; actual GitHub producer/CI/artifact/tag identities fetched independently",
+    "supportedExtract": "passed; all seven original files byte-identical",
+    "retentionPredicate": "produced without signing identity",
+    "actualRc7ArchiveSubstitution": "refused",
+    "actualRc7PacketSelection": "refused",
+    "modifiedArchive": "refused",
+    "staleSource": "refused",
+    "freshAuditPolicy": "passed",
+    "helperDigest": "sha256:c13c792d478ad4904a413ddbdccbfef1fd94432c688863f8ecc0d12c7f4f9987",
+    "consumerVerifierDigest": "sha256:de6c3a22b56fd22939cc934318bcdacb7582c8789937d1f75b4bcc93ab30c555",
+    "signatureProduced": false,
+    "cryptographicSignatureVerified": false,
+    "published": false
+  }
+}
