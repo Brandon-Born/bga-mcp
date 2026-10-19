@@ -6,20 +6,37 @@ import {
   callTool,
   digestDirectory,
   installPackagedServer,
+  type PackagedServer,
   withPublicPackagedServer,
 } from '../helpers/packaged.js';
 
 type Database = ReturnType<typeof AuditDatabaseUsageOutputSchema.parse>;
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 
-it('[E2E-DATABASE-UNQUALIFIED-WILDCARDS] scopes star accounting through installed tools and layouts', async () => {
-  const server = await installPackagedServer('unqualified-wildcards', {
-    modern: 'modern',
-    legacy: 'legacy',
-    hybrid: 'hybrid',
+describe('unqualified wildcard layout coverage', () => {
+  let installed: PackagedServer<'modern' | 'legacy' | 'hybrid'> | undefined;
+
+  beforeAll(async () => {
+    installed = await installPackagedServer('unqualified-wildcards', {
+      modern: 'modern',
+      legacy: 'legacy',
+      hybrid: 'hybrid',
+    });
   });
-  try {
-    for (const [layout, root] of Object.entries(server.projects)) {
+
+  afterAll(async () => {
+    await installed?.cleanup();
+  });
+
+  // Package installation is suite setup. Each unchanged layout oracle retains
+  // the ordinary test deadline instead of sharing one clock with setup and two
+  // other independent server sessions.
+  it.each(['modern', 'legacy', 'hybrid'] as const)(
+    '[E2E-DATABASE-UNQUALIFIED-WILDCARDS] scopes star accounting through installed tools on %s',
+    async (layout) => {
+      const server = installed;
+      if (server === undefined) throw new Error('Packaged server setup did not complete');
+      const root = server.projects[layout];
       const php = resolve(
         root,
         layout === 'legacy' ? 'bgamcplegacy.game.php' : 'modules/php/Game.php',
@@ -94,10 +111,8 @@ it('[E2E-DATABASE-UNQUALIFIED-WILDCARDS] scopes star accounting through installe
         },
       );
       expect(session.stderr).toBe('');
-    }
-  } finally {
-    await server.cleanup();
-  }
+    },
+  );
 });
 
 it('[E2E-DATABASE-QUALIFIED-WILDCARDS] preserves scoped wildcard usage in installed consumers and layouts', async () => {

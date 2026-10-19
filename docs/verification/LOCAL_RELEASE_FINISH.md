@@ -1,7 +1,10 @@
 > **Publication blocked, 2026-10-19:** Independent Daybreak Blue review reproduced
 > two runtime vulnerabilities in signed rc.8. The prior scripted approval is
 > superseded by [the explicit rejection](RC8_SECURITY_REJECTION.md). BGA-449
-> implements a replacement locally; no rc.8 publication or tag movement is allowed.
+> implements the replacement, merged and independently re-reviewed at `a151763`.
+> [BGA-450 rc.9 preparation](RC9_PREPARATION.md) is the current path; this rc.8
+> handoff remains historical. rc.7 was separately returned to draft with its assets
+> and tag preserved. No rc.8 publication or tag movement is allowed.
 
 # Finite local rc.8 release handoff — BGA-447 / BGA-448
 
@@ -9,7 +12,7 @@
 {"kind":"review","scope":"Bounded local-only rc.8 preparation, independent unsigned checks and explicit post-merge authenticated release gates; no publication approval"}
 ```
 
-The owner approved one final bounded wildcard correction, evidence-based status reconciliation and preparation of the next local release. The frozen `config/release.json` still selects seven local tools, three resources, stdio and protocol `2025-11-25`. Package, runtime and manifest now select `1.0.0-rc.8`; this is preparation, while signed rc.7 remains the published version. No documentation/setup/Studio expansion, runtime executor, new runtime dependency, persistent permission or new credential belongs to this plan.
+The owner approved one final bounded wildcard correction, evidence-based status reconciliation and preparation of the next local release. The frozen `config/release.json` still selects seven local tools, three resources, stdio and protocol `2025-11-25`. At this historical preparation, package, runtime and manifest selected `1.0.0-rc.8`, while signed rc.7 was published. Current development selects rc.9; rc.7 is now a draft and rc.8 remains rejected. No documentation/setup/Studio expansion, runtime executor, new runtime dependency, persistent permission or new credential belongs to this plan.
 
 BGA-442 through BGA-446 are now labelled verified from their retained merged implementation, exact-source CI, installed controls and framework admission receipts. BGA-425 is verified as a completed research decision to defer, with no runtime implementation. BGA-438's broad dynamic SQL questions and all later milestones stay open. Existing records and signed candidate bytes are immutable.
 
