@@ -75,7 +75,7 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
   ) as { reviewReceipt: string };
   const actual = SecurityReviewSchema.parse(
     JSON.parse(
-      await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.7.json'), 'utf8'),
+      await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.8.json'), 'utf8'),
     ),
   );
   expect(verifyReviewRecord(actual, plan).failures).toEqual([]);

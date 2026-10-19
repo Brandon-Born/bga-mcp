@@ -559,7 +559,12 @@
         "docs/verification/bga445-source-ci.json",
         "docs/verification/bga446-source-ci.json",
         "docs/verification/bga447-source-ci.json",
-        "config/contracts/history/1.0.0-rc.7.json"
+        "config/contracts/history/1.0.0-rc.7.json",
+        "docs/verification/release-signing-v1.0.0-rc.8.json",
+        "docs/verification/security-review-v1.0.0-rc.8.json",
+        "docs/verification/security-review-v1.0.0-rc.8-clean.json",
+        "docs/verification/codex-client-v1.0.0-rc.8.json",
+        "docs/verification/install-guide-v1.0.0-rc.8-signed.json"
       ]
     }
   ],
