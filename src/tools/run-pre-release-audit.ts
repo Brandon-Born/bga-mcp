@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticFindingSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import { aggregateValidations, type RuleGroup } from '../rules/aggregate.js';
 import { auditPreRelease, type RuleCatalog } from '../rules/pre-release.js';
 import { createValidatorRunners } from '../rules/validators.js';
@@ -25,7 +26,7 @@ export const RunPreReleaseAuditInputSchema = z.strictObject({
     ),
 });
 
-export const RunPreReleaseAuditOutputSchema = z.strictObject({
+const RunPreReleaseAuditDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   catalogVersion: z.string(),
@@ -49,6 +50,9 @@ export const RunPreReleaseAuditOutputSchema = z.strictObject({
   ),
 });
 
+export const RunPreReleaseAuditOutputSchema = withProjectTrust(RunPreReleaseAuditDataSchema);
+
+type RunPreReleaseAuditDataResult = z.infer<typeof RunPreReleaseAuditDataSchema>;
 export type RunPreReleaseAuditResult = z.infer<typeof RunPreReleaseAuditOutputSchema>;
 
 const DESCRIPTION = `Run the catalogued pre-release checks against a BGA project.
@@ -65,7 +69,7 @@ project a check examines leaves that check unsupported, never passed. Checks
 that cannot be automated are always reported as manual-required. Read-only, and
 no network access.`;
 
-export function summarizePreRelease(audit: RunPreReleaseAuditResult, layout: string): string {
+export function summarizePreRelease(audit: RunPreReleaseAuditDataResult, layout: string): string {
   const lines = [
     `Pre-release audit of a ${layout} project against rule catalog ${audit.catalogVersion}.`,
     `${String(audit.counts.passed)} passed, ${String(audit.counts.failed)} failed, ${String(audit.counts.unsupported)} unsupported, ${String(audit.counts['manual-required'])} manual-required.`,
@@ -184,10 +188,10 @@ export function registerRunPreReleaseAudit(
         }
         const result = outcome;
 
-        return publishResult(
+        return publishProjectResult(
           policy,
           RUN_PRE_RELEASE_AUDIT_TOOL,
-          RunPreReleaseAuditOutputSchema,
+          RunPreReleaseAuditDataSchema,
           {
             schemaVersion: 1,
             layout: result.layout,

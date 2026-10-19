@@ -73,3 +73,15 @@ If BGA changes invalidate a claim, publication of the affected release is frozen
 No stable 1.0.0 contract is published yet. The required security update advances the maintained reference test client from 2.0.0 to patched 2.2.0. Preserve the exact previous candidate snapshot at `config/contracts/history/1.0.0-rc.7.json`, then explicitly revise only that reference-client identity in the unpublished current 1.0.0 candidate snapshot. Every package/tool/resource/schema/export/transport fingerprint and every other compatibility row remains identical. Signed rc.7 bytes and historical support observations remain immutable.
 
 This follows the existing pre-stable rc.2 snapshot-archival process. The carry-forward test verifies both snapshots are candidates, their target version is unchanged, and the only identity difference is the declared test client. It also checks that the ordinary classifier still treats changing a supported identity as a major boundary for a stable contract. No stable support/deprecation rule, schema version, contract comparison or test assertion is waived. Actual publication and candidate-specific security approval remain separate decisions.
+
+## Unpublished rc.9 security contract correction
+
+BGA-449 archives the exact rejected rc.8 contract snapshot at
+`config/contracts/history/1.0.0-rc.8.json` before revising the unpublished 1.0.0
+candidate snapshot. Every project tool now declares mandatory `trust` and
+`notice` fields, while retaining its original data fields and diagnostic schema.
+The current development package is `1.0.0-rc.9`; no remote candidate/tag exists.
+This pre-stable correction does not rewrite the rc.8 artifact or pretend its
+schema fingerprints are unchanged. Ordinary published-contract major-version
+and deprecation rules remain enforced. A new candidate/signature and independent
+candidate-specific review are required before publication.

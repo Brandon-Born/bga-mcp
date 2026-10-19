@@ -1,5 +1,7 @@
 # MCP client smoke matrix
 
+Signed rc.8 is [rejected for publication](verification/RC8_SECURITY_REJECTION.md). Its native-client receipt below remains a historical stack/lifecycle observation and does not approve the corrected rc.9 runtime. The replacement needs its own candidate-specific evaluation.
+
 The machine-readable [matrix](../config/client-smoke.json) distinguishes maintained support, a bounded controlled evaluation, and untested candidates. `pnpm verify:clients` refuses omitted supported clients, unpinned versions, absent packaged scenarios, CI environment drift, missing controlled receipts, wrong candidate identities and changed controlled runners. It runs in the complete gate.
 
 | Matrix row              | Client/version                                   | Environment                                                     | Evidence and scope                                                                                                                                                                                                                                                         |

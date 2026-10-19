@@ -14,6 +14,7 @@ import {
   type ReleaseInventory,
 } from '../../scripts/lib/release.js';
 import {
+  assertEvidencePublicationAllowed,
   findRelease,
   reconcileRelease,
   validatePublicationPlan,
@@ -273,3 +274,17 @@ type Mutable<T> = {
       : T[P];
 };
 type MutableEvidence = Mutable<Evidence>;
+
+it('[INT-RELEASE-EVIDENCE-PACKET] refuses live evidence publication for a rejected candidate while retaining offline historical verification', async () => {
+  const review = await load<{ publicationHold?: unknown }>('config/security-review.json');
+  expect(() => assertEvidencePublicationAllowed(review)).toThrow('Candidate publication blocked');
+  expect(() => assertEvidencePublicationAllowed({})).not.toThrow();
+  for (const publicationHold of ['', null, false, 'rejected'])
+    expect(() => assertEvidencePublicationAllowed({ publicationHold })).toThrow(
+      'Candidate publication blocked',
+    );
+  for (const script of ['scripts/publish-github-release.ts', 'scripts/publish-release-evidence.ts'])
+    expect(await readFile(resolve(root, script), 'utf8')).toContain(
+      'Candidate publication blocked by security review',
+    );
+});

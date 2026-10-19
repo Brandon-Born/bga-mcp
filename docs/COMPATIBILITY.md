@@ -255,3 +255,15 @@ BGA-446 retains qualified SELECT wildcard usage for uniquely bound tables only. 
 BGA-447 counts a lone unqualified SELECT wildcard, including DISTINCT, against only the bounded FROM/JOIN tables and their visible declared columns. Unrelated and invisible columns retain unused-column findings; explicit missing references and uncertainty remain. Mixed/result-aliased unqualified stars are unsupported. The rc.8 preparation retains the same public schemas, seven tools, three resources, local read-only stdio and protocol `2025-11-25`.
 
 Rc.8 preparation uses patched reference SDK client 2.2.0 for current installed smoke coverage. The legacy conformance SDK is pinned to patched 1.31.0 through the development graph; no runtime server, transport or protocol claim changes. Historical client/candidate observations retain their original versions.
+
+## Project trust correction — BGA-449
+
+Only startup-configured, canonical roots authorize project reads. A client roots
+response cannot widen that allowlist, and no configured roots means refusal in
+both protocol eras. Existing explicit-root selection, multiple-root ambiguity,
+link/traversal checks and the local-only inventory remain in place. All seven
+project tools and three resources publish invariant `trust`/`notice` fields;
+text starts with the notice, and inspection quotes the untrusted project name
+after a fixed server summary. Parser failures retain an invariant notice too.
+Labels reduce instruction/data confusion; they cannot enforce an agent's own
+permissions or instruction hierarchy. No additional BGA grammar is inferred.

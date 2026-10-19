@@ -130,7 +130,7 @@ afterAll(async () => {
 });
 
 describe('2026 multi-round-trip project roots', () => {
-  it('[E2E-MODERN-INPUT-REQUIRED-ROOTS] asks for one root, validates it, and completes the original tool call', async () => {
+  it('[E2E-MODERN-INPUT-REQUIRED-ROOTS] refuses client roots as filesystem authority', async () => {
     await withModernClient(
       () => Promise.resolve({ roots: [{ uri: pathToFileURL(server.projects.legacy).href }] }),
       async (client, requested) => {
@@ -138,14 +138,14 @@ describe('2026 multi-round-trip project roots', () => {
           { name: 'inspect_project', arguments: {} },
           { timeout: 30_000 },
         );
-        expect(result.isError).not.toBe(true);
-        expect(result.structuredContent).toMatchObject({ layout: 'legacy' });
+        expect(result.isError).toBe(true);
+        expect(text(result)).toContain('policy.root.unconfigured');
         expect(requested()).toBe(1);
       },
     );
   }, 180_000);
 
-  it('[E2E-MODERN-INPUT-REQUIRED-ROOTS] observes changed roots on a later call', async () => {
+  it('[E2E-MODERN-INPUT-REQUIRED-ROOTS] refuses changed client roots on later calls', async () => {
     let current = server.projects.legacy;
     await withModernClient(
       () => Promise.resolve({ roots: [{ uri: pathToFileURL(current).href }] }),
@@ -154,13 +154,15 @@ describe('2026 multi-round-trip project roots', () => {
           { name: 'inspect_project', arguments: {} },
           { timeout: 30_000 },
         );
-        expect(first.structuredContent).toMatchObject({ layout: 'legacy' });
+        expect(first.isError).toBe(true);
+        expect(text(first)).toContain('policy.root.unconfigured');
         current = server.projects.modern;
         const second = await client.callTool(
           { name: 'inspect_project', arguments: {} },
           { timeout: 30_000 },
         );
-        expect(second.structuredContent).toMatchObject({ layout: 'modern' });
+        expect(second.isError).toBe(true);
+        expect(text(second)).toContain('policy.root.unconfigured');
         expect(requested()).toBe(2);
       },
     );
@@ -182,13 +184,13 @@ describe('2026 multi-round-trip project roots', () => {
             { uri: pathToFileURL(server.projects.legacy).href },
             { uri: pathToFileURL(server.projects.modern).href },
           ],
-          /ambiguous/iu,
+          /Client roots cannot authorize/iu,
         ],
         ['invalid-scheme', [{ uri: 'https://example.invalid/project' }], /non-file/iu],
         [
           'missing',
           [{ uri: pathToFileURL(resolve(scratch, 'missing')).href }],
-          /none of the project roots/iu,
+          /Client roots cannot authorize/iu,
         ],
       ] as const) {
         await withModernClient(
@@ -212,8 +214,8 @@ describe('2026 multi-round-trip project roots', () => {
             { name: 'inspect_project', arguments: {} },
             { timeout: 30_000 },
           );
-          expect(result.isError).not.toBe(true);
-          expect(result.structuredContent).toMatchObject({ layout: 'legacy' });
+          expect(result.isError).toBe(true);
+          expect(text(result)).toContain('policy.root.unconfigured');
           expect(requested()).toBe(1);
         },
       );
@@ -248,14 +250,9 @@ describe('2026 multi-round-trip project roots', () => {
     await withModernClient(
       () => Promise.resolve({ roots: [{ uri: pathToFileURL(server.projects.legacy).href }] }),
       async (client, requested) => {
-        const result = await client.readResource(
-          { uri: 'bga://project/summary' },
-          { timeout: 30_000 },
-        );
-        const payload = JSON.parse((result.contents[0] as { text: string }).text) as {
-          layout: string;
-        };
-        expect(payload.layout).toBe('legacy');
+        await expect(
+          client.readResource({ uri: 'bga://project/summary' }, { timeout: 30_000 }),
+        ).rejects.toThrow('policy.root.unconfigured');
         expect(requested()).toBe(1);
       },
     );
@@ -277,8 +274,8 @@ describe('2026 multi-round-trip project roots', () => {
         { name: 'inspect_project', arguments: {} },
         { timeout: 30_000 },
       );
-      expect(result.isError).not.toBe(true);
-      expect(result.structuredContent).toMatchObject({ layout: 'legacy' });
+      expect(result.isError).toBe(true);
+      expect(text(result)).toContain('policy.root.unconfigured');
       expect(requests).toBe(1);
     } finally {
       await connection.client.close();

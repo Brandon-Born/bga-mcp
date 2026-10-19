@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import { summarizeFindings } from '../rules/uncertainty.js';
 import { DATABASE_RULES, auditDatabaseUsage } from '../rules/database.js';
 import {
@@ -25,7 +26,7 @@ export const AuditDatabaseUsageInputSchema = z.strictObject({
     ),
 });
 
-export const AuditDatabaseUsageOutputSchema = z.strictObject({
+const AuditDatabaseUsageDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   schemaSource: z.string().nullable(),
@@ -52,6 +53,9 @@ export const AuditDatabaseUsageOutputSchema = z.strictObject({
   diagnostics: DiagnosticResultSchema,
 });
 
+export const AuditDatabaseUsageOutputSchema = withProjectTrust(AuditDatabaseUsageDataSchema);
+
+type AuditDatabaseUsageDataResult = z.infer<typeof AuditDatabaseUsageDataSchema>;
 export type AuditDatabaseUsageResult = z.infer<typeof AuditDatabaseUsageOutputSchema>;
 
 const DESCRIPTION = `Compare a BGA project's dbmodel.sql with the queries its PHP sources run.
@@ -180,17 +184,17 @@ export function registerAuditDatabaseUsage(
               ],
               signal,
             ),
-          } satisfies AuditDatabaseUsageResult;
+          } satisfies AuditDatabaseUsageDataResult;
         });
         if (isProjectRootInputRequired(outcome)) {
           return outcome;
         }
         const result = outcome;
 
-        return publishResult(
+        return publishProjectResult(
           policy,
           AUDIT_DATABASE_USAGE_TOOL,
-          AuditDatabaseUsageOutputSchema,
+          AuditDatabaseUsageDataSchema,
           result,
           (published) =>
             summarizeDatabaseAudit(

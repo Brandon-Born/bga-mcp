@@ -119,7 +119,8 @@
         "docs/verification/DATABASE_CHECK_COVERAGE.md",
         "docs/verification/NORMALIZED_PROJECT_MODEL.md",
         "docs/verification/REMAINING_OPERATION_DEADLINES.md",
-        "docs/verification/LOCAL_RELEASE_FINISH.md"
+        "docs/verification/LOCAL_RELEASE_FINISH.md",
+        "src/project-trust.ts"
       ]
     },
     {
@@ -270,7 +271,9 @@
         "tests/integration/normalized-project.test.ts",
         "tests/unit/database-insert-prefix.test.ts",
         "tests/unit/database-column-case.test.ts",
-        "tests/e2e/database-column-case.test.ts"
+        "tests/e2e/database-column-case.test.ts",
+        "tests/e2e/project-trust.test.ts",
+        "tests/unit/project-trust.test.ts"
       ]
     },
     {
@@ -564,7 +567,9 @@
         "docs/verification/security-review-v1.0.0-rc.8.json",
         "docs/verification/security-review-v1.0.0-rc.8-clean.json",
         "docs/verification/codex-client-v1.0.0-rc.8.json",
-        "docs/verification/install-guide-v1.0.0-rc.8-signed.json"
+        "docs/verification/install-guide-v1.0.0-rc.8-signed.json",
+        "config/contracts/history/1.0.0-rc.8.json",
+        "docs/verification/RC8_SECURITY_REJECTION.md"
       ]
     }
   ],

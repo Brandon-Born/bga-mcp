@@ -2212,3 +2212,14 @@ The following are not implementation backlog items unless a future documented de
 - Hosting or redistributing publisher artwork.
 - Scraping private projects or bypassing BGA access controls.
 - Depending on undocumented Studio endpoints for core functionality.
+
+### BGA-449 — Repair root authority and project-content trust after independent rc.8 review
+
+- **Status:** implemented; integrated checks and exact-source CI pending.
+- **Priority:** P0, blocks rc.8 publication.
+- **Sources:** Existing TB-CLIENT-INPUT/TB-LOCAL-FILESYSTEM/TB-OUTPUT contract: the developer is trusted, MCP client is semi-trusted and project content is untrusted. No BGA parser, construct or grammar interpretation changes.
+- **Observed defect:** Independent Daybreak Blue SEC-RC8-01/02 review and a local exact-signed-artifact repeat both accept client-only roots, read a synthetic in-root private file and emit hostile metadata at the start of inspection prose. Existing tests intentionally admitted client roots, contradicting the configured-root-only threat contract. Native client smoke and the earlier scripted security review missed these attacks.
+- **Correction:** Only canonical startup-configured roots grant filesystem authority; client roots cannot widen it, including from an empty allowlist. Preserve exact configured-root selection and existing confinement, cancellation and refusal controls in both protocol eras. Central project publishers add mandatory server-authored trust/notice fields, prefix text before source values and quote the inspected project name. Source-derived failures retain the notice; labels are not an agent-side sandbox.
+- **Verification:** Packaged `[E2E-CLIENT-ROOT-AUTHORITY]` rejects filesystem root, home and sibling responses for every public tool/resource, and preserves configured-root use/refusal in both eras. `[E2E-PROJECT-CONTENT-TRUST]` covers all seven public tools and three resources with hostile metadata, state/action/notification names, SQL identifiers/literals, filenames and malformed metadata. Retain before/after identity, immutability, exit, budget and approval-revocation controls; run one integrated full gate and exact-source platform CI before handoff.
+- **Candidate disposition:** [rc.8 rejection](verification/RC8_SECURITY_REJECTION.md) supersedes the earlier clean approval for publication without altering any historical receipt, signature or tag. Independently pinned `publicationHold` blocks package admission and both live evidence/package writers. Offline historical verification stays available. Replace with newly reviewed bytes and a new signature; do not move rc.8 or create a new remote tag in this change.
+- **PR scope:** Continue existing draft PR39; preserve its receipts as historical observations with an explicit rejection, rather than opening an overlapping records/fix series. No merge, release, deployment, publishing, new credential or Dino Racer change is authorized.

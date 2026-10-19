@@ -606,6 +606,16 @@
       "impact": "An uncaught stack or cause exposes private paths or session values in terminal transcripts and retained CI output.",
       "mitigations": ["TM-CLI-ERROR-BOUNDARY", "TM-ARTIFACT-SCAN"],
       "surfaces": ["SURFACE-CLI-STDOUT", "SURFACE-PROCESS-STDERR", "SURFACE-CI-ARTIFACT"]
+    },
+    {
+      "id": "AC-PROJECT-PROMPT-INJECTION",
+      "title": "Project metadata or reflected source contains instructions aimed at the agent",
+      "actor": "ACTOR-PROJECT-CONTENT",
+      "assets": ["ASSET-CLIENT-CONTEXT", "ASSET-LOCAL-SOURCE"],
+      "boundary": "TB-OUTPUT",
+      "surfaces": ["SURFACE-TOOL-RESULT", "SURFACE-TOOL-FAILURE"],
+      "impact": "An agent may treat hostile project values as instructions when receiving an otherwise authoritative-looking tool result.",
+      "mitigations": ["TM-PROJECT-CONTENT-TRUST", "TM-CLIENT-TRUST-DOC"]
     }
   ],
   "mitigations": [
@@ -615,7 +625,11 @@
       "boundary": "TB-LOCAL-FILESYSTEM",
       "control": "automated",
       "status": "implemented",
-      "scenarios": ["INT-POLICY-ROOT-NOT-ALLOWED", "E2E-POLICY-ROOT-UNAVAILABLE"]
+      "scenarios": [
+        "INT-POLICY-ROOT-NOT-ALLOWED",
+        "E2E-POLICY-ROOT-UNAVAILABLE",
+        "E2E-CLIENT-ROOT-AUTHORITY"
+      ]
     },
     {
       "id": "TM-POLICY-FAIL-CLOSED",
@@ -626,7 +640,8 @@
       "scenarios": [
         "INT-POLICY-ROOT-UNCONFIGURED",
         "E2E-POLICY-CONFIG-FAILS-CLOSED",
-        "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE"
+        "E2E-READ-ONLY-INPUT-CANNOT-ESCAPE",
+        "E2E-CLIENT-ROOT-AUTHORITY"
       ]
     },
     {
@@ -1316,6 +1331,16 @@
         "GATE-LOG-REDACTION",
         "GATE-THREAT-MODEL-AGREEMENT"
       ]
+    },
+    {
+      "id": "TM-PROJECT-CONTENT-TRUST",
+      "title": "Project results carry invariant trust labels before source values and quote the inspected project name",
+      "boundary": "TB-OUTPUT",
+      "control": "automated",
+      "status": "implemented",
+      "surfaces": ["SURFACE-TOOL-RESULT", "SURFACE-TOOL-FAILURE"],
+      "backlog": "BGA-449",
+      "scenarios": ["E2E-PROJECT-CONTENT-TRUST"]
     }
   ],
   "residualRisks": [
@@ -1355,8 +1380,8 @@
     },
     {
       "id": "RR-DOC-INJECTION-RESIDUAL",
-      "description": "Labelling retrieved content as untrusted does not stop an agent from acting on it. No server-side control can; the mitigation reduces the chance an agent treats documentation as instruction, and the operator responsibilities carry the rest.",
-      "abuseCases": ["AC-DOC-PROMPT-INJECTION"],
+      "description": "Labelling retrieved documentation and project-derived content as untrusted does not stop an agent from acting on it. The server cannot enforce the consuming agent's instruction hierarchy or other permissions; invariant labels and quoted metadata reduce confusion, and operator responsibilities carry the remaining instruction/data isolation. This does not authorize any instruction embedded in source content.",
+      "abuseCases": ["AC-DOC-PROMPT-INJECTION", "AC-PROJECT-PROMPT-INJECTION"],
       "acceptedBy": "Brandon Born"
     },
     {
@@ -1379,7 +1404,7 @@
     },
     {
       "id": "RR-STUDIO-UNDOCUMENTED-PAGE",
-      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed — an unreadable line is withheld — but the capability stays experimental and off by default for this reason.",
+      "description": "The experimental log reader parses a Studio page BGA does not document or version. It can break without warning, and a page change could in principle alter what the privacy screen sees. The screen fails closed \u2014 an unreadable line is withheld \u2014 but the capability stays experimental and off by default for this reason.",
       "abuseCases": ["AC-STUDIO-SESSION-REUSE", "AC-STUDIO-PLAYER-DATA"],
       "acceptedBy": "Brandon Born"
     },

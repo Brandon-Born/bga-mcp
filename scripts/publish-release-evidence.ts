@@ -124,7 +124,18 @@ async function remote(tag: string): Promise<RemoteRelease | undefined> {
   );
   return findRelease(JSON.parse(stdout) as RemoteRelease[][], tag);
 }
+export function assertEvidencePublicationAllowed(review: { publicationHold?: unknown }): void {
+  assert.equal(
+    review.publicationHold,
+    undefined,
+    'Candidate publication blocked by security review',
+  );
+}
 async function publish(directory: string, expectedDigest: string): Promise<void> {
+  const review = JSON.parse(
+    await readFile(resolve(import.meta.dirname, '../config/security-review.json'), 'utf8'),
+  ) as { publicationHold?: unknown };
+  assertEvidencePublicationAllowed(review);
   const plan = await validatePublicationPlan(directory, expectedDigest);
   const { stdout: tag } = await execute('gh', ['api', `repos/${repository}/commits/${plan.tag}`]);
   assert.equal((JSON.parse(tag) as { sha: string }).sha, plan.sourceCommit);

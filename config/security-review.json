@@ -52,5 +52,6 @@
     "RR-STUDIO-UNDOCUMENTED-PAGE",
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
-  ]
+  ],
+  "publicationHold": "SEC-RC8-01 and SEC-RC8-02 reproduced against signed rc.8. Rejected for publication; runtime fixes require a new candidate and signature. See docs/verification/RC8_SECURITY_REJECTION.md."
 }

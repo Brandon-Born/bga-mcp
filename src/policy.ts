@@ -435,7 +435,7 @@ export class PolicyBoundary {
   readonly #operationSignals = new AsyncLocalStorage<AbortSignal>();
   readonly #config: PolicyConfig;
   readonly #resolvedRoots: readonly string[];
-  /** Roots the client offered, resolved and checked exactly like configured ones. */
+  /** Cached client discovery hints intersected with operator-configured roots. */
   #clientRoots: readonly string[] = [];
   /** Dev accounts supplied during the session, alongside configured ones. */
   #askedStudioAccounts: readonly string[] = [];
@@ -595,7 +595,7 @@ export class PolicyBoundary {
   /**
    * Adopts the client's roots, once per connection unless invalidated.
    *
-   * A client-offered root is not trusted more than a configured one: each is
+   * A client-offered root cannot grant filesystem authority: each is
    * resolved through the filesystem and checked the same way, and one that
    * cannot be resolved is dropped rather than failing the others. A client
    * that offers nothing, or a provider that fails, leaves the configured roots
@@ -624,7 +624,9 @@ export class PolicyBoundary {
         try {
           const resolved = await realpath(normalize(candidate));
           cancellationCheckpoint(options.signal);
-          if (!adopted.includes(resolved)) {
+          // Client input can confirm an operator root, never authorize a new
+          // filesystem location (including when startup configured no roots).
+          if (this.#resolvedRoots.includes(resolved) && !adopted.includes(resolved)) {
             adopted.push(resolved);
           }
         } catch {
@@ -647,12 +649,10 @@ export class PolicyBoundary {
 
   /** Real, existing project roots in configuration order. */
   get projectRoots(): readonly string[] {
-    // Configured roots first: an explicit argument outranks what a client
-    // happened to have open.
-    return [
-      ...this.#resolvedRoots,
-      ...this.#clientRoots.filter((root) => !this.#resolvedRoots.includes(root)),
-    ];
+    // Defense in depth: even cached discovery can only name operator roots.
+    return [...new Set([...this.#resolvedRoots, ...this.#clientRoots])].filter((root) =>
+      this.#resolvedRoots.includes(root),
+    );
   }
 
   /** Redaction options that keep in-root paths readable and hide everything else. */
@@ -691,7 +691,7 @@ export class PolicyBoundary {
     if (allowed.length === 0) {
       throw new PolicyViolationError(
         ERROR_CODES.policyRootUnconfigured,
-        'No project root is configured, and the client offered none. Start the server with --project-root, or use a client that advertises its roots.',
+        'No project root is configured. Start the server with --project-root <absolute path>. Client roots cannot authorize filesystem access.',
       );
     }
 

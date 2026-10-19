@@ -1,3 +1,8 @@
+> **Publication blocked, 2026-10-19:** Independent Daybreak Blue review reproduced
+> two runtime vulnerabilities in signed rc.8. The prior scripted approval is
+> superseded by [the explicit rejection](RC8_SECURITY_REJECTION.md). BGA-449
+> implements a replacement locally; no rc.8 publication or tag movement is allowed.
+
 # Finite local rc.8 release handoff — BGA-447 / BGA-448
 
 ```verification-record

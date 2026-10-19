@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import {
   isProjectRootInputRequired,
   loadProjectContext,
@@ -38,7 +39,7 @@ export const InspectProjectInputSchema = z.strictObject({
     ),
 });
 
-export const InspectProjectOutputSchema = z.strictObject({
+const InspectProjectDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   gameKey: z.string().nullable(),
@@ -99,6 +100,9 @@ export const InspectProjectOutputSchema = z.strictObject({
   diagnostics: DiagnosticResultSchema,
 });
 
+export const InspectProjectOutputSchema = withProjectTrust(InspectProjectDataSchema);
+
+type InspectProjectDataResult = z.infer<typeof InspectProjectDataSchema>;
 export type InspectProjectResult = z.infer<typeof InspectProjectOutputSchema>;
 
 const DESCRIPTION = `Inspect a configured BGA project root and explain its structure.
@@ -112,12 +116,14 @@ logic, states, and client logic is read in whichever form the project has it in.
 Read-only: it never writes to the project and never uses the network.`;
 
 /** Renders the model as the short text an agent or a human reads first. */
-export function summarize(model: InspectProjectResult): string {
+export function summarize(model: InspectProjectDataResult): string {
   const lines: string[] = [];
   const name = model.metadata.gameName ?? model.gameKey ?? 'unnamed project';
   lines.push(
-    `${name}: ${model.layout} layout (${model.detection.certainty}). ${model.detection.reason}`,
+    `Project inspection: ${model.layout} layout (${model.detection.certainty}). ${model.detection.reason}`,
   );
+
+  lines.push(`Project name (untrusted): ${JSON.stringify(name)}.`);
 
   const present = model.components.filter((component) => component.present).map((c) => c.id);
   const missing = model.components
@@ -215,10 +221,10 @@ export function registerInspectProject(
         }
         const model = outcome;
 
-        return publishResult(
+        return publishProjectResult(
           policy,
           INSPECT_PROJECT_TOOL,
-          InspectProjectOutputSchema,
+          InspectProjectDataSchema,
           model,
           summarize,
         );

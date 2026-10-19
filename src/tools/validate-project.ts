@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import {
   DEFAULT_MAX_FINDINGS,
   RULE_GROUPS,
@@ -43,7 +44,7 @@ export const ValidateProjectInputSchema = z.strictObject({
     ),
 });
 
-export const ValidateProjectOutputSchema = z.strictObject({
+const ValidateProjectDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   status: z.enum(['passed', 'findings', 'unsupported', 'incomplete']),
@@ -70,6 +71,9 @@ export const ValidateProjectOutputSchema = z.strictObject({
   diagnostics: DiagnosticResultSchema,
 });
 
+export const ValidateProjectOutputSchema = withProjectTrust(ValidateProjectDataSchema);
+
+type ValidateProjectDataResult = z.infer<typeof ValidateProjectDataSchema>;
 export type ValidateProjectResult = z.infer<typeof ValidateProjectOutputSchema>;
 
 const DESCRIPTION = `Run every BGA project validator and combine the results.
@@ -89,7 +93,7 @@ Read-only, and no network access.`;
 
 export function summarizeProjectValidation(
   status: string,
-  aggregate: ValidateProjectResult,
+  aggregate: ValidateProjectDataResult,
 ): string {
   const { summary } = aggregate.diagnostics;
   const lines = [
@@ -187,10 +191,10 @@ export function registerValidateProject(
         // bounded view of them the schema declares.
         const { aggregate, ...published } = result;
         void aggregate;
-        return publishResult(
+        return publishProjectResult(
           policy,
           VALIDATE_PROJECT_TOOL,
-          ValidateProjectOutputSchema,
+          ValidateProjectDataSchema,
           published,
           (result_) => summarizeProjectValidation(result_.status, result_),
         );

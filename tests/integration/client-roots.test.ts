@@ -45,20 +45,22 @@ afterAll(async () => {
 });
 
 describe('project roots offered by the client', () => {
-  it('[INT-CLIENT-ROOTS-ADOPTED] uses a client root when none was configured', async () => {
+  it('[INT-CLIENT-ROOTS-ADOPTED] refuses a client root when none was configured', async () => {
     const policy = await createPolicyBoundary({});
     expect(policy.projectRoots).toEqual([]);
 
     policy.setClientRootsProvider(() => Promise.resolve([projectA]));
     await policy.ensureClientRoots();
 
-    expect(policy.projectRoots).toEqual([projectA]);
-    // A client-offered root is a real root: it resolves and is accepted.
-    await expect(policy.resolveProjectRoot(projectA)).resolves.toBe(projectA);
+    expect(policy.projectRoots).toEqual([]);
+    // Existing on disk is not operator authorization.
+    await expect(policy.resolveProjectRoot(projectA)).rejects.toMatchObject({
+      code: 'policy.root.unconfigured',
+    });
   });
 
   it('[INT-CLIENT-ROOTS-ADOPTED] checks a client root exactly as it checks a configured one', async () => {
-    const policy = await createPolicyBoundary({});
+    const policy = await createPolicyBoundary({ projectRoots: [projectA] });
     policy.setClientRootsProvider(() => Promise.resolve([projectA]));
 
     // Offered by the client does not mean trusted: everything outside is still
@@ -81,9 +83,8 @@ describe('project roots offered by the client', () => {
     );
     await policy.ensureClientRoots();
 
-    // Configured first, the missing one skipped, and no duplicate for the one
-    // that appears in both.
-    expect(policy.projectRoots).toEqual([projectA, projectB]);
+    // The startup root is preserved; client-only and missing roots cannot widen it.
+    expect(policy.projectRoots).toEqual([projectA]);
   });
 
   it('[INT-CLIENT-ROOTS-ADOPTED] asks once, and again only after the client says they changed', async () => {
@@ -116,7 +117,7 @@ describe('project roots offered by the client', () => {
     await expect(policy.ensureClientRoots({ signal: controller.signal })).rejects.toBe(timeout);
     await policy.ensureClientRoots();
     expect(retries).toBe(2);
-    expect(policy.projectRoots).toEqual([projectB]);
+    expect(policy.projectRoots).toEqual([]);
   });
 
   it('[INT-CLIENT-ROOTS-ADOPTED] treats a client that cannot answer as one without roots', async () => {
@@ -124,14 +125,13 @@ describe('project roots offered by the client', () => {
     policy.setClientRootsProvider(() => Promise.reject(new Error('no roots capability')));
     await policy.ensureClientRoots();
 
-    // Not an error: a client that offers nothing is the situation this server
-    // has always been in, and the refusal says both ways to fix it.
+    // Provider failure leaves the startup allowlist unchanged and fails closed.
     expect(policy.projectRoots).toEqual([]);
     await expect(policy.resolveProjectRoot(projectA)).rejects.toMatchObject({
       code: 'policy.root.unconfigured',
     });
     await policy.resolveProjectRoot(projectA).catch((error: unknown) => {
-      expect((error as Error).message).toContain('client offered none');
+      expect((error as Error).message).toContain('Client roots cannot authorize');
     });
   });
 
@@ -194,7 +194,7 @@ describe('project roots offered by the client', () => {
 
     await expect(
       resolveResponse([pathToFileURL(projectA).href], undefined, new AbortController().signal),
-    ).resolves.toBe(projectA);
+    ).rejects.toMatchObject({ code: 'policy.root.unconfigured' });
     await expect(resolveResponse(['not a URL'])).rejects.toMatchObject({
       code: 'policy.root.unconfigured',
     });
@@ -203,20 +203,19 @@ describe('project roots offered by the client', () => {
     });
     await expect(resolveResponse([])).rejects.toThrow('supplied no project roots');
     await expect(resolveResponse([pathToFileURL(resolve(scratch, 'gone')).href])).rejects.toThrow(
-      'None of the project roots',
+      'Client roots cannot authorize',
     );
     await expect(
       resolveResponse([pathToFileURL(projectA).href, pathToFileURL(projectB).href]),
     ).rejects.toMatchObject({
-      code: 'resource.project.ambiguous',
-      details: { configuredRoots: 2 },
+      code: 'policy.root.unconfigured',
     });
     await expect(
       resolveResponse(
         [pathToFileURL(projectA).href, pathToFileURL(projectB).href],
         (count) => `choose one of ${String(count)}`,
       ),
-    ).rejects.toThrow('choose one of 2');
+    ).rejects.toThrow('Client roots cannot authorize');
   });
 
   it('[INT-CLIENT-ROOTS-ADOPTED] preserves explicit, legacy, and configured-root shortcuts', async () => {
@@ -232,5 +231,9 @@ describe('project roots offered by the client', () => {
     await expect(
       resolveProjectRootForRequest(configured, undefined, 'modern', requestContext()),
     ).resolves.toBe(projectA);
+    await expect(configured.resolveProjectRoot(projectA)).resolves.toBe(projectA);
+    await expect(configured.resolveProjectRoot(projectB)).rejects.toMatchObject({
+      code: 'policy.root.not-allowed',
+    });
   });
 });

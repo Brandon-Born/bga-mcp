@@ -12,6 +12,7 @@ const scenario = z.string().regex(/^[A-Z][A-Z0-9-]+$/u);
 export const SecurityReviewPlanSchema = z.strictObject({
   schemaVersion: z.literal(1),
   owner: z.literal('BGA-405'),
+  publicationHold: z.string().min(1).optional(),
   candidateReceipt: z.string(),
   signingReceipt: z.string(),
   reviewedCandidate: z.strictObject({
@@ -139,6 +140,10 @@ export function verifyReviewApproval(
   now = new Date(),
 ): GateReport {
   const report = verifyReviewRecord(review, plan);
+  report.require(
+    plan.publicationHold === undefined,
+    `Candidate publication blocked: ${plan.publicationHold ?? ''}`,
+  );
   const audit = verifySecurityAudit(
     review.dependencyAudit,
     review.dependencyPolicy,

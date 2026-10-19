@@ -61,7 +61,7 @@ async function readProjectJson(
     if (isProjectRootInputRequired(value)) {
       return value;
     }
-    return publishJson(policy, uri, label, value);
+    return publishJson(policy, uri, label, value, { projectContent: true });
   } catch (error) {
     // A resource cannot return a structured error the way a tool can, so the
     // failure leaves as a protocol error carrying the same stable code, the

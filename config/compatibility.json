@@ -864,7 +864,7 @@
       "dimension": "protocol",
       "value": "2025-11-25",
       "support": "supported",
-      "notes": "Legacy era. Covered by official conformance and by packaged stdio end-to-end tests.",
+      "notes": "Legacy era. Covered by official conformance and by packaged stdio end-to-end tests. BGA-449: client-advertised roots cannot grant filesystem authority; project tools/resources carry invariant untrusted-content labels. Startup-configured roots remain authoritative.",
       "scenarios": [
         "E2E-AUDIT-DATABASE-CLEAN",
         "E2E-DOCS-ADVERTISED",
@@ -882,12 +882,18 @@
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
         "E2E-VALIDATE-PROJECT-CLEAN",
         "E2E-VALIDATE-STATES-CLEAN",
-        "GATE-COMPATIBILITY-MATRIX"
+        "GATE-COMPATIBILITY-MATRIX",
+        "E2E-CLIENT-ROOT-AUTHORITY",
+        "E2E-PROJECT-CONTENT-TRUST"
       ],
       "capabilities": [
         {
           "reference": "tool:audit_database_usage",
-          "scenarios": ["E2E-AUDIT-DATABASE-CLEAN"]
+          "scenarios": [
+            "E2E-AUDIT-DATABASE-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:check_setup",
@@ -895,7 +901,11 @@
         },
         {
           "reference": "tool:inspect_project",
-          "scenarios": ["E2E-INSPECT-PROJECT-LEGACY"]
+          "scenarios": [
+            "E2E-INSPECT-PROJECT-LEGACY",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:read_studio_logs",
@@ -903,7 +913,11 @@
         },
         {
           "reference": "tool:run_pre_release_audit",
-          "scenarios": ["E2E-PRE-RELEASE-CLEAN"]
+          "scenarios": [
+            "E2E-PRE-RELEASE-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:search_bga_docs",
@@ -911,19 +925,35 @@
         },
         {
           "reference": "tool:validate_action_contracts",
-          "scenarios": ["E2E-VALIDATE-ACTIONS-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-ACTIONS-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:validate_notifications",
-          "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:validate_project",
-          "scenarios": ["E2E-VALIDATE-PROJECT-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-PROJECT-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "tool:validate_state_machine",
-          "scenarios": ["E2E-VALIDATE-STATES-CLEAN"]
+          "scenarios": [
+            "E2E-VALIDATE-STATES-CLEAN",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "resource:bga://docs/{topic}",
@@ -935,15 +965,27 @@
         },
         {
           "reference": "resource:bga://project/diagnostics",
-          "scenarios": ["E2E-RESOURCE-DIAGNOSTICS"]
+          "scenarios": [
+            "E2E-RESOURCE-DIAGNOSTICS",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "resource:bga://project/states",
-          "scenarios": ["E2E-RESOURCE-STATES"]
+          "scenarios": [
+            "E2E-RESOURCE-STATES",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         },
         {
           "reference": "resource:bga://project/summary",
-          "scenarios": ["E2E-RESOURCE-SUMMARY"]
+          "scenarios": [
+            "E2E-RESOURCE-SUMMARY",
+            "E2E-CLIENT-ROOT-AUTHORITY",
+            "E2E-PROJECT-CONTENT-TRUST"
+          ]
         }
       ]
     },
@@ -952,7 +994,7 @@
       "dimension": "protocol",
       "value": "2026-07-28",
       "support": "unknown",
-      "notes": "Modern-era handshake, discovery, and multi-round-trip roots and non-secret setup flows work through the packaged stdio server, but the pinned official conformance CLI offers no applicable stdio scenarios. Public capabilities do not claim this protocol version until release evidence deliberately establishes the complete contract; these packaged observations are retained without upgrading this unknown claim."
+      "notes": "Modern-era handshake, discovery and non-secret setup are exercised through the packaged development server. Roots input cannot grant filesystem authority; startup-configured roots are required. Negative roots and unchanged configured-root behavior are exercised in both protocol eras. The pinned official conformance CLI offers no applicable stdio scenarios, so this revision remains unknown for the public release."
     },
     {
       "id": "CLAIM-PROTOCOL-OTHER",

@@ -176,6 +176,14 @@ export async function validateEvidencePacket(
 }
 
 async function prepare(directory: string): Promise<void> {
+  const review = await json<{ publicationHold?: string }>(
+    resolve(root, 'config/security-review.json'),
+  );
+  assert.equal(
+    review.publicationHold,
+    undefined,
+    'Candidate publication blocked by security review',
+  );
   const scratch = await mkdtemp(resolve(tmpdir(), 'bga-evidence-prepare-'));
   try {
     const { stdout: archive } = await execute(

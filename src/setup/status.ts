@@ -66,9 +66,7 @@ export async function buildSetupStatus(
         'project.roots.none',
         'action-needed',
         'No project root is available, so every project capability will refuse.',
-        options.era === 'modern'
-          ? 'Call a project tool or resource without projectRoot; a compatible 2026 client will then complete the in-band roots request. Otherwise restart the server with --project-root <absolute path>.'
-          : 'Start the server with --project-root <absolute path>, or use a client that advertises its open folders as roots.',
+        'Start the server with --project-root <absolute path>. Client roots cannot authorize filesystem access.',
       ),
     );
   } else {

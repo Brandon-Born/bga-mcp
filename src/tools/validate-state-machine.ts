@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import { STATE_MACHINE_RULES, validateStateMachine } from '../rules/state-machine.js';
 import {
   isProjectRootInputRequired,
@@ -23,7 +24,7 @@ export const ValidateStateMachineInputSchema = z.strictObject({
     ),
 });
 
-export const ValidateStateMachineOutputSchema = z.strictObject({
+const ValidateStateMachineDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   statesRead: z.boolean(),
@@ -50,6 +51,9 @@ export const ValidateStateMachineOutputSchema = z.strictObject({
   diagnostics: DiagnosticResultSchema,
 });
 
+export const ValidateStateMachineOutputSchema = withProjectTrust(ValidateStateMachineDataSchema);
+
+type ValidateStateMachineDataResult = z.infer<typeof ValidateStateMachineDataSchema>;
 export type ValidateStateMachineResult = z.infer<typeof ValidateStateMachineOutputSchema>;
 
 const DESCRIPTION = `Validate a BGA project's state machine across its files.
@@ -149,17 +153,17 @@ export function registerValidateStateMachine(
               falsePositives: [...rule.falsePositives],
             })),
             diagnostics,
-          } satisfies ValidateStateMachineResult;
+          } satisfies ValidateStateMachineDataResult;
         });
         if (isProjectRootInputRequired(outcome)) {
           return outcome;
         }
         const result = outcome;
 
-        return publishResult(
+        return publishProjectResult(
           policy,
           VALIDATE_STATE_MACHINE_TOOL,
-          ValidateStateMachineOutputSchema,
+          ValidateStateMachineDataSchema,
           result,
           (published) =>
             summarizeValidation(published.diagnostics, published.stateCount, published.layout),
