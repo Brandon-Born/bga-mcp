@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-447",
+  "releaseOwner": "BGA-448",
+  "baseMain": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
+  "status": "Full integrated gate passed; clean source CI and framework admission pending",
+  "scope": "Single unqualified wildcard accounting in bounded FROM/JOIN subset; finite local rc.8 preparation",
+  "originalRegression": {
+    "source": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
+    "testsFailed": 5,
+    "testsPassed": 28,
+    "installedPublicRegressionFailed": true
+  },
+  "affectedTests": {
+    "passed": 117,
+    "failed": 0,
+    "files": 7
+  },
+  "frozenScope": {
+    "tools": 7,
+    "resources": 3,
+    "protocol": "2025-11-25",
+    "transport": "stdio",
+    "readOnly": true
+  },
+  "sourceCi": null,
+  "frameworkAdmission": null,
+  "releaseReadiness": {
+    "target": "1.0.0-rc.8",
+    "published": false,
+    "signed": false,
+    "securityApproved": false,
+    "credentialOrPersistentPermissionAdded": false,
+    "remaining": [
+      "Reviewed merge to trusted main",
+      "Hosted original candidate identity and authentic signing",
+      "Fresh exact signed-candidate security approval and consumer prerequisites",
+      "Explicit signed GitHub-download publication decision"
+    ]
+  },
+  "delivery": {
+    "draftPR": null,
+    "noMergeReleaseDeploymentPublication": true,
+    "dinoRacerNotTouched": true
+  },
+  "fullGate": {
+    "source": {
+      "commit": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
+      "clean": false
+    },
+    "tests": {
+      "files": 124,
+      "total": 1013,
+      "passed": 1013,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 277,
+      "passed": 277,
+      "failed": 0,
+      "missing": 0
+    },
+    "exitCode": 0,
+    "note": "Actual pre-commit dirty base identity retained; clean implementation-source proof comes from CI"
+  },
+  "artifactDigest": "sha256:34f8edbcbcdeffa5a8dffea7d8089bc48a6b7cd68d3f82eb43b87cf668520d79",
+  "sourceObservations": {
+    "count": 8,
+    "allDigestsUnchangedFromMergedPR36": true
+  }
+}

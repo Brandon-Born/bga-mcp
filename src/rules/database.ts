@@ -72,7 +72,7 @@ export const DATABASE_RULES: readonly DatabaseRule[] = [
     summary: 'The schema declares a column no readable query names.',
     falsePositives: [
       'A query built at runtime, or one outside the read budget, cannot be seen by this rule.',
-      'A column read through SELECT * is used without being named.',
+      'Wildcard coverage is limited to the supported SELECT subset and declared visibility; runtime schema changes are unknown.',
     ],
   },
   {
@@ -364,8 +364,7 @@ export function auditDatabaseUsage(
     }
   }
 
-  const selectsEverything = queries.some((query) => /\bSELECT\s+\*/iu.test(query.text));
-  if (!selectsEverything && queriesComplete && schemaComparable) {
+  if (queriesComplete && schemaComparable) {
     for (const table of tables) {
       cancellationCheckpoint(signal);
       if (wildcardTables.has(table.name)) {

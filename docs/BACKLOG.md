@@ -46,7 +46,7 @@ An implementation item is not done until:
 
 ## Current state and next work — reconciled 2026-10-19
 
-The current signed local-only GitHub prerelease, [v1.0.0-rc.7](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.7), is public with seven tools, three project resources, stdio and protocol `2025-11-25`. Its original source is `8bd773d2` and archive digest is `sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de`. The pre-PR30 main `93b96c4` includes BGA-441 and the BGA-442 INSERT-prefix correction, outside those signed bytes. [PR29](https://github.com/Brandon-Born/bga-mcp/pull/29) merged at 2026-10-08T00:36:18Z. [Merged PR30](https://github.com/Brandon-Born/bga-mcp/pull/30) merged on 2026-10-08 at `64f64f8`, combining that main with the eight bounded improvements below; its combined-source evidence is retained separately from either prior branch. PR31 merged on 2026-10-12 at `50a945e`; its conditional-CREATE correction is preserved in this checkout. PR32 merged on 2026-10-12 at `95e1362`; its bounded schema-only naming evidence and complete verification are preserved. PR33 merged at `840e038` on 2026-10-12; its column-case correction and source-specific proof are preserved. PR34 merged on 2026-10-13 at `4b2ef3f`; its table-case uncertainty correction and exact-source evidence are preserved. PR35 merged on 2026-10-18 at `927674c`; its alias-binding and quoted-value provenance correction and retained source evidence are preserved. Reporting (BGA-406), final candidate security review (BGA-405) and original signed GitHub publication/independent install/removal/receipt retention (BGA-415) are verified. npm publication, documentation/setup surfaces, Studio and game publication are outside that completed scope.
+The current signed local-only GitHub prerelease, [v1.0.0-rc.7](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.7), is public with seven tools, three project resources, stdio and protocol `2025-11-25`. Its original source is `8bd773d2` and archive digest is `sha256:e1ac0af1a8f513a7fbd472a8fd1734ca91787d2f7d42f69f3382e037b15516de`. The pre-PR30 main `93b96c4` includes BGA-441 and the BGA-442 INSERT-prefix correction, outside those signed bytes. [PR29](https://github.com/Brandon-Born/bga-mcp/pull/29) merged at 2026-10-08T00:36:18Z. [Merged PR30](https://github.com/Brandon-Born/bga-mcp/pull/30) merged on 2026-10-08 at `64f64f8`, combining that main with the eight bounded improvements below; its combined-source evidence is retained separately from either prior branch. PR31 merged on 2026-10-12 at `50a945e`; its conditional-CREATE correction is preserved in this checkout. PR32 merged on 2026-10-12 at `95e1362`; its bounded schema-only naming evidence and complete verification are preserved. PR33 merged at `840e038` on 2026-10-12; its column-case correction and source-specific proof are preserved. PR34 merged on 2026-10-13 at `4b2ef3f`; its table-case uncertainty correction and exact-source evidence are preserved. PR35 merged on 2026-10-18 at `927674c`; its alias-binding and quoted-value provenance correction and retained source evidence are preserved. PR36 merged on 2026-10-19 at `3b2e51a`; its table-scoped qualified-wildcard correction and six-job CI are preserved. The approved finite finish scope is BGA-447 plus rc.8 preparation under BGA-448: the same seven local tools, three resources, stdio and protocol `2025-11-25`. Later documentation/setup/Studio features remain separate. The signed rc.7 bytes remain the published release until a separately approved publication. Reporting (BGA-406), final candidate security review (BGA-405) and original signed GitHub publication/independent install/removal/receipt retention (BGA-415) are verified. npm publication, documentation/setup surfaces, Studio and game publication are outside that completed scope.
 
 Eight newly verified fix outcomes are BGA-101, BGA-207, BGA-204, BGA-316, BGA-324, BGA-326, BGA-328 and BGA-410; [the receipt](verification/top10-source-ci.json) preserves their source, archive and admission scope. Seven stale-label reconciliations, the already-merged BGA-442, and BGA-425 defer research are excluded. The requested ten-fix batch is incomplete: historical response inputs and applicable official modern stdio conformance remain specific next-priority holds. No acceptance criterion is silently replaced. The user explicitly approved additive PR29/30 conflict resolution on 2026-10-08; fresh combined-source gates, CI, installed archive evaluation and actual framework admission are required without inheriting either branch's HEAD claim.
 
@@ -1843,7 +1843,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-425 — Research how agents receive game-specific runtime test evidence
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** Verified denotes the completed, gated research decision to defer. No report-reading or runtime capability is implemented or promised.
 - **Priority:** P2
 - **Depends on:** BGA-001, BGA-013, BGA-016, BGA-424
 - **Deliverable:** A reviewed feasibility and boundary decision for reading developer-owned test results alongside framework diagnostics. Consider scenarios for turns, scoring, end conditions, and UI interactions without assuming that a test runner, Studio API, or portable report format already exists. The decision selects proceed, narrower scope, defer, or reject and creates separate permanent implementation owners only for an accepted approach.
@@ -2088,7 +2089,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-442 — Read invariant concatenated INSERT prefixes
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** The merged implementation and [retained exact-source, installed and framework-admission receipt](verification/bga442-source-ci.json) satisfy this bounded item. This status does not certify general SQL, runtime execution, broader BGA-438 or a new signed release.
 - **Priority:** P1
 - **Depends on:** BGA-434, BGA-438, BGA-439, BGA-441
 - **Observed need:** The frozen Dino popup candidate27f8273 appends generated VALUES to a literal INSERT prefix. Merged main0718bf7 reports zero readable queries and fails database audit availability; older unchanged83e2e50 uses BGA-434's readable sprintf template. These are different static forms, not a confirmed game defect.
@@ -2100,7 +2102,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-443 — Compare supported database column names without letter case
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** The merged implementation and [retained exact-source, installed and framework-admission receipt](verification/bga443-source-ci.json) satisfy this bounded item. This status does not certify general SQL, runtime execution, broader BGA-438 or a new signed release.
 - **Priority:** P1
 - **Depends on:** BGA-438, BGA-439, BGA-441, BGA-442
 - **Observed need:** Merged PR32/main `95e1362` compares ASCII column names by exact spelling. A schema declaration `Card_ID` queried as `CARD_id` creates false undeclared/unused warnings; `Card_ID` and `CARD_id` in one declaration fail to produce a duplicate finding. Five original unit/installed regressions fail on the unchanged implementation.
@@ -2111,7 +2114,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-444 — Preserve runtime-dependent table-name casing uncertainty
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** The merged implementation and [retained exact-source, installed and framework-admission receipt](verification/bga444-source-ci.json) satisfy this bounded item. This status does not certify general SQL, runtime execution, broader BGA-438 or a new signed release.
 - **Priority:** P1
 - **Depends on:** BGA-438, BGA-439, BGA-441, BGA-443
 - **Observed need:** Merged PR33/main `840e038` reports a certain missing table and possibly unused columns for schema `Card` queried as `card`, although the target MySQL case setting is unknown. Case-only schema declarations can also create false column/absence claims from a runtime-dependent choice of definition. Five original unit/installed regressions fail on the unchanged implementation.
@@ -2122,7 +2126,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-445 — Bind SQL qualifiers to unique table references
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** The merged implementation and [retained exact-source, installed and framework-admission receipt](verification/bga445-source-ci.json) satisfy this bounded item. This status does not certify general SQL, runtime execution, broader BGA-438 or a new signed release.
 - **Priority:** P0
 - **Depends on:** BGA-420, BGA-438, BGA-443, BGA-444
 - **Observed need:** Merged PR34/main `4b2ef3f` can overwrite a valid alias with a later physical table name. `SELECT token.card_id, t.token_id FROM card token JOIN token t ON token.card_id = t.token_id` wrongly attributes `token.card_id` to the token table and reports false missing/unused columns. Reversing FROM order changes the result. Repeated qualifiers can silently choose a later owner, and a self-join's single physical table can incorrectly make bare columns look unambiguous. Seven original unit/installed regressions fail. A fresh installed original also publishes a synthetic quoted value as an unknown-alias diagnostic; the corrected archive suppresses that data-derived diagnostic and value exposure.
@@ -2134,7 +2139,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 ### BGA-446 — Account for qualified SELECT wildcard usage without hiding unrelated columns
 
-- **Status:** implemented
+- **Status:** verified
+- **Reconciled, 2026-10-19:** The merged implementation and [retained exact-source, installed and framework-admission receipt](verification/bga446-source-ci.json) satisfy this bounded item. This status does not certify general SQL, runtime execution, broader BGA-438 or a new signed release.
 - **Priority:** P1
 - **Depends on:** BGA-420, BGA-438, BGA-445
 - **Observed need:** Merged PR35/main `927674c` drops a bound `c.*` from SELECT usage and can report every unmentioned column on card as unused. Six new original regressions fail, including the installed public command. A global wildcard suppression would hide unrelated token columns and explicit defects instead of repairing attribution.
@@ -2143,6 +2149,26 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 - **Verification:** `UNIT-DATABASE-QUALIFIED-WILDCARDS` and installed `E2E-DATABASE-QUALIFIED-WILDCARDS`; [the receipt](verification/bga446-source-ci.json) retains original failing controls, actual source/archive and completed proof identities as observed. Older CI does not cover a later receipt HEAD.
 - **Sources fetched/read before implementation, 2026-10-19:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) links [main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), whose database helpers retrieve SELECT output. [MySQL SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html) calls a qualified wildcard shorthand for “all columns from the named table”; it explicitly excludes invisible columns. [Invisible columns](https://dev.mysql.com/doc/refman/8.0/en/invisible-columns.html) documents their explicit-reference requirement. The schema structural reader already masks quoted defaults/comments, so data cannot declare INVISIBLE. Names and existing table-case uncertainty are preserved; no runtime schema or migration is inferred.
 - **Next bounded step:** Review unqualified SELECT wildcard usage and its existing global raw-text suppression separately. Full SQL grammar, multi-statement/set-operation scope, runtime VALUES, schema execution and dynamic SQL remain outside this item and broader BGA-438 remains open.
+
+### BGA-447 — Scope unqualified SELECT wildcard usage to its query tables
+
+- **Status:** implemented
+- **Priority:** P1
+- **Depends on:** BGA-438, BGA-445, BGA-446
+- **Observed need:** Merged PR36/main `3b2e51a` globally suppresses unused-column findings when any readable query contains SELECT *. Unrelated schema tables and invisible columns can lose their findings. SELECT DISTINCT * is missed by that raw-text suppression and can instead report selected columns unused. Five new regressions fail, including the installed public command.
+- **Deliverable:** Record a single unqualified wildcard in the existing private query-table provenance, covering only the bounded FROM/JOIN tables and their declared visible columns. Remove global query-text suppression. Preserve COUNT(*), quoted values, explicit defects and unresolved syntax. Mixed or result-aliased unqualified stars remain unsupported; no general SQL grammar is added.
+- **Acceptance:** Unit and installed modern/legacy/hybrid tests cover simple/aliased/DISTINCT/join/self-join forms, unrelated tables, invisible and separately explicitly read columns, genuine missing references, ambiguity/invalid-form holds, COUNT, privacy, repeat results, root refusal, immutable copied fixtures and process cleanup. Run the full gate, clean exact-source matrix CI and actual framework admission. Frozen public inventory, schemas, declarations, permissions and game code are unchanged.
+- **Verification:** `UNIT-DATABASE-UNQUALIFIED-WILDCARDS` and installed `E2E-DATABASE-UNQUALIFIED-WILDCARDS`; [source receipt](verification/bga447-source-ci.json) retains actual identities without treating earlier CI as a later metadata HEAD.
+- **Sources fetched/read before implementation, 2026-10-19:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), [BGA main logic/database helpers](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), [MySQL SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html). SELECT describes a list containing a “single unqualified” wildcard as selecting columns from the query tables, excludes invisible columns and warns that mixing the unqualified star with other expressions can cause a parse error. Existing bounded table/visibility provenance is reused; no database state or execution is inferred.
+
+### BGA-448 — Prepare the finite local rc.8 replacement without publication
+
+- **Status:** in-progress
+- **Priority:** P1
+- **Depends on:** BGA-447, BGA-403, BGA-404, BGA-405, BGA-400, BGA-401, BGA-407, BGA-415
+- **Scope:** The owner approved finishing the bounded wildcard fix, reconciling stale labels and preparing the next release. Select package `1.0.0-rc.8`; retain the existing seven tools and three resources, local read-only stdio and protocol `2025-11-25`. No later documentation/setup/Studio capability, runtime executor, dependency, credential or persistent permission is added. No merge or publication is authorized.
+- **Acceptance:** Complete independent full checks, framework review, fresh production/full dependency audit, reproducibility and isolated installation/discovery/use/refusal/restart/removal controls against identified prepared bytes. Retain exact source/artifact/environment and actual failure/hold records. Preserve all rc.7 originals and selectors until authenticated replacement receipts exist. Authentic signing uses the existing ephemeral-identity workflow on trusted main; it requires merged source and a retained hosted candidate receipt. Signed-candidate security approval, public evidence and independent authenticated installation remain candidate-specific gates. Explicit publication approval is the final decision after those gates pass.
+- **Readiness and holds:** [Finite release handoff](verification/LOCAL_RELEASE_FINISH.md). A local unsigned preparation is not a hosted signed candidate, security approval or publication. A blocked main-only step cannot be simulated as passing.
 
 ## Coverage map
 

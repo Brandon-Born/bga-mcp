@@ -118,7 +118,8 @@
         "docs/verification/DOCUMENTATION_CACHE_LIFECYCLE.md",
         "docs/verification/DATABASE_CHECK_COVERAGE.md",
         "docs/verification/NORMALIZED_PROJECT_MODEL.md",
-        "docs/verification/REMAINING_OPERATION_DEADLINES.md"
+        "docs/verification/REMAINING_OPERATION_DEADLINES.md",
+        "docs/verification/LOCAL_RELEASE_FINISH.md"
       ]
     },
     {
@@ -555,7 +556,8 @@
         "docs/verification/bga443-source-ci.json",
         "docs/verification/bga444-source-ci.json",
         "docs/verification/bga445-source-ci.json",
-        "docs/verification/bga446-source-ci.json"
+        "docs/verification/bga446-source-ci.json",
+        "docs/verification/bga447-source-ci.json"
       ]
     }
   ],
