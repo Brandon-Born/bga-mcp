@@ -3,7 +3,7 @@
   "item": "BGA-447",
   "releaseOwner": "BGA-448",
   "baseMain": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
-  "status": "Full integrated gate passed; clean source CI and framework admission pending",
+  "status": "Patched tooling and explicit pre-stable reference-client metadata pass full integrated gate; clean updated source CI/admission pending",
   "scope": "Single unqualified wildcard accounting in bounded FROM/JOIN subset; finite local rc.8 preparation",
   "originalRegression": {
     "source": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
@@ -45,6 +45,184 @@
   },
   "fullGate": {
     "source": {
+      "commit": "dea899c410e1f56cdb654de15a03c40da0132886",
+      "clean": false
+    },
+    "tests": {
+      "files": 124,
+      "total": 1014,
+      "passed": 1014,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 277,
+      "passed": 277,
+      "failed": 0,
+      "missing": 0
+    },
+    "exitCode": 0,
+    "note": "Actual integrated dirty pre-commit identity retained; clean updated source proof comes from its CI"
+  },
+  "artifactDigest": "sha256:0259893cef25daab6fbab5402d47c6921450503e01fecad5340360554b07b601",
+  "sourceObservations": {
+    "count": 8,
+    "allDigestsUnchangedFromMergedPR36": true
+  },
+  "initialSecurityAudit": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-19T02:42:40.788Z",
+    "registry": "https://registry.npmjs.org",
+    "source": {
+      "commit": "dea899c410e1f56cdb654de15a03c40da0132886",
+      "lockDigest": "sha256:07e52c0f33c4c7a4ea9096f276d62a9d2aada1fdf65a48f99d7022bbb062d621",
+      "packageDigest": "sha256:033133d8c593ef40653203d4312ee2d708d3ccd0eda611dfea803a65078e6bfd",
+      "workspaceDigest": "sha256:fef5dd514042853948c785238bcd49325463812870a8160c27451785e2633e38",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 3,
+        "critical": 1
+      },
+      "findings": [
+        {
+          "id": "GHSA-68fv-2mgg-jv7q",
+          "module": "source-map-js",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-6qxp-vccf-f47h",
+          "module": "@modelcontextprotocol/client",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-6qxp-vccf-f47h",
+          "module": "@modelcontextprotocol/sdk",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-jqcg-44mw-7w3h",
+          "module": "proxy-addr",
+          "severity": "critical"
+        }
+      ]
+    }
+  },
+  "initialUnsignedInstallation": {
+    "schemaVersion": 1,
+    "recordedAt": "2026-10-19T02:42:46.395Z",
+    "runnerSource": "dea899c410e1f56cdb654de15a03c40da0132886",
+    "artifactDigest": "sha256:34f8edbcbcdeffa5a8dffea7d8089bc48a6b7cd68d3f82eb43b87cf668520d79",
+    "version": "1.0.0-rc.8",
+    "platform": "darwin",
+    "node": "v22.17.1",
+    "client": "reference SDK 2.0.0",
+    "layouts": [
+      {
+        "layout": "legacy",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      },
+      {
+        "layout": "modern",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      },
+      {
+        "layout": "hybrid",
+        "discovery": "matched installed inventory",
+        "calls": [
+          "audit_database_usage",
+          "inspect_project",
+          "run_pre_release_audit",
+          "validate_action_contracts",
+          "validate_notifications",
+          "validate_project",
+          "validate_state_machine"
+        ],
+        "resources": ["bga://project/diagnostics", "bga://project/states", "bga://project/summary"],
+        "schemaRefusal": true,
+        "outsideRootRefusal": true,
+        "excludedToolRefusal": true,
+        "repeat": true,
+        "restart": true,
+        "projectUnchanged": true,
+        "processExit": true,
+        "stderrEmpty": true
+      }
+    ],
+    "repeatInstallation": true,
+    "removal": true,
+    "signatureVerified": false,
+    "scope": "Fresh isolated installation and public consumer against identified unsigned preparation bytes; no native-client, GUI, gameplay, signature or publication claim"
+  },
+  "contractPreparation": {
+    "previousCandidateSnapshot": "config/contracts/history/1.0.0-rc.7.json",
+    "previousCandidateSnapshotDigest": "sha256:eb8adbda54b14efa8cf466167187851729356d0a725e6e2d068387da35d9fcb4",
+    "stablePublished": false,
+    "retainedPublicAPIFingerprints": true,
+    "identityChange": {
+      "claim": "CLAIM-CLIENT-SDK",
+      "from": "@modelcontextprotocol/client 2.0.0",
+      "to": "@modelcontextprotocol/client 2.2.0"
+    },
+    "process": "Explicit unpublished first-stable candidate metadata refresh; exact rc.7 snapshot retained, ordinary stable major-boundary classifier unchanged"
+  },
+  "failedUpdatedGate": {
+    "passed": 1012,
+    "failed": 1,
+    "reason": "Contract gate rejected an unrecorded reference-client identity update; exact prior snapshot archival and explicit pre-stable identity-only carry-forward are now tested, with ordinary stable-boundary classification retained"
+  },
+  "preSecurityUpdateFullGate": {
+    "source": {
       "commit": "3b2e51a3da407136207ed8a6a3eb938d829671c9",
       "clean": false
     },
@@ -64,9 +242,12 @@
     "exitCode": 0,
     "note": "Actual pre-commit dirty base identity retained; clean implementation-source proof comes from CI"
   },
-  "artifactDigest": "sha256:34f8edbcbcdeffa5a8dffea7d8089bc48a6b7cd68d3f82eb43b87cf668520d79",
-  "sourceObservations": {
-    "count": 8,
-    "allDigestsUnchangedFromMergedPR36": true
+  "preSecurityUpdateArtifactDigest": "sha256:34f8edbcbcdeffa5a8dffea7d8089bc48a6b7cd68d3f82eb43b87cf668520d79",
+  "initialCi": {
+    "source": "dea899c410e1f56cdb654de15a03c40da0132886",
+    "sourceRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39191219099",
+    "prRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39191393029",
+    "bothSixJobMatricesPassed": true,
+    "scope": "Before required development tooling security remediation; not proof for updated source"
   }
 }

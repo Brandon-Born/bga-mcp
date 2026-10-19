@@ -155,3 +155,40 @@ describe('version policy', () => {
     );
   });
 });
+
+it('[GATE-VERSION-POLICY] preserves the API while explicitly refreshing the pre-stable reference client', async () => {
+  const previous = await loadJson<PublicContractSnapshot>(
+    'config/contracts/history/1.0.0-rc.7.json',
+  );
+  const current = await loadJson<PublicContractSnapshot>('config/contracts/1.0.0.json');
+  expect(previous.status).toBe('candidate');
+  expect(current.status).toBe('candidate');
+  expect(current.packageVersion).toBe(previous.packageVersion);
+  const delta = classifyContractChange(previous, current);
+  expect(delta.level).toBe('major');
+  expect(delta.removals).toEqual(['compatibility:CLAIM-CLIENT-SDK']);
+  expect(delta.invalid).toEqual([]);
+  for (const key of [
+    'release',
+    'tools',
+    'resources',
+    'resourceTemplates',
+    'prompts',
+    'schemas',
+    'policyDigest',
+    'deprecations',
+  ] as const)
+    expect(current[key]).toEqual(previous[key]);
+  expect(current.compatibility).toHaveLength(previous.compatibility.length);
+  for (const claim of previous.compatibility) {
+    const observed = current.compatibility.find((c) => c.id === claim.id);
+    expect(observed).toEqual(
+      claim.id === 'CLAIM-CLIENT-SDK'
+        ? { ...claim, value: '@modelcontextprotocol/client 2.2.0' }
+        : claim,
+    );
+  }
+  expect(previous.compatibility.find((c) => c.id === 'CLAIM-CLIENT-SDK')?.value).toBe(
+    '@modelcontextprotocol/client 2.0.0',
+  );
+});

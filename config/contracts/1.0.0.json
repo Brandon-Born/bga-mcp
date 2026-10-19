@@ -234,7 +234,7 @@
     {
       "id": "CLAIM-CLIENT-SDK",
       "dimension": "client",
-      "value": "@modelcontextprotocol/client 2.0.0",
+      "value": "@modelcontextprotocol/client 2.2.0",
       "support": "supported"
     },
     {

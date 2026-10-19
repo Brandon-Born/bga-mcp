@@ -557,7 +557,8 @@
         "docs/verification/bga444-source-ci.json",
         "docs/verification/bga445-source-ci.json",
         "docs/verification/bga446-source-ci.json",
-        "docs/verification/bga447-source-ci.json"
+        "docs/verification/bga447-source-ci.json",
+        "config/contracts/history/1.0.0-rc.7.json"
       ]
     }
   ],

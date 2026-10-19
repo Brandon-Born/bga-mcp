@@ -136,7 +136,7 @@ BGA-422 adds `GATE-SECURITY-AUDIT` and `INT-SECURITY-AUDIT-PREFLIGHT` to the rel
 
 | Claim                | Value                              | Support   |
 | -------------------- | ---------------------------------- | --------- |
-| CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.0.0 | supported |
+| CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.2.0 | supported |
 | CLAIM-CLIENT-EDITORS | editor and agent clients           | unknown   |
 
 The [BGA-401 client matrix](CLIENTS.md) maintains the supported reference SDK flow and records a bounded native Codex app-server 0.159.2/macOS evaluation of the exact signed candidate. General editor/agent support remains unknown; the controlled smoke does not test GUI behavior or inference turns. New public support claims follow VERSIONING.md without rewriting the frozen signed candidate.
@@ -253,3 +253,5 @@ BGA-445 preserves unique table-reference alias ownership across all three layout
 BGA-446 retains qualified SELECT wildcard usage for uniquely bound tables only. Visible declared columns on those tables count as used; explicitly invisible and unrelated-table columns retain existing unused-column analysis. Unknown/ambiguous wildcards remain unsupported, and explicit missing-column findings are preserved. Internal provenance does not change the query/table output shapes or public declarations. Unqualified wildcard scope and general SQL grammar remain separate work.
 
 BGA-447 counts a lone unqualified SELECT wildcard, including DISTINCT, against only the bounded FROM/JOIN tables and their visible declared columns. Unrelated and invisible columns retain unused-column findings; explicit missing references and uncertainty remain. Mixed/result-aliased unqualified stars are unsupported. The rc.8 preparation retains the same public schemas, seven tools, three resources, local read-only stdio and protocol `2025-11-25`.
+
+Rc.8 preparation uses patched reference SDK client 2.2.0 for current installed smoke coverage. The legacy conformance SDK is pinned to patched 1.31.0 through the development graph; no runtime server, transport or protocol claim changes. Historical client/candidate observations retain their original versions.

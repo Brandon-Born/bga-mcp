@@ -1011,9 +1011,9 @@
     {
       "id": "CLAIM-CLIENT-SDK",
       "dimension": "client",
-      "value": "@modelcontextprotocol/client 2.0.0",
+      "value": "@modelcontextprotocol/client 2.2.0",
       "support": "supported",
-      "notes": "Maintained supported reference client, pinned to 2.0.0 and smoke-tested with the installed public package on every CI platform/Node pair. See config/client-smoke.json.",
+      "notes": "Maintained patched reference client 2.2.0, exercised through the installed package on every CI platform/Node pair. The unpublished first-stable candidate explicitly refreshes this test-client identity; signed rc.7 and its 2.0.0 snapshot/receipts remain immutable in history. No runtime server, tool/schema/export, OAuth configuration or protocol is changed.",
       "scenarios": [
         "E2E-STDIO-UNADVERTISED-METHOD",
         "E2E-POLICY-CONFIG-FAILS-CLOSED",
