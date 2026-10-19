@@ -12,6 +12,137 @@ import {
 type Database = ReturnType<typeof AuditDatabaseUsageOutputSchema.parse>;
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 
+it('[E2E-DATABASE-QUALIFIED-WILDCARDS] preserves scoped wildcard usage in installed consumers and layouts', async () => {
+  const server = await installPackagedServer('qualified-wildcards', {
+    modern: 'modern',
+    legacy: 'legacy',
+    hybrid: 'hybrid',
+  });
+  try {
+    for (const [layout, root] of Object.entries(server.projects)) {
+      const phpPath = resolve(
+        root,
+        layout === 'legacy' ? 'bgamcplegacy.game.php' : 'modules/php/Game.php',
+      );
+      const original = (await readFile(phpPath, 'utf8')).replace(
+        /\b(?:DbQuery|getObjectListFromDB)\b/gu,
+        'fixtureExample',
+      );
+      await writeFile(
+        resolve(root, 'dbmodel.sql'),
+        'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (token_id INT, spare INT);',
+      );
+      const session = await withPublicPackagedServer(
+        server,
+        ['--project-root', root],
+        async (client) => {
+          for (const [query, expectedUnused] of [
+            [
+              'SELECT c.*, t.token_id FROM card c JOIN token t ON c.card_id=t.token_id',
+              ['token.spare'],
+            ],
+            [
+              'SELECT DISTINCT `c`.*, t.* FROM `card` AS `c` JOIN token AS t ON c.card_id=t.token_id',
+              [],
+            ],
+            [
+              "SELECT c.*, t.* FROM card c JOIN token t ON c.card_id=t.token_id WHERE c.label = 'private-wildcard-canary'",
+              [],
+            ],
+          ] as const) {
+            await writeFile(phpPath, original + `\nself::DbQuery("${query}");`);
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            const database = AuditDatabaseUsageOutputSchema.parse(result.structured);
+            expect(result.isError).toBe(false);
+            expect(database.diagnostics.summary.unsupported).toBe(0);
+            expect(database.diagnostics.findings.map((f) => f.code)).toEqual(
+              expectedUnused.map(() => 'database.column.unused'),
+            );
+            for (const name of expectedUnused)
+              expect(database.diagnostics.findings[0]?.message).toContain(name);
+            expect(JSON.stringify(result)).not.toContain('private-wildcard-canary');
+            expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(result);
+            const aggregate = await callTool<{ diagnostics: Database['diagnostics'] }>(
+              client,
+              'validate_project',
+              { groups: ['database'] },
+            );
+            expect(aggregate.structured?.diagnostics.findings).toEqual(
+              database.diagnostics.findings,
+            );
+            const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            expect(
+              audit.structured?.checks.find((c) => c.id === 'database.column.unused')?.outcome,
+            ).toBe(expectedUnused.length ? 'failed' : 'passed');
+            const resource = JSON.stringify(
+              await client.readResource({ uri: 'bga://project/diagnostics' }),
+            );
+            expect(resource.includes('database.column.unused')).toBe(expectedUnused.length > 0);
+            expect(resource).not.toContain('private-wildcard-canary');
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          for (const query of [
+            'SELECT c.* FROM card d',
+            'SELECT c.* FROM card c JOIN token c',
+            'SELECT c.* FROM card c JOIN token C',
+          ]) {
+            await writeFile(phpPath, original + `\nself::DbQuery("${query}");`);
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            expect(result.structured?.diagnostics.summary.unsupported).toBeGreaterThan(0);
+            const audit = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            expect(
+              audit.structured?.checks.find((c) => c.id === 'database.column.unused')?.outcome,
+            ).toBe('unsupported');
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          await writeFile(
+            resolve(root, 'dbmodel.sql'),
+            'CREATE TABLE card (card_id INT, hidden INT INVISIBLE);',
+          );
+          await writeFile(phpPath, original + '\nself::DbQuery("SELECT c.* FROM card c");');
+          const invisibleBefore = await digestDirectory(root);
+          const invisible = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(invisible.structured?.diagnostics.findings.map((f) => f.message)).toEqual([
+            expect.stringContaining('card.hidden'),
+          ]);
+          expect(await digestDirectory(root)).toBe(invisibleBefore);
+          await writeFile(
+            phpPath,
+            original + '\nself::DbQuery("SELECT c.*, c.hidden FROM card c");',
+          );
+          expect(
+            (await callTool<Database>(client, 'audit_database_usage', {})).structured?.diagnostics
+              .findings,
+          ).toEqual([]);
+          await writeFile(
+            resolve(root, 'dbmodel.sql'),
+            'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (token_id INT, spare INT);',
+          );
+          await writeFile(
+            phpPath,
+            original +
+              '\nself::DbQuery("SELECT c.*, c.missing, t.* FROM card c JOIN token t ON c.card_id=t.token_id");',
+          );
+          const broken = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(broken.structured?.diagnostics.findings.map((f) => f.code)).toEqual([
+            'database.column.undeclared',
+          ]);
+          const outside = await callTool(client, 'audit_database_usage', {
+            projectRoot: server.temporaryRoot,
+          });
+          expect(outside.isError).toBe(true);
+          expect(outside.text).toContain('policy.root.not-allowed');
+        },
+      );
+      expect(session.stderr).toBe('');
+    }
+  } finally {
+    await server.cleanup();
+  }
+});
+
 it('[E2E-DATABASE-ALIAS-BINDINGS] preserves alias ownership through installed tools, resources and layouts', async () => {
   const server = await installPackagedServer('alias-bindings', {
     modern: 'modern',

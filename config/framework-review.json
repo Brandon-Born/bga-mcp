@@ -7,15 +7,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
       "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-      "observedAt": "2026-10-17T18:30:57.636Z",
+      "observedAt": "2026-10-19T00:38:22.697Z",
       "review": {
         "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-        "implementationDigest": "sha256:55395fafcf6315f062bd95d3938d6b2571453b767c0cbc7f4cc275d8d9f01bd4",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:ea7f2bf39b11a2427859f1463fd8cf0a1e42a3a87669197eef4aae78516149ce",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:19.750Z",
+        "reviewedAt": "2026-10-19T00:56:18.568Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -46,6 +46,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -125,8 +126,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:55395fafcf6315f062bd95d3938d6b2571453b767c0cbc7f4cc275d8d9f01bd4",
-          "proofDigest": "sha256:a42550953a173f0cd8c6805ec6f9a2bb29158f7f775a4b38f651b64bdc56d149",
+          "semanticDigest": "sha256:ea7f2bf39b11a2427859f1463fd8cf0a1e42a3a87669197eef4aae78516149ce",
+          "proofDigest": "sha256:3844851bc6cf74c9d8d3257cb51c4be1aa9c14be57a05befbefc86c8970a14ec",
           "semantic": [
             {
               "path": ".gitignore",
@@ -140,7 +141,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -150,7 +151,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -175,7 +176,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -205,12 +206,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -255,7 +256,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -505,7 +506,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -585,7 +586,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -1577,7 +1578,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -1652,7 +1653,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -1797,7 +1798,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -2322,7 +2323,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -2479,11 +2480,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:a42550953a173f0cd8c6805ec6f9a2bb29158f7f775a4b38f651b64bdc56d149",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:19.751Z"
+          "dependencyDigest": "sha256:3844851bc6cf74c9d8d3257cb51c4be1aa9c14be57a05befbefc86c8970a14ec",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:18.569Z"
         }
       },
       "needsReview": false
@@ -2491,15 +2492,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
       "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-      "observedAt": "2026-10-17T18:30:58.942Z",
+      "observedAt": "2026-10-19T00:38:23.957Z",
       "review": {
         "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-        "implementationDigest": "sha256:1f717b4a790c730efe1104e72968fe97a5eb3dd41009cb4efc10e4cdec8fc4c5",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:1294de1148916550cb2f9c865f5a448a5580d4e2a52986121cf6fac316799bfe",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:20.604Z",
+        "reviewedAt": "2026-10-19T00:56:19.418Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -2523,6 +2524,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -2602,8 +2604,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:1f717b4a790c730efe1104e72968fe97a5eb3dd41009cb4efc10e4cdec8fc4c5",
-          "proofDigest": "sha256:6707ca0159c88fed7945d43e8ec25b175866bee4b9aae030a6b4c5d0fad2ef3c",
+          "semanticDigest": "sha256:1294de1148916550cb2f9c865f5a448a5580d4e2a52986121cf6fac316799bfe",
+          "proofDigest": "sha256:01c3764182c38f31534d62f84722c0a0b04fa2a19a9c8e73e641714d9a4431ab",
           "semantic": [
             {
               "path": ".gitignore",
@@ -2617,7 +2619,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2627,7 +2629,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2652,7 +2654,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2682,12 +2684,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2732,7 +2734,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2982,7 +2984,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -3062,7 +3064,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -4034,7 +4036,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -4109,7 +4111,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -4254,7 +4256,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -4774,7 +4776,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -4931,11 +4933,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:6707ca0159c88fed7945d43e8ec25b175866bee4b9aae030a6b4c5d0fad2ef3c",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:20.604Z"
+          "dependencyDigest": "sha256:01c3764182c38f31534d62f84722c0a0b04fa2a19a9c8e73e641714d9a4431ab",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:19.419Z"
         }
       },
       "needsReview": false
@@ -4943,15 +4945,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
       "digest": "sha256:c290a9b630c760262760ec83bc162bc38e2a60e723f80fb689e91a34e32f63ff",
-      "observedAt": "2026-10-17T18:30:59.940Z",
+      "observedAt": "2026-10-19T00:38:24.851Z",
       "review": {
         "digest": "sha256:c290a9b630c760262760ec83bc162bc38e2a60e723f80fb689e91a34e32f63ff",
-        "implementationDigest": "sha256:8a0f80b72e6993504278fbe4a73fda23890918efc390954b2fe9b3fbd267ce52",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:99c22870d4ce65ebbad7d4f8ce8e3c1fb57331f68b9ef52d49d6740b49d2110c",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:21.467Z",
+        "reviewedAt": "2026-10-19T00:56:20.232Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -4982,6 +4984,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -5061,8 +5064,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:8a0f80b72e6993504278fbe4a73fda23890918efc390954b2fe9b3fbd267ce52",
-          "proofDigest": "sha256:db542776948b8b4fd598b808bccaaae0a751248b9676606a00cb76a5f3448d7a",
+          "semanticDigest": "sha256:99c22870d4ce65ebbad7d4f8ce8e3c1fb57331f68b9ef52d49d6740b49d2110c",
+          "proofDigest": "sha256:be7bc670b06e6fcb72ef2a3648272982e245f47d909cf358dab4b4e7774a0172",
           "semantic": [
             {
               "path": ".gitignore",
@@ -5076,7 +5079,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5086,7 +5089,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5111,7 +5114,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5141,12 +5144,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5191,7 +5194,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5441,7 +5444,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5521,7 +5524,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -6513,7 +6516,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -6588,7 +6591,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -6733,7 +6736,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -7258,7 +7261,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -7415,11 +7418,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:db542776948b8b4fd598b808bccaaae0a751248b9676606a00cb76a5f3448d7a",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:21.467Z"
+          "dependencyDigest": "sha256:be7bc670b06e6fcb72ef2a3648272982e245f47d909cf358dab4b4e7774a0172",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:20.232Z"
         }
       },
       "needsReview": false
@@ -7427,15 +7430,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
       "digest": "sha256:59340e07bfad24851a78d72eba770bbf07521192916726fbaf67e6f980ddf761",
-      "observedAt": "2026-10-17T18:31:01.102Z",
+      "observedAt": "2026-10-19T00:38:25.923Z",
       "review": {
         "digest": "sha256:59340e07bfad24851a78d72eba770bbf07521192916726fbaf67e6f980ddf761",
-        "implementationDigest": "sha256:eb87d5120e7a06ca36af9184ffcc2f33096580f9663820f1e2c62dbd8f179f79",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:42318e497d2c254e76fb670b472896c403ee464584979626e64469d581efe851",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:22.305Z",
+        "reviewedAt": "2026-10-19T00:56:21.108Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -7466,6 +7469,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -7545,8 +7549,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:eb87d5120e7a06ca36af9184ffcc2f33096580f9663820f1e2c62dbd8f179f79",
-          "proofDigest": "sha256:dba4acec55543b5cf6c79a2346cbd5dda613990d791c7cd8fba0981c6f8c3bbf",
+          "semanticDigest": "sha256:42318e497d2c254e76fb670b472896c403ee464584979626e64469d581efe851",
+          "proofDigest": "sha256:709330fe899b364493cc54213f195007dd2efef7ac9ca1a014a444d3f85c0f00",
           "semantic": [
             {
               "path": ".gitignore",
@@ -7560,7 +7564,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7570,7 +7574,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7595,7 +7599,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7625,12 +7629,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7675,7 +7679,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7925,7 +7929,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -8005,7 +8009,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -8997,7 +9001,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -9072,7 +9076,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -9217,7 +9221,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -9742,7 +9746,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -9899,11 +9903,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:dba4acec55543b5cf6c79a2346cbd5dda613990d791c7cd8fba0981c6f8c3bbf",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:22.305Z"
+          "dependencyDigest": "sha256:709330fe899b364493cc54213f195007dd2efef7ac9ca1a014a444d3f85c0f00",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:21.108Z"
         }
       },
       "needsReview": false
@@ -9911,15 +9915,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
       "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-      "observedAt": "2026-10-17T18:31:02.227Z",
+      "observedAt": "2026-10-19T00:38:27.162Z",
       "review": {
         "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-        "implementationDigest": "sha256:ef60eb12edea6f80bf60aa367824c9fa334f6278a9daeeef47497928f9553426",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:e9c93867d8c02cd2b6299cc940a5bbc5e81ca06bb8856dee1d575f9caf458d61",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:23.138Z",
+        "reviewedAt": "2026-10-19T00:56:22.026Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -9950,6 +9954,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -10029,8 +10034,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:ef60eb12edea6f80bf60aa367824c9fa334f6278a9daeeef47497928f9553426",
-          "proofDigest": "sha256:9915d8145cbcd552ded06e0fed32ce83a37c6ffc95135dc6940792f7001327b2",
+          "semanticDigest": "sha256:e9c93867d8c02cd2b6299cc940a5bbc5e81ca06bb8856dee1d575f9caf458d61",
+          "proofDigest": "sha256:aa0232e51c802535cb23bd98de9a05f185ef647db009b3f7e50f34aa9742f07d",
           "semantic": [
             {
               "path": ".gitignore",
@@ -10044,7 +10049,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10054,7 +10059,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10079,7 +10084,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10109,12 +10114,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10159,7 +10164,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10409,7 +10414,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10489,7 +10494,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -11481,7 +11486,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -11556,7 +11561,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -11701,7 +11706,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -12226,7 +12231,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -12383,11 +12388,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:9915d8145cbcd552ded06e0fed32ce83a37c6ffc95135dc6940792f7001327b2",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:23.138Z"
+          "dependencyDigest": "sha256:aa0232e51c802535cb23bd98de9a05f185ef647db009b3f7e50f34aa9742f07d",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:22.026Z"
         }
       },
       "needsReview": false
@@ -12395,15 +12400,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Studio",
       "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-      "observedAt": "2026-10-17T18:31:03.252Z",
+      "observedAt": "2026-10-19T00:38:28.253Z",
       "review": {
         "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-        "implementationDigest": "sha256:7dbad34bf4cd920d36e500d4f95f0047636b8248c9bedbe99451222914b112e1",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:3df7fbcf003609495d1e8d05a828f61137a7b5c4f0c28f144880a39b528b8b72",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:23.971Z",
+        "reviewedAt": "2026-10-19T00:56:22.907Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -12434,6 +12439,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -12513,8 +12519,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:7dbad34bf4cd920d36e500d4f95f0047636b8248c9bedbe99451222914b112e1",
-          "proofDigest": "sha256:ada5785af33111541d76724185e913b01542b503bfc89ade039940975137ef99",
+          "semanticDigest": "sha256:3df7fbcf003609495d1e8d05a828f61137a7b5c4f0c28f144880a39b528b8b72",
+          "proofDigest": "sha256:a626b58588dde3ce3869ec31637fd5eaac6ee2e9c3ff69e4d0a9257855da241b",
           "semantic": [
             {
               "path": ".gitignore",
@@ -12528,7 +12534,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12538,7 +12544,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12563,7 +12569,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12593,12 +12599,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12643,7 +12649,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12893,7 +12899,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12973,7 +12979,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -13965,7 +13971,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -14040,7 +14046,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -14185,7 +14191,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -14710,7 +14716,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -14867,11 +14873,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:ada5785af33111541d76724185e913b01542b503bfc89ade039940975137ef99",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:23.972Z"
+          "dependencyDigest": "sha256:a626b58588dde3ce3869ec31637fd5eaac6ee2e9c3ff69e4d0a9257855da241b",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:22.908Z"
         }
       },
       "needsReview": false
@@ -14879,15 +14885,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
       "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-      "observedAt": "2026-10-17T18:31:04.217Z",
+      "observedAt": "2026-10-19T00:38:29.301Z",
       "review": {
         "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-        "implementationDigest": "sha256:fbd405aa4a168c123d58218dcd393b307638b1cc2e9c224943d4cc74a9772438",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:e229709c9d427da8b3949f44e5cac956e1ea17daf0287831a564c550e336bc12",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:24.809Z",
+        "reviewedAt": "2026-10-19T00:56:23.745Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -14918,6 +14924,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -14997,8 +15004,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:fbd405aa4a168c123d58218dcd393b307638b1cc2e9c224943d4cc74a9772438",
-          "proofDigest": "sha256:027778bb7b85547d4b4a563219cbf559e8ea66c36400291a01b6b383b5c14f52",
+          "semanticDigest": "sha256:e229709c9d427da8b3949f44e5cac956e1ea17daf0287831a564c550e336bc12",
+          "proofDigest": "sha256:7bdd2e723ee2f9850d8b273df6a6f39f493b735a9e91299881bf86a9eee8e512",
           "semantic": [
             {
               "path": ".gitignore",
@@ -15012,7 +15019,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15022,7 +15029,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15047,7 +15054,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15077,12 +15084,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15127,7 +15134,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15377,7 +15384,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15457,7 +15464,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -16449,7 +16456,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -16524,7 +16531,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -16669,7 +16676,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -17194,7 +17201,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -17351,11 +17358,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:027778bb7b85547d4b4a563219cbf559e8ea66c36400291a01b6b383b5c14f52",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:24.809Z"
+          "dependencyDigest": "sha256:7bdd2e723ee2f9850d8b273df6a6f39f493b735a9e91299881bf86a9eee8e512",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:23.745Z"
         }
       },
       "needsReview": false
@@ -17363,15 +17370,15 @@
     {
       "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
       "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-      "observedAt": "2026-10-17T18:31:05.157Z",
+      "observedAt": "2026-10-19T00:38:30.202Z",
       "review": {
         "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-        "implementationDigest": "sha256:625d441f55a4b4928e5e6313ccca9662d833a3474f679bf00de07e4e2700fb75",
-        "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-        "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
+        "implementationDigest": "sha256:99e5de4eca8785644909dd5c031d276f135b3bbc6390ede378e5641d0a56b158",
+        "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+        "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
         "reviewer": "Codex",
-        "reviewedAt": "2026-10-17T18:45:25.658Z",
+        "reviewedAt": "2026-10-19T00:56:24.585Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -17395,6 +17402,7 @@
           "E2E-DATABASE-INDEPENDENT-CHECKS",
           "E2E-DATABASE-INDEPENDENT-REFUSAL",
           "E2E-DATABASE-INSERT-PREFIX",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-SCHEMA-COVERAGE",
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-SCHEMA-LEXICAL",
@@ -17474,8 +17482,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:625d441f55a4b4928e5e6313ccca9662d833a3474f679bf00de07e4e2700fb75",
-          "proofDigest": "sha256:a21b5547fa84b2b8379668ce7b901fc2efefd57243ad7ee1622c31a4972e386d",
+          "semanticDigest": "sha256:99e5de4eca8785644909dd5c031d276f135b3bbc6390ede378e5641d0a56b158",
+          "proofDigest": "sha256:13b563aef5471e6e710d9ff717e45a209ec1653433afe11e5095960c05d9a517",
           "semantic": [
             {
               "path": ".gitignore",
@@ -17489,7 +17497,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:e1bd3a0eec8efaa3f527ddb956a7b49672ebcbbdf1b2c6e0a47009d2fcc96081",
+              "digest": "sha256:2ba13d31f4058b3459386dfce9d4346c28c3ddecdeb0760707b35fce49638e18",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17499,7 +17507,7 @@
             },
             {
               "path": "config/compatibility.json",
-              "digest": "sha256:4945373995be99c80eba74b80e7749791d3cee6f723bb931cbe8088baf066bc8",
+              "digest": "sha256:3706ee71a854104b4aacd8710110bc4824b5bb2e76b8c4bc95f077e24d8d72ff",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17524,7 +17532,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:cdce51ced3548fe4d2695997fd5d37d3bf1254e282f890187fc548aa8b160c2b",
+              "digest": "sha256:e82a39045916ce766e9461a9782b07002b14e7782b9a401a4ef52aa5c4e90889",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17554,12 +17562,12 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:72461688c647e3706974b63f04aab670bc06c4fcb7a308bdcefce0ed254f58bc",
+              "digest": "sha256:f3c62f64d28bc9c26e610b96043a838257c3d9c5941194aa1c69d36cefaadf46",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "docs/COMPATIBILITY.md",
-              "digest": "sha256:ed649e7a54273959a6164012f612ad5591492fe45a56e3e8f324881ef5cb3467",
+              "digest": "sha256:30d5ee1312fb423a492cf15864b58f13d7702d214c11279b54797ee3f8511811",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17604,7 +17612,7 @@
             },
             {
               "path": "docs/verification/DATABASE_QUERY_SOURCES.md",
-              "digest": "sha256:62f8aab81b44a2adc287778d09406ed06e3c29df11db53ac8b399a9a1a01b814",
+              "digest": "sha256:1f61de932da4c084f32c04491302dac6e644217dec43bcf0b1a7cbf19beacfda",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17854,7 +17862,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17934,7 +17942,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -18906,7 +18914,7 @@
             },
             {
               "path": "src/project/database.ts",
-              "digest": "sha256:7fef3d170bea5ed27b07d4bacca0b4836631f25dcc5a9514ad2a141e364f1f44",
+              "digest": "sha256:aec5cb5d7ecc44ed86520721b58aa8ad4b7f8adbcd78e1c8215813c1a01f64f7",
               "reason": "Imported by tests/unit/database-check-coverage.test.ts"
             },
             {
@@ -18981,7 +18989,7 @@
             },
             {
               "path": "src/rules/database.ts",
-              "digest": "sha256:d00d9d326b1edcdd40834336e5db55b181e4a97ec4f073e23fe0c7320b8f14fd",
+              "digest": "sha256:a197d9b9e45dfafe3f928ba268b60e9cb282757183d33d01195fd908ae9df49b",
               "reason": "Imported by tests/fixture-integrity.test.ts"
             },
             {
@@ -19126,7 +19134,7 @@
             },
             {
               "path": "tests/e2e/database-column-case.test.ts",
-              "digest": "sha256:a5b32e477fb7b208054d26fe3c5a9d6c34f0170c60544349607adaa499db30b3",
+              "digest": "sha256:80107fa0ef4e212c2d51acbda40ceb2cf7969f81703979b5e3a0e03c92ed7869",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -19646,7 +19654,7 @@
             },
             {
               "path": "tests/unit/database-column-case.test.ts",
-              "digest": "sha256:61f9586d4bb014c857377020598896804b7b09e0771e93e9b5c0687be188066a",
+              "digest": "sha256:2857193a7ec9c1c4f5d437b7902a9a56880bfeae8846f355b38e5c1457848e8f",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -19803,11 +19811,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:a21b5547fa84b2b8379668ce7b901fc2efefd57243ad7ee1622c31a4972e386d",
-          "evidenceDigest": "sha256:0748d6c58aaac516b88fb197fdecfe952349dfded0493db0ac2f624ae3068d9f",
-          "evidenceCommit": "25f0a94059f8b21848caa717e0b2a7f574773dd5",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39058745140",
-          "recordedAt": "2026-10-17T18:45:25.658Z"
+          "dependencyDigest": "sha256:13b563aef5471e6e710d9ff717e45a209ec1653433afe11e5095960c05d9a517",
+          "evidenceDigest": "sha256:79c5c0669bdc6f9f523fec0ec90c9eae49f3e830d893dbbb8d23c3e4da0acda5",
+          "evidenceCommit": "34720764cfaceb1491fdafadffe0061ae832482a",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39182203502",
+          "recordedAt": "2026-10-19T00:56:24.586Z"
         }
       },
       "needsReview": false

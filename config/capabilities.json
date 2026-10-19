@@ -171,7 +171,9 @@
           "E2E-DATABASE-TABLE-CASE",
           "UNIT-DATABASE-TABLE-CASE",
           "E2E-DATABASE-ALIAS-BINDINGS",
-          "UNIT-DATABASE-ALIAS-BINDINGS"
+          "UNIT-DATABASE-ALIAS-BINDINGS",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS",
+          "UNIT-DATABASE-QUALIFIED-WILDCARDS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -336,7 +338,8 @@
           "E2E-DATABASE-SCHEMA-INDEPENDENT",
           "E2E-DATABASE-COLUMN-CASE",
           "E2E-DATABASE-TABLE-CASE",
-          "E2E-DATABASE-ALIAS-BINDINGS"
+          "E2E-DATABASE-ALIAS-BINDINGS",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -525,7 +528,8 @@
           "E2E-DATABASE-CONDITIONAL-CREATE",
           "E2E-DATABASE-COLUMN-CASE",
           "E2E-DATABASE-TABLE-CASE",
-          "E2E-DATABASE-ALIAS-BINDINGS"
+          "E2E-DATABASE-ALIAS-BINDINGS",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -668,7 +672,8 @@
           "E2E-DATABASE-CONDITIONAL-CREATE",
           "E2E-DATABASE-COLUMN-CASE",
           "E2E-DATABASE-TABLE-CASE",
-          "E2E-DATABASE-ALIAS-BINDINGS"
+          "E2E-DATABASE-ALIAS-BINDINGS",
+          "E2E-DATABASE-QUALIFIED-WILDCARDS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

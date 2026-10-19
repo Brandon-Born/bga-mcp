@@ -3,6 +3,8 @@ import { cancellationCheckpoint } from '../deadline.js';
 import {
   parseQueries,
   parseSchema,
+  queryWildcardTables,
+  schemaWildcardColumns,
   schemaNamesFullyRead,
   type QueryReference,
   type TableDefinition,
@@ -247,12 +249,17 @@ export function auditDatabaseUsage(
 
   const queries: (QueryReference & { source: string })[] = [];
   let queriesComplete = true;
+  const wildcardTables = new Set<string>();
   for (const source of phpSources) {
     cancellationCheckpoint(signal);
     const outcome = parseQueries(source.text, signal);
     for (const query of outcome.value) {
       cancellationCheckpoint(signal);
       queries.push({ ...query, source: source.path });
+      for (const table of queryWildcardTables(query)) {
+        cancellationCheckpoint(signal);
+        wildcardTables.add(table);
+      }
     }
     for (const construct of outcome.unsupported) {
       cancellationCheckpoint(signal);
@@ -361,6 +368,12 @@ export function auditDatabaseUsage(
   if (!selectsEverything && queriesComplete && schemaComparable) {
     for (const table of tables) {
       cancellationCheckpoint(signal);
+      if (wildcardTables.has(table.name)) {
+        for (const column of schemaWildcardColumns(table)) {
+          cancellationCheckpoint(signal);
+          usedColumns.add(`${table.name}.${column.toLowerCase()}`);
+        }
+      }
       for (const column of table.columns) {
         cancellationCheckpoint(signal);
         if (!usedColumns.has(`${table.name}.${column.toLowerCase()}`)) {
