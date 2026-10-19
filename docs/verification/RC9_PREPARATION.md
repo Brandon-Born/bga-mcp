@@ -69,14 +69,18 @@ draft PR, then validate all six source-CI records. Record admission in one bound
 ledger follow-up; evidence-only metadata does not make earlier CI cover a later
 HEAD and does not require a recursive receipt-for-receipt loop.
 
-With admission clear and the checkout clean, use the existing candidate builder
-and a fresh write-once directory outside the repository. It must run the complete
-gate, collect a fresh production/full-graph dependency audit, compare the original
-packed archive with the tested digest and require frozen-lockfile reconstruction
-to be byte-identical. Any local-only source tag is preparation metadata and must
-not be pushed. Retain exact source, environment, original packet/checksums and
-fresh isolated use/refusal/restart/immutability/exit/removal evidence. A failed or
-intermittent check blocks the preparation; an unchanged retry is not a fix.
+This handoff stops before tagging. Retain the unsigned tested archive and fresh
+isolated use/refusal/restart/immutability/exit/removal observations with their
+actual identities. Framework admission and these observations make the next
+candidate operation reviewable; they do not create a tagged candidate packet.
+
+After tagging is separately authorized and admission is clear, use the existing
+candidate builder at a clean source and a fresh write-once directory outside the
+repository. It must run the complete gate, collect a fresh production/full-graph
+dependency audit, compare the original packed archive with the tested digest and
+require frozen-lockfile reconstruction to be byte-identical. Retain exact source,
+environment and original packet/checksums. A failed or intermittent check blocks
+preparation; an unchanged retry is not a fix.
 
 ## Remaining owner and artifact decisions
 
@@ -88,3 +92,14 @@ Candidate-specific signing and independent security/client/usefulness/public-
 evidence gates must then evaluate the authentic original bytes. Publication is
 a final, separate decision after those gates pass. No rejected rc.8 byte or
 historical receipt may be overwritten to satisfy a new gate.
+
+## Retained preparation failure
+
+Exact-source run [39295263548](https://github.com/Brandon-Born/bga-mcp/actions/runs/39295263548)
+at `6111e8f` failed its first Windows/Node 22 attempt: 1,023 tests passed and the
+unqualified-wildcard test exceeded 30,000 ms. Its package installation plus three
+independent layout sessions shared one test deadline. The correction moves that
+installation to suite setup and makes each unchanged layout oracle a separate
+test. No assertion, scenario, fixture or supported layout is removed; deadlines
+and retry policy are unchanged. Failed-source logs remain retained and cannot
+admit the ledger. New exact-source CI must prove this corrected harness.
