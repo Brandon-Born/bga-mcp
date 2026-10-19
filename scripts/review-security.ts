@@ -87,6 +87,10 @@ async function main(): Promise<void> {
   if (outputRelative === '' || (outputRelative !== '..' && !outputRelative.startsWith(`..${sep}`)))
     throw new Error('Review output cannot alter the immutable packet');
   const plan = SecurityReviewPlanSchema.parse(await load('config/security-review.json'));
+  if (plan.pendingUnsignedCandidate !== undefined)
+    throw new Error(
+      `${plan.pendingUnsignedCandidate.tag} is awaiting authentic signing evidence; integrate its actual signing receipt and signed-review identity before running the signed-candidate review.`,
+    );
   const receipt = await load<unknown>(plan.candidateReceipt);
   const signing = await load<{ signer: { commit: string } }>(plan.signingReceipt);
   const candidate = await readSigningCandidate(packetRoot, receipt);

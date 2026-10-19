@@ -571,7 +571,10 @@
         "config/contracts/history/1.0.0-rc.8.json",
         "docs/verification/RC8_SECURITY_REJECTION.md",
         "docs/verification/RC9_PREPARATION.md",
-        "docs/verification/rc9-unsigned-independent-review.json"
+        "docs/verification/rc9-unsigned-independent-review.json",
+        "docs/verification/release-candidate-v1.0.0-rc.10.json",
+        "docs/verification/rc10-unsigned-independent-review.json",
+        "docs/verification/RC10_SIGNING_PREPARATION.md"
       ]
     }
   ],

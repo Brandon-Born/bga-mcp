@@ -4,6 +4,7 @@ import {
   SecurityReviewPlanSchema,
   verifyReviewRecord,
   verifyReviewApproval,
+  verifyPendingUnsignedReview,
   type SecurityReview,
 } from './lib/security-review.js';
 import { expectSeededFailure, reportOrExit } from './lib/gate.js';
@@ -15,6 +16,28 @@ const review = JSON.parse(
   await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.8.json'), 'utf8'),
 ) as SecurityReview;
 const record = verifyReviewRecord(review, plan);
+if (plan.pendingUnsignedCandidate !== undefined) {
+  const pending = plan.pendingUnsignedCandidate;
+  const candidate = JSON.parse(
+    await readFile(resolve(root, pending.candidateReceipt), 'utf8'),
+  ) as unknown;
+  const unsigned = JSON.parse(
+    await readFile(resolve(root, pending.unsignedReviewReceipt), 'utf8'),
+  ) as unknown;
+  for (const failure of verifyPendingUnsignedReview(plan, candidate, unsigned).failures)
+    record.require(false, failure);
+  expectSeededFailure(
+    'substituted unsigned replacement',
+    verifyPendingUnsignedReview(
+      {
+        ...plan,
+        pendingUnsignedCandidate: { ...pending, artifactDigest: `sha256:${'0'.repeat(64)}` },
+      },
+      candidate,
+      unsigned,
+    ),
+  );
+}
 const candidate = JSON.parse(await readFile(resolve(root, plan.candidateReceipt), 'utf8')) as {
   candidate: {
     sourceTag: string;
@@ -61,5 +84,5 @@ if (review.status === 'approved') {
 reportOrExit(
   'Release security review',
   record,
-  `Retained original-candidate assessment is structurally valid (${review.status}); synthetic controls refuse tampering and incomplete approval. Historical report validity is not fresh publication approval.`,
+  `Retained signed assessment is structurally valid (${review.status}); pending unsigned replacement, if selected, is separately bound and cannot grant signing or publication approval. Synthetic controls refuse substitution and incomplete approval.`,
 );

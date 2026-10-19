@@ -9,10 +9,43 @@ import {
 const digest = z.string().regex(/^sha256:[0-9a-f]{64}$/u);
 const commit = z.string().regex(/^[0-9a-f]{40}$/u);
 const scenario = z.string().regex(/^[A-Z][A-Z0-9-]+$/u);
+const unsignedIdentity = z.strictObject({
+  tag: z.string().regex(/^v1\.0\.0-rc\.[1-9][0-9]*$/u),
+  sourceCommit: commit,
+  artifactDigest: digest,
+  archiveDigest: digest,
+  manifestDigest: digest,
+  producerRun: z.number().int().positive(),
+  producerAttempt: z.number().int().positive(),
+  artifactId: z.number().int().positive(),
+});
+export const UnsignedReviewReceiptSchema = z.strictObject({
+  schemaVersion: z.literal(1),
+  kind: z.literal('independent exact unsigned candidate review'),
+  recordedAt: z.iso.datetime(),
+  reportDate: z.iso.date(),
+  reviewTurn: z.string().min(1),
+  reportSha256: digest,
+  candidate: unsignedIdentity,
+  decision: z.literal('approved for signing preparation'),
+  findings: z.strictObject({ high: z.literal(0), medium: z.literal(0), low: z.literal(0) }),
+  signatureVerified: z.literal(false),
+  publicationApproved: z.literal(false),
+  modelAttribution: z.strictObject({
+    taskSelectedModel: z.string().nullable(),
+    runtimeModel: z.null(),
+    runtimeModelVerified: z.literal(false),
+    evidence: z.string().min(1),
+  }),
+  scope: z.string().min(1),
+});
 export const SecurityReviewPlanSchema = z.strictObject({
   schemaVersion: z.literal(1),
   owner: z.literal('BGA-405'),
   publicationHold: z.string().min(1).optional(),
+  pendingUnsignedCandidate: unsignedIdentity
+    .extend({ candidateReceipt: z.string().min(1), unsignedReviewReceipt: z.string().min(1) })
+    .optional(),
   candidateReceipt: z.string(),
   signingReceipt: z.string(),
   reviewedCandidate: z.strictObject({
@@ -79,6 +112,63 @@ export const SecurityReviewSchema = z.strictObject({
 export type SecurityReview = z.infer<typeof SecurityReviewSchema>;
 export type SecurityReviewPlan = z.infer<typeof SecurityReviewPlanSchema>;
 
+/** Bind the next unsigned target without inventing a signer or promoting a historical review. */
+export function verifyPendingUnsignedReview(
+  plan: SecurityReviewPlan,
+  candidateInput: unknown,
+  reviewInput: unknown,
+): GateReport {
+  const report = new GateReport();
+  const pending = plan.pendingUnsignedCandidate;
+  if (pending === undefined) return report;
+  const candidate = z
+    .object({
+      candidate: z.object({
+        sourceTag: z.string(),
+        sourceCommit: commit,
+        digests: z.object({ artifact: digest }),
+      }),
+      workflow: z.object({
+        url: z
+          .string()
+          .regex(/^https:\/\/github\.com\/Brandon-Born\/bga-mcp\/actions\/runs\/[1-9][0-9]*$/u),
+        conclusion: z.literal('success'),
+        attempt: z.number().int().positive(),
+        artifactId: z.number().int().positive(),
+        archiveDigest: digest,
+        manifestDigest: digest,
+      }),
+      ci: z.object({ commit, conclusion: z.literal('success') }),
+    })
+    .safeParse(candidateInput);
+  const review = UnsignedReviewReceiptSchema.safeParse(reviewInput);
+  report.require(
+    candidate.success && review.success,
+    'Pending unsigned candidate or review receipt is malformed',
+  );
+  if (!candidate.success || !review.success) return report;
+  const actual = {
+    tag: candidate.data.candidate.sourceTag,
+    sourceCommit: candidate.data.candidate.sourceCommit,
+    artifactDigest: candidate.data.candidate.digests.artifact,
+    archiveDigest: candidate.data.workflow.archiveDigest,
+    manifestDigest: candidate.data.workflow.manifestDigest,
+    producerRun: Number(candidate.data.workflow.url.split('/').at(-1)),
+    producerAttempt: candidate.data.workflow.attempt,
+    artifactId: candidate.data.workflow.artifactId,
+  };
+  for (const key of Object.keys(actual) as (keyof typeof actual)[])
+    report.require(
+      pending[key] === actual[key] && review.data.candidate[key] === actual[key],
+      `Pending unsigned review differs from pinned candidate ${key}`,
+    );
+  report.require(
+    candidate.data.ci.commit === actual.sourceCommit,
+    'Pending candidate CI source differs',
+  );
+  return report;
+}
+
 export function reviewIntegrity(
   review: Omit<SecurityReview, 'integrity'> | SecurityReview,
 ): string {
@@ -140,6 +230,10 @@ export function verifyReviewApproval(
   now = new Date(),
 ): GateReport {
   const report = verifyReviewRecord(review, plan);
+  report.require(
+    plan.pendingUnsignedCandidate === undefined,
+    `Unsigned replacement ${plan.pendingUnsignedCandidate?.tag ?? ''} still needs authentic signing and a signed-candidate review`,
+  );
   report.require(
     plan.publicationHold === undefined,
     `Candidate publication blocked: ${plan.publicationHold ?? ''}`,

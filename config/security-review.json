@@ -53,5 +53,17 @@
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
   ],
-  "publicationHold": "SEC-RC8-01 and SEC-RC8-02 reproduced against signed rc.8. Rejected for publication; runtime fixes require a new candidate and signature. See docs/verification/RC8_SECURITY_REJECTION.md."
+  "publicationHold": "SEC-RC8-01 and SEC-RC8-02 reproduced against signed rc.8. Rejected for publication; runtime fixes require a new candidate and signature. See docs/verification/RC8_SECURITY_REJECTION.md.",
+  "pendingUnsignedCandidate": {
+    "tag": "v1.0.0-rc.10",
+    "sourceCommit": "646de4671974b163a7447b1e0647119091109643",
+    "artifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+    "archiveDigest": "sha256:35e53b55f6235f69ddb6fd8b0165893b0ac36a15f78d5cb3769bf9a04e494c76",
+    "manifestDigest": "sha256:a7ce9edb32a64c7451da66319109b5572a6b902f30af22256eea8e430906fd0f",
+    "producerRun": 39320808831,
+    "producerAttempt": 1,
+    "artifactId": 12220660768,
+    "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.10.json",
+    "unsignedReviewReceipt": "docs/verification/rc10-unsigned-independent-review.json"
+  }
 }
