@@ -3,7 +3,8 @@ import { z } from 'zod';
 
 import { DiagnosticResultSchema, type DiagnosticResult } from '../diagnostics.js';
 import type { PolicyBoundary } from '../policy.js';
-import { publishFailure, publishResult } from '../publish.js';
+import { withProjectTrust } from '../project-trust.js';
+import { publishFailure, publishProjectResult } from '../publish.js';
 import { NOTIFICATION_RULES, validateNotifications } from '../rules/notifications.js';
 import { summarizeFindings } from '../rules/uncertainty.js';
 import {
@@ -25,7 +26,7 @@ export const ValidateNotificationsInputSchema = z.strictObject({
     ),
 });
 
-export const ValidateNotificationsOutputSchema = z.strictObject({
+const ValidateNotificationsDataSchema = z.strictObject({
   schemaVersion: z.literal(1),
   layout: z.enum(['modern', 'legacy', 'hybrid', 'unrecognized']),
   serverSourcesRead: z.number().int().nonnegative(),
@@ -61,6 +62,9 @@ export const ValidateNotificationsOutputSchema = z.strictObject({
   diagnostics: DiagnosticResultSchema,
 });
 
+export const ValidateNotificationsOutputSchema = withProjectTrust(ValidateNotificationsDataSchema);
+
+type ValidateNotificationsDataResult = z.infer<typeof ValidateNotificationsDataSchema>;
 export type ValidateNotificationsResult = z.infer<typeof ValidateNotificationsOutputSchema>;
 
 const DESCRIPTION = `Compare the notifications a BGA server sends with the handlers its client declares.
@@ -179,17 +183,17 @@ export function registerValidateNotifications(
               ],
               signal,
             ),
-          } satisfies ValidateNotificationsResult;
+          } satisfies ValidateNotificationsDataResult;
         });
         if (isProjectRootInputRequired(outcome)) {
           return outcome;
         }
         const result = outcome;
 
-        return publishResult(
+        return publishProjectResult(
           policy,
           VALIDATE_NOTIFICATIONS_TOOL,
-          ValidateNotificationsOutputSchema,
+          ValidateNotificationsDataSchema,
           result,
           (published) =>
             summarizeNotifications(

@@ -92,7 +92,7 @@ For Windows, use the package-manager-created `.cmd` shim through the command int
 }
 ```
 
-If your client advertises authorized project roots on protocol `2025-11-25`, you can omit `--project-root` and its value. Explicit configuration is the reproducible first-run path. Multiple configured roots require the tool's `projectRoot` argument; the server never chooses between them.
+Configure `--project-root` at server startup. Client-advertised roots are discovery input and cannot authorize filesystem access, including when no root is configured. Multiple configured roots require the tool's `projectRoot` argument; the server never chooses between them.
 
 Restart the client and ask it to call `inspect_project`. A successful first use identifies your layout and available components. Inspect findings and unsupported-pattern notes before making development decisions. The release exposes the tools and resources in the inventory below and the packed [frozen selection](../config/release.json); discovery must match that selection. `check_setup`, documentation search, Studio reads, mutations, and the newer protocol adapter are excluded.
 
@@ -125,7 +125,7 @@ The public command is now absent. Delete the dedicated installation directory if
 ## Troubleshooting
 
 - **Command not found or unsupported Node:** check Node/Corepack availability and the absolute installed command path. Do not use a package downloader as an automatic fallback.
-- **`policy.root.unconfigured`:** configure an explicit `--project-root` or authorize a root in a client that advertises roots.
+- **`policy.root.unconfigured`:** configure an explicit `--project-root` at server startup; a client response cannot grant this permission.
 - **`resource.project.ambiguous`:** supply `projectRoot` to select one authorized root.
 - **Root/path refused:** check that the configured directory exists, is readable, and matches the intended authorized project; do not broaden roots to your home directory.
 - **Unsupported syntax:** retain the uncertainty in your review. A clean audit does not establish correctness for syntax the reader cannot interpret.

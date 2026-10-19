@@ -14,6 +14,8 @@ const root = resolve(import.meta.dirname, '../..');
 const plan = SecurityReviewPlanSchema.parse(
   JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
 );
+const { publicationHold: _hold, ...unblockedPlan } = plan;
+void _hold;
 const stamp = '2026-10-02T00:00:00.000Z';
 const hash = plan.reviewedCandidate.artifactDigest;
 const source = plan.reviewedCandidate.sourceCommit;
@@ -75,7 +77,7 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
   ) as { reviewReceipt: string };
   const actual = SecurityReviewSchema.parse(
     JSON.parse(
-      await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.7.json'), 'utf8'),
+      await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.8.json'), 'utf8'),
     ),
   );
   expect(verifyReviewRecord(actual, plan).failures).toEqual([]);
@@ -138,7 +140,7 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
 it('[INT-SECURITY-REVIEW-APPROVAL] refuses open risks, stale audits, uncommitted reviewer code and incomplete external gates', () => {
   const review = control();
   const now = new Date(stamp);
-  expect(verifyReviewApproval(review, plan, now).failures).toEqual([]);
+  expect(verifyReviewApproval(review, unblockedPlan, now).failures).toEqual([]);
   expect(verifyReviewApproval(review, plan, new Date('2026-10-04T00:00:00Z')).failed).toBe(true);
   expect(
     verifyReviewApproval(
@@ -189,4 +191,20 @@ it('[INT-SECURITY-REVIEW-ARTIFACT] refuses byte tampering before retained artifa
     verifyReplayDigest(Buffer.concat([bytes, Buffer.from('changed')]), expected),
   ).toThrow('authenticated digest');
   expect(() => verifyReplayDigest(bytes, 'not-a-digest')).toThrow('authenticated digest');
+});
+
+it('[INT-SECURITY-REVIEW-APPROVAL] rejects the actual rc.8 approval at its original valid time after independent findings', async () => {
+  const approved = SecurityReviewSchema.parse(
+    JSON.parse(
+      await readFile(
+        resolve(root, 'docs/verification/security-review-v1.0.0-rc.8-clean.json'),
+        'utf8',
+      ),
+    ),
+  );
+  const now = new Date(approved.reviewedAt);
+  expect(verifyReviewApproval(approved, unblockedPlan, now).failures).toEqual([]);
+  expect(verifyReviewApproval(approved, plan, now).failures).toEqual([
+    expect.stringContaining('Candidate publication blocked: SEC-RC8-01 and SEC-RC8-02'),
+  ]);
 });

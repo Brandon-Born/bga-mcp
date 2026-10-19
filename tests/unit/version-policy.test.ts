@@ -160,7 +160,9 @@ it('[GATE-VERSION-POLICY] preserves the API while explicitly refreshing the pre-
   const previous = await loadJson<PublicContractSnapshot>(
     'config/contracts/history/1.0.0-rc.7.json',
   );
-  const current = await loadJson<PublicContractSnapshot>('config/contracts/1.0.0.json');
+  const current = await loadJson<PublicContractSnapshot>(
+    'config/contracts/history/1.0.0-rc.8.json',
+  );
   expect(previous.status).toBe('candidate');
   expect(current.status).toBe('candidate');
   expect(current.packageVersion).toBe(previous.packageVersion);
@@ -191,4 +193,36 @@ it('[GATE-VERSION-POLICY] preserves the API while explicitly refreshing the pre-
   expect(previous.compatibility.find((c) => c.id === 'CLAIM-CLIENT-SDK')?.value).toBe(
     '@modelcontextprotocol/client 2.0.0',
   );
+});
+
+it('[GATE-VERSION-POLICY] explicitly archives the rejected rc.8 contract before the unpublished security correction', async () => {
+  const previous = await loadJson<PublicContractSnapshot>(
+    'config/contracts/history/1.0.0-rc.8.json',
+  );
+  const current = await loadJson<PublicContractSnapshot>('config/contracts/1.0.0.json');
+  expect(previous.status).toBe('candidate');
+  expect(current.status).toBe('candidate');
+  expect(current.packageVersion).toBe(previous.packageVersion);
+  expect(classifyContractChange(previous, current).level).toBe('major');
+  expect(current.release).toEqual({
+    ...previous.release,
+    typesDigest: current.release.typesDigest,
+  });
+  expect(current.release.typesDigest).not.toBe(previous.release.typesDigest);
+  expect(current.tools).toHaveLength(7);
+  for (const before of previous.tools) {
+    const after = current.tools.find((tool) => tool.name === before.name);
+    expect(after).toEqual({ ...before, outputSchemaDigest: after?.outputSchemaDigest });
+    expect(after?.outputSchemaDigest).not.toBe(before.outputSchemaDigest);
+  }
+  for (const key of [
+    'resources',
+    'resourceTemplates',
+    'prompts',
+    'schemas',
+    'policyDigest',
+    'deprecations',
+    'compatibility',
+  ] as const)
+    expect(current[key]).toEqual(previous[key]);
 });

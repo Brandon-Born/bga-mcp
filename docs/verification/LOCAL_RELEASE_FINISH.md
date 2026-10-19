@@ -1,3 +1,8 @@
+> **Publication blocked, 2026-10-19:** Independent Daybreak Blue review reproduced
+> two runtime vulnerabilities in signed rc.8. The prior scripted approval is
+> superseded by [the explicit rejection](RC8_SECURITY_REJECTION.md). BGA-449
+> implements a replacement locally; no rc.8 publication or tag movement is allowed.
+
 # Finite local rc.8 release handoff — BGA-447 / BGA-448
 
 ```verification-record
@@ -18,11 +23,17 @@ After PR37 merged, the owner explicitly approved source tag `v1.0.0-rc.8` at tes
 
 The hosted original tarball is `sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d`. The prior Mac preparation remains distinct at `sha256:0259893cef25daab6fbab5402d47c6921450503e01fecad5340360554b07b601`; no cross-platform byte equality is claimed. Separate exact-main Linux CI archives match the hosted original digest. The signer and signed-install verifier select the actual new receipt; workflow concurrency selects rc.8. No published rc.7 original, approval or release asset changes.
 
+## Authentic signed original and clean-review preparation
+
+PR38 merged as `df04bb9`; its [main CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/39252355767) passes all six jobs. [Signing run 39253582475](https://github.com/Brandon-Born/bga-mcp/actions/runs/39253582475) passes all three stages using the existing ephemeral identity. [The actual signing receipt](release-signing-v1.0.0-rc.8.json) retains the signed archive, bundle and signer identities, independently verified source/workflow/subjects, modified-byte/wrong-signer refusals and seven unchanged original files. The original tarball remains `sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d`.
+
+Fresh signed-package [native client](codex-client-v1.0.0-rc.8.json), [installation recipes](install-guide-v1.0.0-rc.8-signed.json) and three-layout maintained-SDK checks pass. The native check uses the exact previously evaluated 0.159.2 binary in a temporary workspace, with zero inference and unchanged user configuration. [The initial signed security assessment](security-review-v1.0.0-rc.8.json) passes 68 tests / 11 scenarios, a 275-file scan and fresh zero/zero audit; it honestly retains its framework-admission hold. Any later clean approval is a separate time-limited record after source CI and explicit review, not a rewrite of that initial result. A records-only review branch cannot merge or publish itself.
+
 ## Gates that remain candidate-specific
 
-1. PR37 is merged into trusted main and exact-source CI passes. The new receipt/signing-selector draft requires owner review and merge before the main-only signing workflow can select rc.8; no further merge is authorized in this task.
+1. PR37 and PR38 are merged into trusted main and their exact-source CI passes. The main-only signing workflow has selected and signed the actual rc.8 original. Any post-signing review-record integration remains subject to owner review; no additional merge is authorized.
 2. Hosted original rc.8 production and independent unsigned installation are retained above. Preserve the original archive and tarball without rebuilding or overwriting them. Fresh original-byte security checks pass all 68 selected tests across all 11 required scenarios. Supported read-only signing prepare/extract/predicate succeeds, independently fetching the actual producer/CI/artifact/tag identities and preserving all seven original files. Actual rc.7 substitution, modified archive and stale-source controls are refused. These controls do not confer a signature, cryptographic verification or approval.
-3. Run the existing main-only `release-signing.yml` after its selector references that retained candidate. It uses the established short-lived hosted identity; no new credential or persistent permission is needed. Independently verify authentic signature/source/workflow, tamper/refusal controls and exact signed-package installation. Offline signing-policy tests are not a signature.
+3. Authentic signing and independent cryptographic verification are retained above. Preserve their exact packet, original producer and signer identities. Offline signing-policy tests remain distinct from the real signature; no new credential or persistent permission was introduced.
 4. Re-execute candidate-specific installation, maintained/native-client and applicable usefulness/public-evidence prerequisites against those exact original bytes. Complete a fresh signed-candidate security assessment and explicit time-limited approval. Existing rc.7 approval and selectors do not transfer to rc.8.
 5. Obtain the owner's explicit decision to publish that exact approved signed rc.8 packet through the existing signed GitHub-download channel. Only then run fresh publication admission, token-free public consumer and lifetime success-receipt retention. No stable/npm promotion or overwrite of older assets is included.
 

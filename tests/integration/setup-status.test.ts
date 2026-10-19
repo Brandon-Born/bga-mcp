@@ -33,9 +33,9 @@ describe('setup status', () => {
     expect(status.ready).toBe(false);
     expect(codes(status.findings)).toContain('project.roots.none');
     const roots = status.findings.find((entry) => entry.code === 'project.roots.none');
-    // Both ways out, because a client-offered root is now one of them.
+    // Only operator startup configuration grants filesystem authority.
     expect(roots?.nextAction).toContain('--project-root');
-    expect(roots?.nextAction).toContain('advertises its open folders');
+    expect(roots?.nextAction).toContain('Client roots cannot authorize');
 
     // A capability that is off is reported as off with the flag that enables
     // it, rather than omitted: a reader cannot ask about what they were never
@@ -57,22 +57,22 @@ describe('setup status', () => {
     expect(status.findings.filter((entry) => entry.status === 'action-needed')).toEqual([]);
   });
 
-  it('[INT-SETUP-STATUS] counts a client-offered root as a root', async () => {
+  it('[INT-SETUP-STATUS] refuses to count a client-offered root as startup authority', async () => {
     const policy = await createPolicyBoundary({});
     policy.setClientRootsProvider(() => Promise.resolve([projectRoot]));
 
     const status = await buildSetupStatus(policy);
-    expect(status.ready).toBe(true);
-    expect(codes(status.findings)).toContain('project.roots.available');
+    expect(status.ready).toBe(false);
+    expect(codes(status.findings)).toContain('project.roots.none');
   });
 
-  it('[INT-SETUP-STATUS] describes the modern in-band roots interaction truthfully', async () => {
+  it('[INT-SETUP-STATUS] requires startup authority in the modern era too', async () => {
     const status = await buildSetupStatus(await createPolicyBoundary({}), { era: 'modern' });
     const roots = status.findings.find((entry) => entry.code === 'project.roots.none');
 
-    expect(roots?.nextAction).toContain('in-band roots request');
-    expect(roots?.nextAction).toContain('projectRoot');
-    expect(roots?.nextAction).not.toContain('advertises its open folders');
+    expect(roots?.nextAction).toContain('Client roots cannot authorize');
+    expect(roots?.nextAction).toContain('--project-root');
+    expect(roots?.nextAction).not.toContain('in-band roots request');
   });
 
   it('[INT-SETUP-NO-CREDENTIALS] says whether a session exists, never what it is', async () => {

@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-19T12:46:18.705214+00:00",
+  "owner": "BGA-404 / BGA-448",
+  "candidateReceipt": "release-candidate-v1.0.0-rc.8.json",
+  "candidateTag": "v1.0.0-rc.8",
+  "candidateSourceCommit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+  "originalArtifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+  "signer": {
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-signing.yml",
+    "commit": "df04bb9819aa79c55b80d943364ec6ecd0891e77",
+    "ref": "refs/heads/main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "hostedRunnersOnly": true
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39253582475",
+    "conclusion": "success",
+    "artifactId": 12187850141,
+    "artifactName": "signed-candidate-39253582475",
+    "archiveDigest": "sha256:888544250e68ffbeed9915bc24fecb76c71429de6a2c24e7d8574d57b0d3c550",
+    "expiresAt": "2027-01-17T12:38:04Z"
+  },
+  "attestation": {
+    "transparencyLogUrl": "https://search.sigstore.dev?logIndex=3321007594",
+    "predicateType": "https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1",
+    "signedSubjects": 7,
+    "bundleDigest": "sha256:3423b9fb23eebbc0abb73b25c5cd302d783bfb54a4b3b6518d4e6d9835726f94",
+    "predicateCopyDigest": "sha256:5883b9e1d197e5cfe3e13aa55a581c1f4f1b860cc8ba3c81374ce4d2efa6633c"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39252355767",
+    "commit": "df04bb9819aa79c55b80d943364ec6ecd0891e77",
+    "conclusion": "success",
+    "independentlyValidatedJobs": 6
+  },
+  "originalFilesUnchanged": 7,
+  "hostedVerification": {
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.8",
+    "candidateCommit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "originalArtifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "signerCommit": "df04bb9819aa79c55b80d943364ec6ecd0891e77",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false
+  },
+  "independentMacVerification": {
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.8",
+    "candidateCommit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+    "originalArtifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
+    "signerCommit": "df04bb9819aa79c55b80d943364ec6ecd0891e77",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false
+  },
+  "preservedEarlierFailure": {
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39197833955",
+    "attempt1": "Five jobs passed; Windows/Node 24 failed unchanged documentation-response 350 ms socket-close observation",
+    "attempt2": "Only failed job replayed unchanged and passed; five prior successful records byte-identical",
+    "timingFixClaimed": false
+  },
+  "published": false
+}

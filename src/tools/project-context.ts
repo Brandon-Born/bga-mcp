@@ -343,8 +343,7 @@ export async function resolveProjectRoot(
     return projectRoot;
   }
 
-  // Ask the client for its roots before concluding there are none: for most
-  // clients this is what makes --project-root unnecessary.
+  // Client roots are discovery input, never filesystem authority.
   await policy.ensureClientRoots(signal === undefined ? {} : { signal });
   cancellationCheckpoint(signal);
   const roots = policy.projectRoots;
@@ -355,7 +354,7 @@ export async function resolveProjectRoot(
   if (roots.length === 0) {
     throw new BgaMcpError(
       ERROR_CODES.policyRootUnconfigured,
-      'No project root is configured and the client offered none. Start the server with --project-root <absolute path>, or use a client that advertises its roots.',
+      'No project root is configured. Start the server with --project-root <absolute path>. Client roots cannot authorize filesystem access.',
     );
   }
   throw new BgaMcpError(
@@ -374,8 +373,8 @@ export async function resolveProjectRoot(
  * handler returns `input_required`, the client answers the embedded roots
  * request, and retries this same call with `inputResponses`.
  *
- * A command-line root always wins. Otherwise a modern call asks every time,
- * so a changed set of open folders is observed without hidden session state.
+ * A command-line root always wins. Otherwise a modern call can collect discovery
+ * input, but cannot grant access: an empty startup allowlist stays empty.
  * The returned file URIs are still resolved and allowlisted by PolicyBoundary;
  * a roots response is input, not authority.
  */
@@ -452,8 +451,8 @@ export async function resolveProjectRootForRequest(
     throw new BgaMcpError(
       ERROR_CODES.policyRootUnconfigured,
       response.roots.length === 0
-        ? 'The client supplied no project roots. Open a project and retry without projectRoot, or restart the server with --project-root <absolute path>.'
-        : 'None of the project roots supplied by the client exists and is readable. Fix the open-folder selection and retry, or restart the server with --project-root <absolute path>.',
+        ? 'The client supplied no project roots. Restart the server with --project-root <absolute path>.'
+        : 'Client roots cannot authorize filesystem access. Restart the server with --project-root <absolute path>.',
     );
   }
   throw new BgaMcpError(

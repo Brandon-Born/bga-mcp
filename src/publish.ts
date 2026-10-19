@@ -2,6 +2,7 @@ import type { JSONRPCMessage, Transport } from '@modelcontextprotocol/server';
 
 import { ERROR_CODES, PUBLIC_ERROR_CODES, toPublicError } from './errors.js';
 import type { PolicyBoundary } from './policy.js';
+import { markProjectContent, PROJECT_CONTENT_NOTICE } from './project-trust.js';
 import { redactText, redactValue, type RedactionOptions } from './redaction.js';
 
 /**
@@ -54,6 +55,7 @@ export interface OutputShape<Result> {
 export interface PublishOptions {
   /** How filesystem-looking text is treated. See {@link RedactionOptions.paths}. */
   readonly paths?: RedactionOptions['paths'];
+  readonly projectContent?: boolean;
 }
 
 function publicationOptions(policy: PolicyBoundary, options: PublishOptions): RedactionOptions {
@@ -85,6 +87,34 @@ export function publishResult<Result>(
   return result;
 }
 
+/** Every project tool crosses this boundary before its schema-bound result leaves. */
+export function publishProjectResult<Result extends object>(
+  policy: PolicyBoundary,
+  label: string,
+  shape: OutputShape<Result>,
+  value: unknown,
+  summarize: (result: Result) => string,
+  options: PublishOptions = {},
+) {
+  return publishResult(
+    policy,
+    label,
+    {
+      parse: (input) => {
+        const data = input !== null && typeof input === 'object' ? { ...input } : input;
+        if (data !== null && typeof data === 'object') {
+          Reflect.deleteProperty(data, 'trust');
+          Reflect.deleteProperty(data, 'notice');
+        }
+        return markProjectContent(shape.parse(data));
+      },
+    },
+    value,
+    (result) => `${PROJECT_CONTENT_NOTICE}\nServer summary of project data:\n${summarize(result)}`,
+    options,
+  );
+}
+
 /**
  * Publishes a successful resource body.
  *
@@ -99,7 +129,10 @@ export function publishJson(
   value: unknown,
   options: PublishOptions = {},
 ): { contents: { uri: string; mimeType: string; text: string }[] } {
-  const redacted = redactValue(value, publicationOptions(policy, options));
+  const redacted = redactValue(
+    options.projectContent === true ? markProjectContent(value as object) : value,
+    publicationOptions(policy, options),
+  );
   const text = `${JSON.stringify(redacted, null, 2)}\n`;
   const result = { contents: [{ uri: uri.href, mimeType: 'application/json', text }] };
   policy.assertOutputWithinLimit(label, JSON.stringify(result));
@@ -115,7 +148,10 @@ function failureResult(
   details?: Record<string, unknown>,
 ): { isError: true; content: { type: 'text'; text: string }[] } {
   const suffix = details === undefined ? '' : ` ${JSON.stringify(details)}`;
-  return { isError: true, content: [{ type: 'text', text: `${code}: ${message}${suffix}` }] };
+  return {
+    isError: true,
+    content: [{ type: 'text', text: `${PROJECT_CONTENT_NOTICE}\n${code}: ${message}${suffix}` }],
+  };
 }
 
 function payloadBytes(payload: unknown): number {
@@ -243,11 +279,11 @@ export function publishResourceFailure(policy: PolicyBoundary, error: unknown): 
   const budget = policy.config.maxOutputBytes;
   const details = published.details === undefined ? '' : ` ${JSON.stringify(published.details)}`;
   const candidates = [
-    `${published.code}: ${published.message}${details}`,
-    `${published.code}: ${published.message}`,
+    `${PROJECT_CONTENT_NOTICE}\n${published.code}: ${published.message}${details}`,
+    `${PROJECT_CONTENT_NOTICE}\n${published.code}: ${published.message}`,
   ];
   const fitting =
     candidates.find((candidate) => Buffer.byteLength(candidate, 'utf8') <= budget) ??
-    `${published.code}: ${BUDGET_MESSAGE}`;
+    `${PROJECT_CONTENT_NOTICE}\n${published.code}: ${BUDGET_MESSAGE}`;
   throw new Error(fitting);
 }

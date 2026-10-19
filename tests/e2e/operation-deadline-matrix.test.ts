@@ -270,10 +270,11 @@ async function probe(
       const recovery = await callTool(connection.client, 'check_setup', {}, 20_000);
       expect(recovery.isError, recovery.text).toBe(false);
       expect(recovery.structured?.findings).toContainEqual({
-        code: 'project.roots.available',
-        status: 'ok',
-        summary:
-          '1 project root(s) available. Pass projectRoot explicitly when choosing among several already available roots.',
+        code: 'project.roots.none',
+        status: 'action-needed',
+        summary: 'No project root is available, so every project capability will refuse.',
+        nextAction:
+          'Start the server with --project-root <absolute path>. Client roots cannot authorize filesystem access.',
       });
       const recovered = events(await readFile(log, 'utf8'));
       expect(

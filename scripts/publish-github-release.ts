@@ -81,6 +81,14 @@ async function main(): Promise<void> {
   assert.equal(process.env.GITHUB_REPOSITORY, PUBLICATION_REPOSITORY);
   assert.equal(process.env.GITHUB_REF, 'refs/heads/main');
   assert.equal(process.env.GITHUB_EVENT_NAME, 'workflow_dispatch');
+  const security = JSON.parse(
+    await readFile(resolve(root, 'config/security-review.json'), 'utf8'),
+  ) as { publicationHold?: unknown };
+  assert.equal(
+    security.publicationHold,
+    undefined,
+    'Candidate publication blocked by security review',
+  );
   assert.equal(process.env.RUNNER_ENVIRONMENT, 'github-hosted');
   assert.equal(
     process.env.GITHUB_WORKFLOW_REF,

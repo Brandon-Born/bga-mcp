@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "server": {
     "name": "bga-mcp",
-    "version": "1.0.0-rc.8"
+    "version": "1.0.0-rc.9"
   },
   "ciRuns": [
     {
@@ -175,7 +175,9 @@
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "UNIT-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
-          "UNIT-DATABASE-UNQUALIFIED-WILDCARDS"
+          "UNIT-DATABASE-UNQUALIFIED-WILDCARDS",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -247,7 +249,9 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -342,7 +346,9 @@
           "E2E-DATABASE-TABLE-CASE",
           "E2E-DATABASE-ALIAS-BINDINGS",
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
-          "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+          "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -438,7 +444,9 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -481,7 +489,9 @@
           "E2E-NORMALIZED-PROJECT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -533,7 +543,9 @@
           "E2E-DATABASE-TABLE-CASE",
           "E2E-DATABASE-ALIAS-BINDINGS",
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
-          "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+          "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -571,7 +583,9 @@
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-TELEMETRY-NETWORK-CONTROL",
-          "E2E-TELEMETRY-WRITE-CONTROL"
+          "E2E-TELEMETRY-WRITE-CONTROL",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -678,7 +692,9 @@
           "E2E-DATABASE-TABLE-CASE",
           "E2E-DATABASE-ALIAS-BINDINGS",
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
-          "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+          "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -707,7 +723,9 @@
           "E2E-STATE-UNCONFIRMED-INITIAL",
           "E2E-PROJECT-SOURCE-BYTE-LIMIT",
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
-          "E2E-TELEMETRY-ABSENT"
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -738,7 +756,9 @@
           "E2E-PROJECT-SOURCE-RECEIPT",
           "E2E-PROJECT-SOURCE-RECEIPT-LIMITS",
           "E2E-NORMALIZED-PROJECT",
-          "E2E-TELEMETRY-ABSENT"
+          "E2E-TELEMETRY-ABSENT",
+          "E2E-CLIENT-ROOT-AUTHORITY",
+          "E2E-PROJECT-CONTENT-TRUST"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

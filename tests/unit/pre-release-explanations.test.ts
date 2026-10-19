@@ -1,4 +1,5 @@
 // secret-scan:allow-file Synthetic non-secret assignments test the final publication boundary.
+import { markProjectContent } from '../../src/project-trust.js';
 import { DEFAULT_POLICY_CONFIG, PolicyBoundary } from '../../src/policy.js';
 import type { DiagnosticResult } from '../../src/diagnostics.js';
 import { publishResult } from '../../src/publish.js';
@@ -184,7 +185,9 @@ it('summarizes repeated reasons once while naming their affected checks', async 
     { id: 'database', run: () => summarizeFindings([blocker('Game.php')]) },
   ]);
   const text = summarizePreRelease(
-    RunPreReleaseAuditOutputSchema.parse({ schemaVersion: 1, layout: 'modern', ...result }),
+    RunPreReleaseAuditOutputSchema.parse(
+      markProjectContent({ schemaVersion: 1, layout: 'modern', ...result }),
+    ),
     'modern',
   );
   expect(text.match(/shared\.unsupported-syntax/gu)).toHaveLength(1);
@@ -206,7 +209,7 @@ it('redacts full source strings before rendering summaries without clipping a se
     policy,
     'run_pre_release_audit',
     RunPreReleaseAuditOutputSchema,
-    { schemaVersion: 1, layout: 'modern', ...result },
+    markProjectContent({ schemaVersion: 1, layout: 'modern', ...result }),
     (value) => summarizePreRelease(value, value.layout),
   );
   expect(JSON.stringify(published)).not.toContain(secret);

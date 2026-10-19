@@ -318,10 +318,22 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
     artifactDigest: string;
   };
   const currentGuideDigest = sha256(await readFile(resolve(root, 'docs/INSTALL.md')));
-  // Real retained receipts are checked unchanged. Identity rewrites below are synthetic controls only.
+  // Authenticate the historical guide from the original source, without rewriting
+  // a retained receipt to claim the new root-authority instructions were tested.
+  const originalGuide = await runCommand(
+    'git',
+    ['show', `${reviewed.sourceCommit}:docs/INSTALL.md`],
+    { cwd: root },
+  );
+  expect(originalGuide.exitCode, originalGuide.stderr).toBe(0);
+  const historicalGuideDigest = sha256(originalGuide.stdout);
   expect(() =>
-    verifyPublicationPrerequisites(receipts, reviewed, currentGuideDigest),
+    verifyPublicationPrerequisites(receipts, reviewed, historicalGuideDigest),
   ).not.toThrow();
+  expect(currentGuideDigest).not.toBe(historicalGuideDigest);
+  expect(() => verifyPublicationPrerequisites(receipts, reviewed, currentGuideDigest)).toThrow(
+    'Installation guide changed',
+  );
   for (const [key, path] of [
     ['installation', 'install-guide-v1.0.0-rc.4-signed.json'],
     ['client', 'codex-client-v1.0.0-rc.4-clean.json'],
@@ -333,7 +345,7 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
       verifyPublicationPrerequisites(
         { ...receipts, [key]: historical },
         reviewed,
-        currentGuideDigest,
+        historicalGuideDigest,
       ),
     ).toThrow();
   }

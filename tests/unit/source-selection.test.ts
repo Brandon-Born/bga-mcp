@@ -1,3 +1,4 @@
+import { PROJECT_CONTENT_NOTICE } from '../../src/project-trust.js';
 import { buildProjectModel } from '../../src/project/model.js';
 import { InspectProjectOutputSchema, summarize } from '../../src/tools/inspect-project.js';
 import type { ProjectListing } from '../../src/policy.js';
@@ -72,22 +73,48 @@ it('keeps the complete selection beyond component and layout display caps', asyn
   expect(
     project.detection.signals.find((entry) => entry.id === 'source.selected.php')?.files,
   ).toEqual(paths);
-  expect(summarize(InspectProjectOutputSchema.parse(project))).toContain(
-    '199 more in detection.signals',
-  );
-  expect(summarize(InspectProjectOutputSchema.parse(project))).toContain(
-    'Eligible files are candidates',
-  );
+  expect(
+    summarize(
+      InspectProjectOutputSchema.parse({
+        ...project,
+        trust: 'untrusted-content',
+        notice: PROJECT_CONTENT_NOTICE,
+      }),
+    ),
+  ).toContain('199 more in detection.signals');
+  expect(
+    summarize(
+      InspectProjectOutputSchema.parse({
+        ...project,
+        trust: 'untrusted-content',
+        notice: PROJECT_CONTENT_NOTICE,
+      }),
+    ),
+  ).toContain('Eligible files are candidates');
 });
 
 it.each([{ truncated: true }, { skippedLinks: ['linked'] }, { unreadablePaths: ['closed'] }])(
   'keeps incomplete listing visible beside eligible files: %j',
   async (partial) => {
     const { project } = await model(['modules/lib/runtime.php'], partial);
-    expect(summarize(InspectProjectOutputSchema.parse(project))).toContain(
-      'partial (see listing findings)',
-    );
-    expect(summarize(InspectProjectOutputSchema.parse(project))).not.toContain('listing completed');
+    expect(
+      summarize(
+        InspectProjectOutputSchema.parse({
+          ...project,
+          trust: 'untrusted-content',
+          notice: PROJECT_CONTENT_NOTICE,
+        }),
+      ),
+    ).toContain('partial (see listing findings)');
+    expect(
+      summarize(
+        InspectProjectOutputSchema.parse({
+          ...project,
+          trust: 'untrusted-content',
+          notice: PROJECT_CONTENT_NOTICE,
+        }),
+      ),
+    ).not.toContain('listing completed');
   },
 );
 
