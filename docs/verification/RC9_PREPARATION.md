@@ -103,3 +103,54 @@ installation to suite setup and makes each unchanged layout oracle a separate
 test. No assertion, scenario, fixture or supported layout is removed; deadlines
 and retry policy are unchanged. Failed-source logs remain retained and cannot
 admit the ledger. New exact-source CI must prove this corrected harness.
+
+## Source-admission milestone — 2026-10-19
+
+The integrated correction passed the complete local gate before commit: 1,026
+tests, 279 required scenarios, 107 retained claims and 17 capabilities, including
+package, applicable conformance, coverage and safety. That retained local record
+honestly names parent `6111e8f` with a dirty working tree; clean exact-source CI
+below separately proves committed `dec31f23f63e18ea9d0093e3ddbb762caf0a1a64`.
+The increase from 1,024 is the two additional layout test cases; every original
+per-layout query/assertion body is unchanged under TypeScript formatting. The
+first local full gate caught a setup-variable lint issue; that failure is retained
+and the corrected lint/types/full gate pass. No deadline or retry policy changes.
+
+[Exact-source CI 39297370345](https://github.com/Brandon-Born/bga-mcp/actions/runs/39297370345)
+passes all six OS/Node jobs on attempt 1. Each downloaded sealed record passes
+trusted schema, integrity, clean exact-source, 1,026-test/279-scenario,
+107-claim/17-capability, new attack-scenario and applicable-conformance validation.
+Both Mac archive identities match the retained unsigned test archive below;
+other platforms retain their actual identities without a cross-platform equality
+claim. Failed source run `39295263548` remains inadmissible despite its five
+passing records and the separately passing initial PR run.
+
+All eight official reviews are explicitly admitted against this post-observation
+source CI. The ordinary framework release guard now passes with zero holds.
+Their semantic/proof dependencies match; original legacy/modern/hybrid fixtures
+remain applicable because official wording and BGA interpretations are unchanged.
+This ledger follow-up carries that proof forward; it does not label the earlier
+run as exact-HEAD CI for a later metadata commit.
+
+The unsigned test archive is
+`sha256:dc2138b0928ffc66434827972c3442c0704ec039282debc59ec2b095e5d1e6d8`.
+Fresh isolated maintained-SDK 2.2.0 installs exercised all seven tools and three
+resources across legacy, modern and hybrid fixtures, mandatory trust/notice
+fields, schema/outside-root/excluded-call refusals, repeats, restart, project
+immutability, empty stderr, process exit, repeat installation and removal. Direct
+client-only-root and hostile-metadata probes also pass. Corrected full-gate and
+Mac source-CI evidence bind the same bytes; these results do not confer an
+independent candidate security approval or a signature.
+
+The fresh registry audit at `dec31f2` reports zero production and zero full-graph
+findings, with exact package/lockfile/workspace/policy identities. It is a dated
+source assessment; future tagged candidates and publication retain their own
+source/freshness requirements. The five original rc.8 signing/security/client/
+installation receipts and `publicationHold` are byte-identical to merged `a151763`.
+
+This milestone makes the same draft PR reviewable for source admission. It stops
+before every tag, merge, hosted producer, signing or replacement publication.
+The retained file is an unsigned test archive; the existing candidate builder
+still requires a separately authorized source tag and its own full gate, fresh
+audit and frozen-lockfile reconstruction. The owner decisions and exact-artifact
+gates above remain open.
