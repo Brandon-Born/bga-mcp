@@ -4,7 +4,7 @@ Thank you for helping improve `bga-mcp`.
 
 If you are a coding agent, or are directing one, read [AGENTS.md](AGENTS.md) first: it holds the repository's working rules, including the requirement to check the official BGA documentation before implementing any framework behavior.
 
-The project is currently implementing its local read-only foundation. The highest-value contributions are reproducible BGA workflow examples, small representative fixtures, validation-rule proposals, and feedback on tool contracts.
+Contributions must preserve the local read-only boundary and the evidence requirements below. The highest-value contributions are reproducible BGA workflow examples, small representative fixtures, validation-rule proposals, and feedback on tool contracts.
 
 ## Before opening an issue
 
