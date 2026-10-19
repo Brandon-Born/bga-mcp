@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-19T20:52:35.790261Z",
+  "owner": "BGA-452 / BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.10",
+    "sourceCommit": "646de4671974b163a7447b1e0647119091109643",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.10",
+    "artifactName": "bga-mcp-1.0.0-rc.10.tgz",
+    "lockDigest": "sha256:e5ce23eedba6b3ad68dc1ae95340f6eeb04f12584be4b3d604da8408f2e5775a",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:fd010f582534e837a054896293078ad32a2f6726a1099016f1132807940f8c94",
+      "verificationEvidence": "sha256:9fc2481ad434b41e760cfb9a1bd4c01e3afe8abafd37a36f600da6a45d600fb3",
+      "artifact": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+      "securityAudit": "sha256:06c14d99f6807a87403a82b6630a97b02a1b3d4bd1594f8dfcac06ed6afc866c"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39320808831",
+    "conclusion": "success",
+    "attempt": 1,
+    "artifactId": 12220660768,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.10",
+    "archiveDigest": "sha256:35e53b55f6235f69ddb6fd8b0165893b0ac36a15f78d5cb3769bf9a04e494c76",
+    "manifestDigest": "sha256:a7ce9edb32a64c7451da66319109b5572a6b902f30af22256eea8e430906fd0f",
+    "expiresAt": "2027-01-17T20:37:10Z"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39319217638",
+    "commit": "646de4671974b163a7447b1e0647119091109643",
+    "conclusion": "success"
+  },
+  "verification": {
+    "tests": 1026,
+    "requiredScenarios": 279,
+    "retainedClaims": 107,
+    "capabilities": 17,
+    "allSixExactMainJobsPassed": true,
+    "originalPacketChecksumsAndEvidenceIntegrity": true,
+    "allSixGuidesMatchTaggedSource": true,
+    "productionAuditFindings": 0,
+    "fullGraphAuditFindings": 0,
+    "originalNotRepacked": true
+  },
+  "scope": "Original hosted unsigned candidate identity. No signature, signed-candidate approval, native-client or publication result is conferred."
+}

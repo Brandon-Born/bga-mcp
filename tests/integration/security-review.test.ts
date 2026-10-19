@@ -1,4 +1,7 @@
-import { readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { promisify } from 'node:util';
 import { resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import {
@@ -7,6 +10,7 @@ import {
   reviewIntegrity,
   verifyReviewRecord,
   verifyReviewApproval,
+  verifyPendingUnsignedReview,
   verifyReplayDigest,
   type SecurityReview,
 } from '../../scripts/lib/security-review.js';
@@ -14,8 +18,10 @@ const root = resolve(import.meta.dirname, '../..');
 const plan = SecurityReviewPlanSchema.parse(
   JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
 );
-const { publicationHold: _hold, ...unblockedPlan } = plan;
+// A synthetic complete signed-plan control explicitly has no pending unsigned target.
+const { publicationHold: _hold, pendingUnsignedCandidate: _pending, ...unblockedPlan } = plan;
 void _hold;
+void _pending;
 const stamp = '2026-10-02T00:00:00.000Z';
 const hash = plan.reviewedCandidate.artifactDigest;
 const source = plan.reviewedCandidate.sourceCommit;
@@ -205,6 +211,98 @@ it('[INT-SECURITY-REVIEW-APPROVAL] rejects the actual rc.8 approval at its origi
   const now = new Date(approved.reviewedAt);
   expect(verifyReviewApproval(approved, unblockedPlan, now).failures).toEqual([]);
   expect(verifyReviewApproval(approved, plan, now).failures).toEqual([
+    expect.stringContaining('Unsigned replacement v1.0.0-rc.10 still needs authentic signing'),
     expect.stringContaining('Candidate publication blocked: SEC-RC8-01 and SEC-RC8-02'),
   ]);
+});
+
+it('[GATE-SECURITY-REVIEW] binds every pending unsigned identity and refuses signature/publication/model overclaims', async () => {
+  const pending = plan.pendingUnsignedCandidate;
+  if (pending === undefined) throw new Error('Missing pending unsigned target');
+  const candidate = JSON.parse(
+    await readFile(resolve(root, pending.candidateReceipt), 'utf8'),
+  ) as unknown;
+  const unsigned = JSON.parse(
+    await readFile(resolve(root, pending.unsignedReviewReceipt), 'utf8'),
+  ) as Record<string, unknown>;
+  expect(verifyPendingUnsignedReview(plan, candidate, unsigned).failures).toEqual([]);
+  expect(
+    verifyPendingUnsignedReview(plan, candidate, {
+      ...unsigned,
+      modelAttribution: {
+        taskSelectedModel: 'task-requested label only',
+        runtimeModel: null,
+        runtimeModelVerified: false,
+        evidence: 'Synthetic task selection is not a runtime identity claim',
+      },
+    }).failures,
+  ).toEqual([]);
+  for (const [key, value] of Object.entries({
+    tag: 'v1.0.0-rc.8',
+    sourceCommit: '0'.repeat(40),
+    artifactDigest: `sha256:${'0'.repeat(64)}`,
+    archiveDigest: `sha256:${'0'.repeat(64)}`,
+    manifestDigest: `sha256:${'0'.repeat(64)}`,
+    producerRun: 1,
+    producerAttempt: 2,
+    artifactId: 1,
+  })) {
+    const changed = { ...plan, pendingUnsignedCandidate: { ...pending, [key]: value } };
+    expect(verifyPendingUnsignedReview(changed, candidate, unsigned).failed).toBe(true);
+    const changedReview = {
+      ...unsigned,
+      candidate: { ...(unsigned.candidate as object), [key]: value },
+    };
+    expect(verifyPendingUnsignedReview(plan, candidate, changedReview).failed).toBe(true);
+  }
+  const wrongCi = structuredClone(candidate) as { ci: { commit: string } };
+  wrongCi.ci.commit = '0'.repeat(40);
+  expect(verifyPendingUnsignedReview(plan, wrongCi, unsigned).failed).toBe(true);
+  expect(verifyPendingUnsignedReview(plan, null, unsigned).failed).toBe(true);
+  for (const changed of [
+    { ...unsigned, signatureVerified: true },
+    { ...unsigned, publicationApproved: true },
+    { ...unsigned, decision: 'publication approved' },
+    {
+      ...unsigned,
+      modelAttribution: {
+        taskSelectedModel: 'requested label only',
+        runtimeModel: 'unverified claimed identity',
+        runtimeModelVerified: false,
+        evidence: 'synthetic',
+      },
+    },
+  ])
+    expect(verifyPendingUnsignedReview(plan, candidate, changed).failed).toBe(true);
+});
+
+it('[INT-SECURITY-REVIEW-APPROVAL] keeps unsigned replacement held even if the historical publication hold is removed', async () => {
+  const { publicationHold: _historicalHold, ...pendingPlan } = plan;
+  void _historicalHold;
+  const result = verifyReviewApproval(control(), pendingPlan, new Date(stamp));
+  expect(result.failures).toEqual([
+    expect.stringContaining('Unsigned replacement v1.0.0-rc.10 still needs authentic signing'),
+  ]);
+  const scratch = await mkdtemp(resolve(tmpdir(), 'bga-pending-review-'));
+  try {
+    await expect(
+      promisify(execFile)(
+        process.execPath,
+        [
+          resolve(root, 'node_modules/tsx/dist/cli.mjs'),
+          resolve(root, 'scripts/review-security.ts'),
+        ],
+        {
+          env: {
+            ...process.env,
+            BGA_MCP_SECURITY_SOURCE: root,
+            BGA_MCP_SIGNED_CANDIDATE: resolve(scratch, 'absent-packet'),
+            BGA_MCP_SECURITY_REVIEW_OUTPUT: resolve(scratch, 'output'),
+          },
+        },
+      ),
+    ).rejects.toThrow('v1.0.0-rc.10 is awaiting authentic signing evidence');
+  } finally {
+    await rm(scratch, { recursive: true, force: true });
+  }
 });

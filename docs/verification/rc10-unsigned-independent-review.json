@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent exact unsigned candidate review",
+  "recordedAt": "2026-10-19T20:52:35.790261Z",
+  "reportDate": "2026-10-19",
+  "reviewTurn": "01a155e9-8dad-7452-a2fd-513d4e75cb0b",
+  "reportSha256": "sha256:8cbb9e8646ad3dfe433efe83c1ad2f38976ff3d616b70c9ad9474d9a2523cb6b",
+  "candidate": {
+    "tag": "v1.0.0-rc.10",
+    "sourceCommit": "646de4671974b163a7447b1e0647119091109643",
+    "artifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+    "archiveDigest": "sha256:35e53b55f6235f69ddb6fd8b0165893b0ac36a15f78d5cb3769bf9a04e494c76",
+    "manifestDigest": "sha256:a7ce9edb32a64c7451da66319109b5572a6b902f30af22256eea8e430906fd0f",
+    "producerRun": 39320808831,
+    "producerAttempt": 1,
+    "artifactId": 12220660768
+  },
+  "decision": "approved for signing preparation",
+  "findings": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "signatureVerified": false,
+  "publicationApproved": false,
+  "modelAttribution": {
+    "taskSelectedModel": null,
+    "runtimeModel": null,
+    "runtimeModelVerified": false,
+    "evidence": "The retained review report does not identify the task-selected model and explicitly says runtime model identity was not exposed. Task selection and verified runtime identity are distinct; neither is inferred."
+  },
+  "scope": "Exact hosted unsigned rc.10 bytes only. Approves candidate-specific unsigned security review completion and signing-selector preparation. The reviewer validated retained records locally without independently fetching GitHub, rerunning the full suite, or executing Linux/Windows. Authentic signature verification, signed-candidate security/client gates and separate publication authorization remain required. No rc.8/rc.9 approval transfers."
+}
