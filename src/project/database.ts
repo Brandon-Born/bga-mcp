@@ -15,6 +15,20 @@ export interface TableDefinition {
   readonly columns: readonly string[];
 }
 
+// Reader-owned provenance stays out of public query/table shapes and declarations.
+const wildcardColumnsByTable = new WeakMap<TableDefinition, readonly string[]>();
+const wildcardTablesByQuery = new WeakMap<QueryReference, readonly string[]>();
+
+/** @internal Visible declared columns eligible for a qualified wildcard. */
+export function schemaWildcardColumns(table: TableDefinition): readonly string[] {
+  return wildcardColumnsByTable.get(table) ?? [];
+}
+
+/** @internal Uniquely bound wildcard tables supplied only by the actual reader. */
+export function queryWildcardTables(query: QueryReference): readonly string[] {
+  return wildcardTablesByQuery.get(query) ?? [];
+}
+
 type SchemaOutcome = ParseOutcome<readonly TableDefinition[]>;
 const completedSchemaNamingReads = new WeakSet<SchemaOutcome>();
 
@@ -309,6 +323,24 @@ function schemaStructure(sql: string, signal?: AbortSignal) {
   return { text: masked.join(''), unsupported, excluded, unsafeFrom };
 }
 
+/** Reads the attribute token outside type/constraint expressions and quoted names. */
+function hasInvisibleAttribute(definition: string, signal?: AbortSignal): boolean {
+  let depth = 0;
+  let nextIsName = false;
+  for (const match of definition.matchAll(/`(?:``|[^`])*`|[()]|[A-Za-z_]\w*/gu)) {
+    cancellationCheckpoint(signal);
+    const token = match[0];
+    if (token === '(') depth += 1;
+    else if (token === ')') depth -= 1;
+    else if (depth === 0) {
+      if (nextIsName) nextIsName = false;
+      else if (/^(?:CONSTRAINT|REFERENCES)$/iu.test(token)) nextIsName = true;
+      else if (/^INVISIBLE$/iu.test(token)) return true;
+    }
+  }
+  return false;
+}
+
 // Unread schema regions are never a clean inventory.
 /** Reads the tables and columns `dbmodel.sql` declares. */
 export function parseSchema(
@@ -366,6 +398,7 @@ export function parseSchema(
       continue;
     }
     const columns: string[] = [];
+    const wildcardColumns: string[] = [];
     for (const entry of splitColumns(statement.slice(header[0].length, close), signal)) {
       cancellationCheckpoint(signal);
       const trimmed = entry.trim();
@@ -381,6 +414,12 @@ export function parseSchema(
         continue;
       }
       columns.push(first);
+      // SELECT table.* excludes INVISIBLE columns. The structural schema
+      // text has already masked quoted values; a default string cannot set
+      // visibility. No runtime visibility or migration is inferred.
+      // https://dev.mysql.com/doc/refman/8.0/en/invisible-columns.html
+      if (!hasInvisibleAttribute(trimmed.slice(identifier[0].length), signal))
+        wildcardColumns.push(first);
     }
     const tail = statement.slice(close + 1).trim();
     // Only the naming-neutral options in BGA's documented examples are read.
@@ -394,7 +433,9 @@ export function parseSchema(
     }
     if (columns.length === 0)
       unsupported.push('a CREATE TABLE declaration without readable columns');
-    tables.push({ name, columns });
+    const table = { name, columns };
+    wildcardColumnsByTable.set(table, wildcardColumns);
+    tables.push(table);
     declaredNames.add(name);
   }
   cancellationCheckpoint(signal);
@@ -591,6 +632,7 @@ function simpleColumn(
 }
 
 interface SelectListReading {
+  readonly wildcardTables: readonly string[];
   readonly columns: readonly string[];
   readonly unsupported: readonly string[];
   readonly withoutList: string;
@@ -607,6 +649,7 @@ function readSelectList(
   const from = /\bFROM\b/iu.exec(text.slice(afterSelect));
   if (select === null || from === null) {
     return {
+      wildcardTables: [],
       columns: [],
       unsupported: ['a SELECT statement without a readable FROM clause'],
       withoutList: text,
@@ -616,6 +659,7 @@ function readSelectList(
   const end = start + from.index;
   const list = text.slice(start, end).replace(/^\s*DISTINCT\b/iu, ' ');
   const columns = new Set<string>();
+  const wildcardTables = new Set<string>();
   const unsupported: string[] = [];
 
   for (const rawItem of splitColumns(list, signal)) {
@@ -627,10 +671,19 @@ function readSelectList(
     const wildcard = /^(?:([`"]?)([A-Za-z_]\w*)\1\s*\.\s*)?\*$/u.exec(expression);
     if (wildcard !== null) {
       const qualifier = wildcard[2];
-      if (qualifier !== undefined && !structure.aliases.has(qualifier))
+      const table = qualifier === undefined ? undefined : structure.aliases.get(qualifier);
+      if (alias !== null) {
+        unsupported.push('a SELECT wildcard with an unsupported result alias');
+      } else if (qualifier !== undefined && table === undefined) {
         unsupported.push(
           `SELECT wildcard uses an unknown or ambiguous table qualifier '${qualifier}'`,
         );
+      } else if (table !== undefined) {
+        // MySQL SELECT: tbl_name.* selects the named table's visible columns.
+        // Retain table provenance, not invented explicit column references.
+        // https://dev.mysql.com/doc/refman/8.0/en/select.html
+        wildcardTables.add(table);
+      }
       continue;
     }
 
@@ -659,6 +712,7 @@ function readSelectList(
   }
 
   return {
+    wildcardTables: [...wildcardTables],
     columns: [...columns],
     unsupported,
     withoutList: `${text.slice(0, start)}${' '.repeat(Math.max(0, end - start))}${text.slice(end)}`,
@@ -914,10 +968,12 @@ export function parseQueries(
     unsupported.push(...structure.unsupported);
     const tables = structure.tables;
     const columns = new Set<string>();
+    let wildcardTables: readonly string[] = [];
     let referenceText = text;
     if (/^\s*SELECT\b/iu.test(text)) {
       const selected = readSelectList(text, structure, signal);
       referenceText = selected.withoutList;
+      wildcardTables = selected.wildcardTables;
       for (const column of selected.columns) columns.add(column);
       unsupported.push(...selected.unsupported);
     }
@@ -962,14 +1018,16 @@ export function parseQueries(
       );
     }
 
-    queries.push({
+    const query = {
       tables,
       columns: [...columns].sort(),
       interpolated: INTERPOLATION.test(text),
       // Masked here rather than at the tool: the analysis above is the only
       // reader that needs the values, and it has already finished with them.
       text: maskSqlValues(text.replace(/\s+/gu, ' ').trim(), signal),
-    });
+    };
+    wildcardTablesByQuery.set(query, wildcardTables);
+    queries.push(query);
   }
 
   cancellationCheckpoint(signal);

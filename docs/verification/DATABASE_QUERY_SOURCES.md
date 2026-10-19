@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-127, the correctness owner for the database finding of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":273,"claims":106,"tests":998}
+{"kind":"run","capabilities":17,"scenarios":275,"claims":106,"tests":1006}
 ```
 
 ## What the installed package got wrong
@@ -90,3 +90,9 @@ Sources fetched2026-10-07: [Studio file reference](https://en.doc.boardgamearena
 Merged PR34/main `4b2ef3f` fails seven new regressions because physical table registration can replace an alias, duplicate bindings silently select an owner and self-joins use distinct table count instead of reference count. The bounded correction registers only a reference's binding name, refuses ambiguous ownership, retains all qualifier tokens without treating them as columns and uses reference count for bare-column attribution. Existing quoted-value scrubbing also precedes binding/qualified-reference discovery so private SQL data does not become reference evidence. Original table inventory, raw names and public output shape are preserved.
 
 `UNIT-DATABASE-ALIAS-BINDINGS` and installed `E2E-DATABASE-ALIAS-BINDINGS` cover explicit/implicit/quoted aliases, reversed source order, exact/case-only competing names, self joins, unsupported unbound qualifiers/wildcards, private value strings, genuine missing columns, downstream tools/resources, repeated calls, root refusal and immutable project bytes. [The source receipt](bga445-source-ci.json) retains exact implementation and artifact identities plus actual CI/admission as collected. This does not certify SQL validity, target settings, qualified wildcard usage, dynamic tails or execution. The official [BGA main game logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), [MySQL JOIN](https://dev.mysql.com/doc/refman/8.0/en/join.html), [SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html) and [case-sensitivity](https://dev.mysql.com/doc/refman/8.0/en/identifier-case-sensitivity.html) pages were read before implementation; they distinguish table references, their aliases, result aliases, string data and runtime-dependent casing.
+
+## BGA-446 qualified wildcard usage — 2026-10-19
+
+Merged PR35/main `927674c` fails six new regressions, including the installed public command, because a bound `c.*` does not count any columns as used. The reader now retains private uniquely bound wildcard table provenance. The unused-column heuristic applies visible declared columns on those tables only, preserving unrelated unused columns, explicit missing references, ambiguity holds and declared invisible columns. Wildcard metadata never appears as a new query field or synthetic explicit column.
+
+`UNIT-DATABASE-QUALIFIED-WILDCARDS` and installed `E2E-DATABASE-QUALIFIED-WILDCARDS` cover three layouts, mixed/quoted/DISTINCT/multiple/self-join forms, multiple PHP sources, genuine defects, unknown/case-dependent bindings, privacy, repeat/refusal/immutability and process exit. [The receipt](bga446-source-ci.json) retains actual source, archive, regressions, CI and admission identities. The official [BGA main logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), [MySQL SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html) and [invisible columns](https://dev.mysql.com/doc/refman/8.0/en/invisible-columns.html) pages were read first. This does not certify SQL validity/execution, runtime visibility/migrations, all lexical modes or unqualified wildcard scope.

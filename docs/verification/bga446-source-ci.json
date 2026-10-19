@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "item": "BGA-446",
+  "baseMain": "927674c1ed4111a8b98dd1e1d244ce3383f56bd7",
+  "status": "Full integrated gate and installed comparison pass; clean exact-source CI and refreshed admission pending",
+  "scope": "Uniquely bound qualified SELECT wildcards use only visible declared columns on referenced tables; public shapes preserved",
+  "originalRegression": {
+    "source": "927674c1ed4111a8b98dd1e1d244ce3383f56bd7",
+    "testsFailed": 6,
+    "testsPassed": 19,
+    "installedPublicRegressionFailed": true
+  },
+  "sourceCi": null,
+  "frameworkAdmission": null,
+  "delivery": {
+    "draftPR": null,
+    "noMergeReleaseDeploymentPublication": true,
+    "dinoRacerNotModified": true
+  },
+  "limits": [
+    "Qualified wildcard subset only; unqualified wildcard global suppression remains separate",
+    "No runtime schema/migration/SQL execution or general grammar certification",
+    "Original signed release unchanged; exact artifact/client/security approval does not transfer"
+  ],
+  "affectedTests": {
+    "passed": 26,
+    "failed": 0,
+    "files": 2,
+    "scope": "Final focused regression after visibility hardening; integrated gate covers all affected suites"
+  },
+  "fullGate": {
+    "source": {
+      "commit": "927674c1ed4111a8b98dd1e1d244ce3383f56bd7",
+      "clean": false
+    },
+    "tests": {
+      "files": 124,
+      "total": 1006,
+      "passed": 1006,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 275,
+      "passed": 275,
+      "failed": 0,
+      "missing": 0
+    },
+    "exitCode": 0,
+    "note": "Local full gate ran before committing implementation; actual dirty base identity is retained. Clean implementation-source proof will come from exact-source CI."
+  },
+  "artifactDigest": "sha256:9579050b7f90e6d11e171a63a987c5ab500ec244df6d64fa5c872d88f214a02c",
+  "earlierAffectedTests": {
+    "passed": 109,
+    "failed": 0,
+    "files": 7,
+    "scope": "Before additional visibility-identifier control"
+  },
+  "installedComparison": {
+    "capturedAt": "2026-10-19T00:45:06.143Z",
+    "game": {
+      "commit": "83e2e50eeab36cb3f7296df96f965a358e4c63cd",
+      "digest": "sha256:2fe9e0c95e27e7222b678d2a6bd1c1f9b1565f2a333bb299f10463a19ab0983f",
+      "files": 159,
+      "excludedMetadata": ".git",
+      "unchanged": true
+    },
+    "allTenResponsesDeeplyEqual": true,
+    "rows": [
+      {
+        "runtime": "baseline",
+        "archiveDigest": "sha256:645b403fdd1a985ccf7adc7d0e9a3f67a37486ae2e962f67ab967d914824f672",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "tools": 7,
+        "resources": 3,
+        "repeat": true,
+        "rootRefusal": true,
+        "stderrEmpty": true,
+        "processExit": true
+      },
+      {
+        "runtime": "corrected",
+        "archiveDigest": "sha256:9579050b7f90e6d11e171a63a987c5ab500ec244df6d64fa5c872d88f214a02c",
+        "counts": {
+          "passed": 3,
+          "failed": 0,
+          "unsupported": 30,
+          "manual-required": 8
+        },
+        "queries": 1,
+        "tools": 7,
+        "resources": 3,
+        "repeat": true,
+        "rootRefusal": true,
+        "stderrEmpty": true,
+        "processExit": true
+      }
+    ],
+    "installedWildcardControl": [
+      {
+        "runtime": "baseline",
+        "archiveDigest": "sha256:645b403fdd1a985ccf7adc7d0e9a3f67a37486ae2e962f67ab967d914824f672",
+        "codes": ["database.column.unused", "database.column.unused"]
+      },
+      {
+        "runtime": "corrected",
+        "archiveDigest": "sha256:9579050b7f90e6d11e171a63a987c5ab500ec244df6d64fa5c872d88f214a02c",
+        "codes": []
+      }
+    ],
+    "limits": "Read-only current checkout and original synthetic fixture; no runtime gameplay or historical frozen-snapshot claim."
+  },
+  "sourceObservations": {
+    "count": 8,
+    "allDigestsUnchangedFromMergedPR35": true
+  }
+}

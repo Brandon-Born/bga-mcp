@@ -7,6 +7,135 @@ function audit(schema: string, php: string) {
   ]);
 }
 
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] counts only the bound wildcard table as used', () => {
+  for (const [selection, from] of [
+    ['c.*', 'card c'],
+    ['c.*', 'card AS c'],
+    ['`c`.*', '`card` AS `c`'],
+    ['DISTINCT c.*', 'card c'],
+    ['card.*', 'card'],
+    ['token.*', 'card token JOIN token t ON token.card_id = t.token_id'],
+    ['c.*, d.card_id', 'card c JOIN card d ON c.card_id = d.card_id'],
+    ['c.*, c.*', 'card c'],
+  ] as const) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (token_id INT, spare INT);',
+      `<?php self::DbQuery("SELECT ${selection} FROM ${from}");`,
+    );
+    expect(result.diagnostics.summary.unsupported).toBe(0);
+    expect(result.diagnostics.findings.map((f) => f.message)).toEqual(
+      expect.arrayContaining([expect.stringContaining('token.spare')]),
+    );
+    expect(result.diagnostics.findings.some((f) => f.message.includes('card.label'))).toBe(false);
+    expect(result.queries[0]?.columns.some((c) => c.includes('*'))).toBe(false);
+    expect(Object.keys(result.queries[0] ?? {}).sort()).toEqual([
+      'columns',
+      'interpolated',
+      'source',
+      'tables',
+      'text',
+    ]);
+  }
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] combines bound wildcards across tables and PHP sources', () => {
+  const schema = {
+    path: 'dbmodel.sql',
+    text: 'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (token_id INT, spare INT);',
+  };
+  for (const sources of [
+    [
+      {
+        path: 'Game.php',
+        text: '<?php self::DbQuery("SELECT c.*, t.* FROM card c JOIN token t ON c.card_id=t.token_id");',
+      },
+    ],
+    [
+      { path: 'Game.php', text: '<?php self::DbQuery("SELECT c.* FROM card c");' },
+      { path: 'Other.php', text: '<?php self::DbQuery("SELECT t.* FROM token t");' },
+    ],
+  ])
+    expect(auditDatabaseUsage(schema, sources).diagnostics.findings).toEqual([]);
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] retains explicit missing-column and missing-table defects', () => {
+  const result = audit(
+    'CREATE TABLE card (card_id INT, label VARCHAR(20));',
+    '<?php self::DbQuery("SELECT c.*, c.missing FROM card c"); self::DbQuery("SELECT a.* FROM absent a");',
+  );
+  expect(result.diagnostics.findings.map((f) => f.code)).toEqual([
+    'database.column.undeclared',
+    'database.table.undeclared',
+  ]);
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] refuses unknown, duplicate and case-dependent wildcard bindings', () => {
+  for (const query of [
+    'SELECT c.* FROM card d',
+    'SELECT c.* FROM card c JOIN token c',
+    'SELECT c.* FROM card c JOIN token C',
+    'SELECT card.* FROM card c',
+    'SELECT c.* AS result FROM card c',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+      `<?php self::DbQuery("${query}");`,
+    );
+    expect(result.diagnostics.summary.unsupported).toBeGreaterThan(0);
+    expect(result.diagnostics.findings.every((f) => f.code === 'database.unsupported-syntax')).toBe(
+      true,
+    );
+  }
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] does not treat COUNT or quoted wildcard text as column usage', () => {
+  for (const query of [
+    'SELECT COUNT(*) FROM card',
+    "SELECT card_id FROM card WHERE card_id = 'private_wildcard_canary.*'",
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT, label VARCHAR(20));',
+      `<?php self::DbQuery("${query}");`,
+    );
+    expect(result.diagnostics.findings.some((f) => f.message.includes('card.label'))).toBe(true);
+    expect(JSON.stringify(result)).not.toContain('private_wildcard_canary');
+  }
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] excludes declared invisible columns from wildcard usage', () => {
+  const result = audit(
+    "CREATE TABLE card (card_id INT, hidden INT INVISIBLE, label VARCHAR(20) DEFAULT 'INVISIBLE');",
+    '<?php self::DbQuery("SELECT c.* FROM card c");',
+  );
+  expect(result.diagnostics.findings.map((f) => f.message)).toEqual([
+    expect.stringContaining('card.hidden'),
+  ]);
+  expect(
+    audit(
+      'CREATE TABLE card (card_id INT, hidden INT INVISIBLE);',
+      '<?php self::DbQuery("SELECT c.*, c.hidden FROM card c");',
+    ).diagnostics.findings,
+  ).toEqual([]);
+});
+
+it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] separates INVISIBLE attributes from identifiers and expressions', () => {
+  for (const schema of [
+    'CREATE TABLE card (`invisible` INT, checked INT CHECK (`invisible` > 0));',
+    'CREATE TABLE card (invisible INT, checked INT CHECK (invisible > 0));',
+    'CREATE TABLE card (card_id INT CONSTRAINT invisible CHECK (card_id > 0));',
+    'CREATE TABLE card (card_id INT REFERENCES invisible (id));',
+  ])
+    expect(
+      audit(schema, '<?php self::DbQuery("SELECT c.* FROM card c");').diagnostics.findings,
+    ).toEqual([]);
+  expect(
+    audit(
+      'CREATE TABLE card (card_id INT, hidden INT REFERENCES `other` (id) INVISIBLE);',
+      '<?php self::DbQuery("SELECT c.* FROM card c");',
+    ).diagnostics.findings.map((f) => f.message),
+  ).toEqual([expect.stringContaining('card.hidden')]);
+});
+
 it('[UNIT-DATABASE-ALIAS-BINDINGS] resolves an alias matching another physical table without source-order dependence', () => {
   for (const from of [
     'card AS token JOIN token AS t',
