@@ -665,7 +665,7 @@ function readSelectList(
   for (const rawItem of splitColumns(list, signal)) {
     cancellationCheckpoint(signal);
     const item = rawItem.trim();
-    if (item === '' || item === '*') continue;
+    if (item === '') continue;
     const alias = /^(.*?)(?:\s+AS\s+|\s+)([`"]?)([A-Za-z_]\w*)\2\s*$/iu.exec(item);
     const expression = (alias?.[1] ?? item).trim();
     const wildcard = /^(?:([`"]?)([A-Za-z_]\w*)\1\s*\.\s*)?\*$/u.exec(expression);
@@ -678,6 +678,18 @@ function readSelectList(
         unsupported.push(
           `SELECT wildcard uses an unknown or ambiguous table qualifier '${qualifier}'`,
         );
+      } else if (qualifier === undefined) {
+        if (list.trim() !== '*') {
+          unsupported.push('an unqualified SELECT wildcard mixed with other expressions');
+        } else {
+          // A single unqualified * selects the visible columns of this query's
+          // FROM/JOIN tables, not every table declared anywhere in the schema.
+          // https://dev.mysql.com/doc/refman/8.0/en/select.html
+          for (const name of structure.tables) {
+            cancellationCheckpoint(signal);
+            wildcardTables.add(name);
+          }
+        }
       } else if (table !== undefined) {
         // MySQL SELECT: tbl_name.* selects the named table's visible columns.
         // Retain table provenance, not invented explicit column references.

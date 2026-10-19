@@ -12,6 +12,94 @@ import {
 type Database = ReturnType<typeof AuditDatabaseUsageOutputSchema.parse>;
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 
+it('[E2E-DATABASE-UNQUALIFIED-WILDCARDS] scopes star accounting through installed tools and layouts', async () => {
+  const server = await installPackagedServer('unqualified-wildcards', {
+    modern: 'modern',
+    legacy: 'legacy',
+    hybrid: 'hybrid',
+  });
+  try {
+    for (const [layout, root] of Object.entries(server.projects)) {
+      const php = resolve(
+        root,
+        layout === 'legacy' ? 'bgamcplegacy.game.php' : 'modules/php/Game.php',
+      );
+      const original = (await readFile(php, 'utf8')).replace(
+        /\b(?:DbQuery|getObjectListFromDB)\b/gu,
+        'fixtureExample',
+      );
+      await writeFile(
+        resolve(root, 'dbmodel.sql'),
+        'CREATE TABLE card (card_id INT, label VARCHAR(20), hidden INT INVISIBLE); CREATE TABLE token (token_id INT, spare INT);',
+      );
+      const session = await withPublicPackagedServer(
+        server,
+        ['--project-root', root],
+        async (client) => {
+          for (const [query, expected] of [
+            ['SELECT * FROM card c', ['card.hidden', 'token.token_id', 'token.spare']],
+            ['SELECT DISTINCT * FROM card c JOIN token t ON c.card_id=t.token_id', ['card.hidden']],
+            [
+              "SELECT * FROM card c JOIN token t ON c.card_id=t.token_id WHERE c.label='private-star-canary';",
+              ['card.hidden'],
+            ],
+          ] as const) {
+            await writeFile(php, original + `\nself::DbQuery("${query}");`);
+            const before = await digestDirectory(root);
+            const result = await callTool<Database>(client, 'audit_database_usage', {});
+            const db = AuditDatabaseUsageOutputSchema.parse(result.structured);
+            expect(result.isError).toBe(false);
+            expect(db.diagnostics.summary.unsupported).toBe(0);
+            expect(db.diagnostics.findings).toHaveLength(expected.length);
+            for (const name of expected)
+              expect(db.diagnostics.findings.some((f) => f.message.includes(name))).toBe(true);
+            expect(JSON.stringify(result)).not.toContain('private-star-canary');
+            expect(await callTool<Database>(client, 'audit_database_usage', {})).toEqual(result);
+            const aggregate = await callTool<{ diagnostics: Database['diagnostics'] }>(
+              client,
+              'validate_project',
+              { groups: ['database'] },
+            );
+            expect(aggregate.structured?.diagnostics.findings).toEqual(db.diagnostics.findings);
+            const pre = await callTool<Audit>(client, 'run_pre_release_audit', {});
+            expect(
+              pre.structured?.checks.find((c) => c.id === 'database.column.unused')?.outcome,
+            ).toBe('failed');
+            const resource = JSON.stringify(
+              await client.readResource({ uri: 'bga://project/diagnostics' }),
+            );
+            expect(resource).toContain('database.column.unused');
+            expect(resource).not.toContain('private-star-canary');
+            expect(await digestDirectory(root)).toBe(before);
+          }
+          await writeFile(
+            php,
+            original +
+              '\nself::DbQuery("SELECT * FROM card c JOIN token t ON c.card_id=t.token_id"); self::DbQuery("SELECT hidden FROM card");',
+          );
+          expect(
+            (await callTool<Database>(client, 'audit_database_usage', {})).structured?.diagnostics
+              .findings,
+          ).toEqual([]);
+          await writeFile(php, original + '\nself::DbQuery("SELECT *, card_id FROM card");');
+          const held = await callTool<Audit>(client, 'run_pre_release_audit', {});
+          expect(
+            held.structured?.checks.find((c) => c.id === 'database.column.unused')?.outcome,
+          ).toBe('unsupported');
+          const outside = await callTool(client, 'audit_database_usage', {
+            projectRoot: server.temporaryRoot,
+          });
+          expect(outside.isError).toBe(true);
+          expect(outside.text).toContain('policy.root.not-allowed');
+        },
+      );
+      expect(session.stderr).toBe('');
+    }
+  } finally {
+    await server.cleanup();
+  }
+});
+
 it('[E2E-DATABASE-QUALIFIED-WILDCARDS] preserves scoped wildcard usage in installed consumers and layouts', async () => {
   const server = await installPackagedServer('qualified-wildcards', {
     modern: 'modern',

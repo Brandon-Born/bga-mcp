@@ -7,6 +7,99 @@ function audit(schema: string, php: string) {
   ]);
 }
 
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] limits star usage to the query tables including DISTINCT', () => {
+  for (const query of [
+    'SELECT * FROM card',
+    'SELECT * FROM card c',
+    'SELECT DISTINCT * FROM card c',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (spare INT);',
+      `<?php self::DbQuery("${query}");`,
+    );
+    expect(result.diagnostics.findings.map((f) => f.message)).toEqual([
+      expect.stringContaining('token.spare'),
+    ]);
+    expect(result.queries[0]?.columns).toEqual([]);
+  }
+});
+
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] covers joined and self-joined tables without hiding a third table', () => {
+  for (const from of [
+    'card c JOIN token t ON c.card_id=t.token_id',
+    'card c JOIN card d ON c.card_id=d.card_id',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (token_id INT); CREATE TABLE untouched (spare INT);',
+      `<?php self::DbQuery("SELECT * FROM ${from}");`,
+    );
+    expect(result.diagnostics.findings.some((f) => f.message.includes('untouched.spare'))).toBe(
+      true,
+    );
+    expect(result.diagnostics.findings.some((f) => f.message.includes('card.label'))).toBe(false);
+  }
+});
+
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] excludes invisible columns and combines explicit usage across queries', () => {
+  const schema = 'CREATE TABLE card (card_id INT, hidden INT INVISIBLE);';
+  expect(
+    audit(schema, '<?php self::DbQuery("SELECT * FROM card");').diagnostics.findings.map(
+      (f) => f.message,
+    ),
+  ).toEqual([expect.stringContaining('card.hidden')]);
+  expect(
+    audit(
+      schema,
+      '<?php self::DbQuery("SELECT * FROM card"); self::DbQuery("SELECT hidden FROM card");',
+    ).diagnostics.findings,
+  ).toEqual([]);
+});
+
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] preserves unknown mixed stars and ambiguous bindings', () => {
+  for (const query of [
+    'SELECT *, c.card_id FROM card c',
+    'SELECT c.card_id, * FROM card c',
+    'SELECT * AS result FROM card c',
+    'SELECT * FROM card c JOIN token c',
+  ]) {
+    const result = audit(
+      'CREATE TABLE card (card_id INT); CREATE TABLE token (token_id INT);',
+      `<?php self::DbQuery("${query}");`,
+    );
+    expect(result.diagnostics.summary.unsupported).toBeGreaterThan(0);
+    expect(result.diagnostics.findings.every((f) => f.code === 'database.unsupported-syntax')).toBe(
+      true,
+    );
+  }
+});
+
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] retains genuine defects and COUNT semantics', () => {
+  const schema = 'CREATE TABLE card (card_id INT, spare INT);';
+  const count = audit(schema, '<?php self::DbQuery("SELECT COUNT(*) FROM card");');
+  expect(
+    count.diagnostics.findings.filter((f) => f.code === 'database.column.unused'),
+  ).toHaveLength(2);
+  const broken = audit(
+    schema,
+    '<?php self::DbQuery("SELECT * FROM card"); self::DbQuery("SELECT missing FROM card"); self::DbQuery("SELECT * FROM absent");',
+  );
+  expect(broken.diagnostics.findings.map((f) => f.code)).toEqual([
+    'database.column.undeclared',
+    'database.table.undeclared',
+  ]);
+});
+
+it('[UNIT-DATABASE-UNQUALIFIED-WILDCARDS] keeps quoted wildcard-looking data private and inert', () => {
+  const result = audit(
+    'CREATE TABLE card (card_id INT, label VARCHAR(20)); CREATE TABLE token (spare INT);',
+    '<?php self::DbQuery("SELECT card_id FROM card WHERE label=\'private-star-canary SELECT * FROM token\'");',
+  );
+  expect(result.diagnostics.findings.map((f) => f.message)).toEqual([
+    expect.stringContaining('token.spare'),
+  ]);
+  expect(JSON.stringify(result)).not.toContain('private-star-canary');
+});
+
 it('[UNIT-DATABASE-QUALIFIED-WILDCARDS] counts only the bound wildcard table as used', () => {
   for (const [selection, from] of [
     ['c.*', 'card c'],

@@ -3,7 +3,7 @@
 Recorded: 2026-08-09. Covers BGA-127, the correctness owner for the database finding of the [2026-08-08 installed-package adversarial review](ADVERSARIAL_REVIEW_2026-08-08.md).
 
 ```verification-record
-{"kind":"run","capabilities":17,"scenarios":275,"claims":106,"tests":1006}
+{"kind":"run","capabilities":17,"scenarios":277,"claims":106,"tests":1014}
 ```
 
 ## What the installed package got wrong
@@ -96,3 +96,7 @@ Merged PR34/main `4b2ef3f` fails seven new regressions because physical table re
 Merged PR35/main `927674c` fails six new regressions, including the installed public command, because a bound `c.*` does not count any columns as used. The reader now retains private uniquely bound wildcard table provenance. The unused-column heuristic applies visible declared columns on those tables only, preserving unrelated unused columns, explicit missing references, ambiguity holds and declared invisible columns. Wildcard metadata never appears as a new query field or synthetic explicit column.
 
 `UNIT-DATABASE-QUALIFIED-WILDCARDS` and installed `E2E-DATABASE-QUALIFIED-WILDCARDS` cover three layouts, mixed/quoted/DISTINCT/multiple/self-join forms, multiple PHP sources, genuine defects, unknown/case-dependent bindings, privacy, repeat/refusal/immutability and process exit. [The receipt](bga446-source-ci.json) retains actual source, archive, regressions, CI and admission identities. The official [BGA main logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php), [MySQL SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html) and [invisible columns](https://dev.mysql.com/doc/refman/8.0/en/invisible-columns.html) pages were read first. This does not certify SQL validity/execution, runtime visibility/migrations, all lexical modes or unqualified wildcard scope.
+
+## BGA-447 unqualified wildcard accounting — 2026-10-19
+
+Merged PR36/main `3b2e51a` fails five new regressions, including the installed command. A global raw-text SELECT-star condition hides unused columns on unrelated tables and invisible columns, while DISTINCT-star misses the condition. The single supported unqualified wildcard now supplies the existing private table provenance, and the heuristic uses only visible declared columns of the query's bounded FROM/JOIN tables. COUNT, unknown grammar, genuine defects, privacy and public query shapes are retained. `UNIT-DATABASE-UNQUALIFIED-WILDCARDS` and installed `E2E-DATABASE-UNQUALIFIED-WILDCARDS` cover three layouts and downstream consumers. [The receipt](bga447-source-ci.json) retains actual source/archive/CI/admission identities. Official [BGA main logic](https://en.doc.boardgamearena.com/Main_game_logic:_Game.php) and [MySQL SELECT](https://dev.mysql.com/doc/refman/8.0/en/select.html) were read first. Multi-statement/set-operation scope, arbitrary grammar, runtime SQL and migrations remain outside this correction.

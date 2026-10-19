@@ -67,3 +67,9 @@ If BGA changes invalidate a claim, publication of the affected release is frozen
 - **MCP-VERSIONING:** [MCP Versioning](https://modelcontextprotocol.io/docs/learn/versioning) defines date-based incompatible revisions and says client and server “MUST agree on a single version” for a session.
 - **BGA-FILE-REFERENCE:** [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) labels `states.inc.php` deprecated while documenting State classes, and says a production database change “requires migration.”
 - **BGA-MIGRATION:** [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) describes migrating older projects one file or construct at a time and says an old file can be safely deleted only after its replacement is ready.
+
+## rc.8 first-stable candidate metadata preservation
+
+No stable 1.0.0 contract is published yet. The required security update advances the maintained reference test client from 2.0.0 to patched 2.2.0. Preserve the exact previous candidate snapshot at `config/contracts/history/1.0.0-rc.7.json`, then explicitly revise only that reference-client identity in the unpublished current 1.0.0 candidate snapshot. Every package/tool/resource/schema/export/transport fingerprint and every other compatibility row remains identical. Signed rc.7 bytes and historical support observations remain immutable.
+
+This follows the existing pre-stable rc.2 snapshot-archival process. The carry-forward test verifies both snapshots are candidates, their target version is unchanged, and the only identity difference is the declared test client. It also checks that the ordinary classifier still treats changing a supported identity as a major boundary for a stable contract. No stable support/deprecation rule, schema version, contract comparison or test assertion is waived. Actual publication and candidate-specific security approval remain separate decisions.
