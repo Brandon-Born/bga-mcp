@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-20T13:14:17.105408+00:00",
+  "owner": "BGA-404",
+  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.10.json",
+  "candidateTag": "v1.0.0-rc.10",
+  "candidateSourceCommit": "646de4671974b163a7447b1e0647119091109643",
+  "originalArtifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+  "signer": {
+    "repository": "Brandon-Born/bga-mcp",
+    "workflow": ".github/workflows/release-signing.yml",
+    "commit": "de8cbf32b2bcd25928a4b511d794e986c75a7025",
+    "ref": "refs/heads/main",
+    "issuer": "https://token.actions.githubusercontent.com",
+    "hostedRunnersOnly": true
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39426843155",
+    "conclusion": "success",
+    "attempt": 1,
+    "dispatchCount": 1,
+    "jobs": ["prepare", "sign", "verify"],
+    "artifactId": 12266606753,
+    "artifactName": "signed-candidate-39426843155",
+    "archiveDigest": "sha256:57fc3c1fc3d741f88df6c6a1d9a7677a3ba5e1d9fc450ae22931fa244a2ab2fc",
+    "expiresAt": "2027-01-18T13:01:01Z"
+  },
+  "attestation": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/attestations/57794948",
+    "id": 57794948,
+    "predicateType": "https://github.com/Brandon-Born/bga-mcp/predicates/release-candidate/v1",
+    "signedSubjects": 7,
+    "bundleDigest": "sha256:d93a008efa78c73d92f0777d71244b04f462566e73f0f222b6a15ed2a0612b96",
+    "predicateCopyDigest": "sha256:a2140461968ff76c9ef58e33403130c49c1e5eb29106aba2db7e3a1d88e9efbd",
+    "transparencyLogEntries": [
+      {
+        "logIndex": "3337497737",
+        "integratedTime": "1792501507",
+        "logId": {
+          "keyId": "wNI9atQGlz+VWfO6LRygH4QUfY/8W4RFwiT5i5WRgB0="
+        }
+      }
+    ]
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39330471345",
+    "commit": "de8cbf32b2bcd25928a4b511d794e986c75a7025",
+    "conclusion": "success",
+    "independentlyValidatedJobs": 6
+  },
+  "originalFilesUnchanged": 7,
+  "hostedVerification": {
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.10",
+    "candidateCommit": "646de4671974b163a7447b1e0647119091109643",
+    "originalArtifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+    "signerCommit": "de8cbf32b2bcd25928a4b511d794e986c75a7025",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false
+  },
+  "independentMacVerification": {
+    "schemaVersion": 1,
+    "candidateTag": "v1.0.0-rc.10",
+    "candidateCommit": "646de4671974b163a7447b1e0647119091109643",
+    "originalArtifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+    "signerCommit": "de8cbf32b2bcd25928a4b511d794e986c75a7025",
+    "signature": "verified",
+    "provenance": "matched reviewed candidate and original producer",
+    "modifiedArtifact": "refused by cryptographic verifier",
+    "wrongSignerCommit": "refused",
+    "wrongSignerWorkflow": "refused",
+    "independentTrustedRootDigest": "sha256:65ca537f6ed8a47fd0e560c421baa1f6c1efb8b25fc200d8c5c02c0e92eb2b9c",
+    "freshInstall": "passed",
+    "firstUse": "passed",
+    "projectUnchanged": true,
+    "serverExited": true,
+    "removal": "passed",
+    "rebuilt": false,
+    "published": false
+  },
+  "termsUsed": {
+    "service": "Sigstore public-good keyless attestation used through the pinned GitHub actions/attest workflow",
+    "hostedToolsTerms": "https://lfprojects.org/policies/hosted-project-tools-terms-of-use/",
+    "immutableRecordNotice": "https://lfprojects.org/policies/hosted-project-tools-immutable-records/",
+    "privacyPolicy": "https://lfprojects.org/policies/privacy-policy/",
+    "termsVersion": "1.0; last updated February 21, 2023",
+    "noticeVersion": "1.0; last updated February 21, 2023",
+    "materialChangeFoundAtPreflight": false,
+    "serviceUseOccurred": true,
+    "acceptanceMechanism": "Use of the signing service, as described by the hosted-service terms; no separate interactive acceptance prompt was presented",
+    "submittedMetadata": "Short-lived workflow identity/certificate, seven original subject names/hashes and reviewed source/producer/CI/archive/candidate retention predicate; public GitHub attestation and immutable Rekor log",
+    "submittedMetadataScope": "Not a package or release publication. Registry push and storage-record creation remained disabled."
+  },
+  "published": false,
+  "scope": "Actual signing evidence retained outside the repository. No signed-security/native-client/publication approval is conferred or selected by repository configuration."
+}

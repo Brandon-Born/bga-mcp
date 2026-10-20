@@ -574,7 +574,13 @@
         "docs/verification/rc9-unsigned-independent-review.json",
         "docs/verification/release-candidate-v1.0.0-rc.10.json",
         "docs/verification/rc10-unsigned-independent-review.json",
-        "docs/verification/RC10_SIGNING_PREPARATION.md"
+        "docs/verification/RC10_SIGNING_PREPARATION.md",
+        "docs/verification/release-signing-v1.0.0-rc.10.json",
+        "docs/verification/security-review-plan-v1.0.0-rc.8-rejected.json",
+        "docs/verification/security-review-v1.0.0-rc.10-preparation.json",
+        "docs/verification/install-guide-v1.0.0-rc.10-signed.json",
+        "docs/verification/codex-client-v1.0.0-rc.10.json",
+        "docs/verification/RC10_PUBLICATION_PREPARATION.md"
       ]
     }
   ],

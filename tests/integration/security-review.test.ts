@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
@@ -16,7 +16,12 @@ import {
 } from '../../scripts/lib/security-review.js';
 const root = resolve(import.meta.dirname, '../..');
 const plan = SecurityReviewPlanSchema.parse(
-  JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
+  JSON.parse(
+    await readFile(
+      resolve(root, 'docs/verification/security-review-plan-v1.0.0-rc.8-rejected.json'),
+      'utf8',
+    ),
+  ),
 );
 // A synthetic complete signed-plan control explicitly has no pending unsigned target.
 const { publicationHold: _hold, pendingUnsignedCandidate: _pending, ...unblockedPlan } = plan;
@@ -94,6 +99,11 @@ it('[GATE-SECURITY-REVIEW] refuses changed, omitted or differently bound evidenc
   const selectedApproval = SecurityReviewSchema.parse(
     JSON.parse(await readFile(resolve(root, selection.reviewReceipt), 'utf8')),
   );
+  const currentPlan = SecurityReviewPlanSchema.parse(
+    JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
+  );
+  expect(verifyReviewRecord(selectedApproval, currentPlan).failures).toEqual([]);
+  expect(verifyReviewRecord(actual, currentPlan).failed).toBe(true);
   const selectedResult = verifyReviewApproval(
     selectedApproval,
     plan,
@@ -285,12 +295,20 @@ it('[INT-SECURITY-REVIEW-APPROVAL] keeps unsigned replacement held even if the h
   ]);
   const scratch = await mkdtemp(resolve(tmpdir(), 'bga-pending-review-'));
   try {
+    // Exercise the real runner with the retained pending plan in an isolated
+    // checkout shape; current signed selection must not erase this refusal.
+    await cp(resolve(root, 'scripts'), resolve(scratch, 'scripts'), { recursive: true });
+    await cp(resolve(root, 'src'), resolve(scratch, 'src'), { recursive: true });
+    await mkdir(resolve(scratch, 'config'));
+    await writeFile(resolve(scratch, 'config/security-review.json'), JSON.stringify(plan));
+    await symlink(resolve(root, 'node_modules'), resolve(scratch, 'node_modules'), 'junction');
+    await writeFile(resolve(scratch, 'package.json'), JSON.stringify({ type: 'module' }));
     await expect(
       promisify(execFile)(
         process.execPath,
         [
           resolve(root, 'node_modules/tsx/dist/cli.mjs'),
-          resolve(root, 'scripts/review-security.ts'),
+          resolve(scratch, 'scripts/review-security.ts'),
         ],
         {
           env: {

@@ -12,8 +12,11 @@ const root = resolve(import.meta.dirname, '..');
 const plan = SecurityReviewPlanSchema.parse(
   JSON.parse(await readFile(resolve(root, 'config/security-review.json'), 'utf8')),
 );
+const selection = JSON.parse(await readFile(resolve(root, 'config/publication.json'), 'utf8')) as {
+  reviewReceipt: string;
+};
 const review = JSON.parse(
-  await readFile(resolve(root, 'docs/verification/security-review-v1.0.0-rc.8.json'), 'utf8'),
+  await readFile(resolve(root, selection.reviewReceipt), 'utf8'),
 ) as SecurityReview;
 const record = verifyReviewRecord(review, plan);
 if (plan.pendingUnsignedCandidate !== undefined) {

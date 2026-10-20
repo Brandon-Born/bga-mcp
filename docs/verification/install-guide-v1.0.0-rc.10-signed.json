@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "packageVersion": "1.0.0-rc.10",
+  "guideDigest": "sha256:cf15a4e4b79acdacfb7028de7fd2ed62f08e9d3ac60f5608b560f2211cc532ff",
+  "artifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+  "platform": "darwin",
+  "node": "v22.17.1",
+  "install": "passed",
+  "discovery": "matched installed inventory",
+  "firstUse": "passed",
+  "unconfiguredRoot": "refused",
+  "repeatInstall": "passed",
+  "crossVersionUpgrade": "not evaluated: repeated same candidate",
+  "projectUnchanged": true,
+  "serverExited": true,
+  "removal": "passed",
+  "candidateCommit": "646de4671974b163a7447b1e0647119091109643",
+  "candidateTag": "v1.0.0-rc.10",
+  "signaturePrerequisite": "independent BGA-404 verification required",
+  "rebuilt": false
+}
