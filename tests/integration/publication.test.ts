@@ -305,19 +305,39 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
   );
   const read = async (path: string): Promise<unknown> =>
     JSON.parse(await readFile(resolve(root, path), 'utf8')) as unknown;
-  const receipts = {
+  const selectedReceipts = {
     installation: await read(config.prerequisites.installation),
     client: await read(config.prerequisites.client),
     evidence: await read(config.prerequisites.evidence),
     usefulness: await read(config.prerequisites.usefulness),
   };
-  const review = object(await read(config.reviewReceipt));
+  const selectedReview = object(await read(config.reviewReceipt));
+  const currentGuideDigest = sha256(await readFile(resolve(root, 'docs/INSTALL.md')));
+  expect(() =>
+    verifyPublicationPrerequisites(
+      selectedReceipts,
+      object(selectedReview.candidate) as {
+        tag: string;
+        sourceCommit: string;
+        artifactDigest: string;
+      },
+      currentGuideDigest,
+    ),
+  ).toThrow();
+  // Preserve the complete authentic historical positive control separately
+  // from the intentionally incomplete current rc.10 prerequisite selection.
+  const receipts = {
+    installation: await read('docs/verification/install-guide-v1.0.0-rc.7-signed.json'),
+    client: await read('docs/verification/codex-client-v1.0.0-rc.7.json'),
+    evidence: await read('docs/verification/release-evidence-v1.0.0-rc.7.json'),
+    usefulness: await read('docs/verification/agent-evaluation-v1.0.0-rc.7.json'),
+  };
+  const review = object(await read('docs/verification/security-review-v1.0.0-rc.7-clean.json'));
   const reviewed = object(review.candidate) as {
     tag: string;
     sourceCommit: string;
     artifactDigest: string;
   };
-  const currentGuideDigest = sha256(await readFile(resolve(root, 'docs/INSTALL.md')));
   // Authenticate the historical guide from the original source, without rewriting
   // a retained receipt to claim the new root-authority instructions were tested.
   const originalGuide = await runCommand(

@@ -276,7 +276,9 @@ type Mutable<T> = {
 type MutableEvidence = Mutable<Evidence>;
 
 it('[INT-RELEASE-EVIDENCE-PACKET] refuses live evidence publication for a rejected candidate while retaining offline historical verification', async () => {
-  const review = await load<{ publicationHold?: unknown }>('config/security-review.json');
+  const review = await load<{ publicationHold?: unknown }>(
+    'docs/verification/security-review-plan-v1.0.0-rc.8-rejected.json',
+  );
   expect(() => assertEvidencePublicationAllowed(review)).toThrow('Candidate publication blocked');
   expect(() => assertEvidencePublicationAllowed({})).not.toThrow();
   for (const publicationHold of ['', null, false, 'rejected'])

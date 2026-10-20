@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
   "owner": "BGA-405",
-  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.8.json",
-  "signingReceipt": "docs/verification/release-signing-v1.0.0-rc.8.json",
+  "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.10.json",
+  "signingReceipt": "docs/verification/release-signing-v1.0.0-rc.10.json",
   "suites": [
     "tests/e2e/release-inventory.test.ts",
     "tests/e2e/read-only-network-off.test.ts",
@@ -27,14 +27,14 @@
     "E2E-POLICY-PARSER-DEADLINE"
   ],
   "reviewedCandidate": {
-    "tag": "v1.0.0-rc.8",
-    "sourceCommit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
-    "artifactDigest": "sha256:fce2a4491d7aa41be0b6d0cb8adcd74bfe998805442d0ec1058d031038e9c91d",
-    "signerCommit": "df04bb9819aa79c55b80d943364ec6ecd0891e77",
+    "tag": "v1.0.0-rc.10",
+    "sourceCommit": "646de4671974b163a7447b1e0647119091109643",
+    "artifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
+    "signerCommit": "de8cbf32b2bcd25928a4b511d794e986c75a7025",
     "auditIdentity": {
-      "commit": "f7cdc3d785ae173cde54ffd6ba65d073fac87b47",
+      "commit": "646de4671974b163a7447b1e0647119091109643",
       "lockDigest": "sha256:e5ce23eedba6b3ad68dc1ae95340f6eeb04f12584be4b3d604da8408f2e5775a",
-      "packageDigest": "sha256:41edd85c8d1decf495ab256aeff50f48725e63cf3ef563044bd9e74b25f40c91",
+      "packageDigest": "sha256:c5a5c22f3e927f24f9e3f110f16fc7cf0a5791cede7d018f363c0277a50876bb",
       "workspaceDigest": "sha256:8d2bdf91ed9203ea00b81d7c5d1c1985fc9facd65db06b4877f8bbe22554edba",
       "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
     }
@@ -52,18 +52,5 @@
     "RR-STUDIO-UNDOCUMENTED-PAGE",
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
-  ],
-  "publicationHold": "SEC-RC8-01 and SEC-RC8-02 reproduced against signed rc.8. Rejected for publication; runtime fixes require a new candidate and signature. See docs/verification/RC8_SECURITY_REJECTION.md.",
-  "pendingUnsignedCandidate": {
-    "tag": "v1.0.0-rc.10",
-    "sourceCommit": "646de4671974b163a7447b1e0647119091109643",
-    "artifactDigest": "sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295",
-    "archiveDigest": "sha256:35e53b55f6235f69ddb6fd8b0165893b0ac36a15f78d5cb3769bf9a04e494c76",
-    "manifestDigest": "sha256:a7ce9edb32a64c7451da66319109b5572a6b902f30af22256eea8e430906fd0f",
-    "producerRun": 39320808831,
-    "producerAttempt": 1,
-    "artifactId": 12220660768,
-    "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.10.json",
-    "unsignedReviewReceipt": "docs/verification/rc10-unsigned-independent-review.json"
-  }
+  ]
 }
