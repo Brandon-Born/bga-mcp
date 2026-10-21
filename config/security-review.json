@@ -52,5 +52,6 @@
     "RR-STUDIO-UNDOCUMENTED-PAGE",
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
-  ]
+  ],
+  "publicationHold": "BGA-454: frozen rc.10 has newly disclosed high GHSA-46jr-4wx8-v453 and GHSA-jm63-cq47-j5jp plus undisposed lower/toolchain findings; preserve signed bytes and require a separately evaluated replacement candidate."
 }

@@ -5,7 +5,7 @@ import { resolve, dirname, relative, sep } from 'node:path';
 import { tmpdir } from 'node:os';
 import { promisify } from 'node:util';
 
-import { runSecurityAudit } from './audit-security.js';
+import { runSecurityAudit, SecurityAuditBlocked } from './audit-security.js';
 import { frameworkReleaseGuard } from './framework-change.js';
 import { readSigningCandidate, verifySignedCandidate } from './release-signing.js';
 import { scanText } from './lib/secret-scan.js';
@@ -108,7 +108,15 @@ async function main(): Promise<void> {
     const rootFile = resolve(scratch, 'trusted-root.jsonl');
     await writeFile(rootFile, roots);
     await verifySignedCandidate(packetRoot, signing.signer.commit, rootFile);
-    const fresh = await runSecurityAudit(sourceRoot);
+    let fresh;
+    try {
+      fresh = await runSecurityAudit(sourceRoot);
+    } catch (error) {
+      // Only a complete, normalized, source-bound report can continue as held evidence.
+      // Registry/configuration failures still abort; approval independently rejects findings.
+      if (!(error instanceof SecurityAuditBlocked)) throw error;
+      fresh = error.result;
+    }
     const originalAudit = await load<{ source: unknown }>(
       resolve(packetRoot, 'security-audit.json'),
     );
@@ -290,9 +298,7 @@ async function main(): Promise<void> {
     const structural = verifyReviewRecord(review, plan);
     if (structural.failed) throw new Error(structural.failures.join('; '));
     const approval = verifyReviewApproval(review, plan);
-    if (process.argv.includes('--approve')) {
-      if (approval.failed)
-        throw new Error(`Security approval held: ${approval.failures.join('; ')}`);
+    if (process.argv.includes('--approve') && !approval.failed) {
       const approved = { ...review, status: 'approved' as const };
       review = { ...approved, integrity: reviewIntegrity(approved) };
     }
@@ -307,6 +313,8 @@ async function main(): Promise<void> {
     process.stdout.write(
       `Exact signed-candidate security assessment retained: ${String(results.numPassedTests)} tests, ${String(plan.requiredScenarios.length)} required security scenarios, ${String(files.size)} scanned text files. Approval ${approval.failed ? 'held' : 'eligible for explicit approval'}; no package rebuilt or published.\n`,
     );
+    if (process.argv.includes('--approve') && approval.failed)
+      throw new Error(`Security approval held: ${approval.failures.join('; ')}`);
   } finally {
     await rm(scratch, { recursive: true, force: true });
   }

@@ -584,7 +584,9 @@
         "docs/verification/security-review-v1.0.0-rc.10-clean.json",
         "docs/verification/agent-evaluation-v1.0.0-rc.10.json",
         "docs/verification/RC10_RELEASE_ADMISSION.md",
-        "docs/verification/release-evidence-v1.0.0-rc.10.json"
+        "docs/verification/release-evidence-v1.0.0-rc.10.json",
+        "docs/verification/security-review-v1.0.0-rc.10-blocked-2026-10-21.json",
+        "config/contracts/history/1.0.0-rc.10.json"
       ]
     }
   ],
