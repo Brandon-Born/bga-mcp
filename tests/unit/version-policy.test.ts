@@ -199,10 +199,21 @@ it('[GATE-VERSION-POLICY] explicitly archives the rejected rc.8 contract before 
   const previous = await loadJson<PublicContractSnapshot>(
     'config/contracts/history/1.0.0-rc.8.json',
   );
-  const current = await loadJson<PublicContractSnapshot>('config/contracts/1.0.0.json');
+  const current = await loadJson<PublicContractSnapshot>(
+    'config/contracts/history/1.0.0-rc.10.json',
+  );
   expect(previous.status).toBe('candidate');
   expect(current.status).toBe('candidate');
   expect(current.packageVersion).toBe(previous.packageVersion);
+  const patched = await loadJson<PublicContractSnapshot>('config/contracts/1.0.0.json');
+  expect(patched).toEqual({
+    ...current,
+    compatibility: current.compatibility.map((claim) =>
+      claim.id === 'CLAIM-CLIENT-SDK'
+        ? { ...claim, value: '@modelcontextprotocol/client 2.3.1' }
+        : claim,
+    ),
+  });
   expect(classifyContractChange(previous, current).level).toBe('major');
   expect(current.release).toEqual({
     ...previous.release,

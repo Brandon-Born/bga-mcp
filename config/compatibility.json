@@ -1053,9 +1053,9 @@
     {
       "id": "CLAIM-CLIENT-SDK",
       "dimension": "client",
-      "value": "@modelcontextprotocol/client 2.2.0",
+      "value": "@modelcontextprotocol/client 2.3.1",
       "support": "supported",
-      "notes": "Maintained patched reference client 2.2.0, exercised through the installed package on every CI platform/Node pair. The unpublished first-stable candidate explicitly refreshes this test-client identity; signed rc.7 and its 2.0.0 snapshot/receipts remain immutable in history. No runtime server, tool/schema/export, OAuth configuration or protocol is changed.",
+      "notes": "Maintained patched reference client 2.3.1, exercised against each current-source installed package on every CI platform/Node pair. BGA-454 updates the unpublished first-stable client identity after new advisories. Original signed rc.10 and its 2.2.0 snapshot/receipts remain immutable in history. Runtime server dependencies are patched separately without changing tools, schemas, exports, OAuth configuration or protocol.",
       "scenarios": [
         "E2E-STDIO-UNADVERTISED-METHOD",
         "E2E-POLICY-CONFIG-FAILS-CLOSED",

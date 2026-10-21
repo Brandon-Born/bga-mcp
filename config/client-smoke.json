@@ -6,7 +6,7 @@
     {
       "id": "CLIENT-REFERENCE-SDK",
       "name": "@modelcontextprotocol/client",
-      "version": "2.2.0",
+      "version": "2.3.1",
       "status": "supported",
       "compatibilityClaim": "CLAIM-CLIENT-SDK",
       "platforms": ["ubuntu-latest", "macos-latest", "windows-latest"],

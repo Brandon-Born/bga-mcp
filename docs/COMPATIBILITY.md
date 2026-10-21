@@ -136,7 +136,7 @@ BGA-422 adds `GATE-SECURITY-AUDIT` and `INT-SECURITY-AUDIT-PREFLIGHT` to the rel
 
 | Claim                | Value                              | Support   |
 | -------------------- | ---------------------------------- | --------- |
-| CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.2.0 | supported |
+| CLAIM-CLIENT-SDK     | @modelcontextprotocol/client 2.3.1 | supported |
 | CLAIM-CLIENT-EDITORS | editor and agent clients           | unknown   |
 
 The [BGA-401 client matrix](CLIENTS.md) maintains the supported reference SDK flow and records a bounded native Codex app-server 0.159.2/macOS evaluation of the exact signed candidate. General editor/agent support remains unknown; the controlled smoke does not test GUI behavior or inference turns. New public support claims follow VERSIONING.md without rewriting the frozen signed candidate.
@@ -267,3 +267,5 @@ text starts with the notice, and inspection quotes the untrusted project name
 after a fixed server summary. Parser failures retain an invariant notice too.
 Labels reduce instruction/data confusion; they cannot enforce an agent's own
 permissions or instruction hierarchy. No additional BGA grammar is inferred.
+
+BGA-454 updates current-source CLAIM-CLIENT-SDK to patched client 2.3.1 and the conformance-only legacy SDK to 1.32.0. The original rc.10 contract is archived unchanged; its signed dependency graph remains blocked. The existing installed smoke scenarios must pass on every CI platform/Node pair before this current-source claim is admitted.
