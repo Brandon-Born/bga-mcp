@@ -323,9 +323,28 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
       },
       currentGuideDigest,
     ),
-  ).toThrow();
+  ).not.toThrow();
+  for (const [key, path] of [
+    ['installation', 'install-guide-v1.0.0-rc.7-signed.json'],
+    ['client', 'codex-client-v1.0.0-rc.7.json'],
+    ['evidence', 'release-evidence-v1.0.0-rc.7.json'],
+    ['usefulness', 'agent-evaluation-v1.0.0-rc.7.json'],
+  ] as const) {
+    const historical = await read(`docs/verification/${path}`);
+    expect(() =>
+      verifyPublicationPrerequisites(
+        { ...selectedReceipts, [key]: historical },
+        object(selectedReview.candidate) as {
+          tag: string;
+          sourceCommit: string;
+          artifactDigest: string;
+        },
+        currentGuideDigest,
+      ),
+    ).toThrow();
+  }
   // Preserve the complete authentic historical positive control separately
-  // from the intentionally incomplete current rc.10 prerequisite selection.
+  // from the independently verified current rc.10 prerequisite selection.
   const receipts = {
     installation: await read('docs/verification/install-guide-v1.0.0-rc.7-signed.json'),
     client: await read('docs/verification/codex-client-v1.0.0-rc.7.json'),
