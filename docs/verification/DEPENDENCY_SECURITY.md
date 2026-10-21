@@ -37,3 +37,22 @@ The first remediation pass surfaced four additional findings in fast-uri and bra
 - [pnpm dependency overrides](https://pnpm.io/settings#overrides) describes root-level resolution controls.
 - [Ajv advisory GHSA-2g4f-4pwh-qvx6](https://github.com/advisories/GHSA-2g4f-4pwh-qvx6) and [Nano ID advisory GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8) own the original backlog findings.
 - The sanitized live report records the current advisory identifiers and severities; zero findings means no advisory currently reported for that locked graph, not proof that dependencies have no defects.
+
+## October21 advisory refresh and frozen rc.10 hold — BGA-454
+
+PR44 merged as `98fe1e6b6b456b757c9f79c5f3b1c35936768838`. Its original six-job CI passed; the new main run [39688001533](https://github.com/Brandon-Born/bga-mcp/actions/runs/39688001533) failed because the selected October20 approved security assessment expired. The October21 exact-candidate audit then established a substantive security hold: production has two high and one moderate findings; the full graph has five high, ten moderate and one low findings. The earlier clean audit is preserved as dated evidence.
+
+The original rc.10 tarball remains `sha256:33e3a657b1af0276cdf3422833b5d3bc5ecacab0d1db80c396d33df547a0e295`, source/tag `646de4671974b163a7447b1e0647119091109643`. Its signature and provenance do not remove newly disclosed dependency risks. No installable package publisher has been dispatched. The existing [metadata prerelease](https://github.com/Brandon-Born/bga-mcp/releases/tag/v1.0.0-rc.10), release ID 418703388, retains its twelve metadata assets.
+
+Future development source upgrades server/client to 2.3.1, SDK to 1.32.0, Vitest/coverage to 4.1.12 and Vite to 8.2.4. These upstream fixes remove all currently reported production/full-graph advisories in the local patched graph. This is a different dependency identity; it does not repair or authorize publication of the frozen candidate. No advisory exception or package-manager release-age exclusion is added.
+
+The reviewer now distinguishes a complete normalized blocked audit from an unavailable or invalid audit. It may collect and retain actual original-byte test/scan/signature evidence with status `held` after the former; the latter still aborts. `--approve` retains the held result and exits nonzero when approval fails. Candidate creation and publication still require a successful live preflight, and the approval verifier still refuses every high/critical finding. Engineering checks can validate the structure of an honestly held record without granting publication approval.
+
+Primary upstream advisory ranges were read through GitHub's advisory API:
+
+- [GHSA-46jr-4wx8-v453](https://github.com/advisories/GHSA-46jr-4wx8-v453): server before 2.3.0 and SDK before 1.32.0; high HTTP validation memory exhaustion.
+- [GHSA-jm63-cq47-j5jp](https://github.com/advisories/GHSA-jm63-cq47-j5jp): server before 2.3.0; high cross-client delivery through shared HTTP instances.
+- [GHSA-rvq5-wwqv-78pq](https://github.com/advisories/GHSA-rvq5-wwqv-78pq): server before 2.3.0 and SDK before 1.32.0; bearer audience validation.
+- [GHSA-22jm-h49p-29qw](https://github.com/advisories/GHSA-22jm-h49p-29qw) and [GHSA-6prh-2h8m-c8cw](https://github.com/advisories/GHSA-6prh-2h8m-c8cw): fixed SDK 1.32.0/client 2.3.0.
+- [GHSA-587h-7wmj-h5pm](https://github.com/advisories/GHSA-587h-7wmj-h5pm) and the retained audit's other Vite advisories: compatible 8.2.4 is patched.
+- [GHSA-qxg6-89mg-rqv8](https://github.com/advisories/GHSA-qxg6-89mg-rqv8) and [GHSA-xp26-3454-mjgp](https://github.com/advisories/GHSA-xp26-3454-mjgp): patched Vitest mocker 4.1.12.

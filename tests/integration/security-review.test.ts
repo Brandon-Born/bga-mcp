@@ -198,6 +198,15 @@ it('[INT-SECURITY-REVIEW-APPROVAL] refuses open risks, stale audits, uncommitted
     },
   };
   expect(verifyReviewApproval(sealed(vulnerable), plan, now).failed).toBe(true);
+  // A retained, fresh failed audit is evidence of a hold, never an approval.
+  // Remove unrelated historical plan holds so this proves the advisory gate itself.
+  for (const status of ['held', 'approved'] as const) {
+    const assessment = sealed({ ...vulnerable, status });
+    expect(verifyReviewRecord(assessment, unblockedPlan).failures).toEqual([]);
+    expect(verifyReviewApproval(assessment, unblockedPlan, now).failures).toContainEqual(
+      expect.stringContaining('GHSA-aaaa-bbbb-cccc'),
+    );
+  }
 });
 it('[INT-SECURITY-REVIEW-ARTIFACT] refuses byte tampering before retained artifact installation', () => {
   const bytes = Buffer.from('synthetic harmless original archive bytes');

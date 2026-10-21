@@ -18,6 +18,23 @@ import { scanText } from './lib/secret-scan.js';
 const execute = promisify(execFile);
 const corepack = process.platform === 'win32' ? 'corepack.cmd' : 'corepack';
 
+export interface SecurityAuditResult {
+  readonly audit: SecurityAudit;
+  readonly policy: SecurityPolicy;
+  readonly text: string;
+}
+
+/** Findings remain a failed preflight; reviewers may retain the validated report. */
+export class SecurityAuditBlocked extends Error {
+  constructor(
+    readonly result: SecurityAuditResult,
+    failures: readonly string[],
+  ) {
+    super(`Security preflight failed:\n- ${failures.join('\n- ')}`);
+    this.name = 'SecurityAuditBlocked';
+  }
+}
+
 export async function auditIdentity(root: string): Promise<AuditIdentity> {
   const [{ stdout }, lock, packageText, workspace, policy] = await Promise.all([
     execute('git', ['rev-parse', 'HEAD'], { cwd: root }),
@@ -103,9 +120,7 @@ export async function currentCompensatingScenarios(
   }
 }
 
-export async function runSecurityAudit(
-  root: string,
-): Promise<{ audit: SecurityAudit; policy: SecurityPolicy; text: string }> {
+export async function runSecurityAudit(root: string): Promise<SecurityAuditResult> {
   const identity = await auditIdentity(root);
   const reportPath = resolve(root, '.artifacts/security-audit.json');
   await rm(reportPath, { force: true });
@@ -169,8 +184,7 @@ export async function runSecurityAudit(
     new Date(),
     await currentCompensatingScenarios(root, identity),
   );
-  if (report.failed)
-    throw new Error(`Security preflight failed:\n- ${report.failures.join('\n- ')}`);
+  if (report.failed) throw new SecurityAuditBlocked({ audit, policy, text }, report.failures);
   return { audit, policy, text };
 }
 

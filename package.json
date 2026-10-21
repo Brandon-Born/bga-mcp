@@ -113,17 +113,17 @@
     "framework:retest": "tsx scripts/framework-change.ts retest"
   },
   "dependencies": {
-    "@modelcontextprotocol/server": "2.0.0",
+    "@modelcontextprotocol/server": "2.3.1",
     "acorn": "8.18.0",
     "zod": "4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@modelcontextprotocol/client": "2.2.0",
+    "@modelcontextprotocol/client": "2.3.1",
     "@modelcontextprotocol/conformance": "0.2.0-alpha.11",
     "@modelcontextprotocol/node": "2.0.0",
     "@types/node": "26.1.2",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "4.1.12",
     "ajv": "8.20.0",
     "eslint": "10.8.0",
     "prettier": "3.9.6",
@@ -131,6 +131,6 @@
     "tsx": "4.20.6",
     "typescript": "6.0.2",
     "typescript-eslint": "8.66.0",
-    "vitest": "4.1.11"
+    "vitest": "4.1.12"
   }
 }
