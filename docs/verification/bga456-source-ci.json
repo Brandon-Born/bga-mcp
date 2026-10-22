@@ -1,0 +1,339 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-456",
+  "recordedAt": "2026-10-22T14:56:32.234188Z",
+  "scope": "Actual rc11 signer-selector preparation source checks and framework admission; original candidate identity and independent review are separately bound. No signature, merge permission or signing/publication authorization.",
+  "implementationSource": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+  "candidateSource": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+  "candidateArtifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+  "independentReview": {
+    "reviewTurn": "01a163ee-6ba0-734d-9bc3-99ddc789d344",
+    "reportSha256": "sha256:ea5f1c9a4765622aea8360ba2436816d6da2b7487046577753e84eeacd94893d",
+    "sourceReceiptSha256": "sha256:fb9cd56d09bbf808955a164da5adbbf66ecc47f0a57998f73a5b3b9b9d8aca02",
+    "originalsRetainedVerbatim": true,
+    "decision": "approved for signing preparation",
+    "selectedTestsPassed": 73,
+    "unselectedTestsNotClaimedPassed": 11,
+    "adversarialChecksPassed": 50,
+    "compiledFilesCompared": 252,
+    "sourceAndConsumerAdvisories": 0,
+    "signatureVerified": false
+  },
+  "local": {
+    "source": {
+      "commit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+      "clean": false
+    },
+    "platform": {
+      "node": "v22.17.1",
+      "platform": "darwin",
+      "arch": "arm64",
+      "packageManager": "pnpm@11.15.1",
+      "ci": false
+    },
+    "affectedControlsPassed": 8,
+    "integratedGate": "passed",
+    "tests": {
+      "files": 126,
+      "total": 1028,
+      "passed": 1028,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 279,
+      "passed": 279,
+      "failed": 0,
+      "missing": 0
+    },
+    "claims": 107,
+    "capabilities": 17,
+    "applicableConformance": "passed",
+    "artifactDigest": "sha256:23b4f6f5a350d5158980b6e05e8380634f8d700c770e22679259ac681a638812",
+    "evidenceDigest": "sha256:ff67edc756cb63d3383dea50da0dbc8c5740e54b6575b5da643f6425513d936d",
+    "fullCheckLogDigest": "sha256:0c63e88b8927660c483964f8d2c960c03686335a8391e4d41b05414d9ac8b8e6",
+    "scope": "Full integrated local gate ran at candidate HEAD with preparation changes dirty; it is not relabeled clean source CI. A later backlog status wording-only edit received scoped documentation checks."
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39796495050",
+    "source": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+    "attempt": 1,
+    "conclusion": "success",
+    "allSixJobsTerminalSuccess": true,
+    "allSixArchivesIndependentlyDownloadedAndDigestVerified": true,
+    "allSixSchemasAndSealsAndSourceBindingsValid": true,
+    "records": [
+      {
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:39:46.749Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:23b4f6f5a350d5158980b6e05e8380634f8d700c770e22679259ac681a638812",
+        "evidenceDigest": "sha256:38ee5ee014d7ffa8b2a049ea8439a34086a9d4dbf1fec666c8770af3ee5dbb50"
+      },
+      {
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:39:12.847Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:23b4f6f5a350d5158980b6e05e8380634f8d700c770e22679259ac681a638812",
+        "evidenceDigest": "sha256:67632e14c09f2be28c82f619d1eecc9d055ace79bc75de1006c59336367f4eb5"
+      },
+      {
+        "environment": {
+          "node": "v22.23.4",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:38:35.544Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+        "evidenceDigest": "sha256:c8d5d5a778d0bf8ab3d609cd8eb234a4398d06453d3aa5b45b4f288a6cab175e"
+      },
+      {
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:38:02.727Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+        "evidenceDigest": "sha256:b4ca3c00ba583aa61769d063fc8470ccb6edc9fd49bd784df9212c7bd6757a9d"
+      },
+      {
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:44:36.790Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:70a1e65af0c364c96c1677b1757ac6c73b9393b23aaa15d2093e4525427c8901",
+        "evidenceDigest": "sha256:f285d50010af7ea8c7e196f477ab9df0df6955d9635175ce6d88c91463f32e78"
+      },
+      {
+        "environment": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-22T14:40:44.128Z",
+        "source": {
+          "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+          "clean": true
+        },
+        "tests": {
+          "files": 126,
+          "total": 1028,
+          "passed": 1028,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:70a1e65af0c364c96c1677b1757ac6c73b9393b23aaa15d2093e4525427c8901",
+        "evidenceDigest": "sha256:beeac641839dc2aeecf1ae32ca6f3a6a906da438fda27ff276095d00d25fe1b0"
+      }
+    ],
+    "archives": [
+      {
+        "id": 12434960054,
+        "name": "verification-macos-latest-node-24",
+        "digest": "sha256:59962804e4c9a522d5f7513ef310d76960297ba61bb4a7320b01b28127208763"
+      },
+      {
+        "id": 12434671676,
+        "name": "verification-windows-latest-node-22",
+        "digest": "sha256:58b9ec1b478b4fe0995d7bb21e5af6400d485402ad36ddff083241a652ac7569"
+      },
+      {
+        "id": 12433563758,
+        "name": "verification-windows-latest-node-24",
+        "digest": "sha256:f1fb2d08a2e4d783f37666459e4961613dc2e55c2cbc26a22bf49f63fadeda6a"
+      },
+      {
+        "id": 12433508787,
+        "name": "verification-macos-latest-node-22",
+        "digest": "sha256:487c325d542016c7cd2fa26a4ac7d8bfd1fd1dff302fa5c9acfb2474fa0b84fc"
+      },
+      {
+        "id": 12433214502,
+        "name": "verification-ubuntu-latest-node-22",
+        "digest": "sha256:d3090578f72661d2629a381f3ed60df0c19d2b02c112cea993aa7aec1632842d"
+      },
+      {
+        "id": 12432884445,
+        "name": "verification-ubuntu-latest-node-24",
+        "digest": "sha256:a134089970550d0ad767181120b5024b78bdce5d844b1d6da2944028ab44854f"
+      }
+    ],
+    "ciAttemptsRetried": 0,
+    "statusDelay": "GitHub workflow/job/check summary updates lagged successful steps. Waited for all six terminal successes before accepting evidence; no status was fabricated."
+  },
+  "sourceAudit": {
+    "source": {
+      "commit": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+      "lockDigest": "sha256:d3fbaee9f94822ff9824c9d7bf3dbdd75afff727473549de6632514a02a7328d",
+      "packageDigest": "sha256:664661ecef95c2620733178ef7bfe55e731a97026f65129c1fc5c96c1c241f4c",
+      "workspaceDigest": "sha256:767be479073e6e087ea934602ba55353ee6f5a27080bc8cfdeb2699de3e2a4d4",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "generatedAt": "2026-10-22T14:32:33.534Z",
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "auditDigest": "sha256:549cc71cb73541cc21d3c7552f1e1e25ef750c1b47408ddd60d182a4ba8097b4",
+    "exceptions": []
+  },
+  "framework": {
+    "ci": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39796495050",
+    "proofSource": "2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d",
+    "sourceCount": 8,
+    "holdsAfterAdmission": 0,
+    "currentReleaseGuard": "passed",
+    "officialWordingReadOn": "2026-10-22",
+    "observationScope": "Existing October21 canonical observation digests remain within seven-day policy; no new observation or wording change claimed. No parser/rule/application/fixture change. Conservative map/backlog semantic dependencies reviewed and re-admitted using actual source CI."
+  },
+  "identityFreePreflight": {
+    "mode": "prepare only",
+    "passed": true,
+    "archiveDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928",
+    "candidateRebuilt": false,
+    "signatureCreated": false,
+    "publicationPerformed": false
+  },
+  "preservation": {
+    "threeSignerSelectorsOnly": true,
+    "signedRc10PlanAndPublicationHoldUnchanged": true,
+    "newPendingUnsignedRc11TargetBound": true,
+    "candidateAndDependenciesAndSixPackedGuidesUnchanged": true,
+    "signingPermissionsUnchanged": true,
+    "mainOnlyIsolationAndPinnedActionsUnchanged": true
+  },
+  "authorization": {
+    "mergeApproved": false,
+    "signingApproved": false,
+    "publicationApproved": false,
+    "next": "Owner approval for normal merge of the reviewed passing PR and one manual main-only authentic signing run, including immutable public metadata and signing-service terms. Verify actual merged-main identity/CI before dispatch; no future signer SHA is invented."
+  }
+}

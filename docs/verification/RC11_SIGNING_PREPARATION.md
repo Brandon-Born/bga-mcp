@@ -102,3 +102,28 @@ personal data. The [privacy policy](https://lfprojects.org/policies/privacy-poli
 also applies. Owner approval must cover this public metadata disclosure and
 these signing-service terms before the signing operation. Preparation itself
 performs no signing-service submission or acceptance through such an operation.
+
+## Observed preparation verification
+
+The [actual BGA-456 receipt](bga456-source-ci.json) retains implementation source
+`2fa4d4bbc8769e5cc96f1bbc487b2d5493108f5d` and
+[CI39796495050](https://github.com/Brandon-Born/bga-mcp/actions/runs/39796495050):
+all six jobs terminal and successful on attempt 1, with independently downloaded
+archive digests, schemas, evidence seals and exact source checked. Every record
+has 1,028 passing tests, 279 required scenarios, 107 claims, 17 capabilities and
+applicable conformance passed. All eight mapped framework sources are admitted
+against that real source; the release guard reports zero holds. Later metadata
+commits do not rename this evidence's implementation or original candidate source.
+
+Eight affected signer/security controls and the integrated local full gate passed.
+The real identity-free `prepare` mode re-downloaded and validated the original ZIP
+without signing or rebuilding. A fresh source-bound audit at the implementation
+commit found zero production/full-graph advisories, with no exceptions.
+Original reviewer report and receipt remain byte-identical after formatting.
+GitHub delayed final job status after successful steps; all six terminal successes
+were awaited before admission. No unchanged runtime retry occurred.
+
+This is preparation evidence, not owner merge/signing approval or a signed result.
+The final PR head, terminal automatic PR checks and proposed one-time operation
+are supplied in the owner handoff once observed. After approved normal merge,
+verify actual main and its required CI before that single signing dispatch.
