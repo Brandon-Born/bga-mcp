@@ -36,6 +36,8 @@ Start the packaged server as a subprocess and communicate only through its MCP i
 
 The artifact is packed once per run in `tests/global-setup.ts`, and every capability suite installs that tarball. Packing runs `prepack`, which writes `dist/`, so suites that pack independently race on the same directory and fail intermittently. A new end-to-end suite must install the shared artifact rather than pack its own.
 
+Windows runs use at most two test-file workers to limit competing Node server startups on the hosted runner. This is a scheduling budget, not a larger assertion deadline or a retry: every suite and scenario still runs, and the existing connection, operation and test time limits remain unchanged. PR46 run `39696174905` retains the original Windows/Node22 failure: one five-second MCP connection timeout before the comment-method oracle, with 1,027 passing tests. New source and CI must validate the bounded scheduling; the failed run is not replaced by an unchanged replay.
+
 The official MCP Inspector CLI may provide an additional independent client check. It supplements the automated client harness; it does not replace capability-specific assertions.
 
 The executable-only `src/cli.ts` and `src/release-cli.ts` boundaries, and their shared `src/cli-runner.ts`, are excluded from in-process V8 line coverage because importing an entry point starts stdio service. Their help, version, invalid-argument, startup, profile, protocol, and shutdown behavior is covered through subprocess and packaged-artifact tests instead; the exclusion is not an absence of testing.

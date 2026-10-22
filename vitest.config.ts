@@ -4,6 +4,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    // Keep concurrent Node server startups within the hosted Windows runner budget.
+    // Every scenario and its original connection/test deadlines remain unchanged.
+    ...(process.platform === 'win32' ? { maxWorkers: 2 } : {}),
     include: ['tests/**/*.test.ts'],
     globalSetup: ['tests/global-setup.ts'],
     testTimeout: 30_000,
