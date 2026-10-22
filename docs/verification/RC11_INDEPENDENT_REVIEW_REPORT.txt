@@ -1,0 +1,74 @@
+# Independent rc.11 unsigned-candidate security review
+
+Completed 2026-10-22 UTC by the independent delegated Codex reviewer. This is an actual review of independently obtained original bytes, source and CI records, with fresh package execution and dependency assessments. It is not an endorsement copied from the preparer's report. No separately authenticated runtime-model identity is asserted.
+
+**Decision: APPROVED FOR SIGNER PREPARATION.** No new blocking security finding was identified in the scope below. This decision authorizes no signing or publication. The existing rc.10 signing/security/publication selections and its publication hold remain separate. See `review-receipt.json` for the machine-readable identity and results.
+
+## Exact reviewed identity
+
+| Item | Identity |
+| --- | --- |
+| Repository | Brandon-Born/bga-mcp |
+| Tag | `v1.0.0-rc.11` |
+| Source | `a8838456f5c9143a8cb2364111f35899d60a8e8f` |
+| Producer | [39701663657, attempt 1](https://github.com/Brandon-Born/bga-mcp/actions/runs/39701663657), successful |
+| Original artifact | [12392394262](https://github.com/Brandon-Born/bga-mcp/actions/runs/39701663657/artifacts/12392394262), `bga-mcp-release-candidate-v1.0.0-rc.11` |
+| Original ZIP SHA-256 | `38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928` |
+| Original TGZ SHA-256 | `d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55` |
+| Original manifest SHA-256 | `232941b79638628b87a278677e2ba8b73f369c684afa88f042c0e60a147a54c1` |
+| Exact-source main CI | [39700381851](https://github.com/Brandon-Born/bga-mcp/actions/runs/39700381851), all six jobs successful, attempt 1 |
+
+The packet remains unsigned. It contains exactly seven original files: tarball, candidate manifest, candidate schema, verification evidence, security audit, security policy and SHA256SUMS. There is no signature or provenance receipt to validate at this stage.
+
+## Independent acquisition and evidence verification
+
+The authenticated supported Chrome session downloaded the candidate ZIP from GitHub afresh. Its computed digest matched the live artifact digest and the expected identity. A reviewer-owned extractor checked safe top-level names, bounded sizes and the seven-file allowlist. All packet checksums passed. The original TGZ contains 281 regular text files, with no duplicate names, traversal entries, symlinks or binary payloads. Scanning all 1,678,466 text bytes with allow-marker suppression disabled found zero recognized secrets and no allow markers. This is pattern coverage, not a proof that arbitrary encoded secrets are impossible.
+
+The exact source was cloned into an isolated reviewer checkout. Candidate/evidence schemas came from that source. The reviewer reconstructed the manifest, verified canonical evidence integrity, source and lock/config digests, package inventory, public CLI target, pinned production declarations and packed documentation/config correspondence. The package has no automatic install or prepack lifecycle hook; ordinary development scripts remain. A source-only TypeScript 6.0.2 compilation produced 252 JavaScript/declaration files, every one byte-identical to the original packed files. No replacement candidate was packed.
+
+All six main-CI ZIPs were also freshly downloaded through authenticated GitHub, checked against their live ZIP digests, safely extracted and independently validated. Each original evidence file byte-matches the retained preparation record, identifies the exact merged source and a clean CI checkout, and records 1,028 passed tests, zero failures/skips, 279 required scenarios passed, 107 claims and 17 capabilities passed, and protocol conformance passed. All recorded package-suite runs bind their recorded artifact digest. Both Linux package digests equal the reviewed TGZ. macOS and Windows archive digests differ; no cross-OS archive equality or independent local Windows/macOS execution is claimed.
+
+Details and runnable reviewer code: `identity-validation.json`, `validate-original.mjs`, `compiled-correspondence.json`, and `independent-ci-downloads/download-identities.json`. These validations use the independently downloaded records rather than trusting the preparer's conclusion.
+
+## Fresh executable and dependency assessment
+
+The required eight installed-package security suites and an additional project-trust suite ran against the original absolute TGZ using `BGA_MCP_SECURITY_REVIEW_ARTIFACT` and its expected digest. **73 selected tests passed, zero failed.** Eleven other tests in those files were intentionally unselected by the scenario filter; they are not claimed as locally passed. All eleven required security scenarios and both added root-authority/project-trust scenarios have passing assertions. Nine installed-suite records each identify the original TGZ digest. Coverage includes public executable inventory, read-only/network refusal, redaction, object-bound reads, output budget, race barriers, cancellation and parser deadlines. Reports: `security-test-results-network.json`, `security-tests-network.log`, and `source/.artifacts/security-review-runs/`.
+
+An additional reviewer-written raw JSON-RPC client exercised an independently installed original package, without the repository MCP-client test helper. Its **50 checks passed**: an empty configured-root set refused reads even when client roots offered another directory, `/` or the home directory; all seven tools and three resources stayed within an operator-configured fixture; sibling/root widening, traversal and a symlink escape were refused; all seven tools and three resources carried invariant trust labels; hostile project-name text appeared as quoted/redacted data after the server notice; excluded tools and public network/Studio flags were refused. The fixture remained unchanged, stderr was empty and children exited. See `adversarial-probe.mjs`, `adversarial-probe.json` and its log. No model inference or agent-side prompt-injection immunity was tested or claimed.
+
+Fresh registry audits used the source-declared pnpm 11.15.1 and explicit `https://registry.npmjs.org`. The canonical source audit checked that workspace/global advisory filtering was absent and bound the result to the exact commit, package, lock, workspace and security policy before/after collection. **Production and full graph: zero advisories of every severity**, generated `2026-10-22T14:18:00.540Z`. Policy permits no exceptions and requires evidence no older than 24 hours. See `source-bound-security-audit.json`.
+
+A separate isolated consumer installed the exact original TGZ with lifecycle execution disabled and freshly fetched its production dependencies. Its actual resolved production graph also has **zero advisories** (five total dependency entries), retained in `consumer-security-audit.json`. This supplements rather than replaces the full source-lock audit. Future consumer resolution and newly disclosed advisories can change; refresh checks at the actual signing/publication gates.
+
+## Security conclusions and retained limits
+
+Source review covered `src/policy.ts`, server/client-root wiring, project-trust schema/marking, the shared publication/redaction/budget boundary, public release entry and release-candidate supply chain, with the repository instructions, threat model and current security policy. Client-offered roots can confirm only operator roots; they cannot authorize new locations. Trust/notice fields are server-owned, project keys cannot replace them, and summaries are produced from redacted structures. These conclusions are supported by the installed and independent protocol checks above.
+
+The producer workflow pins action commits, checks out the selected tag with persisted credentials disabled, installs a frozen dependency lock, runs release gates and retains original bytes. Its token permission is `contents: read`, with no signer/publisher credential or OIDC grant. The producer also has a separate audit artifact; two artifacts are expected. GitHub workflow/artifact origin is authenticated service evidence, not yet cryptographically signed provenance. The independent source-to-packed-file comparison strengthens correspondence without pretending to replace the later signing/provenance gate.
+
+All twelve existing risk IDs in the security plan were examined against the source threat model. Their recorded owner acceptance is existing repository evidence, not a new acceptance invented by this reviewer:
+
+- `RR-POLICY-NO-TOOL-EVIDENCE`: selected installed cancellation/cleanup witnesses pass; native OS calls can outlive the cleanup ceiling, and atomic parsing/sorting use input bounds.
+- `RR-POLICY-TRAVERSAL-OPENAT`: selected deterministic race, traversal and symlink refusals pass. Repeated hostile pathname swaps remain a portable-Node limitation; no descriptor-relative `openat` equivalence is claimed.
+- `RR-CLIENT-BEHAVIOR`, `RR-DOC-INJECTION-RESIDUAL`: invariant labels and quoted metadata reduce confusion, but a consuming agent can still mishandle hostile prose. This review grants no authority to project text.
+- `RR-SECRET-SCAN-COVERAGE`: known-format scans/redaction passed; novel or encoded secrets remain outside complete pattern coverage.
+- `RR-DOC-CONTENT-UNREVIEWED`, `RR-DOC-ALLOWLIST-TRUST`, `RR-DOC-QUERY-PROVENANCE`: documentation network surfaces are excluded from the public command. The development entry's network/host/provenance assumptions and compromised-host/topic-origin residuals remain development-only and are not promoted by this review.
+- `RR-STUDIO-UNREVIEWED`, `RR-STUDIO-NO-UNDO`, `RR-STUDIO-SHARED-ACCOUNT`, `RR-STUDIO-UNDOCUMENTED-PAGE`: Studio is excluded from public inventory and its flags refused. This review does not close its open privacy/credential/page risks or authorize remote mutation.
+
+No new blocking finding arose within the reviewed public, local, read-only release scope. This is not a whole-system penetration test, proof of arbitrary game correctness, real-game productivity evaluation, authenticated GUI/client evaluation, signed-candidate approval or publication approval. The preparer's additional installation/native-client reports were available as retained context; this reviewer does not relabel them as independently rerun evaluations.
+
+## Preserved failure history and executor outcomes
+
+PR46's original [CI39696174905](https://github.com/Brandon-Born/bga-mcp/actions/runs/39696174905) had one Windows/Node22 MCP startup timeout at the existing five-second deadline, with 1,027 passing tests. Its root cause is not conclusively diagnosed. The correction capped Windows test-file workers at two without changing assertions, deadlines or retry settings. Later corrected-source/final PR CI and exact merged-main CI passed. That original failure remains part of the record; success is not described as an unchanged-source retry. The preparer's failed one-artifact preservation assertion is also retained in its handoff history.
+
+Reviewer setup had local execution issues, not suppressed candidate failures: pnpm invoked from the wrong directory selected a different package-manager version before installation; the correct isolated consumer directory used 11.15.1 successfully. An initial source dependency symlink caused a denied Vite cache write; it was replaced only in the reviewer checkout with an isolated copy. The first installed-suite attempt could not reach the registry in the default sandbox (one failed setup assertion and 83 pending tests); its report/log remain as `security-test-results.json` and `security-tests-isolated.log`. The network-enabled rerun completed the 73 selected tests above. The first custom probe's assertion incorrectly expected path-like injected markup to survive redaction; its original code/failure log are retained, and the corrected oracle verifies the actual intentional redaction and quoting. These are not represented as security defects or silently erased passes.
+
+Automatic approval review **denied an escalated curl operation saving public GitHub run/artifact metadata to local JSON**, citing the earlier status task's read-only/no-file-modification restriction. That denied operation was not retried. Supported authenticated browser reads/downloads supplied the needed evidence, while separately approved audits/package tests completed. No uncertain operation outcome or unresolved executor blocker remains. No private Codex session files were read.
+
+At final preservation, the original preparation ZIP and all seven packet files remained byte-identical, the implementation checkout was clean at the reviewed source, and rc.10 and rc.11 local tags retained their original identities. Review writes are confined to this isolated review directory and disposable test locations. The candidate/tag, original implementation checkout and preparation were not edited; no merge, workflow dispatch, signing, publication, credential change or deployment was performed.
+
+## Next bounded action
+
+Prepare one minimal tested repository PR retaining the actual candidate receipt and this real review, selecting rc.11 in the signer/test/concurrency configuration and binding the actual `pendingUnsignedCandidate` security-review target. Preserve rc.10's signed records and publication hold. Run applicable full gates, exact-source CI and framework admission before normal merge. The existing security plan still targets rc.10, so this external review alone cannot make a main-only signer select rc.11.
+
+Once that concrete preparation passes, obtain the owner's distinct approval to sign the exact TGZ identified above. Signing/publication was expressly outside this review's authorization. Later signed-candidate security, signature/provenance/refusal, freshness, client/usefulness and publication gates remain separate and must use the actual resulting bytes and records. Do not rebuild or retag this candidate to stand in for the reviewed original.

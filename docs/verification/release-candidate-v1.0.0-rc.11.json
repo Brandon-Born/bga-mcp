@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-22T14:19:37.324272Z",
+  "owner": "BGA-456 / BGA-403",
+  "candidate": {
+    "id": "first-local-only",
+    "environment": "local",
+    "entrypoint": "dist/release-cli.js",
+    "sourceTag": "v1.0.0-rc.11",
+    "sourceCommit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "packageName": "bga-mcp",
+    "packageVersion": "1.0.0-rc.11",
+    "artifactName": "bga-mcp-1.0.0-rc.11.tgz",
+    "lockDigest": "sha256:d3fbaee9f94822ff9824c9d7bf3dbdd75afff727473549de6632514a02a7328d",
+    "digests": {
+      "inventory": "sha256:92e946a86e8354ac62918fe45d5c516952a1a70a7a08341c30e3657b95f19987",
+      "capabilityManifest": "sha256:9b62898e5bc2de62580eb81b39dc69d1d9e13409440bb2fcaf11197c9457193c",
+      "verificationEvidence": "sha256:53f9b5387a7c595d485ad9b927ed8def12f87f388fb429aa3e4c63cccd563c08",
+      "artifact": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+      "securityAudit": "sha256:6464f308c59f2d8891749b73ec6a913e37c0ac8b3c7a75028be496a34616ad3c"
+    }
+  },
+  "workflow": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39701663657",
+    "conclusion": "success",
+    "attempt": 1,
+    "artifactId": 12392394262,
+    "artifactName": "bga-mcp-release-candidate-v1.0.0-rc.11",
+    "archiveDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928",
+    "manifestDigest": "sha256:232941b79638628b87a278677e2ba8b73f369c684afa88f042c0e60a147a54c1",
+    "expiresAt": "2027-01-20T00:46:04Z"
+  },
+  "ci": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/39700381851",
+    "commit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "conclusion": "success"
+  },
+  "verification": {
+    "tests": 1028,
+    "requiredScenarios": 279,
+    "retainedClaims": 107,
+    "capabilities": 17,
+    "allSixExactMainJobsPassed": true,
+    "originalPacketChecksumsAndEvidenceIntegrity": true,
+    "allSixGuidesMatchTaggedSource": true,
+    "productionAuditFindings": 0,
+    "fullGraphAuditFindings": 0,
+    "originalNotRepacked": true
+  },
+  "signatureVerified": false,
+  "independentReviewCompleted": true,
+  "signingApproved": false,
+  "publicationApproved": false,
+  "scope": "Actual original hosted unsigned candidate and exact-main CI identity, validated original archive/packet, authentic independent review retained in rc11-unsigned-independent-review.json and its verbatim source report/receipt. No signature, signed-candidate security approval, owner signing authorization or publication result is granted. Existing rc10 signed records and publication hold remain separate."
+}

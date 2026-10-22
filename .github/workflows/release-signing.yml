@@ -7,7 +7,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: release-signing-v1.0.0-rc.10
+  group: release-signing-v1.0.0-rc.11
   cancel-in-progress: false
 
 jobs:
