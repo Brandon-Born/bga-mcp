@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "independent exact unsigned candidate review",
+  "recordedAt": "2026-10-22T14:19:37.324272Z",
+  "reportDate": "2026-10-22",
+  "reviewTurn": "01a163ee-6ba0-734d-9bc3-99ddc789d344",
+  "reportSha256": "sha256:ea5f1c9a4765622aea8360ba2436816d6da2b7487046577753e84eeacd94893d",
+  "candidate": {
+    "tag": "v1.0.0-rc.11",
+    "sourceCommit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "archiveDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928",
+    "manifestDigest": "sha256:232941b79638628b87a278677e2ba8b73f369c684afa88f042c0e60a147a54c1",
+    "producerRun": 39701663657,
+    "producerAttempt": 1,
+    "artifactId": 12392394262
+  },
+  "decision": "approved for signing preparation",
+  "findings": {
+    "high": 0,
+    "medium": 0,
+    "low": 0
+  },
+  "signatureVerified": false,
+  "publicationApproved": false,
+  "modelAttribution": {
+    "taskSelectedModel": null,
+    "runtimeModel": null,
+    "runtimeModelVerified": false,
+    "evidence": "The original reviewer report does not expose a separately authenticated runtime-model identity; no selected or runtime model is inferred. Actual completed review turn 01a163ee-6ba0-734d-9bc3-99ddc789d344 was read through the supported thread API."
+  },
+  "scope": "Normalized binding of the authentic original report RC11_INDEPENDENT_REVIEW_REPORT.txt (verbatim bytes, reportSha256) and rc11-independent-review-source.json (verbatim reviewer receipt). The report approves this exact unsigned candidate for signer preparation with no new blocking findings; zero finding counts describe that bounded decision, not closure of accepted residual risks or a broader penetration test. Reviewer independently downloaded original candidate and all six CI artifacts, compared 252 compiled files, passed 73 selected tests and 50 adversarial checks, and obtained fresh zero-advisory source production/full and installed-consumer audits. No signature, signed-candidate approval, owner signing authorization or publication approval is granted."
+}

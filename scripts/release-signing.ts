@@ -14,7 +14,7 @@ export const SIGNING_PREDICATE = `https://github.com/${SIGNING_REPOSITORY}/predi
 const repositoryRoot = resolve(import.meta.dirname, '..');
 const receiptPath = resolve(
   repositoryRoot,
-  'docs/verification/release-candidate-v1.0.0-rc.10.json',
+  'docs/verification/release-candidate-v1.0.0-rc.11.json',
 );
 const execute = promisify(execFile);
 const digest = (bytes: Buffer | string): string =>

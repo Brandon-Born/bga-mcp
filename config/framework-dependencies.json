@@ -586,7 +586,13 @@
         "docs/verification/RC10_RELEASE_ADMISSION.md",
         "docs/verification/release-evidence-v1.0.0-rc.10.json",
         "docs/verification/security-review-v1.0.0-rc.10-blocked-2026-10-21.json",
-        "config/contracts/history/1.0.0-rc.10.json"
+        "config/contracts/history/1.0.0-rc.10.json",
+        "docs/verification/RC11_INDEPENDENT_REVIEW_REPORT.txt",
+        "docs/verification/rc11-independent-review-source.json",
+        "docs/verification/rc11-unsigned-independent-review.json",
+        "docs/verification/release-candidate-v1.0.0-rc.11.json",
+        "docs/verification/RC11_SIGNING_PREPARATION.md",
+        "docs/verification/bga456-source-ci.json"
       ]
     }
   ],

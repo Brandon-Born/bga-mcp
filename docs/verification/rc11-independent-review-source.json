@@ -1,0 +1,138 @@
+{
+  "recordedAt": "2026-10-22T14:19:37.324272+00:00",
+  "verdict": "approved-for-signer-preparation",
+  "scope": "original unsigned candidate only",
+  "signingAuthorized": false,
+  "publicationAuthorized": false,
+  "candidate": {
+    "tag": "v1.0.0-rc.11",
+    "source": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "originalZipDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928",
+    "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "manifestDigest": "sha256:232941b79638628b87a278677e2ba8b73f369c684afa88f042c0e60a147a54c1"
+  },
+  "producer": {
+    "runId": 39701663657,
+    "attempt": 1,
+    "artifactId": 12392394262
+  },
+  "mainCI": {
+    "runId": 39700381851,
+    "independentDownloads": 6,
+    "environments": [
+      {
+        "environment": "darwin/22",
+        "evidenceDigest": "sha256:adba4f36d459d0c52341d7b7b71f3e592462c249eb3e6955a59b458ede40219f",
+        "artifactDigest": "sha256:23b4f6f5a350d5158980b6e05e8380634f8d700c770e22679259ac681a638812"
+      },
+      {
+        "environment": "darwin/24",
+        "evidenceDigest": "sha256:c790de6707a8fbafda0185786b8f42d817286dbff848b00b453d931e4250eee8",
+        "artifactDigest": "sha256:23b4f6f5a350d5158980b6e05e8380634f8d700c770e22679259ac681a638812"
+      },
+      {
+        "environment": "linux/22",
+        "evidenceDigest": "sha256:79b13a02e322d69890ff6b2c06c914a91a82305b8dbe73423ba47ac12902239e",
+        "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "environment": "linux/24",
+        "evidenceDigest": "sha256:42d49bd6045f697d0eb0924869f861fd1ffd14793db5f48c81f037dc9be31e70",
+        "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "environment": "win32/22",
+        "evidenceDigest": "sha256:81d5b7562c0233ee0215cc193c6ca9115ffa71149d7be75c4bcc924e165531f1",
+        "artifactDigest": "sha256:70a1e65af0c364c96c1677b1757ac6c73b9393b23aaa15d2093e4525427c8901"
+      },
+      {
+        "environment": "win32/24",
+        "evidenceDigest": "sha256:a96805832ac30e48e13fe5c5bc9f815a35754f4c73ba6a96a59668f507a9ae81",
+        "artifactDigest": "sha256:70a1e65af0c364c96c1677b1757ac6c73b9393b23aaa15d2093e4525427c8901"
+      }
+    ]
+  },
+  "tests": {
+    "passed": 73,
+    "failed": 0,
+    "unselected": 11,
+    "suiteFiles": 9,
+    "requiredSecurityScenarios": 11,
+    "additionalAuthorityAndTrustScenarios": 2,
+    "originalArtifactRecords": [
+      {
+        "suite": "cancellation",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "output-budget",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "project-trust",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "race-barrier",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "read-only-network-off",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "release-inventory",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "success-redaction",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "toolboundary",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      },
+      {
+        "suite": "traversal-bounds",
+        "digest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55"
+      }
+    ]
+  },
+  "independentAdversarialProbe": {
+    "recordedAt": "2026-10-22T14:14:59.465Z",
+    "kind": "independent raw protocol and installed-policy adversarial probe",
+    "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "checksPassed": 50,
+    "clientRootsCannotAuthorize": true,
+    "symlinkAndTraversalRefused": true,
+    "allSevenToolsAndThreeResourcesTrustLabeled": true,
+    "hostileMetadataQuotedAfterNotice": true,
+    "publicNetworkAndStudioExcluded": true,
+    "projectUnchanged": true,
+    "emptyStderrAndProcessExit": true,
+    "scope": "Actual independently installed original package, pinned production dependencies; no model inference or agent-side prompt-injection immunity claim."
+  },
+  "compiledFilesCompared": 252,
+  "sourceAuditAt": "2026-10-22T14:18:00.540Z",
+  "sourceAuditDigest": "sha256:0c9655c9c242859570ca7426cfcbd92e0f3f6b1b4fdd53fb3845a44edb49b8e1",
+  "consumerAuditDigest": "sha256:2450476855dd6f5b7866e047c7ab9459f9f23eb3c44d6bfd830328167246d6a9",
+  "sourceAndConsumerAdvisories": 0,
+  "blockingSecurityFindings": [],
+  "remainingActions": [
+    "Retain actual review and candidate receipts in minimal tested signer-preparation PR; bind pendingUnsignedCandidate to rc11 while preserving rc10 holds.",
+    "Pass applicable gates, exact-source CI and framework admission before normal merge.",
+    "Obtain distinct owner approval to sign the exact original rc11 bytes.",
+    "Perform later signed-candidate cryptographic/provenance/client/security and publication assessments; refresh dependency evidence as required."
+  ],
+  "originalPreparationUnchanged": true,
+  "originalRepoCleanAndAtCandidate": true,
+  "reviewer": "Independent Codex delegated reviewer; no separately authenticated runtime-model identity claimed",
+  "executorBlockers": [],
+  "deniedOperation": {
+    "action": "escalated curl GET of public GitHub metadata saving local JSON",
+    "target": "public GitHub run/artifact metadata for rc11",
+    "outcome": "denied; not retried",
+    "reason": "automatic approval review applied earlier read-only/no-file-modification restriction",
+    "resolution": "authenticated supported browser reads and original artifact downloads completed verification; no remaining blocker"
+  }
+}

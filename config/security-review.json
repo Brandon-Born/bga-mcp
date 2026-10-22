@@ -53,5 +53,17 @@
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
   ],
-  "publicationHold": "BGA-454: frozen rc.10 has newly disclosed high GHSA-46jr-4wx8-v453 and GHSA-jm63-cq47-j5jp plus undisposed lower/toolchain findings; preserve signed bytes and require a separately evaluated replacement candidate."
+  "publicationHold": "BGA-454: frozen rc.10 has newly disclosed high GHSA-46jr-4wx8-v453 and GHSA-jm63-cq47-j5jp plus undisposed lower/toolchain findings; preserve signed bytes and require a separately evaluated replacement candidate.",
+  "pendingUnsignedCandidate": {
+    "tag": "v1.0.0-rc.11",
+    "sourceCommit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "archiveDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928",
+    "manifestDigest": "sha256:232941b79638628b87a278677e2ba8b73f369c684afa88f042c0e60a147a54c1",
+    "producerRun": 39701663657,
+    "producerAttempt": 1,
+    "artifactId": 12392394262,
+    "candidateReceipt": "docs/verification/release-candidate-v1.0.0-rc.11.json",
+    "unsignedReviewReceipt": "docs/verification/rc11-unsigned-independent-review.json"
+  }
 }
