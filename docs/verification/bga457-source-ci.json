@@ -380,5 +380,131 @@
   "replacementCandidateCreated": false,
   "signingApproved": false,
   "publicationApproved": false,
-  "remaining": "Final proof-only review, final-head CI and normal merge decision. A separately versioned original candidate still requires authentic installed/security/client reviews; frozen rc11 is not signing-ready."
+  "remaining": "Fresh exact-source CI/proof retest, final proof-only review and final-head CI, followed by owner merge decision. Local/source approval does not claim the Windows remedy passed; frozen rc11 remains held.",
+  "windowsHarnessFollowUp": {
+    "recordedAt": "2026-10-27T16:30:57.824556+00:00",
+    "failedHead": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+    "failedRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40538258223",
+    "failedJobId": 122309303669,
+    "failedMatrixEntry": "windows-latest / Node 22",
+    "result": {
+      "testsPassed": 1029,
+      "testsTotal": 1030,
+      "failure": "E2E-NORMALIZED-PROJECT first case timed out in 30000ms",
+      "otherJobsPassed": 5
+    },
+    "exactStalledPhase": "unknown; no phase timings in failed log",
+    "correction": "One immutable installed consumer provisioned in the existing setup hook, with its documented returned after-suite cleanup callback; limits and three clean layout fixture copies stay separate. Every scenario call/assertion and configured deadline stays unchanged.",
+    "affectedLocalTests": {
+      "passed": 2,
+      "total": 2
+    },
+    "callEquivalence": {
+      "assertionCallExpressions": 62,
+      "rpcCalls": 11,
+      "connectCalls": 3,
+      "exitWaits": 3,
+      "clientCloses": 3,
+      "fixtureWrites": 6,
+      "allUnchanged": true
+    },
+    "runtimeAndPolicyUnchanged": true,
+    "fullGate": {
+      "status": "passed uninterrupted after retained lint correction",
+      "source": {
+        "commit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "clean": false
+      },
+      "tests": {
+        "files": 126,
+        "total": 1030,
+        "passed": 1030,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scenarios": {
+        "required": 279,
+        "passed": 279,
+        "failed": 0,
+        "missing": 0
+      },
+      "harnessFileDigest": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+      "notCleanCommittedSourceCi": true
+    },
+    "newExactSourceCi": "pending",
+    "independentHarnessReview": {
+      "originalReceiptSha256": "sha256:5996c1caf076eaa0b72060b46250cf8f7d1ceac15fd443b45560706d96ef103f",
+      "originalReceipt": {
+        "schemaVersion": 1,
+        "kind": "independent revised harness source and pending-evidence review, not runtime or release approval",
+        "reviewer": "Codex separate review agent /root/pr48_independent_review",
+        "recordedAt": "2026-10-27T16:36:32.544208+00:00",
+        "priorCommit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "correctedFile": "tests/e2e/normalized-project.test.ts",
+        "correctedFileSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+        "commitContainingCorrection": "not yet observed",
+        "verdict": "approved exact v2 harness source; fresh full/CI/proof verification remains required",
+        "findings": [],
+        "severityCounts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "reportSha256": "sha256:eed2a91af28376557290ab0d9042db79377cd19cbcba9a168407e38eb556038c",
+        "priorHarnessReportSha256": "sha256:822f131ab5d492ae32be0bb0eb4b663f1f60906a67657d5f6d9f22514303aec7",
+        "staticEquivalence": {
+          "recordedAt": "2026-10-27T16:34:59.892Z",
+          "priorHead": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+          "scope": "Read-only v2 AST call-expression equivalence and returned beforeAll cleanup/deadline checks; no build, install, pack or runtime test.",
+          "file": "tests/e2e/normalized-project.test.ts",
+          "fileSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+          "allScenarioCallExpressionsPreservedExceptProvisioningAndCleanup": true,
+          "tests": [
+            {
+              "title": "[E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+              "preservedCallExpressions": 61
+            },
+            {
+              "title": "[E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+              "preservedCallExpressions": 61
+            }
+          ],
+          "fixtureIsolation": "limits modern separate from explicit clean modern/legacy/hybrid loop",
+          "hooksUseExistingDefaultBudget": true,
+          "assertionsAndRpcsRemainInBodies": true,
+          "helpersAndGlobalDeadlinesUnchanged": true,
+          "passed": true
+        },
+        "probeResultsSha256": "sha256:cb8b942928a9ef506b1271b4dfbbc5c7d8f7049dbe24c2eff23210b1d727f372",
+        "cleanupContract": {
+          "officialApi": "https://vitest.dev/api/hooks.html#beforeall",
+          "installedRunnerVersion": "4.1.12",
+          "returnedCleanupAwaited": true,
+          "existingHookTimeoutPreserved": true
+        },
+        "pendingEvidenceScopeReviewed": true,
+        "frameworkStatus": {
+          "heldSources": 8,
+          "onlyProofChanged": true,
+          "newExactSourceEvidenceRequired": true
+        },
+        "affectedLocalResultsRead": {
+          "testsPassed": 2,
+          "total": 2,
+          "fullOrCiPassNotInferred": true
+        },
+        "runtimeRemedyVerifiedByReviewer": false,
+        "fullSuiteRerunByReviewer": false,
+        "priorReportsOverwritten": false,
+        "mergeAuthorized": false,
+        "signingApproved": false,
+        "publicationApproved": false
+      }
+    },
+    "frameworkProof": "held until genuine fresh retest proof; existing interpretation identity unchanged",
+    "unchangedCiRetried": false,
+    "originalRc11Held": true,
+    "cleanupLintCorrection": "An unnecessary optional-chain lint error was caught before tests; the documented returned cleanup callback removes that typing issue without changing scenario bodies or budgets.",
+    "windowsRemedyVerified": false
+  }
 }

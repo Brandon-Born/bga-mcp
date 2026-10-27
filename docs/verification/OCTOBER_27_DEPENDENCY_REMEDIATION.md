@@ -86,6 +86,38 @@ and digests remain preserved within the monitoring window. A separate fresh
 clean-source registry audit also reports zero production/full-graph findings.
 These results cover development source; no original-candidate approval is carried
 forward. Independent source review remains separately scoped and recorded.
+
+## Retained Windows follow-up
+
+Final PR run [40538258223](https://github.com/Brandon-Born/bga-mcp/actions/runs/40538258223)
+at evidence head `33a20eb` passed five jobs; Windows Node 22 failed with 1,029 of
+1,030 tests passing. The first normalization E2E exceeded its unchanged 30-second
+deadline. The log does not locate the exact stalled operation. It bundles consumer
+installation, fixture copying, scenario calls and cleanup inside the timed body;
+a neighboring suite spent about 34 seconds in setup/teardown outside its short
+scenario bodies. The failure remains retained rather than retried unchanged.
+
+Move this suite's immutable consumer provisioning into its existing `beforeAll`
+setup phase and register the documented after-suite cleanup callback from that
+hook, using one installed package with a
+separate `limits` fixture copy and clean modern/legacy/hybrid copies. All original
+fixture mutations, assertion chains, RPC/connect/exit/close calls and protection
+digests remain in the scenario bodies. Test timeout (30 seconds), hook timeout
+(60 seconds), workers, retries, connection/request/process deadlines and output
+limits are unchanged. This follows the documented [Vitest hook lifecycle](https://vitest.dev/api/hooks.html)
+and existing packaged-suite practice; it is not an assertion that installation was
+conclusively the stalled phase.
+
+Both affected packaged tests pass locally. After a retained cleanup-typing lint
+failure was corrected with the documented returned cleanup callback, the full
+local gate passed all 1,030 tests and 279 scenarios. An independent revised-source
+review approved the exact test-file hash and confirmed all 122 scenario call
+expression trees are preserved. These are local/source results, not an observed
+Windows remedy. Fresh exact-source CI remains required. The unchanged framework
+guard correctly holds proof for this test change; interpretation identities stay
+intact. Refresh proof through the genuine retest gate once new CI passes. Earlier
+implementation/receipt reviews remain historical and are not transferred to this
+new harness or used to clear original rc.11.
 The original candidate stays at tag `v1.0.0-rc.11`, tarball
 `sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55`.
 Its seven files, archive, tag and earlier review must never be overwritten by
