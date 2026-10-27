@@ -74,6 +74,18 @@ remain pending until observed. No such passing result is asserted in advance.
 A final uninterrupted `pnpm check` then passed with all 1,030 tests and 279 required
 scenarios. Its honestly dirty source evidence and the two earlier failures are
 retained separately; no result is relabeled as clean committed-source CI.
+
+The subsequent [actual source receipt](bga457-source-ci.json) supersedes the
+implementation checkpoint's pending CI and framework stages: exact-source run
+[40534767114](https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114)
+passed all six jobs for source `86cfd4c2140f279f84d02ab5816a77104e5a06a0`.
+All six original archive digests match GitHub, all extracted evidence passes
+schema/integrity/source/matrix/test/conformance checks, and the unchanged
+framework gate admitted all eight mapped sources. Existing observation timestamps
+and digests remain preserved within the monitoring window. A separate fresh
+clean-source registry audit also reports zero production/full-graph findings.
+These results cover development source; no original-candidate approval is carried
+forward. Independent source review remains separately scoped and recorded.
 The original candidate stays at tag `v1.0.0-rc.11`, tarball
 `sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55`.
 Its seven files, archive, tag and earlier review must never be overwritten by
