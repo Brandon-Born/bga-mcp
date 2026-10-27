@@ -348,3 +348,27 @@ hosted/macOS fresh-consumer checks. Its exact-signer-source CI passes all six
 jobs. The producer receipt above remains its historical unsigned observation;
 the new signing receipt supplies the distinct signature evidence. BGA-407's
 rc.5 distribution and the remaining candidate-specific release gates are separate.
+
+## rc.12 source preparation after the October27 dependency hold — BGA-458
+
+PR48's normal merge `4bb8ea485852229ce2703b5bad513d51b45c2983` retains the
+reviewed dependency fixes and original proof commits. Frozen unsigned rc.11
+remains security-held; none of its original bytes, tag or past review receipts
+is replaced. The next selected package/server version is `1.0.0-rc.12`.
+
+This source preparation changes only the three version fields and records its
+bounded procedure. The patched lockfile, public contract, test/deadline/retry
+settings, security policies, signer selection and public release metadata are
+preserved. A local or CI test tarball is development evidence, not the original
+rc.12 candidate. No original candidate or its digest is claimed before the
+existing tag-gated producer succeeds.
+
+Before production, retain a passing integrated gate, fresh canonical audits,
+independent source review, clean exact-source CI and current framework
+admission. The separate preparation PR needs its own normal merge approval;
+then verify merged main and its checks, create `v1.0.0-rc.12` only if absent,
+and dispatch the existing read-only release-candidate workflow. Keep the
+original hosted archive and independently verify its API digest, inner
+checksums, manifest/source/lock identities, sealed evidence, reproducibility,
+audit scopes and exact-byte installed behavior. Genuine independent artifact
+review and later signing/publication decisions cannot be inherited from rc.11.
