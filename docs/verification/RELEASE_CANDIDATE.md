@@ -428,3 +428,34 @@ canonical fresh audits, independent source review, exact-source CI and current
 framework admission must pass before the separate owner merge and unsigned
 rc.13 production decision. No rc.13 tag, producer dispatch, signature or public
 publication is performed by this source correction.
+
+The rc.13 correction implementation is
+`d1a4d1322628bda11869c1e4b5fb04a7c9456a16` (tree
+`7d52272b689153fff2b3e5f60825e0f4a32c4327`). Its integrated full gate
+passed 1,030 tests / 279 required scenarios with the preparation dirty on base
+`054e4fd`; the retained evidence keeps that actual identity. The independent
+review bound all ten committed paths with no actionable findings (report
+SHA-256 `0d0b0ce9c74d80bb5b2563dcbb12a4602ad99857943ad29f3b8204a136f96cd7`). Six separate library checks reproduce the two vulnerable
+comma-serialization paths on qs 6.16.0, verify fixed 6.16.1 and preserve benign
+controls; they do not assert public stdio exploitability.
+
+The canonical clean correction-source audit generated at
+`2026-10-27T18:40:11.518Z` reports zero production and full-graph findings
+without exceptions. All four dependency/security materials match the correction.
+[Exact-source CI 40562120780](https://github.com/Brandon-Born/bga-mcp/actions/runs/40562120780)
+passed all six platform/Node jobs. All six original archive/API hashes and sealed
+records independently validate schema, integrity, clean actual source, 1,030
+passing tests, 279 scenarios, passing applicable conformance, lock identity and
+installed development test-artifact identity. Each macOS test package matches
+the local development artifact; no original rc.13 candidate is inferred.
+
+Relevant wording from all eight mapped official sources was re-read October27.
+The unchanged framework review command admitted only that genuine exact-source
+CI, reducing eight source-identity holds to zero. October21 page observations
+and digests remain historical and unchanged. This follow-up changes only the
+framework process metadata and this receipt. Implementation proof remains
+explicitly bound to `d1a4d13`; automatic PR checks and the final actual tested
+tree are verified separately in the owner handoff. No failing producer is
+retried or relabeled. The rc.12 tag stays fixed, with no original packet, and
+rc.13 still needs its separate normal-merge and unsigned-production approval.
+Signing and publication remain separate stages.
