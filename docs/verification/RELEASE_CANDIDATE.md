@@ -477,3 +477,42 @@ observer path opens/closes from measured work. CI did not retain inner native
 timings, so it does not prove logging was the sole cause or eliminate all scheduler
 variability. Affected tests, a new integrated gate, independent review and fresh
 source/PR CI must pass before new framework admission or an owner decision.
+
+The observer correction source `963e475d5ab2152ee90a136fc97645212e29dc0b`
+subsequently passed [all six exact-source jobs](https://github.com/Brandon-Born/bga-mcp/actions/runs/40568270079);
+the original six archive/API hashes and sealed clean-source records verify.
+[Its PR run](https://github.com/Brandon-Born/bga-mcp/actions/runs/40568222985)
+passed five jobs but failed the strict installed-executable absence assertion on
+macOS Node22 after successful `pnpm remove`; 1,029 of 1,030 tests passed.
+All deadline-matrix cases passed, including both Windows jobs. The failed PR run
+is retained without an unchanged retry, and still blocks readiness.
+
+Independent controls against the actual unmodified pnpm 11.15.1 binary reproduce
+a possible manifest-read/dependency-removal race that leaves its executable shim.
+The same control against independently downloaded, registry-integrity-verified
+pnpm 11.28.5 verifies manifest read before removal and no leftover shim. The
+[official fixed source](https://github.com/pnpm/pnpm/blob/v11.28.5/pnpm11/installing/linking/modules-cleaner/src/removeDirectDependency.ts)
+awaits executable cleanup before dependency deletion. The exact CI ordering was
+not retained; these controls establish the possible defect and upstream correction,
+not the sole cause of that particular incident. Version 11.28.5 was published
+October6 and is over twenty days old. Current development tooling, ordinary CI consumers and
+prerequisite guidance select it without changing age/security settings, application
+dependencies, removal assertions, deadlines or retries. Historical receipts and
+frozen guides remain unchanged. Historical signed/native replay runners retain
+their reviewed tooling pins and receipt identities; retargeting and replaying them
+is a later actual-candidate stage. An initial overbroad pin edit correctly stopped
+at the controlled-client runner guard before runtime tests; the final preparation
+keeps those historical runner bytes unchanged instead of relabeling their review.
+A new integrated gate, independent source review,
+exact-source/PR CI and authentic framework admission are required. No original
+rc.13 package or approval is inferred from these source/tool checks.
+
+The first narrowed integrated tooling run passed 1,029 of 1,030 tests; its
+publication-prerequisite positive control assumed the historical selected receipt
+still matched the current guide. The real guard correctly rejected the changed
+pnpm prerequisite. The integration control now authenticates the selected
+candidate's guide directly from its recorded Git source, preserves that authentic
+positive case, explicitly verifies current mismatch and digest-substitution
+refusal, and tests mixed receipts against the authentic guide. This does not alter
+the publication guard, any historical receipt, or an approval. A changed source
+guide continues to require actual replacement-candidate installation evidence.

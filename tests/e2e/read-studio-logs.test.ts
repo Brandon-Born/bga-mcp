@@ -49,7 +49,7 @@ beforeAll(async () => {
   await mkdir(installRoot);
   await writeFile(
     resolve(installRoot, 'package.json'),
-    `${JSON.stringify({ name: 'bga-mcp-studio-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+    `${JSON.stringify({ name: 'bga-mcp-studio-install', private: true, packageManager: 'pnpm@11.28.5' })}\n`,
   );
   const artifact = inject('packedArtifact');
   await recordInstalledArtifact('read-studio-logs', artifact);

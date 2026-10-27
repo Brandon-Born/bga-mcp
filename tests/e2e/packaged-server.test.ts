@@ -34,7 +34,7 @@ describe('packaged bga-mcp server', () => {
       await mkdir(installRoot);
       await writeFile(
         resolve(installRoot, 'package.json'),
-        `${JSON.stringify({ name: 'bga-mcp-e2e-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+        `${JSON.stringify({ name: 'bga-mcp-e2e-install', private: true, packageManager: 'pnpm@11.28.5' })}\n`,
       );
       const pack = await runCommand(
         corepackCommand,

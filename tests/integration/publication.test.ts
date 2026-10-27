@@ -313,17 +313,34 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
   };
   const selectedReview = object(await read(config.reviewReceipt));
   const currentGuideDigest = sha256(await readFile(resolve(root, 'docs/INSTALL.md')));
+  const selectedCandidate = object(selectedReview.candidate) as {
+    tag: string;
+    sourceCommit: string;
+    artifactDigest: string;
+  };
+  // A source guide correction cannot renew an authentic historical receipt.
+  // Authenticate its original guide, then test the current guide separately.
+  const selectedOriginalGuide = await runCommand(
+    'git',
+    ['show', `${selectedCandidate.sourceCommit}:docs/INSTALL.md`],
+    { cwd: root },
+  );
+  expect(selectedOriginalGuide.exitCode, selectedOriginalGuide.stderr).toBe(0);
+  const selectedGuideDigest = sha256(selectedOriginalGuide.stdout);
+  expect(() =>
+    verifyPublicationPrerequisites(selectedReceipts, selectedCandidate, selectedGuideDigest),
+  ).not.toThrow();
+  const verifyCurrentGuide = () =>
+    verifyPublicationPrerequisites(selectedReceipts, selectedCandidate, currentGuideDigest);
+  if (currentGuideDigest === selectedGuideDigest) expect(verifyCurrentGuide).not.toThrow();
+  else expect(verifyCurrentGuide).toThrow('Installation guide changed');
   expect(() =>
     verifyPublicationPrerequisites(
       selectedReceipts,
-      object(selectedReview.candidate) as {
-        tag: string;
-        sourceCommit: string;
-        artifactDigest: string;
-      },
-      currentGuideDigest,
+      selectedCandidate,
+      sha256('Unreviewed installation guide substitution'),
     ),
-  ).not.toThrow();
+  ).toThrow('Installation guide changed');
   for (const [key, path] of [
     ['installation', 'install-guide-v1.0.0-rc.7-signed.json'],
     ['client', 'codex-client-v1.0.0-rc.7.json'],
@@ -334,12 +351,8 @@ it('[INT-PUBLICATION-BOUNDARIES] requires candidate-specific install, client, pu
     expect(() =>
       verifyPublicationPrerequisites(
         { ...selectedReceipts, [key]: historical },
-        object(selectedReview.candidate) as {
-          tag: string;
-          sourceCommit: string;
-          artifactDigest: string;
-        },
-        currentGuideDigest,
+        selectedCandidate,
+        selectedGuideDigest,
       ),
     ).toThrow();
   }
