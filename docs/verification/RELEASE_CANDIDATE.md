@@ -459,3 +459,21 @@ tree are verified separately in the owner handoff. No failing producer is
 retried or relabeled. The rc.12 tag stays fixed, with no original packet, and
 rc.13 still needs its separate normal-merge and unsigned-production approval.
 Signing and publication remain separate stages.
+
+The final receipt-head PR run
+[40564533890](https://github.com/Brandon-Born/bga-mcp/actions/runs/40564533890)
+at `5031489e24c662379fafebb342cc9a57f6ce8fb2` failed Windows Node22;
+the other five jobs passed. That job passed 1,029 of 1,030 tests, with the
+adopted-roots recovery `check_setup` returning `policy.timeout.exceeded`
+under its real 100 ms deadline. Earlier injected cancellation, quiescence and
+transport assertions passed. This failure is retained and blocks merge readiness;
+the successful implementation/initial PR runs above do not clear it.
+
+The narrow test-observer correction keeps one append descriptor for the probe's
+transcript, opened before timed work and closed on child exit. Each event remains
+synchronously visible, with existing real native operations, deadlines, assertions,
+fake-clock behavior and mutation witnesses unchanged. This removes repeated
+observer path opens/closes from measured work. CI did not retain inner native
+timings, so it does not prove logging was the sole cause or eliminate all scheduler
+variability. Affected tests, a new integrated gate, independent review and fresh
+source/PR CI must pass before new framework admission or an owner decision.
