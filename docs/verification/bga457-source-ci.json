@@ -1,0 +1,910 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-457",
+  "recordedAt": "2026-10-27T16:04:53.995435+00:00",
+  "scope": "Observed future-source dependency remediation evidence, not a replacement original-candidate review, signature, merge authorization or publication approval. Implementation backlog planning/pending evidence is superseded only by the actual scoped results here.",
+  "implementationSource": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+  "pullRequest": "https://github.com/Brandon-Born/bga-mcp/pull/48",
+  "local": {
+    "source": {
+      "commit": "ec3fcfef0c6acec3d72da96f5f650badfeab0ef7",
+      "clean": false
+    },
+    "tests": {
+      "files": 126,
+      "total": 1030,
+      "passed": 1030,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scenarios": {
+      "required": 279,
+      "passed": 279,
+      "failed": 0,
+      "missing": 0
+    },
+    "conformance": "passed",
+    "uninterruptedFullGatePassed": true,
+    "sourceWasDirtyBeforeCommit": true,
+    "evidenceDigest": "sha256:d7ef31775305eeed7d8bb814ada00716f06a79d26f06de8a6f101419843a0250",
+    "retainedFailures": [
+      "initial 1027/1028: changed nullable-string discovery fingerprint",
+      "subsequent 1030/1030 runtime pass: six stale evidence test counts"
+    ],
+    "finalRun": "all checks passed after correcting actual regressions; no failed result erased"
+  },
+  "cleanSourceAudit": {
+    "generatedAt": "2026-10-27T15:50:05.581Z",
+    "source": {
+      "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+      "lockDigest": "sha256:95bb7356b8f5b37980e84b8a6ce1d7fa5e495eeeb84b12e0359102479848dce2",
+      "packageDigest": "sha256:850b8cc515545dfc8251b0495b4e827c208234bd1f356d418bbeb563026c5e88",
+      "workspaceDigest": "sha256:2d8d27450bd1f4588ec268e328c85b08717e9e8c9bdf8b13146761f300f26c56",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "evidenceDigest": "sha256:5a9b7216e807fb30a408ebcbe0c8f451067278c88e8a46c6407ddc04c5a1547d",
+    "scope": "Clean committed development dependency graph; original candidate remains held."
+  },
+  "sourceCi": {
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
+    "source": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+    "allSixPassed": true,
+    "schemaAndIntegrityValid": true,
+    "records": [
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.4",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T15:55:43.270Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+        "evidenceDigest": "sha256:57b70232d0adbe11ccddf31b610ad4e6648028ca47816752abd170be32d2813e"
+      },
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "darwin",
+          "arch": "arm64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T15:56:21.761Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+        "evidenceDigest": "sha256:eed2eefac910db5f106574cc3f70de44d8866c2700c0070aa0f14f11cbe03269"
+      },
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.3",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T15:55:24.548Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+        "evidenceDigest": "sha256:45d1e01d4dba465163dfff5d2e4d33ead92241ef9b76ffda5d73b216bb30bd50"
+      },
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.21.0",
+          "platform": "linux",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T15:55:08.464Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+        "evidenceDigest": "sha256:4d667cd32491d090180f896ffb42938ff0715853a80f292b2a72828729f052ea"
+      },
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v22.23.4",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T15:58:55.111Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+        "evidenceDigest": "sha256:f5221c566449c23b909a0453024cef5a8393856264643f20eb0beba474735bc9"
+      },
+      {
+        "source": {
+          "commit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+          "clean": true
+        },
+        "environment": {
+          "node": "v24.22.1",
+          "platform": "win32",
+          "arch": "x64",
+          "packageManager": "pnpm@11.15.1",
+          "ci": true
+        },
+        "generatedAt": "2026-10-27T16:00:23.781Z",
+        "tests": {
+          "files": 126,
+          "total": 1030,
+          "passed": 1030,
+          "failed": 0,
+          "skipped": 0
+        },
+        "scenarios": {
+          "required": 279,
+          "passed": 279,
+          "failed": 0,
+          "missing": 0
+        },
+        "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+        "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f"
+      }
+    ],
+    "originalArchiveValidation": {
+      "archivesVerified": 6,
+      "records": [
+        {
+          "id": 12748935669,
+          "name": "verification-ubuntu-latest-node-24",
+          "archiveDigest": "sha256:9ad91173b72fe11d4e5786372653122aad1177b5aef57832195729611eb77436",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:4d667cd32491d090180f896ffb42938ff0715853a80f292b2a72828729f052ea"
+        },
+        {
+          "id": 12748687101,
+          "name": "verification-windows-latest-node-24",
+          "archiveDigest": "sha256:caf1ddb9b6c58c1d8b1bd087ed5e6bc7fa8f5c06a992e93ae359fd851d9cec92",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f"
+        },
+        {
+          "id": 12748471733,
+          "name": "verification-macos-latest-node-24",
+          "archiveDigest": "sha256:2c5e1598e2ba77fceea2263ee67880eca5610d225a0fa60eb755aa581158bc6c",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:eed2eefac910db5f106574cc3f70de44d8866c2700c0070aa0f14f11cbe03269"
+        },
+        {
+          "id": 12748088193,
+          "name": "verification-windows-latest-node-22",
+          "archiveDigest": "sha256:ab55cce1fcdc8740ac5a5ebdad9ba84865e3b595edf8f1138db19bf5d57b37c7",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:f5221c566449c23b909a0453024cef5a8393856264643f20eb0beba474735bc9"
+        },
+        {
+          "id": 12747772978,
+          "name": "verification-ubuntu-latest-node-22",
+          "archiveDigest": "sha256:c54fb365c3c3ab8bb41b4c380e62a8c3b6ac867cd43039d2351159e3f78cc17a",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:45d1e01d4dba465163dfff5d2e4d33ead92241ef9b76ffda5d73b216bb30bd50"
+        },
+        {
+          "id": 12747742177,
+          "name": "verification-macos-latest-node-22",
+          "archiveDigest": "sha256:d35952ea32c235085f3ad85c925864684364841cd96a66876d1d489de4820762",
+          "apiDigestMatches": true,
+          "evidenceIdenticalToIndependentExtraction": true,
+          "evidenceDigest": "sha256:57b70232d0adbe11ccddf31b610ad4e6648028ca47816752abd170be32d2813e"
+        }
+      ]
+    }
+  },
+  "framework": {
+    "source": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+    "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
+    "holdsBefore": 8,
+    "holdsAfter": 0,
+    "sources": [
+      "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+      "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+      "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+      "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+      "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+      "https://en.doc.boardgamearena.com/Studio",
+      "https://en.doc.boardgamearena.com/Studio_file_reference",
+      "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
+    ],
+    "scope": "Relevant official wording reviewed October27; no BGA parser/rule/fixture changes. Existing October21 observation timestamps/digests preserved inside seven-day window; no fresh observation is invented."
+  },
+  "independentSourceReview": {
+    "scope": "Actual implementation review only. New proof-only receipt bytes require separate final review. No candidate approval transfer.",
+    "originalReceiptSha256": "sha256:dfc89c87c74f6b6ef6c57216eab73ee63426a531eb233cf792536faf6a80ad56",
+    "originalReceipt": {
+      "schemaVersion": 1,
+      "kind": "independent source implementation review, not an artifact or release approval",
+      "reviewer": "Codex separate review agent /root/pr48_independent_review",
+      "recordedAt": "2026-10-27T16:05:46.765003+00:00",
+      "baseCommit": "ec3fcfef0c6acec3d72da96f5f650badfeab0ef7",
+      "implementationCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+      "pullRequest": "https://github.com/Brandon-Born/bga-mcp/pull/48",
+      "verdict": "approved for source integration; final proof-only diff and checks still required",
+      "findings": [],
+      "severityCounts": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "reportSha256": "sha256:528c91523b0a0652126bfe40e126ac579a9fc95303f3065d140077e55fe45c1d",
+      "probeResultsSha256": "sha256:115e29b3e1e2bc15475ee4331608b6f9cc37cf16962450930086151ec973cc0e",
+      "officialAdvisoryBindingsSha256": "sha256:d96ab9bb9ed32a142fc5e41bd835476d382fbcbeb8cb939f2925259d7fa0ede9",
+      "independentProbes": {
+        "recordedAt": "2026-10-27T16:03:31.711Z",
+        "source": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+        "scope": "Independent pure in-memory source probes; no package build, original-candidate recreation or release approval.",
+        "cases": 34,
+        "assertions": 120,
+        "passed": true,
+        "sourceFileSha256": "sha256:a385adba7391409e23d8f7f51401428fc1c68d15bd99bd04daaf3a93398a6ff5",
+        "runtime": "v22.17.1"
+      },
+      "retainedResultsInspected": {
+        "localTests": 1030,
+        "localScenarios": 279,
+        "sixSourceCiEvidenceDocuments": 6,
+        "freshAuditSourceAndFourMaterialDigestsMatch": true,
+        "liveAuditRerunByReviewer": false,
+        "fullSuiteRerunByReviewer": false,
+        "ciArchivesDownloadedByReviewer": false
+      },
+      "preservationChecked": {
+        "rc11IndexedFiles": 46,
+        "rc10SignedFiles": 9,
+        "allHashesMatch": true
+      },
+      "laterProofOnlyDiffReview": "pending, no advance approval",
+      "originalRc11Held": true,
+      "candidateApprovalTransferred": false,
+      "mergeAuthorized": false,
+      "signingApproved": false,
+      "publicationApproved": false
+    }
+  },
+  "frozenOriginals": {
+    "rc11ArtifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "rc11FilesHashChecked": 46,
+    "rc10SignedFilesHashChecked": 9,
+    "originalRc11Held": true,
+    "hold": "docs/verification/rc11-security-hold-2026-10-27.json"
+  },
+  "replacementCandidateCreated": false,
+  "signingApproved": false,
+  "publicationApproved": false,
+  "remaining": "Final proof-only review and automatic final-head CI, then owner merge decision. C1 interpretation and corrected e8 proof retain actual source scope; frozen rc11 remains held and requires a distinct replacement candidate.",
+  "windowsHarnessFollowUp": {
+    "recordedAt": "2026-10-27T16:30:57.824556+00:00",
+    "failedHead": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+    "failedRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40538258223",
+    "failedJobId": 122309303669,
+    "failedMatrixEntry": "windows-latest / Node 22",
+    "result": {
+      "testsPassed": 1029,
+      "testsTotal": 1030,
+      "failure": "E2E-NORMALIZED-PROJECT first case timed out in 30000ms",
+      "otherJobsPassed": 5
+    },
+    "exactStalledPhase": "unknown; no phase timings in failed log",
+    "correction": "One immutable installed consumer provisioned in the existing setup hook, with its documented returned after-suite cleanup callback; limits and three clean layout fixture copies stay separate. Every scenario call/assertion and configured deadline stays unchanged.",
+    "affectedLocalTests": {
+      "passed": 2,
+      "total": 2
+    },
+    "callEquivalence": {
+      "assertionCallExpressions": 62,
+      "rpcCalls": 11,
+      "connectCalls": 3,
+      "exitWaits": 3,
+      "clientCloses": 3,
+      "fixtureWrites": 6,
+      "allUnchanged": true
+    },
+    "runtimeAndPolicyUnchanged": true,
+    "fullGate": {
+      "status": "passed uninterrupted after retained lint correction",
+      "source": {
+        "commit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "clean": false
+      },
+      "tests": {
+        "files": 126,
+        "total": 1030,
+        "passed": 1030,
+        "failed": 0,
+        "skipped": 0
+      },
+      "scenarios": {
+        "required": 279,
+        "passed": 279,
+        "failed": 0,
+        "missing": 0
+      },
+      "harnessFileDigest": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+      "notCleanCommittedSourceCi": true
+    },
+    "newExactSourceCi": {
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+      "source": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "allSixPassed": true,
+      "schemaAndIntegrityValid": true,
+      "records": [
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:45:58.944Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+          "evidenceDigest": "sha256:b82aedff02586f32fad87afc345192359abfcda8843a461ee3cd3d747ddc8661"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.21.0",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:46:10.902Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+          "evidenceDigest": "sha256:a078ebf7c9ff1040bd085c46ebb51d195b4d25a5cf119b30319ced705c631019"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:44:02.417Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+          "evidenceDigest": "sha256:5e034e41587ee4b74aea2ded13e97d677645677260500dd3a5ccdb14e165c43f"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.22.1",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:44:24.058Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+          "evidenceDigest": "sha256:55ba056874e6b47f6c569269d82c9165ea5ae6e8c427fc7d28f7b9c342372106"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.4",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:49:46.891Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.22.1",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:48:22.753Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+          "evidenceDigest": "sha256:cb25dd26e92f783941d987e4818bee549ced6563d5fda89087d04931b91b6114"
+        }
+      ],
+      "originalArchiveValidation": {
+        "archivesVerified": 6,
+        "records": [
+          {
+            "id": 12752670107,
+            "name": "verification-ubuntu-latest-node-22",
+            "archiveDigest": "sha256:e4738f033611a1a28816ce9d4e81df66e839f756ac3047261e00565ffb51d64d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:5e034e41587ee4b74aea2ded13e97d677645677260500dd3a5ccdb14e165c43f"
+          },
+          {
+            "id": 12752390967,
+            "name": "verification-ubuntu-latest-node-24",
+            "archiveDigest": "sha256:db7586a597304400f47278b032b8cc3352b7f87e63d32da33baa7e881d2d04e6",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:55ba056874e6b47f6c569269d82c9165ea5ae6e8c427fc7d28f7b9c342372106"
+          },
+          {
+            "id": 12751752326,
+            "name": "verification-windows-latest-node-22",
+            "archiveDigest": "sha256:b4ad231ca177473d0af184edd2254ca6698634d9d1f6b7c616abd012cab7bebd",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff"
+          },
+          {
+            "id": 12751696950,
+            "name": "verification-macos-latest-node-24",
+            "archiveDigest": "sha256:b41e431c2457a01ad9923df93e1bd50a5d27cc117d8685e3ff03965caf77d5a2",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:a078ebf7c9ff1040bd085c46ebb51d195b4d25a5cf119b30319ced705c631019"
+          },
+          {
+            "id": 12750179578,
+            "name": "verification-macos-latest-node-22",
+            "archiveDigest": "sha256:b09d874809dd69b724ac8866c0b550b619beb97d282d9ec7fc11f19f3863431d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:b82aedff02586f32fad87afc345192359abfcda8843a461ee3cd3d747ddc8661"
+          },
+          {
+            "id": 12750169937,
+            "name": "verification-windows-latest-node-24",
+            "archiveDigest": "sha256:99f1aeca84d5daceee024ba7bbeda1aac64b752c96974e004143cc973e39da7d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:cb25dd26e92f783941d987e4818bee549ced6563d5fda89087d04931b91b6114"
+          }
+        ]
+      }
+    },
+    "independentHarnessReview": {
+      "originalReceiptSha256": "sha256:5996c1caf076eaa0b72060b46250cf8f7d1ceac15fd443b45560706d96ef103f",
+      "originalReceipt": {
+        "schemaVersion": 1,
+        "kind": "independent revised harness source and pending-evidence review, not runtime or release approval",
+        "reviewer": "Codex separate review agent /root/pr48_independent_review",
+        "recordedAt": "2026-10-27T16:36:32.544208+00:00",
+        "priorCommit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "correctedFile": "tests/e2e/normalized-project.test.ts",
+        "correctedFileSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+        "commitContainingCorrection": "not yet observed",
+        "verdict": "approved exact v2 harness source; fresh full/CI/proof verification remains required",
+        "findings": [],
+        "severityCounts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "reportSha256": "sha256:eed2a91af28376557290ab0d9042db79377cd19cbcba9a168407e38eb556038c",
+        "priorHarnessReportSha256": "sha256:822f131ab5d492ae32be0bb0eb4b663f1f60906a67657d5f6d9f22514303aec7",
+        "staticEquivalence": {
+          "recordedAt": "2026-10-27T16:34:59.892Z",
+          "priorHead": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+          "scope": "Read-only v2 AST call-expression equivalence and returned beforeAll cleanup/deadline checks; no build, install, pack or runtime test.",
+          "file": "tests/e2e/normalized-project.test.ts",
+          "fileSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+          "allScenarioCallExpressionsPreservedExceptProvisioningAndCleanup": true,
+          "tests": [
+            {
+              "title": "[E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+              "preservedCallExpressions": 61
+            },
+            {
+              "title": "[E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+              "preservedCallExpressions": 61
+            }
+          ],
+          "fixtureIsolation": "limits modern separate from explicit clean modern/legacy/hybrid loop",
+          "hooksUseExistingDefaultBudget": true,
+          "assertionsAndRpcsRemainInBodies": true,
+          "helpersAndGlobalDeadlinesUnchanged": true,
+          "passed": true
+        },
+        "probeResultsSha256": "sha256:cb8b942928a9ef506b1271b4dfbbc5c7d8f7049dbe24c2eff23210b1d727f372",
+        "cleanupContract": {
+          "officialApi": "https://vitest.dev/api/hooks.html#beforeall",
+          "installedRunnerVersion": "4.1.12",
+          "returnedCleanupAwaited": true,
+          "existingHookTimeoutPreserved": true
+        },
+        "pendingEvidenceScopeReviewed": true,
+        "frameworkStatus": {
+          "heldSources": 8,
+          "onlyProofChanged": true,
+          "newExactSourceEvidenceRequired": true
+        },
+        "affectedLocalResultsRead": {
+          "testsPassed": 2,
+          "total": 2,
+          "fullOrCiPassNotInferred": true
+        },
+        "runtimeRemedyVerifiedByReviewer": false,
+        "fullSuiteRerunByReviewer": false,
+        "priorReportsOverwritten": false,
+        "mergeAuthorized": false,
+        "signingApproved": false,
+        "publicationApproved": false
+      }
+    },
+    "frameworkProof": {
+      "recordedAt": "2026-10-27T16:51:32.793Z",
+      "source": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+      "heldBefore": 8,
+      "heldAfter": 0,
+      "sources": [
+        "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "https://en.doc.boardgamearena.com/Studio",
+        "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
+      ],
+      "mode": "unchanged framework:retest gate",
+      "allInterpretationAndObservationIdentitiesPreserved": true,
+      "priorInterpretationSource": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+      "proofSource": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf"
+    },
+    "unchangedCiRetried": false,
+    "originalRc11Held": true,
+    "cleanupLintCorrection": "An unnecessary optional-chain lint error was caught before tests; the documented returned cleanup callback removes that typing issue without changing scenario bodies or budgets.",
+    "windowsRemedyVerified": true,
+    "newAutomaticPrCi": {
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542872197",
+      "githubRunHead": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "status": "completed",
+      "conclusion": "success",
+      "allSixJobsPassed": true,
+      "scope": "Observed GitHub PR run/job result; exact-source artifact validation is separately recorded above."
+    },
+    "freshSourceAudit": {
+      "generatedAt": "2026-10-27T16:40:06.720Z",
+      "source": {
+        "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+        "lockDigest": "sha256:95bb7356b8f5b37980e84b8a6ce1d7fa5e495eeeb84b12e0359102479848dce2",
+        "packageDigest": "sha256:850b8cc515545dfc8251b0495b4e827c208234bd1f356d418bbeb563026c5e88",
+        "workspaceDigest": "sha256:2d8d27450bd1f4588ec268e328c85b08717e9e8c9bdf8b13146761f300f26c56",
+        "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+      },
+      "production": {
+        "counts": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "findings": []
+      },
+      "all": {
+        "counts": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "findings": []
+      },
+      "auditDigest": "sha256:d8547fbba50926d5280a4f3f203deb6885bbcaa9d3ada1b3a9c4e8dd3d1813a0",
+      "scope": "Clean corrected development source only; original rc11 remains held."
+    },
+    "committedHarnessReview": {
+      "originalReceiptSha256": "sha256:fba156fc25fd0d012415946ca5b59467843f9d9698a8cce71b5484fb114f52ce",
+      "originalReceipt": {
+        "schemaVersion": 1,
+        "kind": "independent committed harness and evidence binding addendum; not release approval",
+        "reviewer": "Codex separate review agent /root/pr48_independent_review",
+        "recordedAt": "2026-10-27T16:40:00.638305+00:00",
+        "reviewedCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+        "parentCommit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "tree": "6ada066a7655bc72c96ac14c59cc2af7298cdc0e",
+        "verdict": "approved committed harness/binding; fresh CI/proof and final-head checks pending",
+        "findings": [],
+        "severityCounts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "paths": [
+          "docs/verification/OCTOBER_27_DEPENDENCY_REMEDIATION.md",
+          "docs/verification/bga457-source-ci.json",
+          "tests/e2e/normalized-project.test.ts"
+        ],
+        "committedTestSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+        "v2ReviewReceiptSha256": "sha256:5996c1caf076eaa0b72060b46250cf8f7d1ceac15fd443b45560706d96ef103f",
+        "v2ReviewReportSha256": "sha256:eed2a91af28376557290ab0d9042db79377cd19cbcba9a168407e38eb556038c",
+        "reportSha256": "sha256:e678d3fbdd680eb7a291c8812fe247d339ad9472b93ec5e606ab54998b3b6799",
+        "v2ReceiptEmbeddedVerbatim": true,
+        "localFullGateEvidenceInspected": {
+          "generatedAt": "2026-10-27T16:36:07.062Z",
+          "source": {
+            "commit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+            "clean": false
+          },
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "conformance": "passed",
+          "independentlyRerun": false
+        },
+        "newExactSourceCiObserved": false,
+        "windowsRemedyVerified": false,
+        "proofRetestStillRequired": true,
+        "unchangedCiRetried": false,
+        "priorReportsOverwritten": false,
+        "mergeAuthorized": false,
+        "signingApproved": false,
+        "publicationApproved": false
+      }
+    },
+    "windowsNormalizedCaseResults": [
+      {
+        "matrix": "windows-latest-node-22",
+        "source": {
+          "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "clean": true
+        },
+        "cases": [
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+            "status": "passed",
+            "durationMs": 1247.3544000000002
+          },
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+            "status": "passed",
+            "durationMs": 4239.925499999999
+          }
+        ]
+      },
+      {
+        "matrix": "windows-latest-node-24",
+        "source": {
+          "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "clean": true
+        },
+        "cases": [
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+            "status": "passed",
+            "durationMs": 799.9124000000006
+          },
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+            "status": "passed",
+            "durationMs": 2737.3026
+          }
+        ]
+      }
+    ],
+    "windowsVerificationScope": "Both unchanged 30-second scenario cases passed at corrected source on Windows Node 22 and 24. Prior timeout phase remains unknown; this is not a guarantee of future runner performance.",
+    "finalProofOnlyReview": "pending separate review of final receipt bytes",
+    "finalHeadCi": "pending after final evidence-only push"
+  }
+}

@@ -1,0 +1,268 @@
+{
+  "schemaVersion": 1,
+  "kind": "fresh audit hold for an original unsigned candidate",
+  "recordedAt": "2026-10-27T15:25:26.409470Z",
+  "owner": "BGA-457",
+  "status": "held",
+  "candidate": {
+    "tag": "v1.0.0-rc.11",
+    "sourceCommit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+    "artifactDigest": "sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55",
+    "archiveDigest": "sha256:38aadc15b9fa69e92dd8ddc2c984010b0684291485fc46e1311cefef31342928"
+  },
+  "candidateAudit": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-27T15:13:57.376Z",
+    "registry": "https://registry.npmjs.org",
+    "source": {
+      "commit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
+      "lockDigest": "sha256:d3fbaee9f94822ff9824c9d7bf3dbdd75afff727473549de6632514a02a7328d",
+      "packageDigest": "sha256:664661ecef95c2620733178ef7bfe55e731a97026f65129c1fc5c96c1c241f4c",
+      "workspaceDigest": "sha256:767be479073e6e087ea934602ba55353ee6f5a27080bc8cfdeb2699de3e2a4d4",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 1,
+        "critical": 0
+      },
+      "findings": [
+        {
+          "id": "GHSA-mrhx-c7xc-m3w5",
+          "module": "zod",
+          "severity": "high"
+        }
+      ]
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 2,
+        "moderate": 5,
+        "high": 3,
+        "critical": 0
+      },
+      "findings": [
+        {
+          "id": "GHSA-27r3-jxmh-p828",
+          "module": "body-parser",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-333x-w4r6-6crp",
+          "module": "fast-uri",
+          "severity": "low"
+        },
+        {
+          "id": "GHSA-4qv8-2p9j-2685",
+          "module": "undici",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-f72v-6w45-q472",
+          "module": "undici",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-mrhx-c7xc-m3w5",
+          "module": "zod",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-rxp7-6hxx-x8q5",
+          "module": "ip-address",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-w74x-v6f9-j3xg",
+          "module": "fast-uri",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-wjr9-j795-jxcr",
+          "module": "fast-uri",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-xhq7-xmqj-769h",
+          "module": "fast-uri",
+          "severity": "low"
+        },
+        {
+          "id": "GHSA-xjj6-f33q-929c",
+          "module": "undici",
+          "severity": "high"
+        }
+      ]
+    }
+  },
+  "signerSourceAudit": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-27T15:13:57.372Z",
+    "registry": "https://registry.npmjs.org",
+    "source": {
+      "commit": "ec3fcfef0c6acec3d72da96f5f650badfeab0ef7",
+      "lockDigest": "sha256:d3fbaee9f94822ff9824c9d7bf3dbdd75afff727473549de6632514a02a7328d",
+      "packageDigest": "sha256:664661ecef95c2620733178ef7bfe55e731a97026f65129c1fc5c96c1c241f4c",
+      "workspaceDigest": "sha256:767be479073e6e087ea934602ba55353ee6f5a27080bc8cfdeb2699de3e2a4d4",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 1,
+        "critical": 0
+      },
+      "findings": [
+        {
+          "id": "GHSA-mrhx-c7xc-m3w5",
+          "module": "zod",
+          "severity": "high"
+        }
+      ]
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 2,
+        "moderate": 5,
+        "high": 3,
+        "critical": 0
+      },
+      "findings": [
+        {
+          "id": "GHSA-27r3-jxmh-p828",
+          "module": "body-parser",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-333x-w4r6-6crp",
+          "module": "fast-uri",
+          "severity": "low"
+        },
+        {
+          "id": "GHSA-4qv8-2p9j-2685",
+          "module": "undici",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-f72v-6w45-q472",
+          "module": "undici",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-mrhx-c7xc-m3w5",
+          "module": "zod",
+          "severity": "high"
+        },
+        {
+          "id": "GHSA-rxp7-6hxx-x8q5",
+          "module": "ip-address",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-w74x-v6f9-j3xg",
+          "module": "fast-uri",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-wjr9-j795-jxcr",
+          "module": "fast-uri",
+          "severity": "moderate"
+        },
+        {
+          "id": "GHSA-xhq7-xmqj-769h",
+          "module": "fast-uri",
+          "severity": "low"
+        },
+        {
+          "id": "GHSA-xjj6-f33q-929c",
+          "module": "undici",
+          "severity": "high"
+        }
+      ]
+    }
+  },
+  "patchedVersionsForFutureBuilds": [
+    {
+      "package": "zod",
+      "version": "4.6.6",
+      "publishedAt": "2026-10-11T16:18:23.878Z",
+      "ageHours": 382.99,
+      "engines": null,
+      "integrity": "sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==",
+      "repository": {
+        "url": "git+https://github.com/colinhacks/zod.git",
+        "type": "git"
+      },
+      "latest": "4.6.7"
+    },
+    {
+      "package": "body-parser",
+      "version": "2.4.0",
+      "publishedAt": "2026-10-22T11:39:38.614Z",
+      "ageHours": 123.64,
+      "engines": {
+        "node": ">=18"
+      },
+      "integrity": "sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==",
+      "repository": {
+        "url": "git+https://github.com/expressjs/body-parser.git",
+        "type": "git"
+      },
+      "latest": "2.4.0"
+    },
+    {
+      "package": "fast-uri",
+      "version": "3.1.9",
+      "publishedAt": "2026-10-19T23:05:26.357Z",
+      "ageHours": 184.21,
+      "engines": null,
+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+      "repository": {
+        "url": "git+https://github.com/fastify/fast-uri.git",
+        "type": "git"
+      },
+      "latest": "4.2.3"
+    },
+    {
+      "package": "ip-address",
+      "version": "10.7.4",
+      "publishedAt": "2026-10-11T19:34:42.622Z",
+      "ageHours": 379.72,
+      "engines": {
+        "node": ">= 12"
+      },
+      "integrity": "sha512-DWBMKyeM25D70nrIiTkgQth59/G+naKOTep6huF9j+GmeK3DMD60Zvxg5d5qQnz+38AHgou6ean2LECX+lrKDg==",
+      "repository": {
+        "url": "git+https://github.com/beaugunderson/ip-address.git",
+        "type": "git"
+      },
+      "latest": "10.7.5"
+    },
+    {
+      "package": "undici",
+      "version": "7.30.1",
+      "publishedAt": "2026-10-15T14:18:31.283Z",
+      "ageHours": 288.99,
+      "engines": {
+        "node": ">=20.18.1"
+      },
+      "integrity": "sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==",
+      "repository": {
+        "url": "git+https://github.com/nodejs/undici.git",
+        "type": "git"
+      },
+      "latest": "8.12.3"
+    }
+  ],
+  "signatureVerified": false,
+  "signingApproved": false,
+  "publicationApproved": false,
+  "scope": "Actual fresh registry assessments at both immutable sources. The earlier independent review and clean October22 audits remain historical, not rewritten. This unsigned hold grants no signature or signed-review status. High findings cannot be excepted; no policy exception or release-age relaxation is proposed. Dependencies can only be changed in a separately tested future candidate, never in this original."
+}
