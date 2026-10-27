@@ -595,7 +595,8 @@
         "docs/verification/bga456-source-ci.json",
         "docs/verification/rc11-security-hold-2026-10-27.json",
         "docs/verification/OCTOBER_27_DEPENDENCY_REMEDIATION.md",
-        "docs/verification/bga457-source-ci.json"
+        "docs/verification/bga457-source-ci.json",
+        "docs/verification/rc12-producer-hold-2026-10-27.json"
       ]
     }
   ],

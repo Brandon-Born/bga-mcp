@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "owner": "BGA-459",
+  "recordedAt": "2026-10-27T18:35:57.862856+00:00",
+  "kind": "actual failed original-candidate producer assessment; no candidate artifact or signature",
+  "sourceTag": "v1.0.0-rc.12",
+  "sourceCommit": "054e4fd69a8316b448021c005462df9986590db4",
+  "producer": {
+    "url": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40559714945",
+    "attempt": 1,
+    "conclusion": "failure",
+    "stage": "live security preflight after the complete gate returned success",
+    "auditArtifactId": 12761245179,
+    "auditArchiveDigest": "sha256:02fa40a7b8136037291d36016eab2e86304b2bb1657c9643e9983718613b800a",
+    "auditReportDigest": "sha256:fa9c0249cb0c6dbae5463bd327c8fb084fbd225af3f574818c582e2180b6a114"
+  },
+  "actualAudit": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-10-27T18:30:36.164Z",
+    "registry": "https://registry.npmjs.org",
+    "source": {
+      "commit": "054e4fd69a8316b448021c005462df9986590db4",
+      "lockDigest": "sha256:95bb7356b8f5b37980e84b8a6ce1d7fa5e495eeeb84b12e0359102479848dce2",
+      "packageDigest": "sha256:6f5a6b6feaf72e668242801034f783c03fa8448c758343b3c25d2b133d3692f4",
+      "workspaceDigest": "sha256:2d8d27450bd1f4588ec268e328c85b08717e9e8c9bdf8b13146761f300f26c56",
+      "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+    },
+    "production": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 0,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": []
+    },
+    "all": {
+      "counts": {
+        "info": 0,
+        "low": 0,
+        "moderate": 1,
+        "high": 0,
+        "critical": 0
+      },
+      "findings": [
+        {
+          "id": "GHSA-6pq8-jhm2-2vcw",
+          "module": "qs",
+          "severity": "moderate"
+        }
+      ]
+    }
+  },
+  "advisory": {
+    "id": "GHSA-6pq8-jhm2-2vcw",
+    "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw",
+    "githubDatabasePublishedAt": "2026-10-27T16:10:55Z",
+    "updatedAt": "2026-10-27T16:10:58Z",
+    "severity": "moderate",
+    "affected": "qs >=6.7.0 <=6.16.0",
+    "firstPatchedVersion": "6.16.1",
+    "patchedVersionPublishedAt": "2026-10-14T22:06:17.002Z"
+  },
+  "dependencyPath": "Development conformance/SDK -> Express 5.2.1 -> qs 6.16.0; body-parser 2.4.0 already uses qs 6.16.1. Production audit reports zero findings. Library comma-format serialization impact is not a demonstrated exploit in the public local stdio server.",
+  "originalCandidateRetained": false,
+  "signatureVerified": false,
+  "failedRunRetried": false,
+  "tagMoved": false,
+  "exceptionsAdded": false,
+  "scope": "Fresh registry evidence blocked undisposed full-graph risk. Newer source cannot relabel this failed attempt as successful. Distinct rc.13 preparation needs its own source checks, owner merge and candidate-production decision; no signing or publication approval."
+}

@@ -402,3 +402,29 @@ original-candidate production, exact-byte review, signing and publication
 remain separate stages. PR48's merged main `4bb8ea4` separately passed
 [all six post-merge jobs](https://github.com/Brandon-Born/bga-mcp/actions/runs/40550210841),
 with all six original archive hashes and sealed exact-main records verified.
+
+## rc.12 failed live preflight and distinct rc.13 source correction — BGA-459
+
+PR49 normally merged as `054e4fd69a8316b448021c005462df9986590db4` with
+[all six merged-main jobs passing](https://github.com/Brandon-Born/bga-mcp/actions/runs/40557831224).
+All six original archive/API hashes and sealed exact-main records independently
+verified. The new `v1.0.0-rc.12` tag remains fixed at that source.
+
+[Producer 40559714945](https://github.com/Brandon-Born/bga-mcp/actions/runs/40559714945)
+returned success from its complete gate, then failed live security preflight on
+moderate `GHSA-6pq8-jhm2-2vcw`. It retained only the actual advisory assessment;
+no original rc.12 package, manifest or packet was uploaded. There is no original
+tarball digest to review or sign. The failed run has not been retried. The
+[producer hold](rc12-producer-hold-2026-10-27.json) preserves its actual audit,
+archive identity and scope. Source CI success does not waive this failure.
+
+The remaining vulnerable path is development conformance/SDK through Express
+5.2.1 to qs 6.16.0. Body-parser 2.4.0 already resolves fixed qs 6.16.1.
+The narrow correction extends the existing override to the mature fixed version,
+removes only that old lock resolution and selects `1.0.0-rc.13` in the three
+version fields. Existing gates, release-age settings, security exceptions,
+public contract and all BGA behavior remain unchanged. Ordinary source tests,
+canonical fresh audits, independent source review, exact-source CI and current
+framework admission must pass before the separate owner merge and unsigned
+rc.13 production decision. No rc.13 tag, producer dispatch, signature or public
+publication is performed by this source correction.
