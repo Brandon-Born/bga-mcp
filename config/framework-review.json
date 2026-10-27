@@ -128,7 +128,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:2954d2d54e4a662435f1a3fd589f2046a05ba2cd7f890b272d845259eeabdcf7",
-          "proofDigest": "sha256:d04a8e4ec1899fa96c276bed1521db11d06f2284d49e4833c733e8040ea1701c",
+          "proofDigest": "sha256:d97cc5e76fd3f3d55e1602ed7d146932bd30858e718747aad89e1018b3c57bb0",
           "semantic": [
             {
               "path": ".gitignore",
@@ -1939,7 +1939,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -2506,11 +2506,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:d04a8e4ec1899fa96c276bed1521db11d06f2284d49e4833c733e8040ea1701c",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:33.664Z"
+          "dependencyDigest": "sha256:d97cc5e76fd3f3d55e1602ed7d146932bd30858e718747aad89e1018b3c57bb0",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:26.232Z"
         }
       },
       "needsReview": false
@@ -2632,7 +2632,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:c46662f1b25460b95423b83d75e5d60429f49efc204774af24c47fe3401187c3",
-          "proofDigest": "sha256:1fc2c4597496a63ec1b3effe072ee4bb54979750596f4b53e5aaf2261260a8c8",
+          "proofDigest": "sha256:fc440a6da736d4ebe432c8412e3102074aadcbaafec6ed43ef7fbbb8fdbb79f8",
           "semantic": [
             {
               "path": ".gitignore",
@@ -4418,7 +4418,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4985,11 +4985,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:1fc2c4597496a63ec1b3effe072ee4bb54979750596f4b53e5aaf2261260a8c8",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:34.680Z"
+          "dependencyDigest": "sha256:fc440a6da736d4ebe432c8412e3102074aadcbaafec6ed43ef7fbbb8fdbb79f8",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:27.112Z"
         }
       },
       "needsReview": false
@@ -5118,7 +5118,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:4038ad7b099faac06557f51e4a3d08422bbe0be1b4947e5ecbc2875d2647b5ad",
-          "proofDigest": "sha256:b25e800fa62f83b481c9fbaab4b4bbcedcfb8c027475ce3b32f2597332b4ed6c",
+          "proofDigest": "sha256:19d4fab1c69733d97c82f784fc219c75fbc1920c46ab9898715c21c300b60b4d",
           "semantic": [
             {
               "path": ".gitignore",
@@ -6929,7 +6929,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -7496,11 +7496,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:b25e800fa62f83b481c9fbaab4b4bbcedcfb8c027475ce3b32f2597332b4ed6c",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:35.632Z"
+          "dependencyDigest": "sha256:19d4fab1c69733d97c82f784fc219c75fbc1920c46ab9898715c21c300b60b4d",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:27.932Z"
         }
       },
       "needsReview": false
@@ -7629,7 +7629,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:099539a7895bb78c2f84b7f469e6c8f47edb7f06ed1d202ce8c73bb72caa95b2",
-          "proofDigest": "sha256:89881c17d5f3b71fb696d6cfbcfadf8c87b94d1541e4a06bec9e51b4036b7e9c",
+          "proofDigest": "sha256:c76bd4944b2a198cbf0121869e25b0ae389f18e878c4e63e902d2fce4dd82b71",
           "semantic": [
             {
               "path": ".gitignore",
@@ -9440,7 +9440,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -10007,11 +10007,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:89881c17d5f3b71fb696d6cfbcfadf8c87b94d1541e4a06bec9e51b4036b7e9c",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:36.552Z"
+          "dependencyDigest": "sha256:c76bd4944b2a198cbf0121869e25b0ae389f18e878c4e63e902d2fce4dd82b71",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:28.788Z"
         }
       },
       "needsReview": false
@@ -10140,7 +10140,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:5f7a8170c4c5878d80ddecaea6cb1ec9958703f7fced981fae1b66ab108e1693",
-          "proofDigest": "sha256:87d6d1f63c87fbe93e42d7575fca2845a22c0cb2cd1b216f46338bb0411e5d2a",
+          "proofDigest": "sha256:1a82ac08f2fd406348ebac730581bd9d982d5a52960f74c5d8806d6f9f7d8126",
           "semantic": [
             {
               "path": ".gitignore",
@@ -11951,7 +11951,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -12518,11 +12518,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:87d6d1f63c87fbe93e42d7575fca2845a22c0cb2cd1b216f46338bb0411e5d2a",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:37.633Z"
+          "dependencyDigest": "sha256:1a82ac08f2fd406348ebac730581bd9d982d5a52960f74c5d8806d6f9f7d8126",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:29.646Z"
         }
       },
       "needsReview": false
@@ -12651,7 +12651,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:4ff34c9624774c944ac090458e13a820d2d39b87ad3fedce82d4f2dbf8e1eebb",
-          "proofDigest": "sha256:2caaa7dcddf52b742c01511f351d9ca47ff7505821002c9800e6e92dc57ffa55",
+          "proofDigest": "sha256:a7ff7880f3ed8abd905884b2dcbbc0eb6a0880ed597cd5391d320f655b61cc9a",
           "semantic": [
             {
               "path": ".gitignore",
@@ -14462,7 +14462,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -15029,11 +15029,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:2caaa7dcddf52b742c01511f351d9ca47ff7505821002c9800e6e92dc57ffa55",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:38.540Z"
+          "dependencyDigest": "sha256:a7ff7880f3ed8abd905884b2dcbbc0eb6a0880ed597cd5391d320f655b61cc9a",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:30.516Z"
         }
       },
       "needsReview": false
@@ -15162,7 +15162,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:6e2ee5cf165d4d29d9bf6360811422aa636f635b7686dc75bb02625b2d996deb",
-          "proofDigest": "sha256:293aab3963f84bd401cdd366e60773f2023b8be51271307b3680fe8986bb4bf4",
+          "proofDigest": "sha256:d35699c317e9fa6d8d12c51a96adda947c8694b72db4fcbbfe3590ddb111abbb",
           "semantic": [
             {
               "path": ".gitignore",
@@ -16973,7 +16973,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -17540,11 +17540,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:293aab3963f84bd401cdd366e60773f2023b8be51271307b3680fe8986bb4bf4",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:39.545Z"
+          "dependencyDigest": "sha256:d35699c317e9fa6d8d12c51a96adda947c8694b72db4fcbbfe3590ddb111abbb",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:31.338Z"
         }
       },
       "needsReview": false
@@ -17666,7 +17666,7 @@
         ],
         "dependencies": {
           "semanticDigest": "sha256:7b20dd0efb5e264dc4834e827df42db9129470cd953054493b464e263e2d5d4f",
-          "proofDigest": "sha256:4e9b30ac091bb0cc89c2a35a4d0909a3099e63391edbf6f671308bcbbda056ea",
+          "proofDigest": "sha256:5c1b76d39ac070fc10194ffb34ad958c19bbefaee8bb3b87fccec2578e893079",
           "semantic": [
             {
               "path": ".gitignore",
@@ -19452,7 +19452,7 @@
             },
             {
               "path": "tests/e2e/normalized-project.test.ts",
-              "digest": "sha256:3fe77ce19779bc3b8c1ae54e8de471fe0dc702b0805785d221941f140755da36",
+              "digest": "sha256:a7c64fbfb4864824190ae2ef6ac6dfcbf2eece1fdd7b80395efb8f98290d4c84",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -20019,11 +20019,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:4e9b30ac091bb0cc89c2a35a4d0909a3099e63391edbf6f671308bcbbda056ea",
-          "evidenceDigest": "sha256:d03a6d4e9bb44db2608897f13c3aacb23c446648e75a5b8ddec0102dbb62424f",
-          "evidenceCommit": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40534767114",
-          "recordedAt": "2026-10-27T16:02:40.481Z"
+          "dependencyDigest": "sha256:5c1b76d39ac070fc10194ffb34ad958c19bbefaee8bb3b87fccec2578e893079",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff",
+          "evidenceCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+          "recordedAt": "2026-10-27T16:51:32.171Z"
         }
       },
       "needsReview": false

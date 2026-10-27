@@ -118,6 +118,20 @@ guard correctly holds proof for this test change; interpretation identities stay
 intact. Refresh proof through the genuine retest gate once new CI passes. Earlier
 implementation/receipt reviews remain historical and are not transferred to this
 new harness or used to clear original rc.11.
+
+The subsequent corrected source `e8b619dd3c77dc840ad79746ba3961f8f51ceabf`
+passed all six jobs in exact-source run
+[40542906462](https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462)
+and all six in PR run
+[40542872197](https://github.com/Brandon-Born/bga-mcp/actions/runs/40542872197).
+All six original source-CI archive hashes and evidence documents were independently
+validated. Windows Node 22 normalization cases passed in about 1.25 and 4.24
+seconds; Node 24 cases passed in about 0.80 and 2.74 seconds, under the unchanged
+30-second deadline. This verifies the new cases, not the unknown exact phase of
+the old timeout. A fresh clean corrected-source audit again reports zero findings.
+The unchanged proof-only retest gate refreshed eight holds to zero, preserving
+every interpretation and observation identity. The final evidence-only head still
+needs its own review and automatic CI; no old result is relabeled as that head.
 The original candidate stays at tag `v1.0.0-rc.11`, tarball
 `sha256:d064f15233696bd876a8490007cb304d30aff425df805b9236176026022f4a55`.
 Its seven files, archive, tag and earlier review must never be overwritten by

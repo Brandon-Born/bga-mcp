@@ -380,7 +380,7 @@
   "replacementCandidateCreated": false,
   "signingApproved": false,
   "publicationApproved": false,
-  "remaining": "Fresh exact-source CI/proof retest, final proof-only review and final-head CI, followed by owner merge decision. Local/source approval does not claim the Windows remedy passed; frozen rc11 remains held.",
+  "remaining": "Final proof-only review and automatic final-head CI, then owner merge decision. C1 interpretation and corrected e8 proof retain actual source scope; frozen rc11 remains held and requires a distinct replacement candidate.",
   "windowsHarnessFollowUp": {
     "recordedAt": "2026-10-27T16:30:57.824556+00:00",
     "failedHead": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
@@ -431,7 +431,241 @@
       "harnessFileDigest": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
       "notCleanCommittedSourceCi": true
     },
-    "newExactSourceCi": "pending",
+    "newExactSourceCi": {
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+      "source": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "allSixPassed": true,
+      "schemaAndIntegrityValid": true,
+      "records": [
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:45:58.944Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+          "evidenceDigest": "sha256:b82aedff02586f32fad87afc345192359abfcda8843a461ee3cd3d747ddc8661"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.21.0",
+            "platform": "darwin",
+            "arch": "arm64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:46:10.902Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:85a08ca4b19b7fd6b179005b1002c9b1a5c04ad24f5c13ce9c72dcd17d35cebc",
+          "evidenceDigest": "sha256:a078ebf7c9ff1040bd085c46ebb51d195b4d25a5cf119b30319ced705c631019"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.3",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:44:02.417Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+          "evidenceDigest": "sha256:5e034e41587ee4b74aea2ded13e97d677645677260500dd3a5ccdb14e165c43f"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.22.1",
+            "platform": "linux",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:44:24.058Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:006842f67414872465dd3a50a0ea518d03adf3347267a18efd762022f3782439",
+          "evidenceDigest": "sha256:55ba056874e6b47f6c569269d82c9165ea5ae6e8c427fc7d28f7b9c342372106"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v22.23.4",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:49:46.891Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+          "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff"
+        },
+        {
+          "source": {
+            "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+            "clean": true
+          },
+          "environment": {
+            "node": "v24.22.1",
+            "platform": "win32",
+            "arch": "x64",
+            "packageManager": "pnpm@11.15.1",
+            "ci": true
+          },
+          "generatedAt": "2026-10-27T16:48:22.753Z",
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "artifactDigest": "sha256:901bb6c12965b8d17f139f55ab88cc7632b362db763c79a28ab98a889e621694",
+          "evidenceDigest": "sha256:cb25dd26e92f783941d987e4818bee549ced6563d5fda89087d04931b91b6114"
+        }
+      ],
+      "originalArchiveValidation": {
+        "archivesVerified": 6,
+        "records": [
+          {
+            "id": 12752670107,
+            "name": "verification-ubuntu-latest-node-22",
+            "archiveDigest": "sha256:e4738f033611a1a28816ce9d4e81df66e839f756ac3047261e00565ffb51d64d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:5e034e41587ee4b74aea2ded13e97d677645677260500dd3a5ccdb14e165c43f"
+          },
+          {
+            "id": 12752390967,
+            "name": "verification-ubuntu-latest-node-24",
+            "archiveDigest": "sha256:db7586a597304400f47278b032b8cc3352b7f87e63d32da33baa7e881d2d04e6",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:55ba056874e6b47f6c569269d82c9165ea5ae6e8c427fc7d28f7b9c342372106"
+          },
+          {
+            "id": 12751752326,
+            "name": "verification-windows-latest-node-22",
+            "archiveDigest": "sha256:b4ad231ca177473d0af184edd2254ca6698634d9d1f6b7c616abd012cab7bebd",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:5ed9e9b9ba2f28af1a8ca02e5a6aff2fb038b5cd4dcc1a789f6c9b79d6a843ff"
+          },
+          {
+            "id": 12751696950,
+            "name": "verification-macos-latest-node-24",
+            "archiveDigest": "sha256:b41e431c2457a01ad9923df93e1bd50a5d27cc117d8685e3ff03965caf77d5a2",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:a078ebf7c9ff1040bd085c46ebb51d195b4d25a5cf119b30319ced705c631019"
+          },
+          {
+            "id": 12750179578,
+            "name": "verification-macos-latest-node-22",
+            "archiveDigest": "sha256:b09d874809dd69b724ac8866c0b550b619beb97d282d9ec7fc11f19f3863431d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:b82aedff02586f32fad87afc345192359abfcda8843a461ee3cd3d747ddc8661"
+          },
+          {
+            "id": 12750169937,
+            "name": "verification-windows-latest-node-24",
+            "archiveDigest": "sha256:99f1aeca84d5daceee024ba7bbeda1aac64b752c96974e004143cc973e39da7d",
+            "apiDigestMatches": true,
+            "evidenceIdenticalToIndependentExtraction": true,
+            "evidenceDigest": "sha256:cb25dd26e92f783941d987e4818bee549ced6563d5fda89087d04931b91b6114"
+          }
+        ]
+      }
+    },
     "independentHarnessReview": {
       "originalReceiptSha256": "sha256:5996c1caf076eaa0b72060b46250cf8f7d1ceac15fd443b45560706d96ef103f",
       "originalReceipt": {
@@ -501,10 +735,176 @@
         "publicationApproved": false
       }
     },
-    "frameworkProof": "held until genuine fresh retest proof; existing interpretation identity unchanged",
+    "frameworkProof": {
+      "recordedAt": "2026-10-27T16:51:32.793Z",
+      "source": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542906462",
+      "heldBefore": 8,
+      "heldAfter": 0,
+      "sources": [
+        "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
+        "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
+        "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
+        "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
+        "https://en.doc.boardgamearena.com/State_classes:_State_directory",
+        "https://en.doc.boardgamearena.com/Studio",
+        "https://en.doc.boardgamearena.com/Studio_file_reference",
+        "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
+      ],
+      "mode": "unchanged framework:retest gate",
+      "allInterpretationAndObservationIdentitiesPreserved": true,
+      "priorInterpretationSource": "86cfd4c2140f279f84d02ab5816a77104e5a06a0",
+      "proofSource": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf"
+    },
     "unchangedCiRetried": false,
     "originalRc11Held": true,
     "cleanupLintCorrection": "An unnecessary optional-chain lint error was caught before tests; the documented returned cleanup callback removes that typing issue without changing scenario bodies or budgets.",
-    "windowsRemedyVerified": false
+    "windowsRemedyVerified": true,
+    "newAutomaticPrCi": {
+      "run": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40542872197",
+      "githubRunHead": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+      "status": "completed",
+      "conclusion": "success",
+      "allSixJobsPassed": true,
+      "scope": "Observed GitHub PR run/job result; exact-source artifact validation is separately recorded above."
+    },
+    "freshSourceAudit": {
+      "generatedAt": "2026-10-27T16:40:06.720Z",
+      "source": {
+        "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+        "lockDigest": "sha256:95bb7356b8f5b37980e84b8a6ce1d7fa5e495eeeb84b12e0359102479848dce2",
+        "packageDigest": "sha256:850b8cc515545dfc8251b0495b4e827c208234bd1f356d418bbeb563026c5e88",
+        "workspaceDigest": "sha256:2d8d27450bd1f4588ec268e328c85b08717e9e8c9bdf8b13146761f300f26c56",
+        "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+      },
+      "production": {
+        "counts": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "findings": []
+      },
+      "all": {
+        "counts": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0
+        },
+        "findings": []
+      },
+      "auditDigest": "sha256:d8547fbba50926d5280a4f3f203deb6885bbcaa9d3ada1b3a9c4e8dd3d1813a0",
+      "scope": "Clean corrected development source only; original rc11 remains held."
+    },
+    "committedHarnessReview": {
+      "originalReceiptSha256": "sha256:fba156fc25fd0d012415946ca5b59467843f9d9698a8cce71b5484fb114f52ce",
+      "originalReceipt": {
+        "schemaVersion": 1,
+        "kind": "independent committed harness and evidence binding addendum; not release approval",
+        "reviewer": "Codex separate review agent /root/pr48_independent_review",
+        "recordedAt": "2026-10-27T16:40:00.638305+00:00",
+        "reviewedCommit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+        "parentCommit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+        "tree": "6ada066a7655bc72c96ac14c59cc2af7298cdc0e",
+        "verdict": "approved committed harness/binding; fresh CI/proof and final-head checks pending",
+        "findings": [],
+        "severityCounts": {
+          "high": 0,
+          "medium": 0,
+          "low": 0
+        },
+        "paths": [
+          "docs/verification/OCTOBER_27_DEPENDENCY_REMEDIATION.md",
+          "docs/verification/bga457-source-ci.json",
+          "tests/e2e/normalized-project.test.ts"
+        ],
+        "committedTestSha256": "sha256:8f8fd9fda24df78ded17f5a33d16c1f8433191307fd72cb8624ed57c4917060f",
+        "v2ReviewReceiptSha256": "sha256:5996c1caf076eaa0b72060b46250cf8f7d1ceac15fd443b45560706d96ef103f",
+        "v2ReviewReportSha256": "sha256:eed2a91af28376557290ab0d9042db79377cd19cbcba9a168407e38eb556038c",
+        "reportSha256": "sha256:e678d3fbdd680eb7a291c8812fe247d339ad9472b93ec5e606ab54998b3b6799",
+        "v2ReceiptEmbeddedVerbatim": true,
+        "localFullGateEvidenceInspected": {
+          "generatedAt": "2026-10-27T16:36:07.062Z",
+          "source": {
+            "commit": "33a20eb86b2cdc06d318b79c93b4bb73c24ec776",
+            "clean": false
+          },
+          "tests": {
+            "files": 126,
+            "total": 1030,
+            "passed": 1030,
+            "failed": 0,
+            "skipped": 0
+          },
+          "scenarios": {
+            "required": 279,
+            "passed": 279,
+            "failed": 0,
+            "missing": 0
+          },
+          "conformance": "passed",
+          "independentlyRerun": false
+        },
+        "newExactSourceCiObserved": false,
+        "windowsRemedyVerified": false,
+        "proofRetestStillRequired": true,
+        "unchangedCiRetried": false,
+        "priorReportsOverwritten": false,
+        "mergeAuthorized": false,
+        "signingApproved": false,
+        "publicationApproved": false
+      }
+    },
+    "windowsNormalizedCaseResults": [
+      {
+        "matrix": "windows-latest-node-22",
+        "source": {
+          "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "clean": true
+        },
+        "cases": [
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+            "status": "passed",
+            "durationMs": 1247.3544000000002
+          },
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+            "status": "passed",
+            "durationMs": 4239.925499999999
+          }
+        ]
+      },
+      {
+        "matrix": "windows-latest-node-24",
+        "source": {
+          "commit": "e8b619dd3c77dc840ad79746ba3961f8f51ceabf",
+          "clean": true
+        },
+        "cases": [
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] keeps omitted/unreadable normalization unknown and refuses output budgets without disclosing configuration values",
+            "status": "passed",
+            "durationMs": 799.9124000000006
+          },
+          {
+            "file": "tests/e2e/normalized-project.test.ts",
+            "title": "installed complete internal model [E2E-NORMALIZED-PROJECT] publishes bounded normalized receipts and matching contracts through the unchanged public schema",
+            "status": "passed",
+            "durationMs": 2737.3026
+          }
+        ]
+      }
+    ],
+    "windowsVerificationScope": "Both unchanged 30-second scenario cases passed at corrected source on Windows Node 22 and 24. Prior timeout phase remains unknown; this is not a guarantee of future runner performance.",
+    "finalProofOnlyReview": "pending separate review of final receipt bytes",
+    "finalHeadCi": "pending after final evidence-only push"
   }
 }
