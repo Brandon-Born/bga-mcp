@@ -348,3 +348,57 @@ hosted/macOS fresh-consumer checks. Its exact-signer-source CI passes all six
 jobs. The producer receipt above remains its historical unsigned observation;
 the new signing receipt supplies the distinct signature evidence. BGA-407's
 rc.5 distribution and the remaining candidate-specific release gates are separate.
+
+## rc.12 source preparation after the October27 dependency hold — BGA-458
+
+PR48's normal merge `4bb8ea485852229ce2703b5bad513d51b45c2983` retains the
+reviewed dependency fixes and original proof commits. Frozen unsigned rc.11
+remains security-held; none of its original bytes, tag or past review receipts
+is replaced. The next selected package/server version is `1.0.0-rc.12`.
+
+This source preparation changes only the three version fields and records its
+bounded procedure. The patched lockfile, public contract, test/deadline/retry
+settings, security policies, signer selection and public release metadata are
+preserved. A local or CI test tarball is development evidence, not the original
+rc.12 candidate. No original candidate or its digest is claimed before the
+existing tag-gated producer succeeds.
+
+Before production, retain a passing integrated gate, fresh canonical audits,
+independent source review, clean exact-source CI and current framework
+admission. The separate preparation PR needs its own normal merge approval;
+then verify merged main and its checks, create `v1.0.0-rc.12` only if absent,
+and dispatch the existing read-only release-candidate workflow. Keep the
+original hosted archive and independently verify its API digest, inner
+checksums, manifest/source/lock identities, sealed evidence, reproducibility,
+audit scopes and exact-byte installed behavior. Genuine independent artifact
+review and later signing/publication decisions cannot be inherited from rc.11.
+
+The rc.12 implementation is commit
+`2304c717af673561e64d4bab21d11b3314e157a8` (tree
+`ff793e4c35494986211de0876273ea8aaf763ee0`). Its integrated local gate
+passed 1,030 tests / 279 required scenarios while the five preparation files
+were dirty on base `4bb8ea4`; that evidence is not relabeled as clean CI.
+An independent source review bound all five committed file hashes with no
+actionable findings (report SHA-256
+`2115d2c41ba9722cc1fba7dacbbcf42edede074b97bb5274b3911cbcb67e856d`).
+The canonical clean-source registry audit at `2026-10-27T17:29:17.571Z`
+reported zero production and full-graph findings, without exceptions.
+
+[Exact-source CI 40551058531](https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531)
+passed all six platform/Node jobs. All six original archive hashes match the
+GitHub API; independently extracted sealed records validate schema, integrity,
+clean implementation source, 1,030 tests / 279 scenarios, passing conformance,
+lock identity and installed test-artifact identity. Each macOS test package
+matches the local development test artifact. Those packages are not an
+original rc.12 candidate. After re-reading relevant wording on all eight
+mapped official pages, the unchanged framework review command admitted this
+actual source CI and reduced eight source-identity holds to zero. The original
+October21 observation times/digests remain historical and unchanged.
+
+This follow-up changes only framework process metadata and this receipt.
+The implementation proof remains explicitly bound to `2304c71`; automatic
+follow-up PR CI must finish and be verified separately. Owner merge,
+original-candidate production, exact-byte review, signing and publication
+remain separate stages. PR48's merged main `4bb8ea4` separately passed
+[all six post-merge jobs](https://github.com/Brandon-Born/bga-mcp/actions/runs/40550210841),
+with all six original archive hashes and sealed exact-main records verified.
