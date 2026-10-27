@@ -516,3 +516,42 @@ positive case, explicitly verifies current mismatch and digest-substitution
 refusal, and tests mixed receipts against the authentic guide. This does not alter
 the publication guard, any historical receipt, or an approval. A changed source
 guide continues to require actual replacement-candidate installation evidence.
+
+## Final qs/tooling correction source evidence — BGA-459
+
+The final integrated implementation is `684275e48bba73768489ce9531f2bea0a96760fb` (tree
+`24d07aeaa60c98b952da06e85ff90a21c9f757b7`). Its complete local gate passed
+1,030 tests / 279 required scenarios under pnpm 11.28.5, retaining the actual
+dirty `963e475` source identity and development test-artifact digest
+`sha256:7de0d8ab051c4871a5f2f6a6a3b00e96310a6c138b0b5ab91ff95cf193e112ef`. That artifact is not an original
+rc.13 candidate. Independent review approved all 27 committed paths with no
+findings (report SHA-256 `sha256:209cf0d378a87f833e522af1896dcba4a8ac7b1f3c749f37b668473df4b2fec5`).
+
+[Exact-source CI 40571953833](https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833) and
+[implementation PR CI 40571905848](https://github.com/Brandon-Born/bga-mcp/actions/runs/40571905848) each passed
+all six platform/Node jobs. All twelve original archive/API hashes and sealed
+records verify complete clean-source or actual merge-tree identity, pnpm 11.28.5,
+1,030 passing tests, 279 passing scenarios, applicable conformance, lock and
+installed development test-artifact identity. The PR's actual tested tree equals
+the reviewed implementation tree. The canonical clean-source registry audit at
+`2026-10-27T19:45:06.764Z` reports zero production/full findings without exceptions.
+
+The independent unchanged-binary removal comparison and authentic historical-guide
+controls remain separate from source tests. The new gate preserves every deadline
+and removal assertion, production publication guard, historical receipt and
+controlled signed/native runner. All genuine prior producer/PR/local failures
+remain retained; none was retried unchanged or relabeled as passing.
+
+The unchanged framework command admits this genuine exact-source CI for all eight
+sources and reports zero holds, preserving original October21 observation times
+and digests. Relevant official wording was read during this October27 session;
+no BGA parser/rule, layout or compatibility interpretation changes. This follow-up
+changes only framework process metadata and this receipt; implementation proof
+remains explicitly bound to `684275e48bba73768489ce9531f2bea0a96760fb`. The final automatic PR run and its actual
+tested tree must finish and be verified separately before the owner handoff.
+
+Normal merge of PR50 and creation/testing of distinct unsigned rc.13 still need
+owner approval. No rc.13 tag, producer, original packet, signature or publication
+is inferred. Historical signed/native runner retargeting and authentic exact-byte
+replay remain later candidate stages. Frozen rc.10/rc.11/rc.12 and public metadata
+remain unchanged.
