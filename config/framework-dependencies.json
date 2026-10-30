@@ -274,7 +274,10 @@
         "tests/e2e/database-column-case.test.ts",
         "tests/e2e/project-trust.test.ts",
         "tests/unit/project-trust.test.ts",
-        "docs/verification/STATE_HANDLER_TRANSITIONS.md"
+        "docs/verification/STATE_HANDLER_TRANSITIONS.md",
+        "tests/helpers/filesystem-matrix.ts",
+        "tests/unit/filesystem-matrix-oracle.test.ts",
+        "docs/verification/CANCELLATION_PUBLICATION_ORDER.md"
       ]
     },
     {

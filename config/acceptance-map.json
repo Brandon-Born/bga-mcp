@@ -1526,6 +1526,12 @@
       "case": "Installed mutation control detects removal of the new checker while public schemas and root boundaries remain enforced",
       "boundary": "packaged",
       "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
+    },
+    {
+      "item": "BGA-461",
+      "case": "Installed cancellation and real removed-await/checkpoint/close mutations retain causal publication and cleanup guarantees without a parent-snapshot inference",
+      "boundary": "packaged",
+      "scenarios": ["E2E-FILESYSTEM-CANCELLATION"]
     }
   ]
 }
