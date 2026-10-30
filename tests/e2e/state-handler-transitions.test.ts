@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { link, mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { DiagnosticResult } from '../../src/diagnostics.js';
 import type { RunPreReleaseAuditOutputSchema } from '../../src/tools/run-pre-release-audit.js';
@@ -15,6 +15,13 @@ interface Result {
 type Audit = ReturnType<typeof RunPreReleaseAuditOutputSchema.parse>;
 const CODE = 'state.transition.name-undeclared';
 const UNKNOWN = 'state.transition.call-unresolved';
+/** Replace only this installed directory entry, preserving pnpm hardlinked peers. */
+async function replaceInstalledModule(path: string, text: string): Promise<void> {
+  const temporary = path + '.state-transition-probe';
+  await writeFile(temporary, text);
+  await rename(temporary, path);
+}
+
 const states = (shared = false) => `<?php
 $machinestates = [
   2 => ['name' => 'chooseCard', 'type' => 'activeplayer', 'possibleactions' => [], 'transitions' => ['resolve' => 3]],
@@ -174,7 +181,10 @@ it('[E2E-STATE-HANDLER-TRANSITIONS] detects an installed checker-removal mutant 
   const root = server.projects.legacy;
   const modulePath = resolve(server.packageRoot, 'dist/rules/state-machine.js');
   const original = await readFile(modulePath, 'utf8');
+  const peer = resolve(server.temporaryRoot, 'state-machine-hardlinked-peer.js');
   try {
+    await link(modulePath, peer);
+    expect(await readFile(peer, 'utf8')).toBe(original);
     await writeFile(resolve(root, 'states.inc.php'), states());
     await writeFile(
       resolve(root, 'bgamcplegacy.game.php'),
@@ -198,18 +208,29 @@ it('[E2E-STATE-HANDLER-TRANSITIONS] detects an installed checker-removal mutant 
       '...[]',
     );
     expect(mutant).not.toBe(original);
-    await writeFile(modulePath, mutant);
+    await replaceInstalledModule(modulePath, mutant);
+    expect(await readFile(modulePath, 'utf8')).toBe(mutant);
+    expect(await readFile(peer, 'utf8')).toBe(original);
     const mutated = await invoke();
+    expect(mutated.isError).toBe(false);
+    expect(mutated.structured?.diagnostics).toMatchObject({
+      schemaVersion: 1,
+      status: 'passed',
+      findings: [],
+    });
     expect(() =>
       expect(mutated.structured?.diagnostics.findings.map((entry) => entry.code)).toContain(CODE),
     ).toThrow();
-    await writeFile(modulePath, original);
+    expect(await readFile(modulePath, 'utf8')).toBe(mutant);
+    expect(await readFile(peer, 'utf8')).toBe(original);
+    await replaceInstalledModule(modulePath, original);
     const restored = await invoke();
     expect(restored.structured?.diagnostics.findings.map((entry) => entry.code)).toContain(CODE);
     expect(await readFile(modulePath, 'utf8')).toBe(original);
+    expect(await readFile(peer, 'utf8')).toBe(original);
     expect(await digestDirectory(root)).toBe(before);
   } finally {
-    await writeFile(modulePath, original);
+    await replaceInstalledModule(modulePath, original);
     await server.cleanup();
   }
 }, 240_000);
