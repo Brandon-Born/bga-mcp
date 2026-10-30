@@ -432,3 +432,195 @@ describe('state-machine rule catalog', () => {
     expect(VALID_STATES).toHaveLength(3);
   });
 });
+
+// BGA-460: original two-stage round flow, not a copied published game.
+describe('automatic handler transition names', () => {
+  function validate(
+    body: string,
+    transitions: Record<string, number> = { nextRound: 2, finish: 99 },
+    extra = '',
+  ) {
+    const game = model(
+      [
+        state(2, { transitions: { resolve: 3 } }),
+        state(3, { name: 'roundEnd', type: 'game', action: 'stRoundEnd', transitions }),
+      ],
+      {
+        gameKey: 'round',
+        components: [
+          { id: 'game-logic', present: true, files: ['round.game.php'], expected: true },
+        ],
+      },
+      { initial: { ids: [2], origin: 'default', evidence: 'Explicit test entry' } },
+    );
+    return validateStateMachine(game, [
+      {
+        path: 'round.game.php',
+        text: `<?php\nclass Round {\n function stRoundEnd() {\n${body}\n }\n${extra}\n}`,
+      },
+    ]);
+  }
+
+  it('locates the call, state source and available names without claiming control-flow proof', () => {
+    const result = validate('  $this->gamestate->nextState("endRound");');
+    const finding = result.findings.find(
+      (entry) => entry.code === 'state.transition.name-undeclared',
+    );
+    expect(finding).toMatchObject({
+      kind: 'heuristic',
+      certainty: 'likely',
+      severity: 'warning',
+      locations: [
+        { uri: 'round.game.php', range: { start: { line: 4, column: 3 } } },
+        { uri: 'states.inc.php' },
+      ],
+    });
+    expect(JSON.stringify(finding)).toContain('nextRound');
+    expect(JSON.stringify(finding)).toContain('stRoundEnd');
+    expect(JSON.stringify(finding)).toContain('runtime state change');
+    expect(codes(validate('  $this->gamestate->nextState("nextRound");'))).not.toContain(
+      'state.transition.name-undeclared',
+    );
+  });
+
+  it.each([
+    '$this->gamestate->nextState();',
+    '$this->gamestate->nextState( /* empty */ "" );',
+    '$this -> gamestate -> NEXTSTATE("nextRound");',
+  ])('accepts a valid single transition: %s', (body) => {
+    expect(codes(validate(body, { nextRound: 2 }))).not.toContain(
+      'state.transition.name-undeclared',
+    );
+  });
+
+  it('reports a missing unnamed transition with multiple candidates', () => {
+    expect(codes(validate('$this->gamestate->nextState();'))).toContain(
+      'state.transition.name-undeclared',
+    );
+  });
+
+  it.each([
+    '$this->gamestate->nextState($branch);',
+    '$this->gamestate->nextState("next" . "Round");',
+    '$this->gamestate->nextState("$branch");',
+    '$this->gamestate->nextState(transition: "nextRound");',
+    '$closure = function () { $this->gamestate->nextState("wrong"); };',
+    '$closure = fn () => $this->gamestate->nextState("wrong");',
+    '$closure = FUNCTION () { $this->gamestate->nextState("wrong"); };',
+    '$closure = FN () => $this->gamestate->nextState("wrong");',
+  ])('retains uncertainty rather than interpreting %s', (body) => {
+    const result = validate(body);
+    expect(codes(result)).toContain('state.transition.call-unresolved');
+    expect(codes(result)).not.toContain('state.transition.name-undeclared');
+  });
+
+  it('does not mistake comments, strings, heredoc or another object for handler calls', () => {
+    const result = validate(`// $this->gamestate->nextState('wrong');
+      $example = '$this->gamestate->nextState("wrong")';
+      $example = <<<'EXAMPLE'
+$this->gamestate->nextState('wrong');
+EXAMPLE;
+      $other->gamestate->nextState('wrong');
+      $this->gamestate->nextState(/* name */ 'nextRound');`);
+    expect(codes(result)).not.toContain('state.transition.name-undeclared');
+    expect(codes(result)).not.toContain('state.transition.call-unresolved');
+  });
+
+  it('refuses ambiguous same-name method bindings', () => {
+    const result = validate(
+      '$this->gamestate->nextState("wrong");',
+      undefined,
+      'function stRoundEnd() {}',
+    );
+    expect(codes(result)).toContain('state.transition.call-unresolved');
+    expect(codes(result)).not.toContain('state.transition.name-undeclared');
+  });
+  it.each([
+    '$THIS->gamestate->nextState("wrong");',
+    '$other-> /* dynamic property */ $this->gamestate->nextState("wrong");',
+    '$this->GameState->nextState("wrong");',
+    '$$this->gamestate->nextState("wrong");',
+  ])('does not bind a different PHP receiver: %s', (body) => {
+    expect(codes(validate(body))).not.toContain('state.transition.name-undeclared');
+  });
+
+  it.each(['public static', 'private', 'protected', 'STATIC PUBLIC'])(
+    'refuses a %s automatic method',
+    (modifier) => {
+      const game = model(
+        [state(2, { type: 'game', action: 'stRoundEnd', transitions: { nextRound: 99 } })],
+        { gameKey: 'round' },
+        { initial: { ids: [2], origin: 'default', evidence: 'test entry' } },
+      );
+      const result = validateStateMachine(game, [
+        {
+          path: 'round.game.php',
+          text: `<?php class Round { ${modifier} function stRoundEnd() { $this->gamestate->nextState('wrong'); } }`,
+        },
+      ]);
+      expect(codes(result)).toContain('state.transition.call-unresolved');
+      expect(codes(result)).not.toContain('state.transition.name-undeclared');
+    },
+  );
+
+  it('reads uppercase PHP declarations and preserves namespace/class boundaries', () => {
+    const game = model(
+      [state(2, { type: 'game', action: 'stRoundEnd', transitions: { nextRound: 99 } })],
+      { gameKey: 'round' },
+      { initial: { ids: [2], origin: 'default', evidence: 'test entry' } },
+    );
+    for (const text of [
+      `<?php CLASS Round { PUBLIC FUNCTION stRoundEnd() { $this->gamestate->NEXTSTATE('wrong'); } }`,
+      `<?php namespace Example { class Round { function stRoundEnd() { $this->gamestate->nextState('wrong'); } } }`,
+    ]) {
+      const result = validateStateMachine(game, [{ path: 'round.game.php', text }]);
+      expect(codes(result)).toContain('state.transition.name-undeclared');
+      expect(codes(result)).not.toContain('state.action.handler-missing');
+    }
+    for (const sources of [
+      [
+        { path: 'round.game.php', text: '<?php class Round {}' },
+        {
+          path: 'modules/php/Unrelated.php',
+          text: `<?php class Other { function stRoundEnd() { $this->gamestate->nextState('wrong'); } }`,
+        },
+      ],
+      [
+        {
+          path: 'round.game.php',
+          text: `<?php class Other { function stRoundEnd() { $this->gamestate->nextState('wrong'); } } class Round {}`,
+        },
+      ],
+      [
+        {
+          path: 'round.game.php',
+          text: `<?php function defer() { class Round { function stRoundEnd() { $this->gamestate->nextState('wrong'); } } }`,
+        },
+      ],
+    ]) {
+      const result = validateStateMachine(game, sources);
+      expect(codes(result)).toContain('state.transition.call-unresolved');
+      expect(codes(result)).not.toContain('state.transition.name-undeclared');
+    }
+  });
+  it.each([
+    { truncated: true },
+    { unreadablePaths: ['modules/php'] },
+    { skippedLinks: ['modules/php/Game.php'] },
+  ])('retains incomplete-inventory uncertainty %j', (overrides) => {
+    const game = model(
+      [state(2, { type: 'game', action: 'stRoundEnd', transitions: { nextRound: 99 } })],
+      { gameKey: 'round', ...overrides },
+      { initial: { ids: [2], origin: 'default', evidence: 'test entry' } },
+    );
+    const result = validateStateMachine(game, [
+      {
+        path: 'round.game.php',
+        text: `<?php class Round { function stRoundEnd() { $this->gamestate->nextState('wrong'); } }`,
+      },
+    ]);
+    expect(result.status).not.toBe('passed');
+    expect(codes(result)).toContain('state.transition.call-unresolved');
+    expect(codes(result)).not.toContain('state.transition.name-undeclared');
+  });
+});

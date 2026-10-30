@@ -1,8 +1,14 @@
 import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '../diagnostics.js';
-import { cancellationCheckpoint } from '../deadline.js';
+import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 import type { ProjectModel } from '../project/model.js';
 import type { StateDefinition } from '../project/parse.js';
-import { certainFinding, heuristicFinding, summarizeFindings } from './uncertainty.js';
+import {
+  certainFinding,
+  heuristicFinding,
+  summarizeFindings,
+  unsupportedSyntaxFinding,
+} from './uncertainty.js';
+import { maskComments, matchBracket, readPhpCode } from '../project/php.js';
 
 /**
  * State-machine rule catalog.
@@ -54,7 +60,21 @@ function authored(state: StateDefinition): boolean {
   return !RESERVED.has(state.id) && state.origin !== 'framework';
 }
 
+const HANDLER_TRANSITION_RULE: StateMachineRule = {
+  code: 'state.transition.name-undeclared',
+  severity: 'warning',
+  certainty: 'likely',
+  summary: 'An automatic state handler calls a transition name its state does not declare.',
+  falsePositives: [
+    'This is a static relationship, not control-flow execution: the call may be unreachable or follow a runtime state change.',
+  ],
+};
+
+const NEXT_STATE =
+  /(?<![$>])\$this\s*->\s*gamestate\s*->\s*[nN][eE][xX][tT][sS][tT][aA][tT][eE]\s*\(/gu;
+
 export const STATE_MACHINE_RULES: readonly StateMachineRule[] = [
+  HANDLER_TRANSITION_RULE,
   {
     code: 'state.initial.missing',
     severity: 'error',
@@ -198,7 +218,8 @@ function declaresMethod(
   method: string,
   signal?: AbortSignal,
 ): boolean {
-  const pattern = new RegExp(`function\\s+${method}\\s*\\(`, 'u');
+  const name = method.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+  const pattern = new RegExp(`function\\s+${name}\\s*\\(`, 'iu');
   for (const source of sources) {
     cancellationCheckpoint(signal);
     if (pattern.test(source.text)) {
@@ -492,5 +513,258 @@ export function validateStateMachine(
   }
 
   cancellationCheckpoint(signal);
-  return summarizeFindings(findings, signal);
+  return summarizeFindings(
+    [...findings, ...validateHandlerTransitions(model, sources, signal)],
+    signal,
+  );
+}
+
+interface AutomaticHandler {
+  readonly source: PhpSource;
+  readonly method: { name: string; body: string; bodyOffset: number; callable: boolean };
+}
+
+/** Read only direct methods of the expected game class in its documented main file. */
+function readAutomaticHandlers(
+  model: ProjectModel,
+  sources: readonly PhpSource[],
+  signal?: AbortSignal,
+): AutomaticHandler[] {
+  const handlers: AutomaticHandler[] = [];
+  const mainPaths = new Set([
+    'modules/php/Game.php',
+    ...(model.gameKey === null ? [] : [`${model.gameKey}.game.php`]),
+  ]);
+  // Having both main files is ambiguous for this check; do not guess precedence.
+  const mains = sources.filter((source) => mainPaths.has(source.path));
+  if (mains.length !== 1) return handlers;
+  const source = mains[0];
+  if (source === undefined) return handlers;
+  const syntax = readPhpCode(source.text, signal);
+  if (syntax.unsupported.length > 0) return handlers;
+  const expected = source.path === 'modules/php/Game.php' ? 'game' : model.gameKey?.toLowerCase();
+  const classes = [...syntax.value.matchAll(/\bclass\s+([A-Za-z_]\w*)[^{};]*\{/giu)].filter(
+    (entry) => entry[1]?.toLowerCase() === expected,
+  );
+  if (classes.length !== 1) return handlers;
+  const declaration = classes[0];
+  if (declaration === undefined) return handlers;
+  let classDepth = 0;
+  for (let index = 0; index < declaration.index; index += 1) {
+    periodicCancellationCheckpoint(index, signal);
+    if (syntax.value[index] === '{') classDepth += 1;
+    else if (syntax.value[index] === '}') classDepth -= 1;
+  }
+  const namespace = /\bnamespace\s+[A-Za-z_\\][\w\\]*\s*\{/iu.exec(syntax.value);
+  const namespaceBounds =
+    namespace === null
+      ? null
+      : matchBracket(syntax.value, namespace.index + namespace[0].length - 1, signal);
+  if (
+    classDepth !== 0 &&
+    !(
+      classDepth === 1 &&
+      namespaceBounds !== null &&
+      namespaceBounds.start < declaration.index &&
+      namespaceBounds.end > declaration.index
+    )
+  )
+    return handlers;
+  const bounds = matchBracket(syntax.value, declaration.index + declaration[0].length - 1, signal);
+  if (bounds === null) return handlers;
+  const pattern =
+    /\b(?:(?:public|protected|private|static|final|abstract|readonly)\s+)*function\s+&?\s*([A-Za-z_]\w*)\s*\(/giu;
+  const body = syntax.value.slice(bounds.start + 1, bounds.end);
+  let cursor = 0;
+  let depth = 0;
+  for (const match of body.matchAll(pattern)) {
+    cancellationCheckpoint(signal);
+    // Walk each intervening character once; nested classes/functions are not game methods.
+    for (; cursor < match.index; cursor += 1) {
+      periodicCancellationCheckpoint(cursor, signal);
+      if (body[cursor] === '{') depth += 1;
+      else if (body[cursor] === '}') depth -= 1;
+    }
+    if (depth !== 0) continue;
+    const parameters = matchBracket(body, match.index + match[0].length - 1, signal);
+    if (parameters === null) continue;
+    const open = body.indexOf('{', parameters.end);
+    const semicolon = body.indexOf(';', parameters.end);
+    if (open === -1 || (semicolon !== -1 && semicolon < open)) continue;
+    const methodBody = matchBracket(body, open, signal);
+    if (methodBody === null) continue;
+    const bodyOffset = bounds.start + 1 + methodBody.start + 1;
+    handlers.push({
+      source,
+      method: {
+        name: match[1] ?? '',
+        body: source.text.slice(bodyOffset, bounds.start + 1 + methodBody.end),
+        bodyOffset,
+        callable: !/\b(?:static|private|protected|abstract)\b/iu.test(match[0]),
+      },
+    });
+  }
+  return handlers;
+}
+
+/**
+ * Official states.inc.php documentation: nextPlayer is "the name of the
+ * transition, and NOT the name of the target game state". The page also shows
+ * nextState() with one empty-name transition. State-class imperative nextState
+ * has conflicting official wording (BGA-419); it deliberately stays outside
+ * this array-declared, automatic-handler check.
+ * https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php
+ */
+function validateHandlerTransitions(
+  model: ProjectModel,
+  sources: readonly PhpSource[],
+  signal?: AbortSignal,
+): DiagnosticFinding[] {
+  const findings: DiagnosticFinding[] = [];
+  const automaticStates = model.states.definitions.filter(
+    (state) =>
+      state.origin === 'array' &&
+      state.type === 'game' &&
+      state.action !== null &&
+      state.id !== 1 &&
+      state.id !== 99 &&
+      state.edgesResolved,
+  );
+  if (automaticStates.length === 0) return findings;
+  const mainPaths = [
+    'modules/php/Game.php',
+    ...(model.gameKey === null ? [] : [`${model.gameKey}.game.php`]),
+  ];
+  const hiddenMain = [...model.unreadablePaths, ...model.skippedLinks].some((path) =>
+    mainPaths.some((main) => main === path || main.startsWith(`${path.replace(/\/$/u, '')}/`)),
+  );
+  if (model.truncated || hiddenMain) {
+    return [
+      unsupportedSyntaxFinding({
+        code: 'state.transition.call-unresolved',
+        language: 'php',
+        construct:
+          'automatic handler ownership is uncertain because the project inventory is incomplete',
+        uri: model.states.source,
+        suggestion:
+          'Inspect a complete readable project inventory before relying on automatic-handler transition checks.',
+      }),
+    ];
+  }
+  // A skipped source could contain another definition; do not infer unique binding.
+  if (
+    model.diagnostics.findings.some(
+      (finding) =>
+        finding.kind === 'unsupported-syntax' && finding.code.startsWith('project.source.'),
+    )
+  )
+    return findings;
+
+  // File ownership and direct class scope are both required: a same-name
+  // utility method is not the callback on the game object.
+  const methods = readAutomaticHandlers(model, sources, signal);
+
+  for (const state of automaticStates) {
+    cancellationCheckpoint(signal);
+    const candidates = methods.filter(
+      ({ method }) => method.name.toLowerCase() === state.action?.toLowerCase(),
+    );
+    if (candidates.length === 0) {
+      findings.push(
+        unsupportedSyntaxFinding({
+          code: 'state.transition.call-unresolved',
+          language: 'php',
+          construct: `state ${String(state.id)} automatic handler binding`,
+          uri: model.states.source,
+          suggestion:
+            'Inspect the main game class or inherited handler; this check only reads directly declared automatic callbacks.',
+        }),
+      );
+      continue;
+    }
+    const candidate = candidates[0];
+    if (candidate === undefined) continue;
+    const { source, method } = candidate;
+    const syntax = readPhpCode(method.body, signal);
+    const calls = [...syntax.value.matchAll(NEXT_STATE)];
+    if (!method.callable) {
+      findings.push(
+        unsupportedSyntaxFinding({
+          code: 'state.transition.call-unresolved',
+          language: 'php',
+          construct: `state ${String(state.id)} automatic handler is static or non-public`,
+          uri: source.path,
+        }),
+      );
+      continue;
+    }
+    const unresolved = (reason: string): void => {
+      findings.push(
+        unsupportedSyntaxFinding({
+          code: 'state.transition.call-unresolved',
+          language: 'php',
+          construct: `state ${String(state.id)} handler ${method.name}: ${reason}`,
+          uri: source.path,
+          suggestion:
+            'Inspect the handler and its state transitions directly; this reader cannot establish the call-to-state relationship.',
+        }),
+      );
+    };
+    if (
+      candidates.length !== 1 ||
+      model.states.definitions.filter(
+        (entry) => entry.action?.toLowerCase() === method.name.toLowerCase(),
+      ).length !== 1
+    ) {
+      unresolved('shared or ambiguous handler binding');
+      continue;
+    }
+    if (calls.length === 0) continue;
+    // A deferred closure/function is not the automatic handler's own call.
+    if (/\b(?:function|fn|class)\b/iu.test(syntax.value) || syntax.unsupported.length > 0) {
+      unresolved('nested or unreadable executable context');
+      continue;
+    }
+    const values = maskComments(method.body, signal);
+    for (const call of calls) {
+      cancellationCheckpoint(signal);
+      // PHP allows a dynamic property named by $this, with intervening comments
+      // or spaces. That is a different receiver, not the game's own $this.
+      if (/(?:->|::|\$)$/u.test(syntax.value.slice(0, call.index).trimEnd())) continue;
+      const span = matchBracket(syntax.value, call.index + call[0].length - 1, signal);
+      const argument = span === null ? null : values.slice(span.start + 1, span.end).trim();
+      // Escapes, interpolation, constants, named arguments and expressions are not evaluated.
+      const literal = argument === null ? null : /^(['"])([^'"\\$]*)\1$/u.exec(argument);
+      const name = argument === '' ? '' : literal?.[2];
+      if (name === undefined) {
+        unresolved('computed or unsupported nextState argument');
+        continue;
+      }
+      if (
+        Object.hasOwn(state.transitions, name) ||
+        (name === '' && Object.keys(state.transitions).length === 1)
+      )
+        continue;
+      const declared = Object.keys(state.transitions).sort();
+      const finding = heuristicFinding(HANDLER_TRANSITION_RULE, {
+        code: HANDLER_TRANSITION_RULE.code,
+        message: `State ${String(state.id)} (${state.name ?? 'unnamed'}) handler ${method.name} calls nextState(${JSON.stringify(name)}), but that state declares no matching transition.`,
+        evidence: `State declaration: ${model.states.source ?? 'unknown source'}. Declared transition names: ${JSON.stringify(declared)}. The argument names a transition, not its target state.`,
+        uri: source.path,
+        suggestion: `Use a declared transition name ${JSON.stringify(declared)}, or add the intended named transition to state ${String(state.id)}. Check runtime state changes before editing.`,
+      });
+      const offset = method.bodyOffset + call.index;
+      const prefix = source.text.slice(0, offset);
+      const line = prefix.split('\n').length;
+      const column = offset - prefix.lastIndexOf('\n');
+      findings.push({
+        ...finding,
+        locations: [
+          { uri: source.path, range: { start: { line, column } } },
+          ...(model.states.source === null ? [] : [{ uri: model.states.source }]),
+        ],
+      });
+    }
+  }
+  return findings;
 }

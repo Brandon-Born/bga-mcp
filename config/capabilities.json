@@ -348,7 +348,8 @@
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-STATE-HANDLER-TRANSITIONS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -545,7 +546,8 @@
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-STATE-HANDLER-TRANSITIONS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -585,7 +587,8 @@
           "E2E-TELEMETRY-NETWORK-CONTROL",
           "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-STATE-HANDLER-TRANSITIONS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -694,7 +697,8 @@
           "E2E-DATABASE-QUALIFIED-WILDCARDS",
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-STATE-HANDLER-TRANSITIONS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

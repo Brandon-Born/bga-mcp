@@ -1,7 +1,7 @@
 {
   "$schema": "./compatibility.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-19",
+  "updatedAt": "2026-10-30",
   "claims": [
     {
       "id": "CLAIM-LAYOUT-MODERN",
@@ -253,7 +253,7 @@
       "dimension": "layout",
       "value": "legacy-flat",
       "support": "supported",
-      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts. Repeated conditional CREATE TABLE declarations retain the earlier naming witness and report uncertain effective structure rather than a duplicate-table error; later unconditional declarations retain duplicate findings. BGA-438 permits independent duplicate-check absence only after an actual non-empty supported ASCII schema naming read; unresolved query values, unknown source and omitted PHP still hold query-dependent checks. Partial schema and conditional repeats provide no naming witness. BGA-443 compares supported ASCII column names without letter case while preserving their recorded spelling and existing table identity/unknown query scope. BGA-444 keeps runtime-dependent table-case references and schema collisions unsupported without folding table identity or inferring target settings. BGA-445 binds qualifiers to unique table references, preserves alias shadowing and withholds ambiguous/self-join provenance without reading SQL values as bindings. BGA-446 counts uniquely bound qualified wildcards against visible columns on the referenced table only, preserving unrelated unused and explicit missing-column findings; private provenance does not alter output shapes. BGA-447 accounts for a lone unqualified SELECT wildcard using only that query's bounded FROM/JOIN tables and declared visible columns; DISTINCT is supported, mixed/result-aliased stars remain unsupported, and unrelated unused or explicit missing-column findings remain available.",
+      "notes": "Flat <game>.game.php, <game>.action.php, and <game>.js at the project root. BGA-418 proves public legacy dispatcher visibility, and BGA-420 resolves the official implicit output-alias and table-alias query forms without weakening genuine missing-column findings. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-434 reads only invariant formatted INSERT targets; computed VALUES and suffixes remain unsupported. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts. Repeated conditional CREATE TABLE declarations retain the earlier naming witness and report uncertain effective structure rather than a duplicate-table error; later unconditional declarations retain duplicate findings. BGA-438 permits independent duplicate-check absence only after an actual non-empty supported ASCII schema naming read; unresolved query values, unknown source and omitted PHP still hold query-dependent checks. Partial schema and conditional repeats provide no naming witness. BGA-443 compares supported ASCII column names without letter case while preserving their recorded spelling and existing table identity/unknown query scope. BGA-444 keeps runtime-dependent table-case references and schema collisions unsupported without folding table identity or inferring target settings. BGA-445 binds qualifiers to unique table references, preserves alias shadowing and withholds ambiguous/self-join provenance without reading SQL values as bindings. BGA-446 counts uniquely bound qualified wildcards against visible columns on the referenced table only, preserving unrelated unused and explicit missing-column findings; private provenance does not alter output shapes. BGA-447 accounts for a lone unqualified SELECT wildcard using only that query's bounded FROM/JOIN tables and declared visible columns; DISTINCT is supported, mixed/result-aliased stars remain unsupported, and unrelated unused or explicit missing-column findings remain available. BGA-460 checks literal nextState names in uniquely bound array-declared automatic handlers as located heuristics; computed, shared and nested contexts remain explicitly unsupported. It does not analyze state-class imperative transitions or game correctness.",
       "fixtures": ["tests/fixtures/projects/legacy"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -285,7 +285,8 @@
         "E2E-DATABASE-TABLE-CASE",
         "E2E-DATABASE-ALIAS-BINDINGS",
         "E2E-DATABASE-QUALIFIED-WILDCARDS",
-        "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+        "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+        "E2E-STATE-HANDLER-TRANSITIONS"
       ],
       "capabilities": [
         {
@@ -336,7 +337,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -373,7 +375,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -381,7 +384,8 @@
           "scenarios": [
             "E2E-VALIDATE-STATES-CLEAN",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -398,7 +402,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -426,7 +431,7 @@
       "dimension": "layout",
       "value": "part-migrated",
       "support": "supported",
-      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts. Repeated conditional CREATE TABLE declarations retain the earlier naming witness and report uncertain effective structure rather than a duplicate-table error; later unconditional declarations retain duplicate findings. BGA-438 permits independent duplicate-check absence only after an actual non-empty supported ASCII schema naming read; unresolved query values, unknown source and omitted PHP still hold query-dependent checks. Partial schema and conditional repeats provide no naming witness. BGA-443 compares supported ASCII column names without letter case while preserving their recorded spelling and existing table identity/unknown query scope. BGA-444 keeps runtime-dependent table-case references and schema collisions unsupported without folding table identity or inferring target settings. BGA-445 binds qualifiers to unique table references, preserves alias shadowing and withholds ambiguous/self-join provenance without reading SQL values as bindings. BGA-446 counts uniquely bound qualified wildcards against visible columns on the referenced table only, preserving unrelated unused and explicit missing-column findings; private provenance does not alter output shapes. BGA-447 accounts for a lone unqualified SELECT wildcard using only that query's bounded FROM/JOIN tables and declared visible columns; DISTINCT is supported, mixed/result-aliased stars remain unsupported, and unrelated unused or explicit missing-column findings remain available.",
+      "notes": "A project part-way through migration reads as one project: per-component generations, a state machine merged from both sources with the class taking precedence, and every capability run against it through the installed server. BGA-429 retains all modules and documented legacy root source forms; other local PHP/JS/TS stays inventoried with explicit unsupported execution scope and cannot supply production contracts. Git ignore rules do not select source. BGA-435 explains actual validator-group coverage blockers in existing pre-release reasons and groups repeated reasons in text; check outcomes and schemas are unchanged. BGA-436 retains eligible sources omitted by byte/file read limits as located unsupported coverage, reads later fitting sources and withholds absence-dependent conclusions; schemas and source selection are unchanged. BGA-437 exposes complete bounded source eligibility in existing inspection signals: selected PHP/client/configuration candidates, editor exclusions, unknown scope and other inventoried files. It shares selection with contract reads without claiming execution, complete reads or a clean subset verdict for the whole root. BGA-439 attests audit availability from a read schema and query reference, and schema-duplicate absence only for wholly blank/ordinary-line-comment schemas. Dynamic query-dependent checks remain unsupported; no schema completeness is inferred from the existing parser. BGA-441 preserves partial schema coverage for unexamined statements and lexical regions; absence-dependent schema findings are withheld while readable declarations and known duplicates remain available. It does not execute SQL or interpret ALTER/VIEW or dynamic queries. BGA-101 retains a request-scoped internal normalization across fourteen source categories; existing inspection signals preserve located unknowns and validators share bounded trace instances. Public schemas/declarations are unchanged; legacy PHP configuration, template/style contents and runtime test behavior remain unknown. BGA-442 reads only invariant INSERT names from a literal prefix concatenated with one variable or complete function call; values, generated suffixes and escaping remain unsupported. Outer operators and ambiguous literal concatenations produce no query facts. Repeated conditional CREATE TABLE declarations retain the earlier naming witness and report uncertain effective structure rather than a duplicate-table error; later unconditional declarations retain duplicate findings. BGA-438 permits independent duplicate-check absence only after an actual non-empty supported ASCII schema naming read; unresolved query values, unknown source and omitted PHP still hold query-dependent checks. Partial schema and conditional repeats provide no naming witness. BGA-443 compares supported ASCII column names without letter case while preserving their recorded spelling and existing table identity/unknown query scope. BGA-444 keeps runtime-dependent table-case references and schema collisions unsupported without folding table identity or inferring target settings. BGA-445 binds qualifiers to unique table references, preserves alias shadowing and withholds ambiguous/self-join provenance without reading SQL values as bindings. BGA-446 counts uniquely bound qualified wildcards against visible columns on the referenced table only, preserving unrelated unused and explicit missing-column findings; private provenance does not alter output shapes. BGA-447 accounts for a lone unqualified SELECT wildcard using only that query's bounded FROM/JOIN tables and declared visible columns; DISTINCT is supported, mixed/result-aliased stars remain unsupported, and unrelated unused or explicit missing-column findings remain available. BGA-460 checks literal nextState names in uniquely bound array-declared automatic handlers as located heuristics; computed, shared and nested contexts remain explicitly unsupported. It does not analyze state-class imperative transitions or game correctness.",
       "fixtures": ["tests/fixtures/projects/hybrid"],
       "scenarios": [
         "GATE-FIXTURE-SAFETY",
@@ -455,7 +460,8 @@
         "E2E-DATABASE-TABLE-CASE",
         "E2E-DATABASE-ALIAS-BINDINGS",
         "E2E-DATABASE-QUALIFIED-WILDCARDS",
-        "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+        "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+        "E2E-STATE-HANDLER-TRANSITIONS"
       ],
       "capabilities": [
         {
@@ -503,7 +509,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -538,7 +545,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -546,7 +554,8 @@
           "scenarios": [
             "E2E-VALIDATE-STATES-HYBRID",
             "E2E-PROJECT-SOURCE-SELECTION",
-            "E2E-PROJECT-SOURCE-BYTE-LIMIT"
+            "E2E-PROJECT-SOURCE-BYTE-LIMIT",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {
@@ -562,7 +571,8 @@
             "E2E-DATABASE-TABLE-CASE",
             "E2E-DATABASE-ALIAS-BINDINGS",
             "E2E-DATABASE-QUALIFIED-WILDCARDS",
-            "E2E-DATABASE-UNQUALIFIED-WILDCARDS"
+            "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
+            "E2E-STATE-HANDLER-TRANSITIONS"
           ]
         },
         {

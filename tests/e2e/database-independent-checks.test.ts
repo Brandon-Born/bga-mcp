@@ -150,7 +150,7 @@ it('[E2E-DATABASE-INDEPENDENT-CHECKS] retains independent evidence and all unkno
           expect(data.counts).toEqual({
             passed: 3,
             failed: 0,
-            unsupported: 30,
+            unsupported: 31,
             'manual-required': 8,
           });
           for (const id of QUERY_CHECKS) {

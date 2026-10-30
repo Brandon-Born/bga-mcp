@@ -269,3 +269,7 @@ Labels reduce instruction/data confusion; they cannot enforce an agent's own
 permissions or instruction hierarchy. No additional BGA grammar is inferred.
 
 BGA-454 updates current-source CLAIM-CLIENT-SDK to patched client 2.3.1 and the conformance-only legacy SDK to 1.32.0. The original rc.10 contract is archived unchanged; its signed dependency graph remains blocked. The existing installed smoke scenarios must pass on every CI platform/Node pair before this current-source claim is admitted.
+
+## Automatic state-handler transition names — BGA-460
+
+Array-declared GAME states in legacy and hybrid projects receive bounded, located transition-name checks through the state validator, aggregate validator, pre-release audit and diagnostics resource (`E2E-STATE-HANDLER-TRANSITIONS`). Literal valid names and unnamed single transitions are accepted; typos receive a warning with heuristic certainty. Computed arguments, missing/directly unbound or shared/ambiguous handlers, static/non-public methods and nested functions/closures remain explicitly unsupported. Only the expected class in one documented main game file supplies the callback; unrelated helper classes cannot. State-class imperative transitions, player-action routing, delegates and runtime reachability are outside this increment. No new tool, schema, network or execution boundary is introduced.
