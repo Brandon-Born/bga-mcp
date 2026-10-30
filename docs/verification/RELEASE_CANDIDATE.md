@@ -402,3 +402,156 @@ original-candidate production, exact-byte review, signing and publication
 remain separate stages. PR48's merged main `4bb8ea4` separately passed
 [all six post-merge jobs](https://github.com/Brandon-Born/bga-mcp/actions/runs/40550210841),
 with all six original archive hashes and sealed exact-main records verified.
+
+## rc.12 failed live preflight and distinct rc.13 source correction — BGA-459
+
+PR49 normally merged as `054e4fd69a8316b448021c005462df9986590db4` with
+[all six merged-main jobs passing](https://github.com/Brandon-Born/bga-mcp/actions/runs/40557831224).
+All six original archive/API hashes and sealed exact-main records independently
+verified. The new `v1.0.0-rc.12` tag remains fixed at that source.
+
+[Producer 40559714945](https://github.com/Brandon-Born/bga-mcp/actions/runs/40559714945)
+returned success from its complete gate, then failed live security preflight on
+moderate `GHSA-6pq8-jhm2-2vcw`. It retained only the actual advisory assessment;
+no original rc.12 package, manifest or packet was uploaded. There is no original
+tarball digest to review or sign. The failed run has not been retried. The
+[producer hold](rc12-producer-hold-2026-10-27.json) preserves its actual audit,
+archive identity and scope. Source CI success does not waive this failure.
+
+The remaining vulnerable path is development conformance/SDK through Express
+5.2.1 to qs 6.16.0. Body-parser 2.4.0 already resolves fixed qs 6.16.1.
+The narrow correction extends the existing override to the mature fixed version,
+removes only that old lock resolution and selects `1.0.0-rc.13` in the three
+version fields. Existing gates, release-age settings, security exceptions,
+public contract and all BGA behavior remain unchanged. Ordinary source tests,
+canonical fresh audits, independent source review, exact-source CI and current
+framework admission must pass before the separate owner merge and unsigned
+rc.13 production decision. No rc.13 tag, producer dispatch, signature or public
+publication is performed by this source correction.
+
+The rc.13 correction implementation is
+`d1a4d1322628bda11869c1e4b5fb04a7c9456a16` (tree
+`7d52272b689153fff2b3e5f60825e0f4a32c4327`). Its integrated full gate
+passed 1,030 tests / 279 required scenarios with the preparation dirty on base
+`054e4fd`; the retained evidence keeps that actual identity. The independent
+review bound all ten committed paths with no actionable findings (report
+SHA-256 `0d0b0ce9c74d80bb5b2563dcbb12a4602ad99857943ad29f3b8204a136f96cd7`). Six separate library checks reproduce the two vulnerable
+comma-serialization paths on qs 6.16.0, verify fixed 6.16.1 and preserve benign
+controls; they do not assert public stdio exploitability.
+
+The canonical clean correction-source audit generated at
+`2026-10-27T18:40:11.518Z` reports zero production and full-graph findings
+without exceptions. All four dependency/security materials match the correction.
+[Exact-source CI 40562120780](https://github.com/Brandon-Born/bga-mcp/actions/runs/40562120780)
+passed all six platform/Node jobs. All six original archive/API hashes and sealed
+records independently validate schema, integrity, clean actual source, 1,030
+passing tests, 279 scenarios, passing applicable conformance, lock identity and
+installed development test-artifact identity. Each macOS test package matches
+the local development artifact; no original rc.13 candidate is inferred.
+
+Relevant wording from all eight mapped official sources was re-read October27.
+The unchanged framework review command admitted only that genuine exact-source
+CI, reducing eight source-identity holds to zero. October21 page observations
+and digests remain historical and unchanged. This follow-up changes only the
+framework process metadata and this receipt. Implementation proof remains
+explicitly bound to `d1a4d13`; automatic PR checks and the final actual tested
+tree are verified separately in the owner handoff. No failing producer is
+retried or relabeled. The rc.12 tag stays fixed, with no original packet, and
+rc.13 still needs its separate normal-merge and unsigned-production approval.
+Signing and publication remain separate stages.
+
+The final receipt-head PR run
+[40564533890](https://github.com/Brandon-Born/bga-mcp/actions/runs/40564533890)
+at `5031489e24c662379fafebb342cc9a57f6ce8fb2` failed Windows Node22;
+the other five jobs passed. That job passed 1,029 of 1,030 tests, with the
+adopted-roots recovery `check_setup` returning `policy.timeout.exceeded`
+under its real 100 ms deadline. Earlier injected cancellation, quiescence and
+transport assertions passed. This failure is retained and blocks merge readiness;
+the successful implementation/initial PR runs above do not clear it.
+
+The narrow test-observer correction keeps one append descriptor for the probe's
+transcript, opened before timed work and closed on child exit. Each event remains
+synchronously visible, with existing real native operations, deadlines, assertions,
+fake-clock behavior and mutation witnesses unchanged. This removes repeated
+observer path opens/closes from measured work. CI did not retain inner native
+timings, so it does not prove logging was the sole cause or eliminate all scheduler
+variability. Affected tests, a new integrated gate, independent review and fresh
+source/PR CI must pass before new framework admission or an owner decision.
+
+The observer correction source `963e475d5ab2152ee90a136fc97645212e29dc0b`
+subsequently passed [all six exact-source jobs](https://github.com/Brandon-Born/bga-mcp/actions/runs/40568270079);
+the original six archive/API hashes and sealed clean-source records verify.
+[Its PR run](https://github.com/Brandon-Born/bga-mcp/actions/runs/40568222985)
+passed five jobs but failed the strict installed-executable absence assertion on
+macOS Node22 after successful `pnpm remove`; 1,029 of 1,030 tests passed.
+All deadline-matrix cases passed, including both Windows jobs. The failed PR run
+is retained without an unchanged retry, and still blocks readiness.
+
+Independent controls against the actual unmodified pnpm 11.15.1 binary reproduce
+a possible manifest-read/dependency-removal race that leaves its executable shim.
+The same control against independently downloaded, registry-integrity-verified
+pnpm 11.28.5 verifies manifest read before removal and no leftover shim. The
+[official fixed source](https://github.com/pnpm/pnpm/blob/v11.28.5/pnpm11/installing/linking/modules-cleaner/src/removeDirectDependency.ts)
+awaits executable cleanup before dependency deletion. The exact CI ordering was
+not retained; these controls establish the possible defect and upstream correction,
+not the sole cause of that particular incident. Version 11.28.5 was published
+October6 and is over twenty days old. Current development tooling, ordinary CI consumers and
+prerequisite guidance select it without changing age/security settings, application
+dependencies, removal assertions, deadlines or retries. Historical receipts and
+frozen guides remain unchanged. Historical signed/native replay runners retain
+their reviewed tooling pins and receipt identities; retargeting and replaying them
+is a later actual-candidate stage. An initial overbroad pin edit correctly stopped
+at the controlled-client runner guard before runtime tests; the final preparation
+keeps those historical runner bytes unchanged instead of relabeling their review.
+A new integrated gate, independent source review,
+exact-source/PR CI and authentic framework admission are required. No original
+rc.13 package or approval is inferred from these source/tool checks.
+
+The first narrowed integrated tooling run passed 1,029 of 1,030 tests; its
+publication-prerequisite positive control assumed the historical selected receipt
+still matched the current guide. The real guard correctly rejected the changed
+pnpm prerequisite. The integration control now authenticates the selected
+candidate's guide directly from its recorded Git source, preserves that authentic
+positive case, explicitly verifies current mismatch and digest-substitution
+refusal, and tests mixed receipts against the authentic guide. This does not alter
+the publication guard, any historical receipt, or an approval. A changed source
+guide continues to require actual replacement-candidate installation evidence.
+
+## Final qs/tooling correction source evidence — BGA-459
+
+The final integrated implementation is `684275e48bba73768489ce9531f2bea0a96760fb` (tree
+`24d07aeaa60c98b952da06e85ff90a21c9f757b7`). Its complete local gate passed
+1,030 tests / 279 required scenarios under pnpm 11.28.5, retaining the actual
+dirty `963e475` source identity and development test-artifact digest
+`sha256:7de0d8ab051c4871a5f2f6a6a3b00e96310a6c138b0b5ab91ff95cf193e112ef`. That artifact is not an original
+rc.13 candidate. Independent review approved all 27 committed paths with no
+findings (report SHA-256 `sha256:209cf0d378a87f833e522af1896dcba4a8ac7b1f3c749f37b668473df4b2fec5`).
+
+[Exact-source CI 40571953833](https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833) and
+[implementation PR CI 40571905848](https://github.com/Brandon-Born/bga-mcp/actions/runs/40571905848) each passed
+all six platform/Node jobs. All twelve original archive/API hashes and sealed
+records verify complete clean-source or actual merge-tree identity, pnpm 11.28.5,
+1,030 passing tests, 279 passing scenarios, applicable conformance, lock and
+installed development test-artifact identity. The PR's actual tested tree equals
+the reviewed implementation tree. The canonical clean-source registry audit at
+`2026-10-27T19:45:06.764Z` reports zero production/full findings without exceptions.
+
+The independent unchanged-binary removal comparison and authentic historical-guide
+controls remain separate from source tests. The new gate preserves every deadline
+and removal assertion, production publication guard, historical receipt and
+controlled signed/native runner. All genuine prior producer/PR/local failures
+remain retained; none was retried unchanged or relabeled as passing.
+
+The unchanged framework command admits this genuine exact-source CI for all eight
+sources and reports zero holds, preserving original October21 observation times
+and digests. Relevant official wording was read during this October27 session;
+no BGA parser/rule, layout or compatibility interpretation changes. This follow-up
+changes only framework process metadata and this receipt; implementation proof
+remains explicitly bound to `684275e48bba73768489ce9531f2bea0a96760fb`. The final automatic PR run and its actual
+tested tree must finish and be verified separately before the owner handoff.
+
+Normal merge of PR50 and creation/testing of distinct unsigned rc.13 still need
+owner approval. No rc.13 tag, producer, original packet, signature or publication
+is inferred. Historical signed/native runner retargeting and authentic exact-byte
+replay remain later candidate stages. Frozen rc.10/rc.11/rc.12 and public metadata
+remain unchanged.

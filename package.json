@@ -1,6 +1,6 @@
 {
   "name": "bga-mcp",
-  "version": "1.0.0-rc.12",
+  "version": "1.0.0-rc.13",
   "description": "Unofficial MCP server for Board Game Arena Studio development",
   "type": "module",
   "license": "Apache-2.0",
@@ -16,7 +16,7 @@
   "engines": {
     "node": "^22.13.0 || >=24.0.0"
   },
-  "packageManager": "pnpm@11.15.1",
+  "packageManager": "pnpm@11.28.5",
   "bin": {
     "bga-mcp": "dist/release-cli.js"
   },

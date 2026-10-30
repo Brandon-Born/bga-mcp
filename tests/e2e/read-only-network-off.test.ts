@@ -83,7 +83,7 @@ beforeAll(async () => {
   await mkdir(installRoot);
   await writeFile(
     resolve(installRoot, 'package.json'),
-    `${JSON.stringify({ name: 'bga-mcp-readonly-install', private: true, packageManager: 'pnpm@11.15.1' })}\n`,
+    `${JSON.stringify({ name: 'bga-mcp-readonly-install', private: true, packageManager: 'pnpm@11.28.5' })}\n`,
   );
 
   // The artifact is packed once for the whole run; see tests/global-setup.ts.

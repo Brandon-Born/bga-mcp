@@ -52,3 +52,15 @@ All direct dependency versions are exact. Upgrades require a dedicated change wi
 ## Verification decision
 
 The stack is not considered proven by this ADR. BGA-002 is verified only when CI exercises a test-only MCP capability over stdio using the real client on both supported Node LTS lines. The distributable package is separately verified by BGA-003 and BGA-010.
+
+## Tooling amendment — October 27, 2026
+
+The rc.13 source preparation selects mature pnpm `11.28.5` for current
+development and ordinary CI consumers. Historical signed/native replay runners
+retain their original tooling pins until authentic candidate retargeting/replay. Its upstream removal implementation waits
+for executable cleanup before deleting the dependency directory; pinned
+`11.15.1` can race its manifest read against that deletion and leave a shim after
+a successful exit. The original decision and historical receipts above remain
+historical. This amendment changes no application dependency, assertion, deadline
+or security policy. New full source/consumer checks and matrix CI are required;
+source success does not approve an original release artifact.

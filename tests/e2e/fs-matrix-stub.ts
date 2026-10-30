@@ -1,5 +1,5 @@
 /** Test-only observation of issued filesystem promises, never OS cancellation. */
-import { appendFileSync, type Dir } from 'node:fs';
+import { appendFileSync, closeSync, openSync, type Dir } from 'node:fs';
 import type * as FsPromises from 'node:fs/promises';
 import { createRequire, syncBuiltinESMExports } from 'node:module';
 
@@ -23,7 +23,12 @@ if (
   recoveryMs < 0
 )
   throw new Error('Invalid filesystem matrix probe configuration');
-const transcript = path;
+// Keep observer path opens outside the timed operation while retaining each
+// event synchronously. This descriptor belongs to the probe, not the server.
+const transcript = openSync(path, 'a');
+process.once('exit', () => {
+  closeSync(transcript);
+});
 const now = performance.now.bind(performance);
 const timer = globalThis.setTimeout;
 let expiry: (() => void) | undefined;

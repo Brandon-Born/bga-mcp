@@ -10,12 +10,12 @@
       "observedAt": "2026-10-21T22:59:10.811Z",
       "review": {
         "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-        "implementationDigest": "sha256:7a725d871db1da7ddb4928a5ff760b445a0b9226af9cc4fc1085e3962740bcca",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:26.646Z",
+        "implementationDigest": "sha256:68e78ea9f2bc1ea312ad3006b552d5f6a03a918bad56ad5f059be3c1dfeb6e04",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:15.723Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -127,8 +127,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:7a725d871db1da7ddb4928a5ff760b445a0b9226af9cc4fc1085e3962740bcca",
-          "proofDigest": "sha256:c9f294b98f4982943ce8704615994d7d69fc39e470a2c1802a8f921fd8a7c7a1",
+          "semanticDigest": "sha256:68e78ea9f2bc1ea312ad3006b552d5f6a03a918bad56ad5f059be3c1dfeb6e04",
+          "proofDigest": "sha256:637378daf913fd5120eb1cbc756b16626a3a3be8a453d5a63dda6bc6d376c6fc",
           "semantic": [
             {
               "path": ".gitignore",
@@ -142,7 +142,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -177,7 +177,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -207,7 +207,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -347,12 +347,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -497,7 +497,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -1339,12 +1339,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -1574,7 +1574,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -1799,7 +1799,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -1879,7 +1879,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -1909,7 +1909,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -1924,7 +1924,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -1954,7 +1954,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -1969,7 +1969,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -1994,12 +1994,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -2009,12 +2009,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -2084,7 +2084,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -2199,7 +2199,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -2506,11 +2506,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:c9f294b98f4982943ce8704615994d7d69fc39e470a2c1802a8f921fd8a7c7a1",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:26.647Z"
+          "dependencyDigest": "sha256:637378daf913fd5120eb1cbc756b16626a3a3be8a453d5a63dda6bc6d376c6fc",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:15.726Z"
         }
       },
       "needsReview": false
@@ -2521,12 +2521,12 @@
       "observedAt": "2026-10-21T22:59:12.322Z",
       "review": {
         "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-        "implementationDigest": "sha256:d4db8cb4f769ac8c9e4541093933fb0e032472b354fd7348b29856cc760c80ab",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:27.665Z",
+        "implementationDigest": "sha256:295ce2a5f021c64d7bbe5e2bdf4d55750af38c14f5b473a9dbec62c4d4da3ed9",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:16.566Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -2631,8 +2631,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:d4db8cb4f769ac8c9e4541093933fb0e032472b354fd7348b29856cc760c80ab",
-          "proofDigest": "sha256:e47864d1d53c8145508d6922d8549e4c1d3ca80d4ce8793a7ad6f852346599f0",
+          "semanticDigest": "sha256:295ce2a5f021c64d7bbe5e2bdf4d55750af38c14f5b473a9dbec62c4d4da3ed9",
+          "proofDigest": "sha256:6758e0c61e3a2a75f00b98cbe9b78dc0b75dd21261a9b718247aaf850aee9602",
           "semantic": [
             {
               "path": ".gitignore",
@@ -2646,7 +2646,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2681,7 +2681,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2711,7 +2711,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -2851,12 +2851,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -3001,7 +3001,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -3823,12 +3823,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -4058,7 +4058,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -4283,7 +4283,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4363,7 +4363,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -4388,7 +4388,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -4403,7 +4403,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4433,7 +4433,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -4448,7 +4448,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4473,12 +4473,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4488,12 +4488,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4563,7 +4563,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -4678,7 +4678,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -4985,11 +4985,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:e47864d1d53c8145508d6922d8549e4c1d3ca80d4ce8793a7ad6f852346599f0",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:27.665Z"
+          "dependencyDigest": "sha256:6758e0c61e3a2a75f00b98cbe9b78dc0b75dd21261a9b718247aaf850aee9602",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:16.567Z"
         }
       },
       "needsReview": false
@@ -5000,12 +5000,12 @@
       "observedAt": "2026-10-21T22:59:13.893Z",
       "review": {
         "digest": "sha256:c290a9b630c760262760ec83bc162bc38e2a60e723f80fb689e91a34e32f63ff",
-        "implementationDigest": "sha256:4c1d7d18a98ad475077ac5aa1b0cb3c7b0c840a33c975faa18fa41b95613f6a8",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:28.667Z",
+        "implementationDigest": "sha256:2fee997a53fc417b8dc7e057d60c6580ccb819c4f938c1dfd31104c31abc82c1",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:17.467Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -5117,8 +5117,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:4c1d7d18a98ad475077ac5aa1b0cb3c7b0c840a33c975faa18fa41b95613f6a8",
-          "proofDigest": "sha256:ee6708e46e8a9ae4e0d025a051b274f50a8c9717d57e098bc2acc00669548dfe",
+          "semanticDigest": "sha256:2fee997a53fc417b8dc7e057d60c6580ccb819c4f938c1dfd31104c31abc82c1",
+          "proofDigest": "sha256:34a9dba5deeaa4e74fa4da9e31c639cafd9ac7396dad1f9877cacda5c50318b3",
           "semantic": [
             {
               "path": ".gitignore",
@@ -5132,7 +5132,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5167,7 +5167,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5197,7 +5197,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5337,12 +5337,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -5487,7 +5487,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -6329,12 +6329,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -6564,7 +6564,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -6789,7 +6789,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -6869,7 +6869,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -6899,7 +6899,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -6914,7 +6914,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -6944,7 +6944,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -6959,7 +6959,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -6984,12 +6984,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -6999,12 +6999,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -7074,7 +7074,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -7189,7 +7189,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -7496,11 +7496,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:ee6708e46e8a9ae4e0d025a051b274f50a8c9717d57e098bc2acc00669548dfe",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:28.667Z"
+          "dependencyDigest": "sha256:34a9dba5deeaa4e74fa4da9e31c639cafd9ac7396dad1f9877cacda5c50318b3",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:17.468Z"
         }
       },
       "needsReview": false
@@ -7511,12 +7511,12 @@
       "observedAt": "2026-10-21T22:59:15.789Z",
       "review": {
         "digest": "sha256:3f8ddd60efb86026a3a323a41fcdc249f0c18d62d4fc066f01415354a2e343ad",
-        "implementationDigest": "sha256:73f9ed73b5e62bb5dfa0959b839e8873573c96d414083456b1b32f51524ed25c",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:29.641Z",
+        "implementationDigest": "sha256:08a6277279ed312e2bf26820557ec3ca03039bfd5493c64c7bb5cc71e345a6e5",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:18.353Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -7628,8 +7628,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:73f9ed73b5e62bb5dfa0959b839e8873573c96d414083456b1b32f51524ed25c",
-          "proofDigest": "sha256:279f0ffb4c707b4efc8304d9d33b416c6b0566a00e8f48b7099b7e262bde3b08",
+          "semanticDigest": "sha256:08a6277279ed312e2bf26820557ec3ca03039bfd5493c64c7bb5cc71e345a6e5",
+          "proofDigest": "sha256:77a6342083f296f28a32260a9a2e0c5d9f8d8ddf6538726578f73d00c87ba2a6",
           "semantic": [
             {
               "path": ".gitignore",
@@ -7643,7 +7643,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7678,7 +7678,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7708,7 +7708,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7848,12 +7848,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -7998,7 +7998,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -8840,12 +8840,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -9075,7 +9075,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -9300,7 +9300,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9380,7 +9380,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -9410,7 +9410,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -9425,7 +9425,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9455,7 +9455,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -9470,7 +9470,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9495,12 +9495,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9510,12 +9510,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9585,7 +9585,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -9700,7 +9700,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -10007,11 +10007,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:279f0ffb4c707b4efc8304d9d33b416c6b0566a00e8f48b7099b7e262bde3b08",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:29.641Z"
+          "dependencyDigest": "sha256:77a6342083f296f28a32260a9a2e0c5d9f8d8ddf6538726578f73d00c87ba2a6",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:18.353Z"
         }
       },
       "needsReview": false
@@ -10022,12 +10022,12 @@
       "observedAt": "2026-10-21T22:59:17.730Z",
       "review": {
         "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-        "implementationDigest": "sha256:d93cd89dec8861098fbbe8b3668946352251cf7a0742d0364b773ec36725dc3b",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:30.622Z",
+        "implementationDigest": "sha256:97698e72adf5f3ac8fe85159ed16a2abbe6c2bd297423d86a8dd0b79126772dc",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:19.205Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -10139,8 +10139,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:d93cd89dec8861098fbbe8b3668946352251cf7a0742d0364b773ec36725dc3b",
-          "proofDigest": "sha256:d7871d963ec030d0267bd87245b85573c0a171af9ffb05e56c1bd1148329fd06",
+          "semanticDigest": "sha256:97698e72adf5f3ac8fe85159ed16a2abbe6c2bd297423d86a8dd0b79126772dc",
+          "proofDigest": "sha256:2c3493db1dcb9bf1fc7bd193aa270c31d0dfecf9bdefb6f0e7f0434428b702bc",
           "semantic": [
             {
               "path": ".gitignore",
@@ -10154,7 +10154,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10189,7 +10189,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10219,7 +10219,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10359,12 +10359,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -10509,7 +10509,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -11351,12 +11351,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -11586,7 +11586,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -11811,7 +11811,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -11891,7 +11891,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -11921,7 +11921,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -11936,7 +11936,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -11966,7 +11966,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -11981,7 +11981,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -12006,12 +12006,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -12021,12 +12021,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -12096,7 +12096,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -12211,7 +12211,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -12518,11 +12518,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:d7871d963ec030d0267bd87245b85573c0a171af9ffb05e56c1bd1148329fd06",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:30.623Z"
+          "dependencyDigest": "sha256:2c3493db1dcb9bf1fc7bd193aa270c31d0dfecf9bdefb6f0e7f0434428b702bc",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:19.206Z"
         }
       },
       "needsReview": false
@@ -12533,12 +12533,12 @@
       "observedAt": "2026-10-21T22:59:19.207Z",
       "review": {
         "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-        "implementationDigest": "sha256:b2b9dfdc8f9eeec33261f023d7e494ef494f779487b3c65cc579826133ea316d",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:31.552Z",
+        "implementationDigest": "sha256:78b4a40dda5febf2e1e7a95c3e32d35f39d4802e4353636a6beebf996583a076",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:20.047Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -12650,8 +12650,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:b2b9dfdc8f9eeec33261f023d7e494ef494f779487b3c65cc579826133ea316d",
-          "proofDigest": "sha256:42971ad6867dd25992e54a53923414f28dee7dabbd0bf7687250c42f9bced2d1",
+          "semanticDigest": "sha256:78b4a40dda5febf2e1e7a95c3e32d35f39d4802e4353636a6beebf996583a076",
+          "proofDigest": "sha256:f1ab55423da2153cfde116180c04e6686dfa58a73acdc99db1f70e2ee45d743e",
           "semantic": [
             {
               "path": ".gitignore",
@@ -12665,7 +12665,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12700,7 +12700,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12730,7 +12730,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -12870,12 +12870,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -13020,7 +13020,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -13862,12 +13862,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -14097,7 +14097,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -14322,7 +14322,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14402,7 +14402,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -14432,7 +14432,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -14447,7 +14447,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14477,7 +14477,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -14492,7 +14492,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14517,12 +14517,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14532,12 +14532,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14607,7 +14607,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -14722,7 +14722,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -15029,11 +15029,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:42971ad6867dd25992e54a53923414f28dee7dabbd0bf7687250c42f9bced2d1",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:31.553Z"
+          "dependencyDigest": "sha256:f1ab55423da2153cfde116180c04e6686dfa58a73acdc99db1f70e2ee45d743e",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:20.048Z"
         }
       },
       "needsReview": false
@@ -15044,12 +15044,12 @@
       "observedAt": "2026-10-21T22:59:20.783Z",
       "review": {
         "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-        "implementationDigest": "sha256:6b0fda3e0d718bad7166f26b5283a935133c7033cb4b7f9fe32174c3559fc799",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:32.369Z",
+        "implementationDigest": "sha256:1d5e0ca5b0ee9c68da12c0c864c4387698f9b0c7d9696da5d83af652ed75b17a",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:20.931Z",
         "fixturePaths": [
           "tests/fixtures/projects/comment-contract-controls",
           "tests/fixtures/projects/comment-contract-reproduction",
@@ -15161,8 +15161,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:6b0fda3e0d718bad7166f26b5283a935133c7033cb4b7f9fe32174c3559fc799",
-          "proofDigest": "sha256:dbbe7fece2ad46c8e6381f809446ba929c4f44ace3d4fd37390360955786b8f4",
+          "semanticDigest": "sha256:1d5e0ca5b0ee9c68da12c0c864c4387698f9b0c7d9696da5d83af652ed75b17a",
+          "proofDigest": "sha256:fec62d5f2c57eb1761502b7c194e4d5d4d3622a994a0d0be10daa9da3e719603",
           "semantic": [
             {
               "path": ".gitignore",
@@ -15176,7 +15176,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15211,7 +15211,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15241,7 +15241,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15381,12 +15381,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -15531,7 +15531,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -16373,12 +16373,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -16608,7 +16608,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -16833,7 +16833,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -16913,7 +16913,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -16943,7 +16943,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -16958,7 +16958,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -16988,7 +16988,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -17003,7 +17003,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -17028,12 +17028,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -17043,12 +17043,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -17118,7 +17118,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -17233,7 +17233,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -17540,11 +17540,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:dbbe7fece2ad46c8e6381f809446ba929c4f44ace3d4fd37390360955786b8f4",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:32.369Z"
+          "dependencyDigest": "sha256:fec62d5f2c57eb1761502b7c194e4d5d4d3622a994a0d0be10daa9da3e719603",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:20.931Z"
         }
       },
       "needsReview": false
@@ -17555,12 +17555,12 @@
       "observedAt": "2026-10-21T22:59:22.461Z",
       "review": {
         "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-        "implementationDigest": "sha256:1f0609e416bf623a9337d6062d679c453511aac4194dc2f5b12aecb4eca85f3f",
-        "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-        "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-        "reviewer": "Codex (BGA-458 version-only rc12 package/manifest/runtime metadata preparation; relevant paragraphs of all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory, compatibility and patched lockfile unchanged; genuine clean exact-source six-job CI bound to the actual version source)",
-        "reviewedAt": "2026-10-27T17:41:33.257Z",
+        "implementationDigest": "sha256:8f9adc2d873354b9d418b5ed0f94cb2701ba78ced0f909beec9d3c3a803caf14",
+        "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+        "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+        "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+        "reviewer": "Codex (BGA-459 narrow development qs security override/lock correction, distinct rc13 metadata, test-only synchronous transcript owned-descriptor correction and mature pnpm11.28.5 development/ordinary CI tooling/current prerequisite correction; historical signed/native replay runners preserved; deadline/removal assertions, timers, native operations and mutation witnesses preserved; publication test authenticates historical guide and explicitly rejects changed guidance with production guards/receipts unchanged; relevant wording from all eight mapped official sources re-read October27; BGA parser, rule, fixture, public inventory and compatibility interpretations unchanged; failed rc12 evidence and map remain mandatory; admission bound only to genuine clean exact-source six-job CI)",
+        "reviewedAt": "2026-10-27T19:58:21.784Z",
         "fixturePaths": [
           "tests/fixtures/projects/hybrid",
           "tests/fixtures/projects/legacy",
@@ -17665,8 +17665,8 @@
           "UNIT-DOC-RELEVANCE-ORACLE"
         ],
         "dependencies": {
-          "semanticDigest": "sha256:1f0609e416bf623a9337d6062d679c453511aac4194dc2f5b12aecb4eca85f3f",
-          "proofDigest": "sha256:d0b665a8ab8e29960638a55d49b963efad3c133e1bb8be9fc83ce86a9afd0ea4",
+          "semanticDigest": "sha256:8f9adc2d873354b9d418b5ed0f94cb2701ba78ced0f909beec9d3c3a803caf14",
+          "proofDigest": "sha256:62dd66ac600bffd3979d19898ee112636fec12b61ecf97b2da122eae730aa00a",
           "semantic": [
             {
               "path": ".gitignore",
@@ -17680,7 +17680,7 @@
             },
             {
               "path": "config/capabilities.json",
-              "digest": "sha256:9de6bf570a0aa465454e0844d52d72d638f527b69c8e861d8f720a69fe03defb",
+              "digest": "sha256:3022d496d6849aaaf14284472ef77f1dd635b35bc4fa268372fc49e26319f972",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17715,7 +17715,7 @@
             },
             {
               "path": "config/framework-dependencies.json",
-              "digest": "sha256:189a97b4f4f14b4c635547a08f75e83f3589e28b66c4affe41e25d3b9ebf2729",
+              "digest": "sha256:90283eaaccee52311bae0047a1b03b3dcf0b369c9d7cea9449c8d76b516800cd",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17745,7 +17745,7 @@
             },
             {
               "path": "docs/BACKLOG.md",
-              "digest": "sha256:aebdd36f6f02eea6b09e3bcd326ec70ca27f453e313255bb4630b2abb9399f5a",
+              "digest": "sha256:6beba0dc9cf9ac28b4e1931dc5fc985603d6711b2558b365d9e370e14f1cf0b1",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -17885,12 +17885,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -18035,7 +18035,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Shared cross-file model, reader/rule contract, source decision or framework gate policy"
             },
             {
@@ -18857,12 +18857,12 @@
             },
             {
               "path": "package.json",
-              "digest": "sha256:ba22d64f6a715e95a6bc0ed64a8b8c52261eaa74e9535abeb13f8df1f1929d0d",
+              "digest": "sha256:6558db1dff09f27e7db30558c07479a48a583f11b5933d660a9f7e5388f67a63",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
               "path": "pnpm-lock.yaml",
-              "digest": "sha256:f432025d3316d12892ed42d861daf180cfe1cb8eef6697661e4f53c69eac2fb0",
+              "digest": "sha256:915e80b87fff633d08071b7259db1650ec29608d14f4a8bbf1ca6f8f62ccce75",
               "reason": "Reviewed installed-package API import: temporary packageRoot is the just-installed current tarball; track source API closure, build inputs and installation oracle. Package digest is independently asserted by installed/evidence gates. No runtime import exemption."
             },
             {
@@ -19092,7 +19092,7 @@
             },
             {
               "path": "src/metadata.ts",
-              "digest": "sha256:30459648f8940508977190cca9c0e03a9a7a6baea55ac6e22f3cf90cf272723e",
+              "digest": "sha256:44722401fbea936e66a8aa1f9a9955b4764836746196833d86e8da7affad4e75",
               "reason": "Imported by tests/integration/repository-gates.test.ts"
             },
             {
@@ -19317,7 +19317,7 @@
             },
             {
               "path": "tests/e2e/check-setup.test.ts",
-              "digest": "sha256:962f8c36dc38028cc60c7a088cf63a925ce55239d23597f6588d6761f971efa3",
+              "digest": "sha256:61b0effc442773b901af4dcf8c2ee4c874348ea2085b607f41fc6435d25fc183",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19397,7 +19397,7 @@
             },
             {
               "path": "tests/e2e/docs-resources.test.ts",
-              "digest": "sha256:9c1600c7837be859086826e7b21963192fb6ef4aaf3504aacd56eb1e372d3ac2",
+              "digest": "sha256:f43d3447de63c0a67cc353c188244cf30ad7c797243204532b313cd251b96102",
               "reason": "Runnable affected scenario declaration"
             },
             {
@@ -19422,7 +19422,7 @@
             },
             {
               "path": "tests/e2e/fs-matrix-stub.ts",
-              "digest": "sha256:9c4fd7e112d2baed162b645aacb6ed946a967564125db6d9ef86dad1d3f5d1c1",
+              "digest": "sha256:452932efedabf32efe9bb3c704198d2846000d46ead7068897428f92afc5ece2",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -19437,7 +19437,7 @@
             },
             {
               "path": "tests/e2e/inspect-project.test.ts",
-              "digest": "sha256:3d92d50a86a3b17dd359d439bdbf97af9ac86791295c745486fd4e132f0d6501",
+              "digest": "sha256:33a1b890e3c204d536798217d8561d78a2caae1f0e85733a75e369b4d920b3aa",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19467,7 +19467,7 @@
             },
             {
               "path": "tests/e2e/packaged-server.test.ts",
-              "digest": "sha256:9b1b6298d1b72149d92e89488a847a243c256a7d512b23ba224e95b1a7695967",
+              "digest": "sha256:5d6ad50d160dd132641ec38fc26e583bb381b7492a85835d19faf2b5ebb262d6",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -19482,7 +19482,7 @@
             },
             {
               "path": "tests/e2e/project-resources.test.ts",
-              "digest": "sha256:5ac484cee9f18d4a54ea352151672b6672a3a2738240e76434091d9d32bc2c9b",
+              "digest": "sha256:8e1b07804a509769a2482ebb4189420335f16a216c81fcc690f0d49c68eeb594",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19507,12 +19507,12 @@
             },
             {
               "path": "tests/e2e/read-only-network-off.test.ts",
-              "digest": "sha256:fca22b8edf5d4c326f4cf90a0da18e7407bccbe8d123a8b320969ca98721e2dd",
+              "digest": "sha256:c455fcfa5dd883ec9b7223c2fd0cc5b0b998d235a0284072917f189be2623c04",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
               "path": "tests/e2e/read-studio-logs.test.ts",
-              "digest": "sha256:f2d8cf03978f9eb2d3b58e94fe4de9ad396bd5581e3be52c248f9798e5a9498c",
+              "digest": "sha256:f97ca9559378e28b4513ab0e5887362a9c1b883644b15459b473679321e390cc",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19522,12 +19522,12 @@
             },
             {
               "path": "tests/e2e/run-pre-release-audit.test.ts",
-              "digest": "sha256:7c395a783b5dd4994c797c6e8a5a332a9863c657776ed3363363a06c54286962",
+              "digest": "sha256:93337026c22e7e5a91c35fac349db6c20c5a613f8b2c201386f1be006c0ce6b7",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
               "path": "tests/e2e/search-bga-docs.test.ts",
-              "digest": "sha256:2470d8467e76b1dc0d4edb7e2e017ea14465993da01f6f2734065dd7db4c45b2",
+              "digest": "sha256:27278bd0ab7d120f2959ab7aab7f76821a24e522113d58e39bc41ebe5e276530",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19597,7 +19597,7 @@
             },
             {
               "path": "tests/e2e/validate-project.test.ts",
-              "digest": "sha256:50dfbb82274ea53dc6384ed4145cc7aa6360af2dfb9de16fc15eb9fee9398597",
+              "digest": "sha256:a68e30f3f0da5bfb53aa135c522dd6ef13d6f3ed765c5a1434873802e7bfd041",
               "reason": "Affected runnable compatibility scenarios; import closure includes their helpers"
             },
             {
@@ -19712,7 +19712,7 @@
             },
             {
               "path": "tests/helpers/packaged.ts",
-              "digest": "sha256:d833edf398683514272b4fa418cb796c27d8bc3e9e8de5cdff41c2d6327eefb3",
+              "digest": "sha256:c09e29d5622bc6589ce768327a142f6a247f7c007ecf0e940b3253d31a5ae6ec",
               "reason": "Shared test, package, evidence or conformance harness; requires proof refresh, not wording review"
             },
             {
@@ -20019,11 +20019,11 @@
           "issues": []
         },
         "proof": {
-          "dependencyDigest": "sha256:d0b665a8ab8e29960638a55d49b963efad3c133e1bb8be9fc83ce86a9afd0ea4",
-          "evidenceDigest": "sha256:7c6461f1912ea52675fa2443331e27a871aa58d42a401916333ccc2f970b55c7",
-          "evidenceCommit": "2304c717af673561e64d4bab21d11b3314e157a8",
-          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40551058531",
-          "recordedAt": "2026-10-27T17:41:33.257Z"
+          "dependencyDigest": "sha256:62dd66ac600bffd3979d19898ee112636fec12b61ecf97b2da122eae730aa00a",
+          "evidenceDigest": "sha256:26cf5b18c54aa52c73da13329da0e3cdd9eb8bff88f2b18434bd4d4e3c67ca84",
+          "evidenceCommit": "684275e48bba73768489ce9531f2bea0a96760fb",
+          "ciRun": "https://github.com/Brandon-Born/bga-mcp/actions/runs/40571953833",
+          "recordedAt": "2026-10-27T19:58:21.784Z"
         }
       },
       "needsReview": false

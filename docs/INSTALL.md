@@ -6,7 +6,7 @@ All acquisition identities below belong to the rc.3 example. For another candida
 
 ## Before you start
 
-Use Node 22.13 or later on the Node 22 line, or Node 24 or later, with Corepack and pnpm 11.15.1 available. The walkthrough uses a dedicated installation directory outside your game project. Create that empty directory and save this `package.json` there:
+Use Node 22.13 or later on the Node 22 line, or Node 24 or later, with Corepack and pnpm 11.28.5 available. The walkthrough uses a dedicated installation directory outside your game project. Create that empty directory and save this `package.json` there:
 
 <!-- guide:manifest -->
 
@@ -14,7 +14,7 @@ Use Node 22.13 or later on the Node 22 line, or Node 24 or later, with Corepack 
 {
   "name": "bga-mcp-consumer",
   "private": true,
-  "packageManager": "pnpm@11.15.1"
+  "packageManager": "pnpm@11.28.5"
 }
 ```
 

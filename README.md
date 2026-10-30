@@ -87,9 +87,10 @@ This supports bounded cross-file inspection usefulness. The review still had six
 
 ## Develop and contribute
 
-Use a source checkout for development. Requirements: Node `^22.13.0 || >=24.0.0`, Corepack, Git and pinned pnpm 11.15.1.
+Use a source checkout for development. Requirements: Node `^22.13.0 || >=24.0.0`, Corepack, Git and pinned pnpm 11.28.5.
 
 ```sh
+corepack enable
 corepack pnpm install --frozen-lockfile
 corepack pnpm check
 corepack pnpm build

@@ -53,7 +53,7 @@
     "RR-POLICY-TRAVERSAL-OPENAT",
     "RR-DOC-QUERY-PROVENANCE"
   ],
-  "publicationHold": "BGA-454: frozen rc.10 has newly disclosed high GHSA-46jr-4wx8-v453 and GHSA-jm63-cq47-j5jp plus undisposed lower/toolchain findings; preserve signed bytes and require a separately evaluated replacement candidate. BGA-457: fresh October27 audits also hold frozen unsigned rc.11 for high GHSA-mrhx-c7xc-m3w5 in production zod and undisposed full-graph findings. Preserve its original archive/tag and require a separately evaluated replacement candidate; newer source dependencies do not clear that original.",
+  "publicationHold": "BGA-454: frozen rc.10 has newly disclosed high GHSA-46jr-4wx8-v453 and GHSA-jm63-cq47-j5jp plus undisposed lower/toolchain findings; preserve signed bytes and require a separately evaluated replacement candidate. BGA-457: fresh October27 audits also hold frozen unsigned rc.11 for high GHSA-mrhx-c7xc-m3w5 in production zod and undisposed full-graph findings. Preserve its original archive/tag and require a separately evaluated replacement candidate; newer source dependencies do not clear that original. BGA-459: frozen rc.12 source tag 054e4fd69a8316b448021c005462df9986590db4 failed original-candidate production on undisposed moderate GHSA-6pq8-jhm2-2vcw in the full dependency graph. No original rc.12 packet exists; preserve its tag and failed audit, and require separately evaluated replacement source/candidate rather than retrying unchanged code.",
   "pendingUnsignedCandidate": {
     "tag": "v1.0.0-rc.11",
     "sourceCommit": "a8838456f5c9143a8cb2364111f35899d60a8e8f",
