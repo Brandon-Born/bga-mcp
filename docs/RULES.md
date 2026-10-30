@@ -1,6 +1,6 @@
 # Pre-release rule catalog
 
-Catalog version 1.6.0. Updated 2026-08-23. Backlog items: BGA-110, BGA-124 through BGA-127, BGA-417 through BGA-420.
+Catalog version 1.7.0. Updated 2026-10-30. Backlog items: BGA-110, BGA-124 through BGA-127, BGA-417 through BGA-420.
 
 [`config/rule-catalog.json`](../config/rule-catalog.json) is the machine-readable source of truth; this file is its human-readable view. `pnpm verify:rule-catalog` fails when a rule is implemented but not catalogued, catalogued but not implemented, catalogued with a severity or certainty its implementation does not use, missing a fixture or a source, or missing from this file.
 
@@ -123,3 +123,9 @@ These are part of a BGA pre-release review and cannot be automated. `run_pre_rel
 2. Update the catalog entry and, where the outcome changes, the fixture that declares it.
 3. Update this file.
 4. Run `pnpm check`. A rule and its catalogue entry cannot drift apart without failing the build.
+
+## Automatic handler transition names — BGA-460
+
+`state.transition.name-undeclared` is a warning with likely certainty. It compares direct literal `$this->gamestate->nextState(...)` calls in a uniquely bound array-declared GAME state action handler with that state’s declared transition names. Calls to a target state’s name instead of its transition name are a common-looking mistake this bounded check can explain; no frequency or productivity claim is measured. Findings locate the call and state source, enumerate the available names and suggest the smallest correction.
+
+Shared or unbound handlers, ambiguous definitions, static/non-public methods, nested executable contexts and computed arguments produce explicit unsupported syntax. The callback must be a directly declared method of the expected class in one documented main game file; unrelated classes cannot supply it. State-class imperative calls remain under BGA-419’s documented conflict; player actions, delegates, inherited handlers and runtime control flow are outside this check. An unnamed call with one transition is accepted conservatively. An unreachable call or an earlier runtime state change can make the heuristic inapplicable; inspect that context before editing.

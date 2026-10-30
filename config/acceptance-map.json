@@ -1,7 +1,7 @@
 {
   "$schema": "./acceptance-map.schema.json",
   "schemaVersion": 1,
-  "updatedAt": "2026-10-07",
+  "updatedAt": "2026-10-30",
   "owner": "BGA-128",
   "cases": [
     {
@@ -1502,6 +1502,30 @@
       "case": "Independent installed network and analytics-identifier write controls fail the absence invariant without a packet or persistent identifier",
       "boundary": "packaged",
       "scenarios": ["E2E-TELEMETRY-NETWORK-CONTROL", "E2E-TELEMETRY-WRITE-CONTROL"]
+    },
+    {
+      "item": "BGA-460",
+      "case": "A located transition-name typo in a representative round flow reaches state, aggregate, audit and resource consumers",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
+    },
+    {
+      "item": "BGA-460",
+      "case": "The same-root caller repair removes the heuristic and changes the check outcome without MCP project writes",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
+    },
+    {
+      "item": "BGA-460",
+      "case": "Computed, shared, ambiguous and nested contexts retain unsupported coverage; unrelated receivers and owners do not supply calls",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
+    },
+    {
+      "item": "BGA-460",
+      "case": "Installed mutation control detects removal of the new checker while public schemas and root boundaries remain enforced",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
     }
   ]
 }

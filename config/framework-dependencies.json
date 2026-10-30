@@ -273,7 +273,8 @@
         "tests/unit/database-column-case.test.ts",
         "tests/e2e/database-column-case.test.ts",
         "tests/e2e/project-trust.test.ts",
-        "tests/unit/project-trust.test.ts"
+        "tests/unit/project-trust.test.ts",
+        "docs/verification/STATE_HANDLER_TRANSITIONS.md"
       ]
     },
     {
@@ -300,7 +301,8 @@
         "tests/e2e/formatted-insert.test.ts",
         "tests/e2e/database-schema-coverage.test.ts",
         "tests/e2e/normalized-project.test.ts",
-        "tests/e2e/database-insert-prefix.test.ts"
+        "tests/e2e/database-insert-prefix.test.ts",
+        "tests/e2e/state-handler-transitions.test.ts"
       ]
     },
     {

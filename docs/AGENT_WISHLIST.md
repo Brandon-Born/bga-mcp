@@ -489,3 +489,7 @@ Runtime-built tuple values and escaping remain unknown; no concatenation or
 dynamic SQL support is claimed by BGA-441.
 
 **INSERT-prefix follow-on, BGA-442, 2026-10-07.** The frozen27f8273 setup appends an opaque function result to a literal INSERT target. BGA-442 implements bounded naming coverage for this form while retaining all four query-dependent holds. It also refuses quoted concatenations that the prior literal reader could misread as complete SQL. Availability is evaluated independently; no dynamic VALUES or escaping support is claimed. The next observed need remains trustworthy partial query coverage, with evidence against original controls before expanding any grammar.
+
+## Catch a stuck automatic turn before Studio — BGA-460
+
+Inspection of current source found that transition targets were checked while automatic handlers’ `nextState` names were not. The original turn/round reproducer for BGA-460 pairs a typo and correction on the same project root; its intended benefit is an actionable call-to-state explanation without reconstructing the map manually. Static checking remains heuristic and does not establish game correctness or measured time savings. Computed/shared/nested contexts must stay visible as limits.

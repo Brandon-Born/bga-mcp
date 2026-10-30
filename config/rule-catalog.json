@@ -1,8 +1,8 @@
 {
   "$schema": "./rule-catalog.schema.json",
   "schemaVersion": 1,
-  "catalogVersion": "1.6.0",
-  "updatedAt": "2026-10-02",
+  "catalogVersion": "1.7.0",
+  "updatedAt": "2026-10-30",
   "checks": [
     {
       "id": "action.argument.mismatch",
@@ -972,6 +972,33 @@
       "automatable": false,
       "summary": "The game stays responsive with the largest supported board and player count.",
       "manualReason": "Requires measuring a live table.",
+      "owner": "Brandon Born"
+    },
+    {
+      "id": "state.transition.name-undeclared",
+      "automatable": true,
+      "group": "state-machine",
+      "tool": "validate_state_machine",
+      "summary": "An automatic state handler calls a transition name its state does not declare.",
+      "severity": "warning",
+      "certainty": "likely",
+      "implementation": "src/rules/state-machine.ts",
+      "sources": [
+        {
+          "kind": "official-documentation",
+          "reference": "The states.inc.php transitions section distinguishes a transition name from the target state name and permits an unnamed call with one transition.",
+          "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php"
+        },
+        {
+          "kind": "project-inference",
+          "reference": "Compare a uniquely bound array-declared automatic handler with its state transition map. This is a heuristic, not execution or control-flow proof."
+        }
+      ],
+      "fixtures": {
+        "valid": "tests/fixtures/projects/legacy",
+        "validModern": "tests/fixtures/projects/hybrid"
+      },
+      "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"],
       "owner": "Brandon Born"
     }
   ]

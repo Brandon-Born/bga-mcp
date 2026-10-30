@@ -4,6 +4,16 @@ Recorded: 2026-08-08. Covers BGA-124, the correctness owner for the state-machin
 
 This record describes a run, so it states which one. `pnpm verify:evidence` compares every number below with the artifact that run produced, and fails when they disagree — a record that stops being true has to be updated or marked historical, not left to drift.
 
+> Historical evidence only.
+
+The tally below is preserved from the PR50 preparation baseline, head
+`a751b9b287159235454ff0357ea3fac91757c869`, whose [six-job final CI](https://github.com/Brandon-Born/bga-mcp/actions/runs/40574356236)
+tested merge `9cccdcf28c0953cac34fe44d345ea6695f94cb4e` with the identical
+`df4964f29e596829adca1793900278ba8ae992e1` tree, 1,030 tests and 279 required scenarios.
+The original dated observations and numerical block are unchanged. Current
+BGA-460 results belong to the separate [automatic-handler verification record](STATE_HANDLER_TRANSITIONS.md)
+and its source-bound evidence; this historical tally does not certify that feature.
+
 ```verification-record
 {"kind":"run","capabilities":17,"scenarios":279,"claims":107,"tests":1030}
 ```
