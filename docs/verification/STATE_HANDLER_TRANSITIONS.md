@@ -1,5 +1,15 @@
 # Automatic state-handler transition diagnosis — BGA-460
 
+> Historical evidence only.
+
+This feature handoff and its numerical block are preserved from the reviewed
+`46a1521f9dae2010e1a788ec36c7731513f2bc15` source. Its [fresh premerge recheck](https://github.com/Brandon-Born/bga-mcp/actions/runs/41112146247)
+passed all six jobs at 1,061 tests / 280 scenarios / 108 claims. The actual
+subsequent main failure and current test-oracle correction belong to
+[CANCELLATION_PUBLICATION_ORDER.md](CANCELLATION_PUBLICATION_ORDER.md); the prior
+passing run is not approval of a failed later run. Original local source and
+artifact identities below remain unchanged.
+
 ```verification-record
 { "kind": "run", "capabilities": 17, "scenarios": 280, "claims": 108, "tests": 1061 }
 ```
