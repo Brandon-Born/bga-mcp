@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-10T20:52:35.236Z",
+  "registry": "https://registry.npmjs.org",
+  "source": {
+    "commit": "4edf476e49ddb679ab3906442620fa7c94093f65",
+    "lockDigest": "sha256:2298e9f9ec04efff2c1576c272a2efffa831d6ab4f0e94b484a4c400ff5ce015",
+    "packageDigest": "sha256:b086a93e24dce3b930e4eb459b1aae1ca4df972663b8159d7ba97fd7e3a58610",
+    "workspaceDigest": "sha256:cb702802db6f85597c6a359206f79efc19f7a1c58b85c4a94825001c915daad8",
+    "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+  },
+  "production": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "findings": []
+  },
+  "all": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "findings": []
+  }
+}
