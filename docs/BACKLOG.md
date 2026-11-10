@@ -2388,7 +2388,7 @@ The following are not implementation backlog items unless a future documented de
 
 ### BGA-464 — Treat dbmodel.sql as optional during project inspection
 
-- **Status:** implemented; full local gate passes. Exact-source CI pending; no framework or release admission.
+- **Status:** implemented; full local gate and exact-source six-platform CI pass. Framework and release admission remain held.
 - **Priority:** P1 local diagnostic accuracy.
 - **Depends on:** BGA-100, BGA-101, BGA-102, BGA-103, BGA-109.
 - **Observed:** Through the built public stdio command at `dd9c0c6`, an original `modern-state-classes` fixture copy with its custom SQL call removed reports `project.component.missing` for `database` when `dbmodel.sql` is omitted. Restoring the file removes that finding. Both copies remain unchanged during inspection. The packaged regression independently reproduces the incorrect expectation field across modern, legacy and hybrid original fixture copies.
@@ -2397,3 +2397,5 @@ The following are not implementation backlog items unless a future documented de
 - **Sources:** Followed the [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) to [Game database model](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-database-model/) on November 10. The official page says “You can delete `dbmodel.sql` if you don't need any custom tables.” This is a file-inventory correction only; the page's default-table wording and historical `player`-extension guidance need separate reconciliation under BGA-463. No inferred required file or absence of custom SQL.
 
 - **Local evidence, 2026-11-10:** All three new packaged cases fail on the original expectation and pass after correction. The affected suites pass 17 tests; the integrated full gate passes 1,074 tests, 281 required scenarios, 108 claims and applicable conformance. Local evidence identifies dirty base `dd9c0c6`, Node 22.17.1 and test archive `sha256:87d3ad50b9247049b9e6b756c46b6773eb449b74244e567345a29c0f4dcbc851`. The real framework guard still refuses eight holds (four unreachable and four stale); this package is a local test artifact, not a release candidate.
+
+- **Exact-source evidence, 2026-11-10:** [CI 42909612076](https://github.com/Brandon-Born/bga-mcp/actions/runs/42909612076) passes all six jobs on attempt 1 at clean `7ca8dbe`. Every sealed record contains the three optional-schema controls and 1,074 tests / 281 required scenarios / 108 claims with passing applicable conformance. [The retained result](verification/GENERATED_TEMPLATE_REGRESSIONS.md#optional-schema-follow-up--bga-464) binds each archive and verification artifact to its actual run. This later evidence note is not its own exact-HEAD run.

@@ -130,3 +130,36 @@ passed all six Ubuntu/macOS/Windows jobs on Node 22/24 at implementation commit
 records 613 passing tests and 185 passing required scenarios per environment.
 Raw real-game results remain private. The tests prove the three bounded fixes,
 not arbitrary source-scope correctness, the complete game, or BGA-424 usefulness.
+
+## Optional schema follow-up — BGA-464
+
+A separate November 10 reproduction used the built public stdio command and
+original `modern-state-classes` copies with the custom SQL call removed. Before
+correction, omitting `dbmodel.sql` produced `project.component.missing`. After
+correction, both variants report the optional component without that warning;
+the present file is inventoried. Directory digests before and after both
+inspection calls match. No game runtime or live database was tested.
+
+`E2E-INSPECT-OPTIONAL-DBMODEL` independently fails all three old expectations
+and passes modern, legacy and hybrid packaged cases after correction. Absent
+schema remains unavailable to the SQL audit. The full local gate passes 1,074
+checks at dirty base `dd9c0c6`; the detailed local archive identity is in BGA-464.
+
+[CI 42909612076](https://github.com/Brandon-Born/bga-mcp/actions/runs/42909612076),
+attempt 1, passes every Linux/macOS/Windows Node 22/24 job. Every downloaded
+verification record validates against the trusted schema and seal, clean
+`7ca8dbecb6dab429e18e51f77570be0a03461aab`, current lockfile, passing applicable
+conformance, 1,074 tests, 281 scenarios and 108 claims. Both the inspection tool
+and summary resource contain all three passing assertions for the new scenario.
+The table retains SHA-256 identities for the tested archive and the downloaded
+verification JSON. This evidence-only follow-up does not claim a run on its own
+commit. The eight framework holds remain active.
+
+| Job                    | Node     | Test archive SHA-256                                               | Verification JSON SHA-256                                          |
+| ---------------------- | -------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| macos-latest-node-22   | v22.23.4 | `87d3ad50b9247049b9e6b756c46b6773eb449b74244e567345a29c0f4dcbc851` | `57d234bdb5a4abc7d8ec17e8a335b67ea4d27ae10364fa75d60fb5f75560f377` |
+| macos-latest-node-24   | v24.22.2 | `87d3ad50b9247049b9e6b756c46b6773eb449b74244e567345a29c0f4dcbc851` | `5139db4bf8638cec30aa9f294ea9e3e42f25fe52c03e98f4bd0f7648af42766c` |
+| ubuntu-latest-node-22  | v22.23.4 | `c83b484eaaef9156a3b54489fcaddf6ccd0521eb0b25bf0f10b0a83442523282` | `e4eca569973632355286c361a595cc070637b0b219e6755a461894d580d96f13` |
+| ubuntu-latest-node-24  | v24.22.2 | `c83b484eaaef9156a3b54489fcaddf6ccd0521eb0b25bf0f10b0a83442523282` | `49c78dc9a5b55326af87b7cf97968a3756a7c43f98575b3746189ec046970bdb` |
+| windows-latest-node-22 | v22.23.4 | `f31a9fe491448e3973648b622579bad906fba8c24cb08c790c6b464db9ba4c09` | `2fe3ad5b4877a1e57f44b6190ad95174a8c4214de7f5ea6dcdd5b4dec60ea8e7` |
+| windows-latest-node-24 | v24.22.2 | `f31a9fe491448e3973648b622579bad906fba8c24cb08c790c6b464db9ba4c09` | `8690d238aacc5246d776cbe11d025038534763b81daa4e0e79056f0deda993f4` |
