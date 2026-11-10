@@ -61,3 +61,47 @@ Within 24 hours of a credible breaking change, observe the exact official page, 
 ## Sources
 
 [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) and [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) were fetched and read on 2026-10-02 UTC before implementation. Official sources determine BGA semantics; ownership, timing and publication holds above are this repository's process policy. This implementation adds no BGA parsing rule.
+
+## Official site migration proposal — 2026-11-10
+
+BGA-463 records an upstream source change, separate from PR #53's passing
+source checks. The existing `framework:observe` command recorded four unavailable
+pages: `Main_game_logic:_Game.php`, `Game_interface_logic:_Game.js`,
+`State_classes:_State_directory`, and `Game_database_model:_dbmodel.sql`.
+Each exact URL independently returned HTTP 404 with no redirect. A cached copy
+of the database wiki page was readable in search; it does not establish live
+availability. File reference, Studio, migration guide and `states.inc.php`
+were retrievable with changed digests. Every original review is preserved in
+the ledger. None of those eight observations admits a claim.
+
+The file reference and Studio overview link to the following official
+replacement sections. This is a **proposed exact-page review set**, not an
+active allowlist or a claim that all existing interpretations carry forward.
+
+| Unavailable wiki topic | Candidate replacement pages                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Game.php               | [Overview](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/), [actions](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/actions/), [notifications](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/notify/), [database calls](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/database/) |
+| Game.js                | [Overview](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/), [actions](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/actions/), [notifications](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/notifications/)                                                                                            |
+| State classes          | [State class reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/)                                                                                                                                                                                                                                                                                                                                  |
+| dbmodel.sql            | [Schema model](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-database-model/)                                                                                                                                                                                                                                                                                                                                          |
+
+Review by affected rule, not by hostname substitution. The new state class
+reference says “If you do not return a value, the initial state is state `2`.”
+BGA-432's earlier explicit uncertainty is historical; the existing implementation
+still returns an unresolved edge and needs a separate checked correction. The
+Game.php overview distinguishes named `nextState` transitions, direct jumps and
+callback return targets. Reassess BGA-419 against the separate action and state
+pages; do not infer arbitrary legacy dispatch precedence. The new schema page
+allows omission without custom tables, addressed in BGA-464. Its default-table
+wording is broader than the older wiki's explicit `player` extension allowance;
+preserve current legacy evidence and leave that interpretation open. Retain the
+still reachable deprecated `states.inc.php` guidance alongside modern pages.
+
+After approval of the [proposed network boundary](THREAT_MODEL.md#proposed-maintainer-documentation-origin--bga-463),
+implement explicit replacement metadata and a write-once archive of historical
+review identities. The current guard derives URLs from official rule sources;
+its new mapping must preserve per-rule/per-claim scenario coverage and fail on
+an unmapped or incomplete replacement. Existing successful CI predates these
+observations; use a fresh clean exact-source `CI` run after observation, not a
+PR head SHA substituted for the actual tested merge commit. No stale digest,
+local probe, manually imported response, or arbitrary redirect can admit a page.

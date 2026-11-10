@@ -357,3 +357,28 @@ Hostile source text is still data; labels cannot enforce a consuming agent's
 instruction hierarchy or permissions. The exact signed rc.8 remains rejected,
 its old approval is explicitly blocked, and new bytes need a new candidate and
 signature. See [the rejection and retained identities](verification/RC8_SECURITY_REJECTION.md).
+
+## Proposed maintainer documentation origin — BGA-463
+
+**Unreviewed proposal.** Add `doc.studio.boardgamearena.com` only for the explicit
+repository `framework:observe` path, and only for the nine exact HTTPS pages in
+the [migration proposal](FRAMEWORK_CHANGES.md#official-site-migration-proposal--2026-11-10).
+The host currently returns 404 for `/robots.txt`; no redistribution, indexing
+or crawling permission has been established. Check the operator's applicable
+access policy before enabling retrieval. No new origin is authorized by this note.
+
+Use the existing policy boundary's bounded HTTPS, DNS/address pinning, size,
+time and cancellation checks. An input selects a fixed route; reject custom
+ports, credentials, query strings, fragments, redirects and unlisted paths
+before following them. Send only the canonical path and identifying user agent;
+no project content, root paths, credentials, cookies, Studio sessions or client
+queries. Do not execute content, traverse links, use a search index, or persist
+page bodies. Keep only the source identity, digest, observation time and existing
+review metadata. Treat responses as untrusted and fail closed on refusal or loss.
+
+Neither packaged MCP profile nor the development docs reader gets a route to
+this origin. Verify exact-path and off-origin refusals, blocked private addresses,
+byte/deadline behavior, safe error publication, source/ledger substitution
+refusal, and continued default/network-off behavior before enabling it. New
+source approval grants no permission to merge, build a release candidate, sign,
+publish, contact Studio, or enable new MCP capabilities.

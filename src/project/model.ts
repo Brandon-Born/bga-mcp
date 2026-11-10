@@ -147,7 +147,9 @@ const COMPONENT_RULES: readonly ComponentRule[] = [
     match: (path) => /^stats\.(?:jsonc?|inc\.php)$/u.test(path),
     expected: always,
   },
-  { id: 'database', match: (path) => path === 'dbmodel.sql', expected: always },
+  // Projects without custom tables may omit dbmodel.sql (BGA-464).
+  // https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-database-model/
+  { id: 'database', match: (path) => path === 'dbmodel.sql', expected: () => false },
   {
     id: 'game-logic',
     match: (path, gameKey) =>
