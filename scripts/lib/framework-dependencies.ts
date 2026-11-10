@@ -436,11 +436,12 @@ export function scopedFrameworkHolds(
   return sources.flatMap((source): ScopedFrameworkHold[] => {
     const review = ledger.observations.find((entry) => entry.url === source.url)?.review;
     const identity = identities.get(source.url);
-    const reasons: string[] = [];
+    const reasons: string[] =
+      source.interpretationHold === undefined ? [] : [source.interpretationHold];
     const base = frameworkHolds([source], ledger, review?.implementationDigest ?? '', now)[0];
     if (base !== undefined) reasons.push(`Source/review ${base.state}`);
     if (
-      ledger.schemaVersion !== 2 ||
+      ledger.schemaVersion < 2 ||
       review?.dependencies === undefined ||
       review.proof === undefined
     )

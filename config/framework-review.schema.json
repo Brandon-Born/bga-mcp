@@ -4,7 +4,7 @@
   "additionalProperties": false,
   "properties": {
     "schemaVersion": {
-      "enum": [1, 2]
+      "enum": [1, 2, 3]
     },
     "owner": {
       "const": "Brandon-Born"
@@ -27,7 +27,7 @@
         "properties": {
           "url": {
             "type": "string",
-            "pattern": "^https://en\\.doc\\.boardgamearena\\.com/[^ ]+$"
+            "pattern": "^https://(?:en\\.doc|doc\\.studio)\\.boardgamearena\\.com/[^ ]+$"
           },
           "observedAt": {
             "type": "string",
@@ -227,6 +227,10 @@
       },
       "minItems": 0,
       "uniqueItems": true
+    },
+    "migrationArchiveDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
     }
   },
   "required": [
@@ -241,7 +245,7 @@
       "if": {
         "properties": {
           "schemaVersion": {
-            "const": 2
+            "enum": [2, 3]
           }
         }
       },
@@ -261,6 +265,23 @@
               }
             }
           }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "schemaVersion": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "required": ["migrationArchiveDigest"]
+      },
+      "else": {
+        "not": {
+          "required": ["migrationArchiveDigest"]
         }
       }
     }

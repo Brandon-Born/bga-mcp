@@ -4,7 +4,7 @@ Brandon-Born owns framework monitoring, compatibility decisions and emergency re
 
 ## Detect and hold
 
-`corepack pnpm framework:status` lists the official pages derived from the rule catalog plus the file reference, migration guide and Studio overview. It maps each page to existing BGA support claims and their scenario IDs. Foundational pages and any unmapped rule source conservatively affect all BGA claims. Node, operating-system and MCP protocol claims are separate. This mapping expresses review scope, not a new framework rule.
+`corepack pnpm framework:status` lists the official pages derived from the rule catalog, reviewed replacements, file reference, migration guide and Studio overview. It maps each page to existing BGA support claims and their scenario IDs. Foundational pages and any unmapped rule source conservatively affect all BGA claims. Node, operating-system and MCP protocol claims are separate. This mapping expresses review scope, not a new framework rule.
 
 For one URL printed by status, run:
 
@@ -28,7 +28,7 @@ Create or update original regression fixtures for the affected construct and its
 corepack pnpm framework:review https://en.doc.boardgamearena.com/Studio_file_reference /absolute/path/verification-evidence.json Brandon-Born ACTUAL_CI_RUN_ID
 ```
 
-The named run must be completed successful CI for that exact evidence source; the command reads only that run through the GitHub CLI. The evidence must match the trusted schema, retain its integrity digest and passing conformance, postdate the observation, have a clean ancestor source, pass the full gate, and include every mapped targeted scenario. The affected interpretation and proof paths must match that evidence commit; explicitly unrelated receipts may differ. The version-2 ledger retains the page digest, semantic/proof dependency snapshots, original interpretation evidence commit, separate latest proof evidence, reviewer, fixture paths and passing scenario IDs. Commit the review metadata and run the offline policy gate plus `framework:release`; do not manufacture another exact-HEAD CI claim for that metadata-only commit. The weekly observation can renew unchanged guidance without rereview; content changes or retrieval failure require a new review and post-observation retest.
+The named run must be completed successful CI for that exact evidence source; the command reads only that run through the GitHub CLI. The evidence must match the trusted schema, retain its integrity digest and passing conformance, postdate the observation, have a clean ancestor source, pass the full gate, and include every mapped targeted scenario. Version 3 compares the supplied file byte-for-byte with the verification artifact downloaded from the named CI matrix job. The run must start after observation. The affected interpretation and proof paths must match that evidence commit; explicitly unrelated receipts may differ. The active ledger retains the page digest, semantic/proof dependency snapshots, original interpretation evidence commit, separate latest proof evidence, reviewer, fixture paths and passing scenario IDs. Commit the review metadata and run the offline policy gate plus `framework:release`; do not manufacture another exact-HEAD CI claim for that metadata-only commit. The weekly observation can renew unchanged guidance without rereview; content changes or retrieval failure require a new review and post-observation retest.
 
 ## Scoped dependency identity (BGA-433)
 
@@ -44,7 +44,7 @@ Version-1 digests are historical and cannot be reinterpreted as scoped approval.
 corepack pnpm framework:migrate
 ```
 
-This writes the original ledger once to `docs/verification/framework-review-v1.json`, retains its observations in version 2, clears reviews and requires all eight scoped baselines. It refuses a second migration or an existing archive instead of overwriting history. After actual clean, successful exact-source CI, use `framework:review` for each affected page. No synthetic test, migration or local dirty run admits the live ledger.
+This writes the original ledger once to `docs/verification/framework-review-v1.json`, retains its observations in version 2, clears reviews and requires all eight scoped baselines. It refuses a second migration after success and preserves any existing archive. An interrupted migration can resume with the identical archived bytes. After actual clean, successful exact-source CI, use `framework:review` for each affected page. No synthetic test, migration or local dirty run admits the live ledger.
 
 For a proof-only change after a valid interpretation baseline, use:
 
@@ -62,7 +62,7 @@ Within 24 hours of a credible breaking change, observe the exact official page, 
 
 [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference) and [BGA Studio Migration Guide](https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide) were fetched and read on 2026-10-02 UTC before implementation. Official sources determine BGA semantics; ownership, timing and publication holds above are this repository's process policy. This implementation adds no BGA parsing rule.
 
-## Official site migration proposal — 2026-11-10
+## Official site migration — 2026-11-10
 
 BGA-463 records an upstream source change, separate from PR #53's passing
 source checks. The existing `framework:observe` command recorded four unavailable
@@ -74,11 +74,12 @@ availability. File reference, Studio, migration guide and `states.inc.php`
 were retrievable with changed digests. Every original review is preserved in
 the ledger. None of those eight observations admits a claim.
 
-The file reference and Studio overview link to the following official
-replacement sections. This is a **proposed exact-page review set**, not an
-active allowlist or a claim that all existing interpretations carry forward.
+The file reference and Studio overview link to these official replacement
+sections. The maintainer approved individual reads of the nine exact pages
+on November 10, 2026. Each page inherits its retired source’s rule, claim and
+scenario requirements.
 
-| Unavailable wiki topic | Candidate replacement pages                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Unavailable wiki topic | Approved replacement pages                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Game.php               | [Overview](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/), [actions](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/actions/), [notifications](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/notify/), [database calls](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/database/) |
 | Game.js                | [Overview](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/), [actions](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/actions/), [notifications](https://doc.studio.boardgamearena.com/framework-documentation/front-end/game-interface-logic/notifications/)                                                                                            |
@@ -97,11 +98,20 @@ wording is broader than the older wiki's explicit `player` extension allowance;
 preserve current legacy evidence and leave that interpretation open. Retain the
 still reachable deprecated `states.inc.php` guidance alongside modern pages.
 
-After approval of the [proposed network boundary](THREAT_MODEL.md#proposed-maintainer-documentation-origin--bga-463),
-implement explicit replacement metadata and a write-once archive of historical
-review identities. The current guard derives URLs from official rule sources;
-its new mapping must preserve per-rule/per-claim scenario coverage and fail on
-an unmapped or incomplete replacement. Existing successful CI predates these
-observations; use a fresh clean exact-source `CI` run after observation, not a
-PR head SHA substituted for the actual tested merge commit. No stale digest,
-local probe, manually imported response, or arbitrary redirect can admit a page.
+Run `corepack pnpm framework:migrate-sources` on a version-2 ledger to start
+version 3. The command archives the original bytes at
+`docs/verification/framework-review-v2.json` and pins their SHA-256 digest in
+the active ledger. It resets active reviews and leaves new pages unobserved.
+The archive is created exclusively and reused only when its bytes match an
+interrupted migration. Ledger updates check that the original bytes still
+match, then replace the active file atomically. An interrupted process can
+leave `.artifacts/framework-review.lock`. Remove it after confirming no ledger
+writer is active.
+
+Use `corepack pnpm framework:observe URL` on one exact URL from
+`corepack pnpm framework:status`. Review the live wording and run CI on a clean
+source after observation. Each recorded review requires the authentic retained
+artifact from that run. Status includes unresolved interpretation holds for
+the state-2 default, transition and action precedence, and default-table
+wording. Resolve those issues and prove the affected readers before admitting
+those pages. See the [reviewed network boundary](THREAT_MODEL.md#maintainer-documentation-origin--bga-463).
