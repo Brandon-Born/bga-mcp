@@ -2378,7 +2378,7 @@ The following are not implementation backlog items unless a future documented de
 
 ### BGA-463 — Restore framework source admission after the official wiki move
 
-- **Status:** implemented. Live observations succeeded for all nine approved replacement pages. Current source reviews and exact-source CI are pending.
+- **Status:** implemented. All nine approved replacement pages returned live observations and all six exact-source CI jobs passed. Framework admission remains held for source review and interpretation.
 - **Priority:** P0 for future framework admission and candidate production.
 - **Depends on:** BGA-408, BGA-433, BGA-423, BGA-462.
 - **Observed November 10:** Four exact monitored wiki pages (Game.php, Game.js, state classes, database model) return HTTP 404 without a redirect. Four other pages returned changed digests. All eight were observed individually by the existing policy; historical reviews remain intact. [Draft PR #53](https://github.com/Brandon-Born/bga-mcp/pull/53) passes its six checks on the dependency correction and evidence update. This new source hold is separate from that PR's engineering result.
@@ -2389,6 +2389,8 @@ The following are not implementation backlog items unless a future documented de
 - **Live observations, 2026-11-10:** The maintainer command recorded a digest for every approved replacement. The active ledger has 13 observations and 13 review holds. The version-2 archive is byte-identical to the prior ledger and preserves its eight original identities and reviews. The state default, transitions and action precedence, and legacy default-table wording remain explicit interpretation holds.
 
 - **Local verification, 2026-11-10:** The final full gate passed 1,080 tests, 281 required scenarios and applicable conformance. It recorded dirty base `1cf53ff` and test archive `sha256:bc48099c7b121b64eee1a8e078896bb9f39f870713cae0d3a3a35b5ffe019cf5`. The installed contract test caught and drove removal of an extra declaration file. The safety scan caught a credential-shaped synthetic URL, which was replaced with a username fixture. Direct observations also succeeded for all four retained wiki pages. The release guard reports 13 holds, and the review command refuses the genuine BGA-464 artifact that predates these observations.
+
+- **Hosted verification, 2026-11-10:** [CI 42919345166](https://github.com/Brandon-Born/bga-mcp/actions/runs/42919345166) passed all six jobs at clean `2a8a7f4` after the 13 observations. The six sealed records retained 1,080 tests, 281 required scenarios and 108 claims. The real review command rejected an altered copy and authenticated the genuine CI artifact up to a controlled write lock. The [verification record](FRAMEWORK_CHANGES.md#observer-verification--bga-463) retains artifact identities and the 13 active holds.
 
 ### BGA-464 — Treat dbmodel.sql as optional during project inspection
 

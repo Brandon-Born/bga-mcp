@@ -115,3 +115,31 @@ artifact from that run. Status includes unresolved interpretation holds for
 the state-2 default, transition and action precedence, and default-table
 wording. Resolve those issues and prove the affected readers before admitting
 those pages. See the [reviewed network boundary](THREAT_MODEL.md#maintainer-documentation-origin--bga-463).
+
+### Observer verification — BGA-463
+
+The migrated ledger contains live digests for nine replacement pages and four
+retained wiki pages. The version-2 archive SHA-256 is
+`3173593ad8ad2cb9e85b65570459fa9c736aaef3cc30bc486d93fb466a86e8f9`.
+The complete local gate and all six jobs of [CI 42919345166](https://github.com/Brandon-Born/bga-mcp/actions/runs/42919345166)
+passed 1,080 tests, 281 required scenarios and 108 claims with applicable
+conformance. The workflow started after the latest observation and its six sealed
+records bind clean source `2a8a7f4fce4dd1bae83591996bbff2f822283e7d`. Each record
+includes the installed search, topic and framework-version isolation control.
+
+The live review command refused a genuine earlier CI artifact because it
+predated observation. It also refused an altered copy of the current CI
+artifact whose JSON and canonical integrity seal still matched. The genuine
+current bytes passed evidence authentication and reached the deliberately held
+ledger write lock. The ledger retained all 13 source holds, including four
+explicit interpretation holds. These receipts describe the implementation
+commit and its actual test archives.
+
+| Job                    | Node     | Test archive SHA-256                                               | Verification JSON SHA-256                                          |
+| ---------------------- | -------- | ------------------------------------------------------------------ | ------------------------------------------------------------------ |
+| macos-latest-node-22   | v22.23.4 | `bc48099c7b121b64eee1a8e078896bb9f39f870713cae0d3a3a35b5ffe019cf5` | `070ade344896d718d17fb08c686761e9668ea144f5fea2239925b4a8efb175a4` |
+| macos-latest-node-24   | v24.22.2 | `bc48099c7b121b64eee1a8e078896bb9f39f870713cae0d3a3a35b5ffe019cf5` | `ede85878cb9223953fcea24d6d63317e80d98b39730f3c472ff0c248725a4c5d` |
+| ubuntu-latest-node-22  | v22.23.4 | `5eccb10410981d42f1ecfcee4fa3317b3eaaeada95742ff900670edf77b00779` | `f636eb8d2fa489004eb23a6ac8fcf2bca8ff45fcd2f669f71319fe15ce2ecfe3` |
+| ubuntu-latest-node-24  | v24.22.2 | `5eccb10410981d42f1ecfcee4fa3317b3eaaeada95742ff900670edf77b00779` | `110777d3896405d9a4e3020debab8c81e1cce9818be2596b826f12d63db760fc` |
+| windows-latest-node-22 | v22.23.4 | `86a29a1420a954bc84689e7d6c3b2f50b2f4657e83e1eeb17ba459a839910057` | `20ecadaaed0858b1bb7fd6d18ce0ecc472556968a2a41f02c7189f66f1c45f68` |
+| windows-latest-node-24 | v24.22.2 | `86a29a1420a954bc84689e7d6c3b2f50b2f4657e83e1eeb17ba459a839910057` | `15ab9988a254b05d9e2ef4cde65a05d6f97846931906e546851c179d23487ec8` |
