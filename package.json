@@ -121,7 +121,7 @@
     "@eslint/js": "10.0.1",
     "@modelcontextprotocol/client": "2.3.1",
     "@modelcontextprotocol/conformance": "0.2.0-alpha.11",
-    "@modelcontextprotocol/node": "2.0.0",
+    "@modelcontextprotocol/node": "2.1.1",
     "@types/node": "26.1.2",
     "@vitest/coverage-v8": "4.1.12",
     "ajv": "8.20.0",
