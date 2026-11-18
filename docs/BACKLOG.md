@@ -1956,6 +1956,8 @@ BGA-306 and BGA-312 are `blocked` on that evidence. Reading these logs would nee
 
 - **Verified, 2026-10-02 UTC:** [Exact-source CI](verification/bga432-source-ci.json) at `e9b35a2` passes all six Ubuntu/macOS/Windows Node 22/24 jobs at 674 tests / 209 required scenarios. All eight BGA-408 source reviews were explicitly admitted against that clean post-observation evidence; the actual framework release guard passes with zero ledger holds. This closes BGA-432 for its bounded syntax/entry-point scope, without upstream confirmation or new real-game/registry evidence.
 
+- **Follow-up, 2026-11-18:** BGA-465 implements the bounded documented class-only fallback under the replacement official reference. The original BGA-432 receipts preserve what was verified against the October wording.
+
 ### BGA-433 — Scope framework review invalidation to affected dependencies
 
 - **Status:** verified
@@ -2405,3 +2407,12 @@ The following are not implementation backlog items unless a future documented de
 - **Local evidence, 2026-11-10:** All three new packaged cases fail on the original expectation and pass after correction. The affected suites pass 17 tests; the integrated full gate passes 1,074 tests, 281 required scenarios, 108 claims and applicable conformance. Local evidence identifies dirty base `dd9c0c6`, Node 22.17.1 and test archive `sha256:87d3ad50b9247049b9e6b756c46b6773eb449b74244e567345a29c0f4dcbc851`. The real framework guard still refuses eight holds (four unreachable and four stale); this package is a local test artifact, not a release candidate.
 
 - **Exact-source evidence, 2026-11-10:** [CI 42909612076](https://github.com/Brandon-Born/bga-mcp/actions/runs/42909612076) passes all six jobs on attempt 1 at clean `7ca8dbe`. Every sealed record contains the three optional-schema controls and 1,074 tests / 281 required scenarios / 108 claims with passing applicable conformance. [The retained result](verification/GENERATED_TEMPLATE_REGRESSIONS.md#optional-schema-follow-up--bga-464) binds each archive and verification artifact to its actual run. This later evidence note is not its own exact-HEAD run.
+
+### BGA-465 — Read the documented class-only state-2 default
+
+- **Status:** implemented; framework review and exact-source CI pending.
+- **Priority:** P1 local validator correctness.
+- **Depends on:** BGA-432, BGA-463.
+- **Acceptance:** When a readable `setupNewGame` method on the documented `Game` class returns no value, use state 2 when declared. Report a missing entry only when the required state is absent from a complete machine. Keep unresolved returns or unestablished overrides unsupported and preserve explicit entries and independently migrated legacy/hybrid behavior.
+- **Verification:** `E2E-STATE-CLASS-DEFAULT-ENTRY` exercises the declared default and missing-state diagnostic through the installed public tools and resources. Keep the explicit-return, unavailable and legacy/hybrid controls in `E2E-STATE-UNCONFIRMED-INITIAL` and retain a read-only project digest. The BGA-463 source review still requires accepted evidence after observation.
+- **Sources:** The [current state class reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/#initial-state), checked November 18 via the [Studio file reference](https://en.doc.boardgamearena.com/Studio_file_reference), says “If you do not return a value, the initial state is state 2.” [Main game logic](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/) identifies `modules/php/Game.php` as the back-end entry point. The [legacy state-machine page](https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php) separately documents the optional state-1 definition.

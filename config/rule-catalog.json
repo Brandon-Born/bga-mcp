@@ -734,8 +734,8 @@
         },
         {
           "kind": "official-documentation",
-          "reference": "State classes marks the absent setup return default as \"to be confirmed\". BGA-432 reports class-only entry uncertainty instead of concluding missing or default state 2. Displayed revision 29634, reviewed 2026-10-02 UTC.",
-          "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
+          "reference": "The current state-class reference says \"If you do not return a value, the initial state is state 2.\" BGA-465 applies the default for a readable Game.php override with no return value. An absent or unresolved setup remains unsupported.",
+          "url": "https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/"
         }
       ],
       "fixtures": {
@@ -746,7 +746,8 @@
         "E2E-VALIDATE-STATES-CLEAN",
         "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
         "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
-        "E2E-STATE-UNCONFIRMED-INITIAL"
+        "E2E-STATE-UNCONFIRMED-INITIAL",
+        "E2E-STATE-CLASS-DEFAULT-ENTRY"
       ],
       "owner": "Brandon Born"
     },

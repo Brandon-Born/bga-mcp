@@ -14,7 +14,7 @@ interface Result {
   components: { id: string; present: boolean; files: string[] }[];
   trace: { gameMethods: string[]; clientCalls: { source: string }[] };
   complete: { declarations: boolean; edges: boolean };
-  checks: { group?: string; outcome: string }[];
+  checks: { id: string; group?: string; outcome: string }[];
   states: { initial: { ids: number[]; origin: string } };
 }
 
@@ -36,12 +36,17 @@ async function copy(name: string): Promise<string> {
   return root;
 }
 
-it('[E2E-STATE-UNCONFIRMED-INITIAL] preserves the official class-only default ambiguity without false entry or reachability verdicts', async () => {
+it('[E2E-STATE-UNCONFIRMED-INITIAL] keeps computed or absent setup overrides unsupported and preserves explicit and legacy entries', async () => {
   for (const id of [2, 12]) {
     const root = await copy(`unconfirmed-initial-${String(id)}`);
     const gamePath = resolve(root, 'modules/php/Game.php');
     const game = await readFile(gamePath, 'utf8');
-    await writeFile(gamePath, game.replace('return PlayerTurn::class;', 'return;'));
+    await writeFile(
+      gamePath,
+      id === 2
+        ? game.replace('return PlayerTurn::class;', 'return $this->chooseEntryState();')
+        : game.replace('function setupNewGame(', 'function setupElsewhere('),
+    );
     const constantsPath = resolve(root, 'modules/php/StateConstants.php');
     const constants = await readFile(constantsPath, 'utf8');
     await writeFile(
@@ -81,7 +86,7 @@ it('[E2E-STATE-UNCONFIRMED-INITIAL] preserves the official class-only default am
         'bga://project/diagnostics',
       ]) {
         const resource = await client.readResource({ uri });
-        expect(JSON.stringify(resource)).toContain('unconfirmed');
+        expect(JSON.stringify(resource)).toContain('setupNewGame');
       }
     });
     expect(await digestDirectory(root)).toBe(before);
@@ -116,6 +121,57 @@ it('[E2E-STATE-UNCONFIRMED-INITIAL] preserves the official class-only default am
       expect(inspected.structured?.states.initial).toMatchObject({ ids: [1], origin: 'state-1' });
     },
   );
+}, 180_000);
+
+it('[E2E-STATE-CLASS-DEFAULT-ENTRY] uses the documented state 2 for a readable setup that returns no value', async () => {
+  for (const id of [2, 12]) {
+    const root = await copy(`class-default-entry-${String(id)}`);
+    const gamePath = resolve(root, 'modules/php/Game.php');
+    const game = await readFile(gamePath, 'utf8');
+    await writeFile(gamePath, game.replace('return PlayerTurn::class;', id === 2 ? 'return;' : ''));
+    const constantsPath = resolve(root, 'modules/php/StateConstants.php');
+    const constants = await readFile(constantsPath, 'utf8');
+    await writeFile(
+      constantsPath,
+      constants.replace('STATE_PLAYER_TURN = 2', `STATE_PLAYER_TURN = ${String(id)}`),
+    );
+    const before = await digestDirectory(root);
+    const expectedEntry =
+      id === 2 ? { ids: [2], origin: 'default' } : { ids: [], origin: 'unresolved' };
+    await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      const inspected = await callTool<Result>(client, 'inspect_project', { projectRoot: root });
+      expect(inspected.structured?.states.initial).toMatchObject(expectedEntry);
+      const states = await callTool<Result>(client, 'validate_state_machine', {
+        projectRoot: root,
+      });
+      expect(states.structured?.complete).toEqual({ declarations: true, edges: true });
+      const codes = states.structured?.diagnostics.findings.map((finding) => finding.code) ?? [];
+      expect(codes).not.toContain('project.states.unsupported');
+      expect(codes).not.toContain('state.unreachable');
+      expect(codes.includes('state.initial.missing')).toBe(id !== 2);
+      const aggregate = await callTool<Result>(client, 'validate_project', {
+        projectRoot: root,
+        groups: ['state-machine'],
+      });
+      const aggregateCodes = aggregate.structured?.diagnostics.findings.map(
+        (finding) => finding.code,
+      );
+      expect(aggregateCodes?.includes('state.initial.missing')).toBe(id !== 2);
+      const audit = await callTool<Result>(client, 'run_pre_release_audit', { projectRoot: root });
+      expect(
+        audit.structured?.checks.find((check) => check.id === 'state.initial.missing')?.outcome,
+      ).toBe(id === 2 ? 'passed' : 'failed');
+      for (const uri of ['bga://project/states', 'bga://project/summary']) {
+        const resource = await client.readResource({ uri });
+        expect(JSON.stringify(resource)).toContain(
+          id === 2 ? 'framework starts at state 2' : 'default state 2 is not declared',
+        );
+      }
+      const diagnostics = await client.readResource({ uri: 'bga://project/diagnostics' });
+      expect(JSON.stringify(diagnostics).includes('state.initial.missing')).toBe(id !== 2);
+    });
+    expect(await digestDirectory(root)).toBe(before);
+  }
 }, 180_000);
 
 it('[E2E-INSPECT-JSONC-COMPONENTS] inventories JSONC, JSON, PHP and independently migrated components without inventing missing files', async () => {
