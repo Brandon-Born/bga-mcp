@@ -357,6 +357,9 @@ final class Game extends \\Bga\\GameFramework\\Table {
     expect(readsGameSetupWithoutValue(game(''))).toBe(true);
     expect(readsGameSetupWithoutValue(game('return;'))).toBe(true);
     expect(readsGameSetupWithoutValue(game('return $this->firstState();'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('RETURN PlayerTurn::class;'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('yield PlayerTurn::class;'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('/* yield PlayerTurn::class; */ return;'))).toBe(true);
     const source = (text: string) => [{ path: 'modules/php/Game.php', text }];
     expect(readsGameSetupWithoutValue(source('<?php class Game extends ParentGame {}'))).toBe(
       false,

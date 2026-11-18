@@ -481,9 +481,11 @@ export function readsGameSetupWithoutValue(
   const methods = readConcreteClassMethods(game.text.slice(body.start + 1, body.end), signal);
   const setups = methods.filter((method) => method.name.toLowerCase() === 'setupnewgame');
   const setup = setups[0];
-  return (
-    setups.length === 1 && setup !== undefined && returnExpressions(setup.body, signal).length === 0
-  );
+  if (setups.length !== 1 || setup === undefined) return false;
+  // A generator returns an object even without a value-returning statement.
+  // Refuse value-bearing returns in any PHP keyword casing.
+  const setupCode = maskLiterals(setup.body, signal);
+  return !/\byield\b|\breturn\b(?!\s*;)/iu.test(setupCode);
 }
 
 /**
