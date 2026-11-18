@@ -174,6 +174,54 @@ it('[E2E-STATE-CLASS-DEFAULT-ENTRY] uses the documented state 2 for a readable s
   }
 }, 180_000);
 
+it('[E2E-STATE-RESERVED-ENTRY] keeps entry coverage unresolved when a modern class takes reserved state 1', async () => {
+  const root = await copy('reserved-class-entry');
+  const gamePath = resolve(root, 'modules/php/Game.php');
+  const game = await readFile(gamePath, 'utf8');
+  await writeFile(gamePath, game.replace('return PlayerTurn::class;', 'return;'));
+  const constantsPath = resolve(root, 'modules/php/StateConstants.php');
+  const constants = await readFile(constantsPath, 'utf8');
+  await writeFile(
+    constantsPath,
+    constants.replace('STATE_NEXT_PLAYER = 20', 'STATE_NEXT_PLAYER = 1'),
+  );
+  const before = await digestDirectory(root);
+
+  await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+    const inspected = await callTool<Result>(client, 'inspect_project', { projectRoot: root });
+    expect(inspected.structured?.states.initial).toMatchObject({ ids: [], origin: 'unresolved' });
+    const states = await callTool<Result>(client, 'validate_state_machine', { projectRoot: root });
+    expect(states.structured?.complete).toEqual({ declarations: true, edges: false });
+    const codes = states.structured?.diagnostics.findings.map((finding) => finding.code) ?? [];
+    expect(codes).toContain('state.id.reserved');
+    expect(codes).toContain('project.states.unsupported');
+    expect(codes).not.toContain('state.initial.missing');
+    expect(codes).not.toContain('state.unreachable');
+
+    const aggregate = await callTool<Result>(client, 'validate_project', {
+      projectRoot: root,
+      groups: ['state-machine'],
+    });
+    expect(aggregate.structured?.diagnostics.findings.map((finding) => finding.code)).toEqual(
+      expect.arrayContaining(['state.id.reserved', 'project.states.unsupported']),
+    );
+    const audit = await callTool<Result>(client, 'run_pre_release_audit', { projectRoot: root });
+    expect(
+      audit.structured?.checks.find((check) => check.id === 'state.initial.missing')?.outcome,
+    ).toBe('unsupported');
+
+    for (const uri of [
+      'bga://project/states',
+      'bga://project/summary',
+      'bga://project/diagnostics',
+    ]) {
+      const resource = await client.readResource({ uri });
+      expect(JSON.stringify(resource)).toContain('declares reserved state ID 1');
+    }
+  });
+  expect(await digestDirectory(root)).toBe(before);
+}, 180_000);
+
 it('[E2E-INSPECT-JSONC-COMPONENTS] inventories JSONC, JSON, PHP and independently migrated components without inventing missing files', async () => {
   for (const [name, extensions] of [
     ['jsonc', ['jsonc', 'jsonc', 'jsonc']],

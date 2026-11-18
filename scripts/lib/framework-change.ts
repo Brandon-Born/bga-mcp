@@ -51,10 +51,6 @@ const origin = 'https://en.doc.boardgamearena.com/';
 const wikiPage = /^https:\/\/en\.doc\.boardgamearena\.com\/[\w:.-]+$/u;
 const interpretationHolds = new Map([
   [
-    'back-end/game-state-classes/',
-    'BGA-432: Review the documented state-2 default and its regression cases.',
-  ],
-  [
     'back-end/main-game-logic/',
     'BGA-419: Reconcile named transitions, direct jumps and callback returns.',
   ],

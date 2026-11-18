@@ -380,7 +380,8 @@ const NO_INITIAL_STATE = {
  * The legacy skeleton comments state 1 with "only keep this line if your
  * initial state is not 2". The current state-class reference says "If you do
  * not return a value, the initial state is state 2." Apply this to a class-only
- * machine only when the documented Game.php override can be read.
+ * machine only when the documented Game.php override can be read. The same
+ * reference says "Do not use it for your own states" about ID 1.
  * Sources: https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php
  * https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/
  */
@@ -417,6 +418,11 @@ function resolveInitialState(
     };
   }
   if (declared.has(1)) {
+    if (definitions.some((state) => state.id === 1 && state.origin === 'class')) {
+      const construct = 'The entry point is unknown because a class declares reserved state ID 1';
+      unreadable.push({ path: classSource, construct, scope: 'edge' });
+      return { ids: [], origin: 'unresolved', evidence: construct };
+    }
     return {
       ids: [1],
       origin: 'state-1',
