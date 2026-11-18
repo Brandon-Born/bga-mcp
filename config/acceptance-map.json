@@ -1250,6 +1250,12 @@
       "scenarios": ["E2E-STATE-CLASS-DEFAULT-ENTRY"]
     },
     {
+      "item": "BGA-467",
+      "case": "A modern class taking reserved state 1 keeps implicit entry coverage unresolved while preserving the reserved-ID finding, aggregate and audit uncertainty, and the project digest",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-RESERVED-ENTRY"]
+    },
+    {
       "item": "BGA-433",
       "case": "Shared reader, policy, governing claim and relevant fixture changes invalidate affected interpretations",
       "boundary": "repository",

@@ -112,10 +112,28 @@ writer is active.
 Use `corepack pnpm framework:observe URL` on one exact URL from
 `corepack pnpm framework:status`. Review the live wording and run CI on a clean
 source after observation. Each recorded review requires the authentic retained
-artifact from that run. Status includes unresolved interpretation holds for
-the state-2 default, transition and action precedence, and default-table
-wording. Resolve those issues and prove the affected readers before admitting
-those pages. See the [reviewed network boundary](THREAT_MODEL.md#maintainer-documentation-origin--bga-463).
+artifact from that run. The action and transition precedence and default-table
+questions still need decisions before those pages can be admitted. See the
+[reviewed network boundary](THREAT_MODEL.md#maintainer-documentation-origin--bga-463).
+
+### State-class source decision — 2026-11-18
+
+The current [official state-class reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/)
+confirms the state-2 default when setup returns no value. It also reserves ID 1
+against use by an authored state. BGA-465 reads the documented default and
+BGA-467 keeps the initial edge unresolved if a modern class uses that reserved
+ID and no explicit entry is readable. The separate legacy state-1 declaration
+still has its documented meaning.
+
+The current page still lists the same four state types, permits shared names
+while discouraging them, and documents regular `#[PossibleAction]` methods
+and the `Game.php` fallback when the current state has no matching action.
+The mapped rules warn about shared names and check duplicate entry points only
+within a resolution scope. Checks that depend on conflicting action or
+transition forms still report unsupported syntax under BGA-419. The state-class
+page can proceed to the regular source review against genuine post-observation
+CI. The separate action, transition and database interpretation questions stay
+open.
 
 ### Observer verification — BGA-463
 
