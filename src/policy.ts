@@ -31,6 +31,43 @@ import { ERROR_CODES, PolicyViolationError } from './errors.js';
 import { MINIMUM_OUTPUT_BYTES } from './publish.js';
 import { MIN_REDACTED_SECRET_LENGTH, redactPath } from './redaction.js';
 
+const frameworkWikiOrigin = 'https://en.doc.boardgamearena.com/';
+const frameworkStudioOrigin = 'https://doc.studio.boardgamearena.com/framework-documentation/';
+
+/** @internal Exact pages approved for the repository observer in BGA-463. */
+export const FRAMEWORK_REPLACEMENTS = [
+  {
+    retired: `${frameworkWikiOrigin}Main_game_logic:_Game.php`,
+    pages: [
+      `${frameworkStudioOrigin}back-end/main-game-logic/`,
+      `${frameworkStudioOrigin}back-end/main-game-logic/actions/`,
+      `${frameworkStudioOrigin}back-end/main-game-logic/notify/`,
+      `${frameworkStudioOrigin}back-end/main-game-logic/database/`,
+    ],
+  },
+  {
+    retired: `${frameworkWikiOrigin}Game_interface_logic:_Game.js`,
+    pages: [
+      `${frameworkStudioOrigin}front-end/game-interface-logic/`,
+      `${frameworkStudioOrigin}front-end/game-interface-logic/actions/`,
+      `${frameworkStudioOrigin}front-end/game-interface-logic/notifications/`,
+    ],
+  },
+  {
+    retired: `${frameworkWikiOrigin}State_classes:_State_directory`,
+    pages: [`${frameworkStudioOrigin}back-end/game-state-classes/`],
+  },
+  {
+    retired: `${frameworkWikiOrigin}Game_database_model:_dbmodel.sql`,
+    pages: [`${frameworkStudioOrigin}back-end/game-database-model/`],
+  },
+] as const;
+
+/** @internal Resolve a selected replacement to its retired wiki source. */
+export function retiredFrameworkSource(url: string): string | undefined {
+  return FRAMEWORK_REPLACEMENTS.find(({ pages }) => pages.some((page) => page === url))?.retired;
+}
+
 export const DEFAULT_OPERATION_TIMEOUT_MS = 10_000;
 export const MAX_OPERATION_TIMEOUT_MS = 600_000;
 export const DEFAULT_MAX_OUTPUT_BYTES = 1_048_576;
@@ -1360,6 +1397,45 @@ export class PolicyBoundary {
     return documentationRequestUrl(source, request);
   }
 
+  /** @internal Used by the repository framework observer. */
+  static async fetchMaintainerFrameworkPage(url: string): Promise<string> {
+    if (!import.meta.url.endsWith('/src/policy.ts'))
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'Framework observation runs from the repository source.',
+      );
+    if (retiredFrameworkSource(url) === undefined)
+      throw new PolicyViolationError(
+        ERROR_CODES.policyDocSourceNotAllowed,
+        'Choose an exact approved framework page.',
+      );
+    const boundary = new PolicyBoundary(DEFAULT_POLICY_CONFIG, []);
+    return await boundary.runWithTimeout('framework documentation observation', async (signal) => {
+      const response = await boundary.#sendGuardedRequest(
+        new URL(url),
+        MAX_DOCUMENTATION_BYTES,
+        signal,
+        {
+          'user-agent': 'bga-mcp (+https://github.com/Brandon-Born/bga-mcp)',
+          accept: 'text/html',
+          'accept-encoding': 'identity',
+        },
+        'framework documentation page',
+        true,
+      );
+      if (
+        response.status !== 200 ||
+        response.location !== null ||
+        !/^text\/html(?:\s*;|$)/iu.test(response.contentType ?? '')
+      )
+        throw new PolicyViolationError(
+          ERROR_CODES.policyDocFetchFailed,
+          'Framework observation requires a direct and complete HTML response.',
+        );
+      return response.body;
+    });
+  }
+
   /** One HTTPS request, pinned to a checked address and bounded in size. */
   async #sendGuardedRequest(
     url: URL,
@@ -1368,11 +1444,13 @@ export class PolicyBoundary {
     headers: Readonly<Record<string, string>>,
     /** What to call the page in a refusal, so a Studio failure does not read as a documentation one. */
     what = 'documentation page',
+    direct = false,
   ): Promise<{
     readonly status: number;
     readonly body: string;
     readonly location: string | null;
     readonly lastModified: string | null;
+    readonly contentType: string | null;
   }> {
     // The lookup both checks and pins: the address the guard approved is the
     // address the socket connects to, so a second DNS answer cannot be
@@ -1416,6 +1494,7 @@ export class PolicyBoundary {
           method: 'GET',
           lookup: guardedLookup,
           headers,
+          ...(direct ? { agent: false, rejectUnauthorized: true } : {}),
           ...(signal === undefined ? {} : { signal }),
         },
         (response) => {
@@ -1427,7 +1506,7 @@ export class PolicyBoundary {
             // and time this server would spend on someone else's decision, and
             // `resume()` spends both until the far end is finished talking.
             response.destroy();
-            resolveRequest({ status, body: '', location, lastModified: null });
+            resolveRequest({ status, body: '', location, lastModified: null, contentType: null });
             return;
           }
           if (status < 200 || status >= 300) {
@@ -1458,6 +1537,7 @@ export class PolicyBoundary {
                 body,
                 location: null,
                 lastModified: typeof lastModified === 'string' ? lastModified : null,
+                contentType: response.headers['content-type'] ?? null,
               });
             },
             (error: unknown) => {

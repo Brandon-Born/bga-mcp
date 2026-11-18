@@ -30,7 +30,11 @@ const root = resolve(import.meta.dirname, '../..');
 const load = async <T>(path: string): Promise<T> =>
   JSON.parse(await readFile(resolve(root, path), 'utf8')) as T;
 const matrix = await load<CompatibilityMatrix>('config/compatibility.json');
-const sources = frameworkSources(matrix, await load('config/rule-catalog.json'));
+const sources = frameworkSources(matrix, await load('config/rule-catalog.json')).map(
+  // The synthetic reviewed baseline isolates dependency changes. The live
+  // interpretation holds are exercised by the release-guard controls.
+  ({ url, claims, scenarios }) => ({ url, claims, scenarios }),
+);
 const map = await load<DependencyMap>('config/framework-dependencies.json');
 const declarations = await collectDeclaredScenarios(resolve(root, 'tests'));
 // The actual working-tree controls are separate. These mutation controls model a committed baseline.

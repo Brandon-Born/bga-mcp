@@ -349,6 +349,51 @@ describe('installed documentation page authority', () => {
     '[E2E-DOC-AUTHORITY-CACHE] applies final-page 7/30-day retention on repeated search calls',
     cacheOracle,
   );
+  it('[E2E-DOC-AUTHORITY-SEARCH][E2E-DOC-AUTHORITY-RESOURCES] refuses maintainer routes from every packaged documentation reader', async () => {
+    const observed: { host: string | undefined; path: string }[] = [];
+    script = (request, response) => {
+      const path = new URL(request.url ?? '/', ORIGIN).pathname;
+      observed.push({ host: request.headers.host, path });
+      if (path === '/api.php') {
+        response.writeHead(200, { 'content-type': 'application/json' });
+        response.end(JSON.stringify({ query: { search: [{ title: 'Studio' }] } }));
+      } else {
+        redirect(
+          response,
+          'https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/',
+        );
+      }
+    };
+    await connect(async (client) => {
+      const refusal = await callTool(client, 'search_bga_docs', {
+        query: 'cookbook',
+        sourceId: WIKI,
+        maxResults: 5,
+      });
+      expect(refusal.isError).toBe(true);
+      expect(observed.map(({ path }) => path)).toContain('/Studio');
+      await expect(client.readResource({ uri: 'bga://docs/file-reference' })).rejects.toThrow();
+      await expect(client.readResource({ uri: 'bga://framework/version' })).rejects.toThrow();
+    });
+    expect(observed.map(({ path }) => path)).toEqual(
+      expect.arrayContaining(['/api.php', '/Studio_file_reference', '/Studio']),
+    );
+    expect([...new Set(observed.map(({ host }) => host))]).toEqual(['en.doc.boardgamearena.com']);
+    const count = observed.length;
+    const direct = await installedProbe(`
+      import { PolicyBoundary } from ${moduleUrl('dist/index.js')};
+      try {
+        await PolicyBoundary.fetchMaintainerFrameworkPage(
+          'https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/'
+        );
+        console.log(JSON.stringify('accepted'));
+      } catch (error) {
+        console.log(JSON.stringify(error.code));
+      }
+    `);
+    expect(direct).toBe('policy.doc-source.not-allowed');
+    expect(observed).toHaveLength(count);
+  });
   it('[E2E-DOC-AUTHORITY-REDIRECTS] sends each hop with its owning policy and returns final provenance', async () => {
     const observed: { path: string; agent: string }[] = [];
     script = (request, response) => {

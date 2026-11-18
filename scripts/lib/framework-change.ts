@@ -1,3 +1,4 @@
+import { FRAMEWORK_REPLACEMENTS, retiredFrameworkSource } from '../../src/policy.js';
 import type { CompatibilityMatrix } from './compatibility.js';
 import { GateReport } from './gate.js';
 import type { FrameworkDependencies, FrameworkProof } from './framework-dependencies.js';
@@ -6,6 +7,9 @@ export interface FrameworkSource {
   readonly url: string;
   readonly claims: readonly string[];
   readonly scenarios: readonly string[];
+  readonly rules?: readonly string[];
+  readonly replaces?: string;
+  readonly interpretationHold?: string;
 }
 export interface FrameworkReview {
   readonly digest: string;
@@ -33,15 +37,36 @@ export interface FrameworkLedger {
   readonly monitoringDays: number;
   readonly emergencyResponseHours: number;
   readonly observations: readonly FrameworkObservation[];
+  readonly migrationArchiveDigest?: string;
 }
 interface RuleSources {
   readonly checks: readonly {
+    readonly id?: string;
     readonly tool?: string;
     readonly sources?: readonly { readonly kind: string; readonly url: string }[];
   }[];
 }
 
 const origin = 'https://en.doc.boardgamearena.com/';
+const wikiPage = /^https:\/\/en\.doc\.boardgamearena\.com\/[\w:.-]+$/u;
+const interpretationHolds = new Map([
+  [
+    'back-end/game-state-classes/',
+    'BGA-432: Review the documented state-2 default and its regression cases.',
+  ],
+  [
+    'back-end/main-game-logic/',
+    'BGA-419: Reconcile named transitions, direct jumps and callback returns.',
+  ],
+  [
+    'back-end/main-game-logic/actions/',
+    'BGA-419: Reconcile the documented state and Game.php action precedence.',
+  ],
+  [
+    'back-end/game-database-model/',
+    'BGA-463: Reconcile default-table wording with the legacy player extension guidance.',
+  ],
+]);
 export const FOUNDATIONAL_SOURCES = [
   `${origin}Studio_file_reference`,
   `${origin}BGA_Studio_Migration_Guide`,
@@ -52,6 +77,7 @@ export const FOUNDATIONAL_SOURCES = [
 export function frameworkSources(
   matrix: CompatibilityMatrix,
   catalog: RuleSources,
+  replacements = true,
 ): readonly FrameworkSource[] {
   const claims = matrix.claims.filter(
     (claim) =>
@@ -62,10 +88,23 @@ export function frameworkSources(
   for (const check of catalog.checks)
     for (const source of check.sources ?? [])
       if (source.kind === 'official-documentation') urls.add(source.url);
+  if (replacements) {
+    for (const { retired, pages } of FRAMEWORK_REPLACEMENTS) {
+      if (!urls.delete(retired))
+        throw new Error(`Missing original rule source in framework migration: ${retired}`);
+      for (const page of pages) urls.add(page);
+    }
+  }
   return [...urls].sort().map((url) => {
-    const tools = catalog.checks
-      .filter((check) => check.sources?.some((source) => source.url === url))
-      .map((check) => `tool:${check.tool ?? ''}`);
+    const replaces = replacements ? retiredFrameworkSource(url) : undefined;
+    const checks = catalog.checks.filter((check) =>
+      check.sources?.some(
+        (source) =>
+          source.kind === 'official-documentation' &&
+          (source.url === url || source.url === replaces),
+      ),
+    );
+    const tools = checks.map((check) => `tool:${check.tool ?? ''}`);
     const direct = claims.filter((claim) =>
       claim.capabilities?.some((capability) => tools.includes(capability.reference)),
     );
@@ -74,10 +113,17 @@ export function frameworkSources(
       : direct.length > 0
         ? direct
         : claims; // An unmapped official source holds all BGA claims, never none.
+    const pathname = replaces === undefined ? '' : new URL(url).pathname;
+    const interpretationHold = interpretationHolds.get(
+      pathname.replace(/^\/framework-documentation\//u, ''),
+    );
     return {
       url,
       claims: affected.map((claim) => claim.id).sort(),
       scenarios: [...new Set(affected.flatMap((claim) => claim.scenarios ?? []))].sort(),
+      rules: checks.flatMap((check) => (check.id === undefined ? [] : [check.id])).sort(),
+      ...(replaces === undefined ? {} : { replaces }),
+      ...(interpretationHold === undefined ? {} : { interpretationHold }),
     };
   });
 }
@@ -175,6 +221,25 @@ export function migrateFrameworkLedger(ledger: FrameworkLedger): FrameworkLedger
   };
 }
 
+export function migrateFrameworkSources(
+  ledger: FrameworkLedger,
+  archiveDigest: string,
+): FrameworkLedger {
+  if (ledger.schemaVersion !== 2 || !sha256.test(archiveDigest))
+    throw new Error(
+      'Source migration requires the original version-2 ledger and its archive digest.',
+    );
+  const retired = new Set<string>(FRAMEWORK_REPLACEMENTS.map((entry) => entry.retired));
+  return {
+    ...ledger,
+    schemaVersion: 3,
+    migrationArchiveDigest: archiveDigest,
+    observations: ledger.observations
+      .filter((entry) => !retired.has(entry.url))
+      .map((entry) => ({ ...entry, review: null, needsReview: true })),
+  };
+}
+
 export interface FrameworkTestEvidence {
   readonly source: { readonly commit: string; readonly clean: boolean };
   readonly generatedAt: string;
@@ -222,9 +287,25 @@ export function verifyFrameworkPolicy(
 ): GateReport {
   const report = new GateReport();
   report.require(
-    [1, 2].includes(ledger.schemaVersion) && ledger.owner === 'Brandon-Born',
+    [1, 2, 3].includes(ledger.schemaVersion) && ledger.owner === 'Brandon-Born',
     'Framework process has no accountable owner',
   );
+  report.require(
+    ledger.schemaVersion === 3
+      ? sha256.test(ledger.migrationArchiveDigest ?? '')
+      : ledger.migrationArchiveDigest === undefined,
+    'Framework source migration archive binding is invalid',
+  );
+  if (ledger.schemaVersion === 3) {
+    for (const { retired, pages } of FRAMEWORK_REPLACEMENTS) {
+      report.require(!sources.some((source) => source.url === retired), 'Retired source is active');
+      for (const page of pages)
+        report.require(
+          sources.some((source) => source.url === page && source.replaces === retired),
+          `Missing framework replacement: ${page}`,
+        );
+    }
+  }
   report.require(
     Number.isInteger(ledger.monitoringDays) &&
       ledger.monitoringDays > 0 &&
@@ -253,7 +334,13 @@ export function verifyFrameworkPolicy(
       source.claims.length > 0 && source.scenarios.length > 0,
       `Unmapped impact or tests for ${source.url}`,
     );
-    report.require(source.url.startsWith(origin), 'Framework process source is not official');
+    report.require(
+      wikiPage.test(source.url) ||
+        (ledger.schemaVersion === 3 &&
+          source.replaces !== undefined &&
+          retiredFrameworkSource(source.url) === source.replaces),
+      'Framework process source is not official',
+    );
   }
   return report;
 }
@@ -264,8 +351,10 @@ export function verifyFrameworkCi(
     readonly conclusion: string;
     readonly status: string;
     readonly workflowName: string;
+    readonly startedAt?: string;
   },
   evidenceCommit: string,
+  observedAt?: string,
 ): GateReport {
   const report = new GateReport();
   report.require(
@@ -275,5 +364,10 @@ export function verifyFrameworkCi(
       run.workflowName === 'CI',
     'Framework retest requires successful completed exact-source CI, not a partial or different workflow',
   );
+  if (observedAt !== undefined)
+    report.require(
+      Date.parse(run.startedAt ?? '') >= Date.parse(observedAt),
+      'Exact-source CI must start after the framework observation',
+    );
   return report;
 }

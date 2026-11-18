@@ -161,7 +161,7 @@ Automated controls name the scenarios that must exist as executable tests. Manua
 | TM-NO-BROWSER-SESSION                    | Browser sessions and undocumented endpoints stay unused pending a separate review                                                                                                                | manual    | planned     | —                                                                                                          | Brandon Born | Before any Studio log or table capability is implemented                                   | docs/BACKLOG.md BGA-305 decision record                                                                                                                                                                                                                          |
 | TM-DOC-PROVENANCE                        | Documentation results carry source URL, snapshot date, and official or community provenance                                                                                                      | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-PROVENANCE, UNIT-DOC-EVALUATION, UNIT-DOC-AUTHORITY-PAGES, E2E-DOC-AUTHORITY-CATALOG, E2E-DOC-AUTHORITY-POLICY, E2E-DOC-AUTHORITY-SEARCH, E2E-DOC-AUTHORITY-RESOURCES, E2E-DOC-AUTHORITY-CACHE, E2E-DOC-AUTHORITY-REDIRECTS, E2E-DOC-AUTHORITY-MUTATION |
 | TM-DOC-UNTRUSTED                         | Retrieved documentation is labelled as untrusted content and never as instructions                                                                                                               | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-EXCERPT, UNIT-DOC-PROVENANCE, UNIT-DOC-SEARCH-PARSE                                                                                                                                                                                                     |
-| TM-DOC-HOST-ALLOWLIST                    | Only allowlisted documentation hosts over HTTPS, with redirects confined to the allowlist                                                                                                        | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF                                                                                                                                                                                             |
+| TM-DOC-HOST-ALLOWLIST                    | Only allowlisted documentation hosts over HTTPS, with redirects confined to the allowlist                                                                                                        | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-HOST-ALLOWLIST, INT-DOC-HOST-ALLOWLIST, INT-DOC-NETWORK-OFF, INT-FRAMEWORK-OBSERVATION-BOUNDARY                                                                                                                                                         |
 | TM-DOC-NO-LOOPBACK                       | Recognized dotted IPv4 and literal IPv6 loopback, link-local, and private forms are refused after resolution                                                                                     | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-ADDRESS-BLOCKED, UNIT-DOC-ADDRESS-NORMALIZATION                                                                                                                                                                                                         |
 | TM-DOC-ADDRESS-NORMALIZATION             | Every resolved address is normalized semantically before non-public address classification and socket use                                                                                        | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-ADDRESS-NORMALIZATION, E2E-DOCS-ADDRESS-NORMALIZATION                                                                                                                                                                                                   |
 | TM-DOC-REQUEST-CONTENT                   | MCP documentation queries select fixed public outbound vocabulary after lexical exclusions; string shape never establishes origin                                                                | automated | implemented | —                                                                                                          | —            | —                                                                                          | UNIT-DOC-REQUEST-CONTENT, INT-DOC-REQUEST-CONTENT                                                                                                                                                                                                                |
@@ -358,27 +358,26 @@ instruction hierarchy or permissions. The exact signed rc.8 remains rejected,
 its old approval is explicitly blocked, and new bytes need a new candidate and
 signature. See [the rejection and retained identities](verification/RC8_SECURITY_REJECTION.md).
 
-## Proposed maintainer documentation origin — BGA-463
+## Maintainer documentation origin — BGA-463
 
-**Unreviewed proposal.** Add `doc.studio.boardgamearena.com` only for the explicit
-repository `framework:observe` path, and only for the nine exact HTTPS pages in
-the [migration proposal](FRAMEWORK_CHANGES.md#official-site-migration-proposal--2026-11-10).
-The host currently returns 404 for `/robots.txt`; no redistribution, indexing
-or crawling permission has been established. Check the operator's applicable
-access policy before enabling retrieval. No new origin is authorized by this note.
+Maintainer approval on November 10, 2026 covers the nine exact HTTPS pages
+listed in the [source migration](FRAMEWORK_CHANGES.md#official-site-migration--2026-11-10).
+The repository observer uses the existing documentation retrieval boundary.
+The prior access review found HTTP 404 for the new host's `/robots.txt`.
+Approval covers individual public reference requests and digest retention.
 
-Use the existing policy boundary's bounded HTTPS, DNS/address pinning, size,
-time and cancellation checks. An input selects a fixed route; reject custom
-ports, credentials, query strings, fragments, redirects and unlisted paths
-before following them. Send only the canonical path and identifying user agent;
-no project content, root paths, credentials, cookies, Studio sessions or client
-queries. Do not execute content, traverse links, use a search index, or persist
-page bodies. Keep only the source identity, digest, observation time and existing
-review metadata. Treat responses as untrusted and fail closed on refusal or loss.
+The observer checks the literal URL before creating a connection. It sends a
+GET with a fixed identifying user agent, HTML accept header and identity
+encoding. It uses direct TLS certificate verification, checks and pins DNS
+answers, and applies the existing size, deadline and cancellation bounds.
+Redirects and non-200 or non-HTML responses fail closed. The framework ledger
+records the URL, observation time and text digest. Failures record a null digest
+and a fixed error message. Page bodies exist in memory during observation.
 
-Neither packaged MCP profile nor the development docs reader gets a route to
-this origin. Verify exact-path and off-origin refusals, blocked private addresses,
-byte/deadline behavior, safe error publication, source/ledger substitution
-refusal, and continued default/network-off behavior before enabling it. New
-source approval grants no permission to merge, build a release candidate, sign,
-publish, contact Studio, or enable new MCP capabilities.
+The packaged readers resolve network targets through their reviewed catalog.
+Installed controls exercise search, topic and framework-version redirects
+towards the new origin and verify the transport receives only wiki requests.
+The maintainer observer has its own exact-page selector and does not read
+project roots or Studio credentials. The version-3 review command verifies the
+post-observation CI run and compares the supplied evidence with the artifact
+downloaded from its named matrix job.

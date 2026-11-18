@@ -4,11 +4,14 @@ import {
   frameworkReleaseGuard,
   runFrameworkChange,
   frameworkState,
+  verifyFrameworkArchive,
 } from '../../scripts/framework-change.js';
 import type { CompatibilityMatrix } from '../../scripts/lib/compatibility.js';
+import { FRAMEWORK_REPLACEMENTS } from '../../src/policy.js';
 import {
   frameworkHolds,
   frameworkSources,
+  migrateFrameworkSources,
   observeFrameworkPage,
   verifyFrameworkPolicy,
   verifyFrameworkRetest,
@@ -20,12 +23,10 @@ const root = resolve(import.meta.dirname, '../..');
 const matrix = JSON.parse(
   await readFile(resolve(root, 'config/compatibility.json'), 'utf8'),
 ) as CompatibilityMatrix;
-const sources = frameworkSources(
-  matrix,
-  JSON.parse(await readFile(resolve(root, 'config/rule-catalog.json'), 'utf8')) as Parameters<
-    typeof frameworkSources
-  >[1],
-);
+const catalog = JSON.parse(
+  await readFile(resolve(root, 'config/rule-catalog.json'), 'utf8'),
+) as Parameters<typeof frameworkSources>[1];
+const sources = frameworkSources(matrix, catalog);
 const ledger = JSON.parse(
   await readFile(resolve(root, 'config/framework-review.json'), 'utf8'),
 ) as FrameworkLedger;
@@ -90,6 +91,47 @@ it('[INT-FRAMEWORK-CHANGE] holds changed, unavailable, old and unmapped sources 
     'supported',
   );
 });
+
+it('[INT-FRAMEWORK-CHANGE] preserves original rule and scenario coverage during source migration', async () => {
+  const prior = frameworkSources(matrix, catalog, false);
+  const archive = JSON.parse(
+    await readFile(resolve(root, 'docs/verification/framework-review-v2.json'), 'utf8'),
+  ) as FrameworkLedger;
+  const migrated = migrateFrameworkSources(archive, hash);
+  expect(verifyFrameworkPolicy(migrated, sources).failures).toEqual([]);
+  for (const replacement of FRAMEWORK_REPLACEMENTS) {
+    const old = prior.find(({ url }) => url === replacement.retired);
+    expect(old?.rules?.length).toBeGreaterThan(0);
+    expect(sources.some(({ url }) => url === replacement.retired)).toBe(false);
+    for (const url of replacement.pages) {
+      expect(sources.find((source) => source.url === url)).toMatchObject({
+        replaces: replacement.retired,
+        rules: old?.rules,
+        claims: old?.claims,
+        scenarios: old?.scenarios,
+      });
+      expect(migrated.observations.some((entry) => entry.url === url)).toBe(false);
+    }
+  }
+  expect(migrated.observations.every((entry) => entry.review === null && entry.needsReview)).toBe(
+    true,
+  );
+  expect(archive.observations.some((entry) => entry.review !== null)).toBe(true);
+  await expect(verifyFrameworkArchive(ledger)).resolves.toBeUndefined();
+  await expect(verifyFrameworkArchive({ ...ledger, migrationArchiveDigest: hash })).rejects.toThrow(
+    'archive does not match',
+  );
+  expect(() => migrateFrameworkSources(migrated, hash)).toThrow('version-2');
+  const url = FRAMEWORK_REPLACEMENTS[0].pages[0];
+  expect(
+    verifyFrameworkPolicy(
+      migrated,
+      sources.filter((entry) => entry.url !== url),
+    ).failed,
+  ).toBe(true);
+  const spoofed = observeFrameworkPage(migrated, url + '?query=private', hash, stamp);
+  expect(verifyFrameworkPolicy(spoofed, sources).failed).toBe(true);
+});
 it('[INT-FRAMEWORK-RETEST] requires post-observation, clean, passing targeted evidence before restoring claims', () => {
   const evidence: FrameworkTestEvidence = {
     source: { commit: 'd'.repeat(40), clean: true },
@@ -106,6 +148,13 @@ it('[INT-FRAMEWORK-RETEST] requires post-observation, clean, passing targeted ev
     workflowName: 'CI',
   };
   expect(verifyFrameworkCi(ci, evidence.source.commit).failed).toBe(false);
+  expect(verifyFrameworkCi({ ...ci, startedAt: stamp }, evidence.source.commit, stamp).failed).toBe(
+    false,
+  );
+  expect(
+    verifyFrameworkCi({ ...ci, startedAt: '2026-10-01T00:00:00Z' }, evidence.source.commit, stamp)
+      .failed,
+  ).toBe(true);
   for (const run of [
     { ...ci, headSha: 'e'.repeat(40) },
     { ...ci, conclusion: 'failure' },

@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import type { CompatibilityMatrix } from './lib/compatibility.js';
+import { verifyFrameworkArchive } from './framework-change.js';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import { verifyDependencyMap, type DependencyMap } from './lib/framework-dependencies.js';
 import {
@@ -26,7 +27,9 @@ for (const [name, value] of [
 const sources = frameworkSources(
   await load<CompatibilityMatrix>('config/compatibility.json'),
   await load('config/rule-catalog.json'),
+  ledger.schemaVersion === 3,
 );
+await verifyFrameworkArchive(ledger);
 expectSeededFailure(
   'unowned framework response',
   verifyFrameworkPolicy({ ...ledger, owner: '' }, sources),

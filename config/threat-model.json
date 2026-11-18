@@ -940,7 +940,12 @@
       "control": "automated",
       "status": "implemented",
       "backlog": "BGA-207",
-      "scenarios": ["UNIT-DOC-HOST-ALLOWLIST", "INT-DOC-HOST-ALLOWLIST", "INT-DOC-NETWORK-OFF"]
+      "scenarios": [
+        "UNIT-DOC-HOST-ALLOWLIST",
+        "INT-DOC-HOST-ALLOWLIST",
+        "INT-DOC-NETWORK-OFF",
+        "INT-FRAMEWORK-OBSERVATION-BOUNDARY"
+      ]
     },
     {
       "id": "TM-DOC-NO-LOOPBACK",
