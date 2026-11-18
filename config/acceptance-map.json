@@ -1239,9 +1239,15 @@
     },
     {
       "item": "BGA-432",
-      "case": "Unconfirmed class-only initial state stays unsupported through installed state/aggregate/resource/pre-release results; explicit and independent legacy/hybrid entries remain readable and project digests unchanged",
+      "case": "Class-only entries with computed or unestablished setup remain unsupported through installed state/aggregate/resource/pre-release results; explicit and independent legacy/hybrid entries remain readable and project digests unchanged",
       "boundary": "packaged",
       "scenarios": ["E2E-STATE-UNCONFIRMED-INITIAL"]
+    },
+    {
+      "item": "BGA-465",
+      "case": "A readable class-only setup with no returned value selects declared state 2 or reports missing state 2; installed tools and resources agree and the project remains read-only",
+      "boundary": "packaged",
+      "scenarios": ["E2E-STATE-CLASS-DEFAULT-ENTRY"]
     },
     {
       "item": "BGA-433",

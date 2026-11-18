@@ -88,8 +88,9 @@ scenario requirements.
 
 Review by affected rule, not by hostname substitution. The new state class
 reference says “If you do not return a value, the initial state is state `2`.”
-BGA-432's earlier explicit uncertainty is historical; the existing implementation
-still returns an unresolved edge and needs a separate checked correction. The
+BGA-432's earlier explicit uncertainty is historical. BGA-465 applies that
+default to a readable override with no return value. Source review still needs
+passing post-observation CI and a decision about the affected rules. The
 Game.php overview distinguishes named `nextState` transitions, direct jumps and
 callback return targets. Reassess BGA-419 against the separate action and state
 pages; do not infer arbitrary legacy dispatch precedence. The new schema page

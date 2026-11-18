@@ -9,7 +9,9 @@ import {
   collectIntConstants,
   matchBracket,
   maskLiterals,
+  readConcreteClassMethods,
   readMethods,
+  readPhpCode,
   readStringLiteral,
   resolveIntExpression,
   returnExpressions,
@@ -460,6 +462,30 @@ export interface InitialStateOutcome {
   readonly evidence: string | null;
   /** Set when a returned value could not be resolved to a declared state. */
   readonly unreadable: UnreadableConstruct | null;
+}
+
+/** @internal Recognizes a readable override of setupNewGame on the documented Game class. */
+export function readsGameSetupWithoutValue(
+  sources: readonly PhpSource[],
+  signal?: AbortSignal,
+): boolean {
+  const game = sources.find((source) => source.path === 'modules/php/Game.php');
+  if (game === undefined) return false;
+  const code = readPhpCode(game.text, signal);
+  if (code.unsupported.length > 0) return false;
+  const classes = [...code.value.matchAll(/\bclass\s+Game\b[^;{]*\{/gu)];
+  const declaration = classes[0];
+  if (classes.length !== 1 || declaration === undefined) return false;
+  const body = matchBracket(code.value, declaration.index + declaration[0].length - 1, signal);
+  if (body === null) return false;
+  const methods = readConcreteClassMethods(game.text.slice(body.start + 1, body.end), signal);
+  const setups = methods.filter((method) => method.name.toLowerCase() === 'setupnewgame');
+  const setup = setups[0];
+  if (setups.length !== 1 || setup === undefined) return false;
+  // A generator returns an object even without a value-returning statement.
+  // Refuse value-bearing returns in any PHP keyword casing.
+  const setupCode = maskLiterals(setup.body, signal);
+  return !/\byield\b|\breturn\b(?!\s*;)/iu.test(setupCode);
 }
 
 /**

@@ -314,11 +314,34 @@ const FUNCTION = /\bfunction\s+([A-Za-z_]\w*)\s*\(/gu;
 
 /** Reads the functions a PHP source declares, with their attributes and bodies. */
 export function readMethods(source: string, signal?: AbortSignal): PhpMethod[] {
+  return readPhpMethods(source, signal, false);
+}
+
+/** @internal Read concrete methods declared directly in an already isolated class body. */
+export function readConcreteClassMethods(body: string, signal?: AbortSignal): PhpMethod[] {
+  return readPhpMethods(body, signal, true);
+}
+
+function readPhpMethods(
+  source: string,
+  signal: AbortSignal | undefined,
+  concreteClassMethodsOnly: boolean,
+): PhpMethod[] {
   const masked = maskLiterals(source, signal);
   const methods: PhpMethod[] = [];
+  let cursor = 0;
+  let braceDepth = 0;
 
   for (const match of masked.matchAll(FUNCTION)) {
     cancellationCheckpoint(signal);
+    if (concreteClassMethodsOnly) {
+      for (; cursor < match.index; cursor++) {
+        periodicCancellationCheckpoint(cursor, signal);
+        if (masked[cursor] === '{') braceDepth++;
+        if (masked[cursor] === '}') braceDepth--;
+      }
+      if (braceDepth !== 0) continue;
+    }
     const parameters = matchBracket(masked, match.index + match[0].length - 1, signal);
     if (parameters === null) {
       continue;
@@ -330,6 +353,7 @@ export function readMethods(source: string, signal?: AbortSignal): PhpMethod[] {
     const semicolon = masked.indexOf(';', parameters.end);
     const hasBody = brace !== -1 && (semicolon === -1 || brace < semicolon);
     const body = hasBody ? matchBracket(masked, brace, signal) : null;
+    if (concreteClassMethodsOnly && body === null) continue;
 
     methods.push({
       name: match[1] ?? '',

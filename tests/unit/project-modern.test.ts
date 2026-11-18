@@ -1,4 +1,8 @@
-import { parseModernStates, readInitialState } from '../../src/project/modern.js';
+import {
+  parseModernStates,
+  readInitialState,
+  readsGameSetupWithoutValue,
+} from '../../src/project/modern.js';
 import {
   collectIntConstants,
   maskLiterals,
@@ -347,6 +351,32 @@ final class Game extends \\Bga\\GameFramework\\Table {
   it('says nothing when setupNewGame returns nothing', () => {
     const outcome = readInitialState(game('$this->setup();'), states.value, states.classIds);
     expect(outcome).toEqual({ ids: [], evidence: null, unreadable: null });
+  });
+
+  it('establishes a no-value setup only from a readable method on the documented Game class', () => {
+    expect(readsGameSetupWithoutValue(game(''))).toBe(true);
+    expect(readsGameSetupWithoutValue(game('return;'))).toBe(true);
+    expect(readsGameSetupWithoutValue(game('return $this->firstState();'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('RETURN PlayerTurn::class;'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('yield PlayerTurn::class;'))).toBe(false);
+    expect(readsGameSetupWithoutValue(game('/* yield PlayerTurn::class; */ return;'))).toBe(true);
+    const source = (text: string) => [{ path: 'modules/php/Game.php', text }];
+    expect(readsGameSetupWithoutValue(source('<?php class Game extends ParentGame {}'))).toBe(
+      false,
+    );
+    expect(
+      readsGameSetupWithoutValue(
+        source('<?php abstract class Game { abstract function setupNewGame(); }'),
+      ),
+    ).toBe(false);
+    expect(
+      readsGameSetupWithoutValue(
+        source('<?php class Game { function other() { function setupNewGame() {} } }'),
+      ),
+    ).toBe(false);
+    expect(
+      readsGameSetupWithoutValue(source('<?php class Game { function setupNewGame() {}')),
+    ).toBe(false);
   });
 });
 

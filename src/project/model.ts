@@ -9,7 +9,7 @@ import {
   type LayoutSignal,
   type ProjectLayout,
 } from './layout.js';
-import { parseModernStates, readInitialState } from './modern.js';
+import { parseModernStates, readInitialState, readsGameSetupWithoutValue } from './modern.js';
 import {
   parseLegacyMetadata,
   parseLegacyStates,
@@ -378,10 +378,11 @@ const NO_INITIAL_STATE = {
  * a state class project "add[s] `return PlayerTurn::class;` to the code of
  * `setupNewGame`", while `states.inc.php` reserves identifier 1 for it.
  * The legacy skeleton comments state 1 with "only keep this line if your
- * initial state is not 2". The state-class page instead marks its default
- * "to be confirmed", so that default is unsupported for a class-only machine.
+ * initial state is not 2". The current state-class reference says "If you do
+ * not return a value, the initial state is state 2." Apply this to a class-only
+ * machine only when the documented Game.php override can be read.
  * Sources: https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php
- * https://en.doc.boardgamearena.com/State_classes:_State_directory
+ * https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/
  */
 function resolveInitialState(
   definitions: readonly StateDefinition[],
@@ -422,11 +423,13 @@ function resolveInitialState(
       evidence: 'State 1 is declared, and the framework reserves it for the first game state.',
     };
   }
-  if (!hasLegacyDefinitions && definitions.some((state) => state.origin === 'class')) {
+  const classOnly = !hasLegacyDefinitions && definitions.some((state) => state.origin === 'class');
+  if (classOnly && !readsGameSetupWithoutValue(supporting, signal)) {
     const construct =
-      'The default initial state of a state-class-only machine without an explicit entry point is unconfirmed in official documentation';
+      'The reader cannot establish whether the Game.php setupNewGame override returns no value';
     unreadable.push({
-      path: classSource,
+      path:
+        supporting.find((source) => source.path === 'modules/php/Game.php')?.path ?? classSource,
       construct,
       scope: 'edge',
     });
@@ -436,15 +439,17 @@ function resolveInitialState(
     return {
       ids: [2],
       origin: 'default',
-      evidence:
-        'Neither setupNewGame nor state 1 names an entry point, so the framework default of state 2 was used.',
+      evidence: classOnly
+        ? 'setupNewGame in modules/php/Game.php returns no value, so the framework starts at state 2.'
+        : 'Neither setupNewGame nor state 1 names an entry point, so the framework default of state 2 was used.',
     };
   }
   return {
     ids: [],
     origin: 'unresolved',
-    evidence:
-      'No setupNewGame return value, no state 1, and no state 2: nothing names where the game starts.',
+    evidence: classOnly
+      ? 'setupNewGame in modules/php/Game.php returns no value, but the default state 2 is not declared.'
+      : 'No setupNewGame return value, no state 1, and no state 2: nothing names where the game starts.',
   };
 }
 
