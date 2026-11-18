@@ -1,10 +1,12 @@
 # Causal ordering and isolated installed mutations — BGA-461
 
+> Historical evidence only.
+
 ```verification-record
 { "kind": "run", "capabilities": 17, "scenarios": 280, "claims": 108, "tests": 1071 }
 ```
 
-This current correction record is checked against its actual full-gate evidence. The complete local gate passed 1,071/1,071 tests, 280/280 required scenarios and 108 claims, plus package/safety checks and applicable conformance. Independent source review and exact-head CI remain pending at this checkpoint; the failed main run and earlier source proofs remain separate.
+This correction record describes its original full-gate evidence. The complete local gate passed 1,071/1,071 tests, 280/280 required scenarios and 108 claims, plus package/safety checks and applicable conformance. Independent source review and exact-head CI remain pending at this checkpoint; the failed main run and earlier source proofs remain separate.
 
 [Final merged-main CI41113878027](https://github.com/Brandon-Born/bga-mcp/actions/runs/41113878027) failed Windows/Node24: 1,060/1,061 tests passed, with one cancellation-oracle failure in `readProjectFile:close`, occurrence1, injected completion600. Five other matrix jobs passed. The exact main source is `b6744b21eb387e2a9fdb69d59f4faa5d127d961f`. The completed-job log records publication index91 and selected completion92; the equal-snapshot branch demanded the reverse order. The full child transcript was not retained, and the failed job uploaded no sealed verification artifact. Those missing facts remain missing. The run is not retried unchanged.
 

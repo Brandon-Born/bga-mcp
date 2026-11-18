@@ -493,3 +493,14 @@ dynamic SQL support is claimed by BGA-441.
 ## Catch a stuck automatic turn before Studio — BGA-460
 
 Inspection of current source found that transition targets were checked while automatic handlers’ `nextState` names were not. The original turn/round reproducer for BGA-460 pairs a typo and correction on the same project root; its intended benefit is an actionable call-to-state explanation without reconstructing the map manually. Static checking remains heuristic and does not establish game correctness or measured time savings. Computed/shared/nested contexts must stay visible as limits.
+
+## Distinguish an optional schema file from an unavailable SQL audit
+
+**Observed November 10.** The built public command reports a missing database
+component on an original fixture variant without `dbmodel.sql` or custom SQL.
+The current official database-model page explicitly allows the file to be absent
+when there are no custom tables. An agent could create unnecessary scaffolding
+from that warning. BGA-464 owns the inspection correction; the audit's lack of
+schema evidence remains visible. No live database check or game-correctness claim
+follows from either result. BGA-463 separately owns the upstream docs move and
+review of the changed initial-state, action and default-table wording.

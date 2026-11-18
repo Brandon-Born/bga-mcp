@@ -171,6 +171,46 @@ it('[E2E-INSPECT-JSONC-COMPONENTS] inventories JSONC, JSON, PHP and independentl
   });
 }, 180_000);
 
+it.each(['modern', 'legacy', 'hybrid'] as const)(
+  '[E2E-INSPECT-OPTIONAL-DBMODEL] distinguishes optional schema inventory from SQL audit coverage for %s',
+  async (layout) => {
+    const root = resolve(server.temporaryRoot, 'variants', `optional-schema-${layout}`);
+    await cp(server.projects[layout], root, { recursive: true });
+    for (const present of [true, false]) {
+      if (!present) await rm(resolve(root, 'dbmodel.sql'));
+      const before = await digestDirectory(root);
+      await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+        const result = await callTool<Result>(client, 'inspect_project', { projectRoot: root });
+        expect(result.isError).toBe(false);
+        const summary = await client.readResource({ uri: 'bga://project/summary' });
+        const data = JSON.parse((summary.contents[0] as { text: string }).text) as Result;
+        for (const model of [result.structured, data]) {
+          expect(model?.components.find((entry) => entry.id === 'database')).toEqual({
+            id: 'database',
+            present,
+            expected: false,
+            files: present ? ['dbmodel.sql'] : [],
+          });
+          expect(model?.diagnostics.findings.map((finding) => finding.code)).not.toContain(
+            'project.component.missing',
+          );
+        }
+        if (!present) {
+          const audit = await callTool<Result>(client, 'audit_database_usage', {
+            projectRoot: root,
+          });
+          expect(audit.isError).toBe(false);
+          expect(audit.structured?.diagnostics.status).not.toBe('passed');
+          expect(audit.structured?.diagnostics.findings.map((finding) => finding.code)).toContain(
+            'database.audit.unavailable',
+          );
+        }
+      });
+      expect(await digestDirectory(root)).toBe(before);
+    }
+  },
+);
+
 it('[E2E-CONTRACT-EDITOR-HELPERS] excludes helpers from contracts and preserves genuine runtime uncertainty and missing methods through every consumer', async () => {
   const root = server.projects.modern;
   const before = await digestDirectory(root);

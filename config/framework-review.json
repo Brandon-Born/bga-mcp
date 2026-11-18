@@ -6,8 +6,8 @@
   "observations": [
     {
       "url": "https://en.doc.boardgamearena.com/BGA_Studio_Migration_Guide",
-      "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
-      "observedAt": "2026-10-21T22:59:10.811Z",
+      "digest": "sha256:66679e023acaf60487cff982a0d12e931e0861cda2f73b1b52c0e28093db9ea0",
+      "observedAt": "2026-11-10T21:44:13.168Z",
       "review": {
         "digest": "sha256:c66f27183cada48fae71158f2da8c39f87c760fa956d43a72954a8d87ec3d52c",
         "implementationDigest": "sha256:68e78ea9f2bc1ea312ad3006b552d5f6a03a918bad56ad5f059be3c1dfeb6e04",
@@ -2513,12 +2513,12 @@
           "recordedAt": "2026-10-27T19:58:15.726Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Game_database_model:_dbmodel.sql",
-      "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
-      "observedAt": "2026-10-21T22:59:12.322Z",
+      "digest": null,
+      "observedAt": "2026-11-10T21:44:15.071Z",
       "review": {
         "digest": "sha256:e0a82290661fed460dfa38f6608da50e17e77714ac495e089dc1ee23d2225e9c",
         "implementationDigest": "sha256:295ce2a5f021c64d7bbe5e2bdf4d55750af38c14f5b473a9dbec62c4d4da3ed9",
@@ -4992,12 +4992,12 @@
           "recordedAt": "2026-10-27T19:58:16.567Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Game_interface_logic:_Game.js",
-      "digest": "sha256:c290a9b630c760262760ec83bc162bc38e2a60e723f80fb689e91a34e32f63ff",
-      "observedAt": "2026-10-21T22:59:13.893Z",
+      "digest": null,
+      "observedAt": "2026-11-10T21:44:07.308Z",
       "review": {
         "digest": "sha256:c290a9b630c760262760ec83bc162bc38e2a60e723f80fb689e91a34e32f63ff",
         "implementationDigest": "sha256:2fee997a53fc417b8dc7e057d60c6580ccb819c4f938c1dfd31104c31abc82c1",
@@ -7503,12 +7503,12 @@
           "recordedAt": "2026-10-27T19:58:17.468Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Main_game_logic:_Game.php",
-      "digest": "sha256:3f8ddd60efb86026a3a323a41fcdc249f0c18d62d4fc066f01415354a2e343ad",
-      "observedAt": "2026-10-21T22:59:15.789Z",
+      "digest": null,
+      "observedAt": "2026-11-10T21:43:24.571Z",
       "review": {
         "digest": "sha256:3f8ddd60efb86026a3a323a41fcdc249f0c18d62d4fc066f01415354a2e343ad",
         "implementationDigest": "sha256:08a6277279ed312e2bf26820557ec3ca03039bfd5493c64c7bb5cc71e345a6e5",
@@ -10014,12 +10014,12 @@
           "recordedAt": "2026-10-27T19:58:18.353Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory",
-      "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
-      "observedAt": "2026-10-21T22:59:17.730Z",
+      "digest": null,
+      "observedAt": "2026-11-10T21:44:09.365Z",
       "review": {
         "digest": "sha256:2d56731b557d9c7f24e81790fcb56af4209528934ce10d39bad391b6ac76603b",
         "implementationDigest": "sha256:97698e72adf5f3ac8fe85159ed16a2abbe6c2bd297423d86a8dd0b79126772dc",
@@ -12525,12 +12525,12 @@
           "recordedAt": "2026-10-27T19:58:19.206Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Studio",
-      "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
-      "observedAt": "2026-10-21T22:59:19.207Z",
+      "digest": "sha256:2f5a922bbf42debfcd1b43be2fa77e9df4519acea929c445db215c007ff3a11b",
+      "observedAt": "2026-11-10T21:44:16.863Z",
       "review": {
         "digest": "sha256:a9c84238d61521eae5371689fa88af07c0af077de358d94a0f8ab535f79f8d63",
         "implementationDigest": "sha256:78b4a40dda5febf2e1e7a95c3e32d35f39d4802e4353636a6beebf996583a076",
@@ -15036,12 +15036,12 @@
           "recordedAt": "2026-10-27T19:58:20.048Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Studio_file_reference",
-      "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
-      "observedAt": "2026-10-21T22:59:20.783Z",
+      "digest": "sha256:524576fa0b0e7a086e20b933cc4abd5088075183434e3f5de4e9abae95ca5db2",
+      "observedAt": "2026-11-10T21:44:11.381Z",
       "review": {
         "digest": "sha256:4d8c035b233b0a981dcc79645f5e166781ae363474b488ec9f7754594dea3f2b",
         "implementationDigest": "sha256:1d5e0ca5b0ee9c68da12c0c864c4387698f9b0c7d9696da5d83af652ed75b17a",
@@ -17547,12 +17547,12 @@
           "recordedAt": "2026-10-27T19:58:20.931Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     },
     {
       "url": "https://en.doc.boardgamearena.com/Your_game_state_machine:_states.inc.php",
-      "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
-      "observedAt": "2026-10-21T22:59:22.461Z",
+      "digest": "sha256:f5080a20a8383ffccbd3a430e691491b9b569b4046b694f7eb75bf04ef60a71c",
+      "observedAt": "2026-11-10T21:44:18.978Z",
       "review": {
         "digest": "sha256:6f22536d254d4225c27e83d1b878987559017342b0d2394fe576873ea4ab9306",
         "implementationDigest": "sha256:8f9adc2d873354b9d418b5ed0f94cb2701ba78ced0f909beec9d3c3a803caf14",
@@ -20026,7 +20026,7 @@
           "recordedAt": "2026-10-27T19:58:21.784Z"
         }
       },
-      "needsReview": false
+      "needsReview": true
     }
   ]
 }
