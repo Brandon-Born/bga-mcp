@@ -2,9 +2,10 @@ import type { DiagnosticFinding, DiagnosticResult, DiagnosticSeverity } from '..
 import { cancellationCheckpoint } from '../deadline.js';
 import {
   PREDEFINED_NOTIFICATIONS,
+  hasNotificationDecorator,
   parseNotificationHandlers,
+  readNotificationSends,
   readPromiseRegistration,
-  parseSentNotifications,
   type NotificationHandler,
   type SentNotification,
 } from '../project/notifications.js';
@@ -139,11 +140,14 @@ export function validateNotifications(
 ): NotificationTrace {
   const findings: DiagnosticFinding[] = [];
 
+  const projectCanDecorate = serverSources.some((source) =>
+    hasNotificationDecorator(source.text, signal),
+  );
   let serverComplete = true;
   const sent: (SentNotification & { source: string })[] = [];
   for (const source of serverSources) {
     cancellationCheckpoint(signal);
-    const outcome = parseSentNotifications(source.text, signal);
+    const outcome = readNotificationSends(source.text, projectCanDecorate, signal);
     serverComplete = serverComplete && outcome.unsupported.length === 0;
     for (const notification of outcome.value) {
       cancellationCheckpoint(signal);

@@ -354,7 +354,9 @@
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
           "E2E-PROJECT-CONTENT-TRUST",
-          "E2E-STATE-HANDLER-TRANSITIONS"
+          "E2E-STATE-HANDLER-TRANSITIONS",
+          "E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD",
+          "E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -452,7 +454,8 @@
           "E2E-TELEMETRY-NETWORK-CONTROL",
           "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -497,7 +500,8 @@
           "E2E-TELEMETRY-NETWORK-CONTROL",
           "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -554,7 +558,8 @@
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
           "E2E-PROJECT-CONTENT-TRUST",
-          "E2E-STATE-HANDLER-TRANSITIONS"
+          "E2E-STATE-HANDLER-TRANSITIONS",
+          "E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -597,7 +602,8 @@
           "E2E-TELEMETRY-WRITE-CONTROL",
           "E2E-CLIENT-ROOT-AUTHORITY",
           "E2E-PROJECT-CONTENT-TRUST",
-          "E2E-STATE-HANDLER-TRANSITIONS"
+          "E2E-STATE-HANDLER-TRANSITIONS",
+          "E2E-STATE-IMMEDIATE-JUMP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -709,7 +715,8 @@
           "E2E-DATABASE-UNQUALIFIED-WILDCARDS",
           "E2E-CLIENT-ROOT-AUTHORITY",
           "E2E-PROJECT-CONTENT-TRUST",
-          "E2E-STATE-HANDLER-TRANSITIONS"
+          "E2E-STATE-HANDLER-TRANSITIONS",
+          "E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",
@@ -742,7 +749,8 @@
           "E2E-PROJECT-SOURCE-FILE-LIMIT",
           "E2E-TELEMETRY-ABSENT",
           "E2E-CLIENT-ROOT-AUTHORITY",
-          "E2E-PROJECT-CONTENT-TRUST"
+          "E2E-PROJECT-CONTENT-TRUST",
+          "E2E-STATE-IMMEDIATE-JUMP"
         ],
         "liveStudioRequired": false,
         "boundary": "TB-LOCAL-FILESYSTEM",

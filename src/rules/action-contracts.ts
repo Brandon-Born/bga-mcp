@@ -440,13 +440,24 @@ export function validateActionContracts(
       : entryPoints.filter((candidate) => candidate.action === call.action);
     const legacy = matching.filter((candidate) => candidate.scope === 'legacy-dispatcher');
     const applicable = legacy.length > 0 ? legacy : matching;
+    // The state reference checks Game.php only when the current state has no
+    // matching action. A client call alone does not establish that state.
+    // Source: https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/
     const signatures = new Set(
-      applicable.map((candidate) => JSON.stringify([...candidate.argumentNames].sort())),
+      applicable.map((candidate) =>
+        JSON.stringify({
+          names: [...candidate.argumentNames].sort(),
+          checks: (candidate.parameters ?? [])
+            .filter(({ constraints }) => Object.keys(constraints).length > 0)
+            .map(({ name, constraints }) => ({ name, constraints }))
+            .sort((left, right) => left.name.localeCompare(right.name)),
+        }),
+      ),
     );
     if (applicable.length > 1 && signatures.size > 1) {
       findings.push(
         unsupported(
-          `action ${call.action} resolves to state-scoped or fallback entry points with different argument shapes`,
+          `action ${call.action} may resolve to entry points with different argument names or checks`,
           call.source,
         ),
       );

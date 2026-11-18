@@ -1,4 +1,6 @@
 import type { Client } from '@modelcontextprotocol/client';
+import { readFile, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 
 import {
   callTool,
@@ -8,6 +10,7 @@ import {
   installPackagedServer,
   readFixtureExpectations,
   withPackagedServer,
+  withPublicPackagedServer,
   type PackagedServer,
   type ToolResponse,
 } from '../helpers/packaged.js';
@@ -318,4 +321,63 @@ describe('packaged validate_notifications', () => {
     expect(findings.every((finding) => finding.kind === 'unsupported-syntax')).toBe(true);
     expect(findings[0]?.message.length).toBeGreaterThan(20);
   });
+
+  it('[E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD] withholds payload comparisons for message objects, decorators and private arguments', async () => {
+    for (const form of ['message-object', 'decorator', 'private-args'] as const) {
+      const root = await deriveProject(server, modernCleanRoot, form, []);
+      const gamePath = resolve(root, 'modules/php/Game.php');
+      if (form === 'message-object') {
+        const game = await readFile(gamePath, 'utf8');
+        await writeFile(
+          gamePath,
+          game.replace(
+            /notify->all\('playerPassed',[\s\S]*?\]\);/u,
+            "notify->all('playerPassed', $this->buildPassMessage($cardId));",
+          ),
+        );
+      } else if (form === 'decorator') {
+        await writeFile(
+          resolve(root, 'modules/php/NotificationSetup.php'),
+          '<?php function addGameDecorator($game, $decorator) { $game->bga->notify->addDecorator($decorator); }',
+        );
+      } else {
+        const game = await readFile(gamePath, 'utf8');
+        await writeFile(
+          gamePath,
+          game.replace("'cardId' => $cardId", "'_private' => [1 => ['cardId' => $cardId]]"),
+        );
+      }
+
+      const before = await digestDirectory(root);
+      await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+        const response = await callValidate(client, { projectRoot: root });
+        expect(response.structured?.trace.sent).toContainEqual(
+          expect.objectContaining({ name: 'playerPassed', payloadShape: 'unknown' }),
+        );
+        const codes = response.structured?.diagnostics.findings.map((finding) => finding.code);
+        expect(codes).toContain('notification.unsupported-syntax');
+        expect(codes).not.toContain('notification.payload.mismatch');
+
+        const aggregate = await callTool<NotificationResult>(client, 'validate_project', {
+          projectRoot: root,
+          groups: ['notifications'],
+        });
+        expect(aggregate.structured?.diagnostics.findings.map((finding) => finding.code)).toContain(
+          'notification.unsupported-syntax',
+        );
+        const audit = await callTool<{ checks: { id: string; outcome: string }[] }>(
+          client,
+          'run_pre_release_audit',
+          { projectRoot: root },
+        );
+        expect(
+          audit.structured?.checks.find((check) => check.id === 'notification.payload.mismatch')
+            ?.outcome,
+        ).toBe('unsupported');
+        const diagnostics = await client.readResource({ uri: 'bga://project/diagnostics' });
+        expect(JSON.stringify(diagnostics)).toContain('notification.unsupported-syntax');
+      });
+      expect(await digestDirectory(root)).toBe(before);
+    }
+  }, 180_000);
 });

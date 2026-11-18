@@ -146,6 +146,19 @@ it('[E2E-DATABASE-SCHEMA-COVERAGE][E2E-DATABASE-CONDITIONAL-CREATE] keeps mixed 
           expect(
             JSON.stringify(await client.readResource({ uri: 'bga://project/diagnostics' })),
           ).toContain('database.unsupported-syntax');
+          // A historical player extension remains uncertain under the current
+          // default-table wording. The reader does not issue an authoring verdict.
+          await writeFile(path, 'ALTER TABLE player ADD COLUMN project_marker INT;');
+          const playerExtension = await callTool<Database>(client, 'audit_database_usage', {});
+          expect(
+            playerExtension.structured?.diagnostics.findings.map(({ code }) => code),
+          ).toContain('database.unsupported-syntax');
+          expect(
+            playerExtension.structured?.diagnostics.findings.some(({ code }) =>
+              ABSENCE.includes(code),
+            ),
+          ).toBe(false);
+          await writeFile(path, originalSchema);
           const outside = await callTool(client, 'audit_database_usage', {
             projectRoot: server.temporaryRoot,
           });

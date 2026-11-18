@@ -301,12 +301,19 @@ function readClass(
       'edge',
     );
   }
-  const imperativeRedirects = methods.filter((method) =>
-    /->gamestate\s*->\s*nextState\s*\(/u.test(maskLiterals(method.body, signal)),
-  );
-  for (const method of imperativeRedirects) {
+  let hasImperativeRedirect = false;
+  for (const method of methods) {
+    cancellationCheckpoint(signal);
+    const immediate = /->gamestate\s*->\s*(nextState|jumpToState)\s*\(/u.exec(
+      maskLiterals(method.body, signal),
+    )?.[1];
+    if (immediate === undefined) continue;
+    hasImperativeRedirect = true;
+    // Game.php documents immediate named transitions and direct jumps
+    // separately from callback returns. This reader cannot establish their order.
+    // Source: https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/
     report(
-      `state class ${className} uses documented-but-conflicting imperative nextState in ${method.name}`,
+      `state class ${className} uses an imperative ${immediate} transition in ${method.name}`,
       'edge',
     );
   }
@@ -339,7 +346,7 @@ function readClass(
     edgesResolved:
       transitions.unreadable.length === 0 &&
       conflictingActions.length === 0 &&
-      imperativeRedirects.length === 0,
+      !hasImperativeRedirect,
     returned,
     initialPrivate: named.get('initialPrivate') ?? null,
   };
