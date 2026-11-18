@@ -601,7 +601,10 @@
         "docs/verification/rc11-security-hold-2026-10-27.json",
         "docs/verification/OCTOBER_27_DEPENDENCY_REMEDIATION.md",
         "docs/verification/bga457-source-ci.json",
-        "docs/verification/rc12-producer-hold-2026-10-27.json"
+        "docs/verification/rc12-producer-hold-2026-10-27.json",
+        "docs/verification/NOVEMBER_10_DEPENDENCY_REMEDIATION.md",
+        "docs/verification/november9-security-hold.json",
+        "docs/verification/november10-working-tree-audit.json"
       ]
     }
   ],

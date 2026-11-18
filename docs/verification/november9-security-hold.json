@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-09T14:26:43.018Z",
+  "registry": "https://registry.npmjs.org",
+  "source": {
+    "commit": "4edf476e49ddb679ab3906442620fa7c94093f65",
+    "lockDigest": "sha256:3b3f303401d7c9bc23a3fc5f451a2fc1feaff10e0460af8fa712f5880fb86bfc",
+    "packageDigest": "sha256:aa675cc19533ac44fe8efb800c7ff23ccc7aee5b9f4916adfe41a6aed119b756",
+    "workspaceDigest": "sha256:7cc345fb24b334adb9e9ca5bce9473abb33323cf88d20f94fe03fabc7ae25662",
+    "policyDigest": "sha256:be837bd11c489f74024db6e99c7817db38b9fad9d2ae2b69f3ee56553f972bab"
+  },
+  "production": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 0
+    },
+    "findings": []
+  },
+  "all": {
+    "counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 2,
+      "high": 1,
+      "critical": 0
+    },
+    "findings": [
+      {
+        "id": "GHSA-f897-62hf-6gxq",
+        "module": "@modelcontextprotocol/node",
+        "severity": "high"
+      },
+      {
+        "id": "GHSA-g3hv-75wg-m249",
+        "module": "minimatch",
+        "severity": "moderate"
+      },
+      {
+        "id": "GHSA-rmxm-3fg6-px4f",
+        "module": "@hono/node-server",
+        "severity": "moderate"
+      }
+    ]
+  }
+}
