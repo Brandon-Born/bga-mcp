@@ -80,6 +80,8 @@ BGA-465 uses state 2 for a state-class-only project when the reader establishes 
 
 BGA-467 leaves implicit entry coverage unresolved if an authored modern class takes reserved state ID 1. The state validator still reports the prohibited identifier. The installed control `E2E-STATE-RESERVED-ENTRY` covers inspection, validation, the audit and all three project resources. The source documents the restriction and leaves the runtime behavior of an invalid declaration unspecified. [Official state-class ID reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-state-classes/#id).
 
+BGA-468 preserves literal modern notification names when an object, a visible decorator or recipient-specific arguments prevent a reliable payload comparison. A client literal also stays unresolved when a state action and its `Game.php` fallback have different validation checks. The state reader keeps its graph incomplete for immediate `jumpToState` calls, just as for immediate named transitions. Installed scenarios cover each boundary. [Source decisions](FRAMEWORK_CHANGES.md#remaining-source-decisions--2026-11-18).
+
 BGA-442 reads a literal INSERT target concatenated with one simple variable or complete ordinary function call. It reports the table and explicit columns while generated VALUES, possible SQL suffixes and escaping remain unsupported. Top-level operators, chained concatenations, dynamic identifiers, escaped/interpolated heads and other SQL forms are refused. A concatenated expression cannot fall through as a complete quoted SQL literal. Original installed controls cover modern, legacy and hybrid roots; no PHP or SQL runs.
 
 ## File generations

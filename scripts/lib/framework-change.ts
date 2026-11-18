@@ -49,20 +49,9 @@ interface RuleSources {
 
 const origin = 'https://en.doc.boardgamearena.com/';
 const wikiPage = /^https:\/\/en\.doc\.boardgamearena\.com\/[\w:.-]+$/u;
-const interpretationHolds = new Map([
-  [
-    'back-end/main-game-logic/',
-    'BGA-419: Reconcile named transitions, direct jumps and callback returns.',
-  ],
-  [
-    'back-end/main-game-logic/actions/',
-    'BGA-419: Reconcile the documented state and Game.php action precedence.',
-  ],
-  [
-    'back-end/game-database-model/',
-    'BGA-463: Reconcile default-table wording with the legacy player extension guidance.',
-  ],
-]);
+// BGA-468 records the bounded decisions for the migrated sources. Each page
+// still requires a recorded review against current post-observation evidence.
+const interpretationHolds = new Map<string, string>();
 export const FOUNDATIONAL_SOURCES = [
   `${origin}Studio_file_reference`,
   `${origin}BGA_Studio_Migration_Guide`,

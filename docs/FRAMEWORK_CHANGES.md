@@ -112,8 +112,8 @@ writer is active.
 Use `corepack pnpm framework:observe URL` on one exact URL from
 `corepack pnpm framework:status`. Review the live wording and run CI on a clean
 source after observation. Each recorded review requires the authentic retained
-artifact from that run. The action and transition precedence and default-table
-questions still need decisions before those pages can be admitted. See the
+artifact from that run. The source decisions below describe which forms the
+readers can establish from project source. See the
 [reviewed network boundary](THREAT_MODEL.md#maintainer-documentation-origin--bga-463).
 
 ### State-class source decision — 2026-11-18
@@ -132,8 +132,41 @@ The mapped rules warn about shared names and check duplicate entry points only
 within a resolution scope. Checks that depend on conflicting action or
 transition forms still report unsupported syntax under BGA-419. The state-class
 page can proceed to the regular source review against genuine post-observation
-CI. The separate action, transition and database interpretation questions stay
-open.
+CI.
+
+### Remaining source decisions — 2026-11-18
+
+The [main game logic reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/)
+distinguishes an immediate named transition, a direct jump and a value returned
+from a state callback. BGA-468 reports visible immediate calls as unsupported
+for graph conclusions. It does not infer the current main state or execution
+order from the callback body. The legacy named-transition checks retain their
+separate scope.
+
+The [action reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/actions/)
+and state-class reference describe Game fallback actions. A client call can be
+read without resolving the current state. The validator now withholds literal
+value checks if the readable targets differ in their validation attributes,
+even when they name the same arguments. The rule still preserves uncertainty
+around the older conflicting walkthrough spelling.
+
+The [current database model reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/game-database-model/)
+restricts modifications to default tables, in tension with the historical
+`player` extension guidance. The schema audit reports `ALTER TABLE player` as
+unverified schema coverage. It makes no claim about the legality, applied
+schema or column absence for such projects. Its installed control preserves
+this limitation across the three local layouts.
+
+The [notification reference](https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/notify/)
+describes message objects, decorators and recipient-specific arguments. A
+readable notification name remains available while these forms leave payload
+comparison unknown. Literal payload and legacy controls still run beside the
+new installed regression.
+
+The regular per-page review still requires passing hosted evidence. The nine
+other selected pages retain the bounded readers for documented database calls,
+client action and notification forms, deprecated files and independently
+migrated layouts.
 
 ### Observer verification — BGA-463
 

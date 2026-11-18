@@ -1550,6 +1550,24 @@
       "case": "The installed checker-removal mutation and restoration preserve a genuine hardlinked peer while the original diagnostic oracle still detects checker removal",
       "boundary": "packaged",
       "scenarios": ["E2E-STATE-HANDLER-TRANSITIONS"]
+    },
+    {
+      "item": "BGA-468",
+      "case": "Known notification names remain visible with unknown object, decorated or per-recipient payloads through validation, audit and diagnostics",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD"]
+    },
+    {
+      "item": "BGA-468",
+      "case": "A client literal remains unresolved when a state action and the Game fallback have different constraints, and a direct state jump leaves graph coverage incomplete",
+      "boundary": "packaged",
+      "scenarios": ["E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS", "E2E-STATE-IMMEDIATE-JUMP"]
+    },
+    {
+      "item": "BGA-468",
+      "case": "A possible legacy alteration of player retains unknown schema coverage across local layouts",
+      "boundary": "packaged",
+      "scenarios": ["E2E-DATABASE-SCHEMA-COVERAGE"]
     }
   ]
 }

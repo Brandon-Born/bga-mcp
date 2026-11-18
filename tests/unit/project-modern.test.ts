@@ -296,7 +296,7 @@ final class PlayerTurn extends GameState {
     });
     expect(outcome.unsupported.map((entry) => entry.construct)).toEqual([
       'state class PlayerTurn uses documented-but-conflicting #[PossibleAction] method action_pass',
-      'state class PlayerTurn uses documented-but-conflicting imperative nextState in action_pass',
+      'state class PlayerTurn uses an imperative nextState transition in action_pass',
     ]);
     expect(outcome.unsupported.every((entry) => entry.scope === 'edge')).toBe(true);
   });

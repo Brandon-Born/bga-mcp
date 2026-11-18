@@ -1,10 +1,12 @@
-import { writeFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import type { Client } from '@modelcontextprotocol/client';
 
 import {
   callTool,
+  deriveProject,
+  digestDirectory,
   installPackagedServer,
   withPublicPackagedServer,
   type PackagedServer,
@@ -462,6 +464,40 @@ describe('release-blocking correctness through the installed public command', ()
       });
       expect(audit.structured?.counts.unsupported).toBeGreaterThan(0);
     });
+  });
+
+  it('[E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS] withholds literal verdicts when state and fallback checks differ', async () => {
+    const root = await deriveProject(
+      server,
+      server.projects.scopedequal,
+      'fallback-constraints',
+      [],
+    );
+    const gamePath = resolve(root, 'modules/php/Game.php');
+    const game = await readFile(gamePath, 'utf8');
+    await writeFile(
+      gamePath,
+      game.replace(
+        /\}\s*$/u,
+        'public function actScoped(#[IntParam(min: 2)] int $cardId): void {}\n}',
+      ),
+    );
+    const before = await digestDirectory(root);
+    await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+      const response = await callTool<ValidatorResult>(client, 'validate_action_contracts', {});
+      expect(
+        response.structured?.diagnostics.findings.some((finding) =>
+          finding.message.includes('different argument names or checks'),
+        ),
+      ).toBe(true);
+      expect(codes(response)).not.toContain('action.argument.invalid');
+      expect(codes(response)).not.toContain('action.argument.mismatch');
+      const audit = await callTool<AuditResult>(client, 'run_pre_release_audit', {});
+      expect(
+        audit.structured?.checks.find((check) => check.id === 'action.argument.invalid')?.outcome,
+      ).toBe('unsupported');
+    });
+    expect(await digestDirectory(root)).toBe(before);
   });
 
   it('[E2E-AUDIT-DATABASE-ALIASES] resolves BGA output aliases and table aliases while keeping unreadable SQL unsupported', async () => {

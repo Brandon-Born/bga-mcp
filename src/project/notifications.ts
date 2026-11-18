@@ -2,7 +2,7 @@ import type { AnyNode, Program } from 'acorn';
 
 import type { ParseOutcome } from './parse.js';
 import { readJavaScript, walkJavaScript } from './javascript.js';
-import { maskComments, maskLiterals, readPhpCode } from './php.js';
+import { maskComments, maskLiterals, readPhpCode, readStringLiteral } from './php.js';
 import { cancellationCheckpoint, periodicCancellationCheckpoint } from '../deadline.js';
 
 /**
@@ -61,6 +61,15 @@ const FRAMEWORK_PAYLOAD_KEYS = new Set(['i18n', 'player_name', 'player_id']);
 // without needing to pass through the game variable".
 const NOTIFY =
   /(?:\$this->|self::|static::)?notify(All)?Player(?:s)?\s*\(|->(?:bga->)?notif(?:y)?->(all|player)\s*\(/gu;
+
+const NOTIFICATION_DECORATOR =
+  /\bfunction\s+&?\s*decorateNotifArgs\s*\(|->\s*(?:bga\s*->\s*)?notif(?:y)?\s*->\s*addDecorator\s*\(/iu;
+
+/** @internal A visible decorator may change the arguments of a modern send in another source. */
+export function hasNotificationDecorator(source: string, signal?: AbortSignal): boolean {
+  return NOTIFICATION_DECORATOR.test(maskLiterals(source, signal));
+}
+
 interface SplitCallArguments {
   readonly parts: readonly string[];
   readonly complete: boolean;
@@ -146,9 +155,19 @@ export function parseSentNotifications(
   source: string,
   signal?: AbortSignal,
 ): ParseOutcome<readonly SentNotification[]> {
+  return readNotificationSends(source, false, signal);
+}
+
+/** @internal The project validator supplies visible cross-file decorator registrations. */
+export function readNotificationSends(
+  source: string,
+  projectCanDecorate: boolean,
+  signal?: AbortSignal,
+): ParseOutcome<readonly SentNotification[]> {
   cancellationCheckpoint(signal);
   const syntax = readPhpCode(source, signal);
   if (syntax.unsupported.length > 0) return { value: [], unsupported: syntax.unsupported };
+  const canDecorate = projectCanDecorate || NOTIFICATION_DECORATOR.test(syntax.value);
   const sent: SentNotification[] = [];
   const unsupported: string[] = [];
 
@@ -166,6 +185,7 @@ export function parseSentNotifications(
     const parts = split.parts;
     // notifyAllPlayers(name, message, args); notifyPlayer(playerId, name, message, args)
     const nameArgument = scope === 'all' ? parts[0] : parts[1];
+    const messageArgument = scope === 'all' ? parts[1] : parts[2];
     const payloadArgument = scope === 'all' ? parts[2] : parts[3];
     if (nameArgument === undefined) {
       continue;
@@ -185,7 +205,27 @@ export function parseSentNotifications(
       continue;
     }
 
-    if (payloadArgument === undefined) {
+    // BGA documents NotificationMessage in place of the message string, with
+    // arguments inside the object. Modern decorators and per-recipient args
+    // can also change the final payload. Preserve the independently read name.
+    // Source: https://doc.studio.boardgamearena.com/framework-documentation/back-end/main-game-logic/notify/
+    if (modern !== undefined) {
+      const messageCanCarryArgs =
+        messageArgument !== undefined &&
+        messageArgument.trim() !== '' &&
+        readStringLiteral(messageArgument, signal) === null;
+      const hasPrivateArgs =
+        payloadArgument !== undefined && phpArrayKeys(payloadArgument, signal).includes('_private');
+      if (messageCanCarryArgs || canDecorate || hasPrivateArgs) {
+        unsupported.push(
+          `notification '${name}' has message, decorated, or private arguments the reader cannot establish`,
+        );
+        sent.push({ name, payloadKeys: [], payloadShape: 'unknown', scope });
+        continue;
+      }
+    }
+
+    if (payloadArgument === undefined || (modern !== undefined && payloadArgument.trim() === '')) {
       sent.push({ name, payloadKeys: [], payloadShape: 'known', scope });
       continue;
     }

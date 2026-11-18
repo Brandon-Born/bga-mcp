@@ -222,6 +222,31 @@ it('[E2E-STATE-RESERVED-ENTRY] keeps entry coverage unresolved when a modern cla
   expect(await digestDirectory(root)).toBe(before);
 }, 180_000);
 
+it('[E2E-STATE-IMMEDIATE-JUMP] withholds graph conclusions when a state uses a direct jump', async () => {
+  const root = await copy('direct-state-jump');
+  const statePath = resolve(root, 'modules/php/States/NextPlayer.php');
+  const state = await readFile(statePath, 'utf8');
+  await writeFile(
+    statePath,
+    state.replace(
+      'return StateConstants::STATE_END_GAME;',
+      '$this->game->gamestate->jumpToState(99);',
+    ),
+  );
+  const before = await digestDirectory(root);
+  await withPublicPackagedServer(server, ['--project-root', root], async (client) => {
+    const states = await callTool<Result>(client, 'validate_state_machine', {});
+    expect(states.structured?.complete).toEqual({ declarations: true, edges: false });
+    const codes = states.structured?.diagnostics.findings.map((finding) => finding.code);
+    expect(codes).toContain('project.states.unsupported');
+    expect(codes).not.toContain('state.unreachable');
+    expect(codes).not.toContain('state.dead-end');
+    const resource = await client.readResource({ uri: 'bga://project/states' });
+    expect(JSON.stringify(resource)).toContain('imperative jumpToState');
+  });
+  expect(await digestDirectory(root)).toBe(before);
+}, 180_000);
+
 it('[E2E-INSPECT-JSONC-COMPONENTS] inventories JSONC, JSON, PHP and independently migrated components without inventing missing files', async () => {
   for (const [name, extensions] of [
     ['jsonc', ['jsonc', 'jsonc', 'jsonc']],

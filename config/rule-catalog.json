@@ -30,7 +30,8 @@
         "E2E-VALIDATE-ACTIONS-SEEDED-DEFECTS",
         "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
         "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
-        "E2E-VALIDATE-ACTION-SCOPES"
+        "E2E-VALIDATE-ACTION-SCOPES",
+        "E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS"
       ],
       "owner": "Brandon Born"
     },
@@ -58,7 +59,8 @@
       "scenarios": [
         "E2E-VALIDATE-ACTIONS-MODERN-CLEAN",
         "E2E-VALIDATE-ACTIONS-MODERN-DEFECTS",
-        "E2E-VALIDATE-ACTIONS-STATE-CLASSES"
+        "E2E-VALIDATE-ACTIONS-STATE-CLASSES",
+        "E2E-VALIDATE-ACTION-FALLBACK-CONSTRAINTS"
       ],
       "owner": "Brandon Born"
     },
@@ -156,7 +158,7 @@
       "sources": [
         {
           "kind": "official-documentation",
-          "reference": "State classes: State directory says an action needs a #[PossibleAction] attribute and that \"if you trigger an action from the front, and it's not declared in this state, the framework will check if the function exists in the Game.php file\". Main game logic: Game.php documents the autowired act\u2026 entry point.",
+          "reference": "State classes: State directory says an action needs a #[PossibleAction] attribute and that \"if you trigger an action from the front, and it's not declared in this state, the framework will check if the function exists in the Game.php file\". Main game logic: Game.php documents the autowired act… entry point.",
           "url": "https://en.doc.boardgamearena.com/State_classes:_State_directory"
         }
       ],
@@ -205,14 +207,14 @@
       "automatable": true,
       "group": "action-contracts",
       "tool": "validate_action_contracts",
-      "summary": "A player action the client calls should be named act\u2026 so the framework routes it.",
+      "summary": "A player action the client calls should be named act… so the framework routes it.",
       "severity": "information",
       "certainty": "certain",
       "implementation": "src/rules/action-contracts.ts",
       "sources": [
         {
           "kind": "community-convention",
-          "reference": "Player action methods are named act\u2026 in the modern framework; older projects vary."
+          "reference": "Player action methods are named act… in the modern framework; older projects vary."
         }
       ],
       "fixtures": {
@@ -494,7 +496,8 @@
         "E2E-VALIDATE-NOTIFICATIONS-CLEAN",
         "E2E-VALIDATE-NOTIFICATIONS-SEEDED-DEFECTS",
         "E2E-VALIDATE-NOTIFICATIONS-STATE-CLASSES",
-        "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES"
+        "E2E-VALIDATE-UNKNOWN-CROSS-FILE-SHAPES",
+        "E2E-VALIDATE-NOTIFICATIONS-DYNAMIC-PAYLOAD"
       ],
       "owner": "Brandon Born"
     },
@@ -658,7 +661,8 @@
       "scenarios": [
         "E2E-VALIDATE-STATES-CLEAN",
         "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
-        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
+        "E2E-STATE-IMMEDIATE-JUMP"
       ],
       "owner": "Brandon Born"
     },
@@ -917,7 +921,8 @@
       "scenarios": [
         "E2E-VALIDATE-STATES-CLEAN",
         "E2E-VALIDATE-STATES-SEEDED-DEFECTS",
-        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS"
+        "E2E-VALIDATE-STATES-MODERN-CONSTRUCTS",
+        "E2E-STATE-IMMEDIATE-JUMP"
       ],
       "owner": "Brandon Born"
     },
